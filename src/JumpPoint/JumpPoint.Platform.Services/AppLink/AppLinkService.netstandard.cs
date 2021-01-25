@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Text;
 using System.Threading.Tasks;
 using JumpPoint.Platform.Items;
-using JumpPoint.Platform.Models;
 using NittyGritty.Platform.Launcher;
 using NittyGritty.Platform.Payloads;
 
