@@ -91,12 +91,4 @@ namespace JumpPoint.Platform.Models
 
     }
 
-    [Flags, StoreAsText]
-    public enum AppLinkLaunchTypes
-    {
-        None = 0,
-        Uri = 1,
-        UriForResults = 2,
-        All = Uri | UriForResults
-    }
 }
