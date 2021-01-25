@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JumpPoint.Platform.Services
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JumpPoint.Platform.Watchers", "JumpPoint.Platform.Watchers\JumpPoint.Platform.Watchers.csproj", "{2599C9EA-7D83-4861-9D63-7C11D3936498}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JumpPoint.Platform.Interop", "JumpPoint.Platform.Interop\JumpPoint.Platform.Interop.csproj", "{3767D794-4942-425C-8319-B8DEF530AB1C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_BETA|Any CPU = Debug_BETA|Any CPU
@@ -73,6 +75,14 @@ Global
 		{2599C9EA-7D83-4861-9D63-7C11D3936498}.Release_BETA|Any CPU.Build.0 = Release|Any CPU
 		{2599C9EA-7D83-4861-9D63-7C11D3936498}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2599C9EA-7D83-4861-9D63-7C11D3936498}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3767D794-4942-425C-8319-B8DEF530AB1C}.Debug_BETA|Any CPU.ActiveCfg = Debug|Any CPU
+		{3767D794-4942-425C-8319-B8DEF530AB1C}.Debug_BETA|Any CPU.Build.0 = Debug|Any CPU
+		{3767D794-4942-425C-8319-B8DEF530AB1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3767D794-4942-425C-8319-B8DEF530AB1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3767D794-4942-425C-8319-B8DEF530AB1C}.Release_BETA|Any CPU.ActiveCfg = Release|Any CPU
+		{3767D794-4942-425C-8319-B8DEF530AB1C}.Release_BETA|Any CPU.Build.0 = Release|Any CPU
+		{3767D794-4942-425C-8319-B8DEF530AB1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3767D794-4942-425C-8319-B8DEF530AB1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
