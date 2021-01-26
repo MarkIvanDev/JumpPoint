@@ -1,10 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Text;
 using Humanizer;
-using JumpPoint.Platform.Utilities;
 using NittyGritty;
 using NittyGritty.Extensions;
 
@@ -75,7 +74,7 @@ namespace JumpPoint.Platform.Models
             DisplayName = Breadcrumbs.LastOrDefault()?.DisplayName ?? string.Empty;
         }
 
-        public Collection<Breadcrumb> GenerateBreadcrumbs(string path)
+        private Collection<Breadcrumb> GenerateBreadcrumbs(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -95,20 +94,7 @@ namespace JumpPoint.Platform.Models
                             DisplayName = nameof(PathType.Drives)
                         });
 
-                        breadcrumbs.AddRange(PathUtilities.GetCrumbs(path));
-
-                        //var dirInfo = new DirectoryInfo(path);
-                        //while (dirInfo != null)
-                        //{
-                        //    var type = dirInfo.Parent == null ? PathType.Drive : PathType.Folder;
-                        //    breadcrumbs.Insert(1, new Breadcrumb()
-                        //    {
-                        //        PathType = type,
-                        //        Path = dirInfo.FullName,
-                        //        DisplayName = dirInfo.Name
-                        //    });
-                        //    dirInfo = dirInfo.Parent;
-                        //}
+                        breadcrumbs.AddRange(GetStorageCrumbs(path));
                         return breadcrumbs;
                     }
                 case PathType.Drive:
@@ -120,13 +106,7 @@ namespace JumpPoint.Platform.Models
                             DisplayName = nameof(PathType.Drives)
                         });
 
-                        breadcrumbs.AddRange(PathUtilities.GetCrumbs(path));
-                        //breadcrumbs.Add(new Breadcrumb()
-                        //{
-                        //    PathType = Type,
-                        //    Path = Path,
-                        //    DisplayName = Path
-                        //});
+                        breadcrumbs.AddRange(GetStorageCrumbs(path));
                         return breadcrumbs;
                     }
                 case PathType.Workspace:
@@ -184,34 +164,53 @@ namespace JumpPoint.Platform.Models
                     return breadcrumbs;
             }
         }
-    
-    }
 
-    public class Breadcrumb : ObservableObject
-    {
-
-        private PathType _pathType;
-
-        public PathType PathType
+        public static IList<Breadcrumb> GetStorageCrumbs(string path)
         {
-            get { return _pathType; }
-            set { Set(ref _pathType, value); }
-        }
+            var workingPath = path.Replace(System.IO.Path.AltDirectorySeparatorChar, System.IO.Path.DirectorySeparatorChar);
 
-        private string _path;
+            var prefix = string.Empty;
+            if (workingPath.StartsWith(@"\\?\")) // Unmounted storage
+            {
+                prefix = @"\\?\";
+                workingPath = workingPath.Remove(0, 4);
+            }
+            else if (workingPath.StartsWith(@"\\")) // Network path
+            {
+                prefix = @"\\";
+                workingPath = workingPath.Remove(0, 2);
+            }
 
-        public string Path
-        {
-            get { return _path; }
-            set { Set(ref _path, value); }
-        }
+            var crumbs = new List<Breadcrumb>();
+            workingPath = workingPath.EndsWith("\\") ? workingPath : $@"{workingPath}\";
+            var parent = System.IO.Path.GetDirectoryName(workingPath);
+            if (!string.IsNullOrEmpty(parent))
+            {
+                while (!string.IsNullOrEmpty(parent))
+                {
+                    var displayName = System.IO.Path.GetFileName(parent);
+                    displayName = string.IsNullOrEmpty(displayName) ? parent : displayName;
 
-        private string _displayName;
+                    crumbs.Insert(0, new Breadcrumb()
+                    {
+                        PathType = string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(parent)) ? PathType.Drive : PathType.Folder,
+                        Path = $"{prefix}{parent}",
+                        DisplayName = displayName
+                    });
 
-        public string DisplayName
-        {
-            get { return _displayName; }
-            set { Set(ref _displayName, value); }
+                    parent = System.IO.Path.GetDirectoryName(parent);
+                }
+            }
+            else
+            {
+                crumbs.Insert(0, new Breadcrumb()
+                {
+                    PathType = PathType.Drive,
+                    Path = $"{prefix}{workingPath}",
+                    DisplayName = workingPath
+                });
+            }
+            return crumbs;
         }
 
     }

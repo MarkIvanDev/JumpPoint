@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace JumpPoint.Platform.Models
+namespace JumpPoint.Platform
 {
     public static class MessengerTokens
     {

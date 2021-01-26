@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JumpPoint.Platform.Items\JumpPoint.Platform.Items.csproj" />
+    <ProjectReference Include="..\JumpPoint.Platform\JumpPoint.Platform.csproj" />
   </ItemGroup>
 
 </Project>

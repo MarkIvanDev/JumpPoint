@@ -311,7 +311,7 @@ namespace JumpPoint.Platform.Services
         {
             try
             {
-                if (!FileUtilities.HasBuiltInIcon(file.FileType))
+                if (!HasBuiltInIcon(file))
                 {
                     var storageFile = await GetStorageFile(file);
                     if (storageFile is null) return;

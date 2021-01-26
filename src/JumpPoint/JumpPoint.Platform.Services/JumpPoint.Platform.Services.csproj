@@ -58,11 +58,13 @@
     <SDKReference Include="WindowsDesktop, Version=10.0.17763.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
+    <ProjectReference Include="..\JumpPoint.Platform.Interop\JumpPoint.Platform.Interop.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\JumpPoint.FullTrust.Core\JumpPoint.FullTrust.Core.csproj" />
     <ProjectReference Include="..\JumpPoint.Platform.Items\JumpPoint.Platform.Items.csproj" />
+    <ProjectReference Include="..\JumpPoint.Platform.Models\JumpPoint.Platform.Models.csproj" />
   </ItemGroup>
 
 </Project>

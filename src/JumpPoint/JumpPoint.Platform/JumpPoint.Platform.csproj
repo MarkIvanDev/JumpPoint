@@ -1,9 +1,8 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;uap10.0.17763</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <DefaultLanguage>en-US</DefaultLanguage>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <LangVersion>7.3</LangVersion>
     <Configurations>Debug;Release;Debug_BETA;Release_BETA</Configurations>
   </PropertyGroup>
@@ -30,44 +29,8 @@
     <DefineConstants>$(DefineConstants);TRACE;BETA</DefineConstants>
   </PropertyGroup>
   
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard')) ">
-    <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('uap10.0')) ">
-    <DefineConstants>$(DefineConstants);UWP</DefineConstants>
-
-  </PropertyGroup>
-
   <ItemGroup>
-    <Compile Include="**\*.shared.cs" />
-    <Compile Include="**\*.shared.*.cs" />
-    <PackageReference Include="Humanizer.Core" Version="2.8.25" />
-    <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="NittyGritty" Version="1.9.1" />
-    <PackageReference Include="NittyGritty.Platform" Version="1.9.1" />
-    <PackageReference Include="NittyGritty.Services" Version="1.9.1" />
-    <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.5.1" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('netstandard')) ">
-    <Compile Include="**\*.netstandard.cs" />
-    <Compile Include="**\*.netstandard.*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('uap10.0')) ">
-    <Compile Include="**\*.uwp.cs" />
-    <Compile Include="**\*.uwp.*.cs" />
-    <SDKReference Include="WindowsDesktop, Version=10.0.17763.0">
-      <Name>Windows Desktop Extensions for the UWP</Name>
-    </SDKReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\JumpPoint.FullTrust.Core\JumpPoint.FullTrust.Core.csproj" />
   </ItemGroup>
 
 </Project>

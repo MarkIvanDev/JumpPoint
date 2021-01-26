@@ -13,7 +13,6 @@ using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Items.Storage.Properties;
 using JumpPoint.Platform.Items.Templates;
 using JumpPoint.Platform.Models;
-using JumpPoint.Platform.Utilities;
 using NittyGritty.Extensions;
 using NittyGritty.Platform.Storage;
 using NittyGritty.Services;
@@ -23,15 +22,65 @@ namespace JumpPoint.Platform.Services
     public static partial class StorageService
     {
         private static readonly FileService fileService;
+        private static readonly HashSet<string> builtInIconFileTypes;
 
         static StorageService()
         {
             fileService = new FileService();
+            builtInIconFileTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                // Common
+                ".dll",
+                ".ini",
+                ".pdf",
+                ".txt",
+                ".zip",
+
+                // Data formats
+                ".csv",
+                ".json",
+                ".xml",
+                ".db",
+                ".srt",
+
+                // Code
+                ".cpp",
+                ".cs",
+                ".vb",
+                ".xaml",
+                ".html",
+                ".js",
+                ".css",
+                ".py",
+
+                // Fonts
+                ".otf",
+                ".ttf",
+                ".woff"
+            };
+        }
+
+        public static PathKind GetPathKind(string path)
+        {
+            var workingPath = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            if (workingPath.StartsWith(@"\\?\")) // Unmounted storage
+            {
+                return PathKind.Unmounted;
+            }
+            else if (workingPath.StartsWith(@"\\")) // Network path
+            {
+                return PathKind.Network;
+            }
+            else if (workingPath.Length >= 2 && workingPath[1] == ':') // Mounted
+            {
+                return PathKind.Mounted;
+            }
+            return PathKind.Unknown;
         }
 
         public static async Task<StorageType?> GetPathStorageType(string path)
         {
-            var kind = PathUtilities.GetPathKind(path);
+            var kind = GetPathKind(path);
             switch (kind)
             {
                 case PathKind.Mounted:
@@ -185,7 +234,7 @@ namespace JumpPoint.Platform.Services
 
         public static async Task<DirectoryBase> GetDirectory(string path)
         {
-            var crumbs = PathUtilities.GetCrumbs(path);
+            var crumbs = PathInfo.GetStorageCrumbs(path);
             if (crumbs.Count == 1 && crumbs[0].PathType == PathType.Drive)
             {
                 return await GetDrive(path);
@@ -474,6 +523,11 @@ namespace JumpPoint.Platform.Services
         #endregion
 
         #region File
+
+        public static bool HasBuiltInIcon(FileBase file)
+        {
+            return builtInIconFileTypes.Contains(file.FileType.ToLower());
+        }
 
         public static async Task Load(FileBase file)
         {

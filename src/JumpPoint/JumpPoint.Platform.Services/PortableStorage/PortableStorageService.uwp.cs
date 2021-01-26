@@ -8,7 +8,6 @@ using JumpPoint.Platform.Interop;
 using JumpPoint.Platform.Items.PortableStorage;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Models;
-using JumpPoint.Platform.Utilities;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Portable;
 using Windows.Storage;
@@ -242,7 +241,7 @@ namespace JumpPoint.Platform.Services
             {
                 if (path.StartsWith(@"\\?\")) // Unmounted Storage
                 {
-                    var crumbs = PathUtilities.GetCrumbs(path);
+                    var crumbs = PathInfo.GetStorageCrumbs(path);
                     StorageFolder currentFolder = null;
                     foreach (var item in crumbs)
                     {
@@ -302,7 +301,7 @@ namespace JumpPoint.Platform.Services
                 {
                     var fileName = Path.GetFileName(path);
 
-                    var crumbs = PathUtilities.GetCrumbs(Path.GetDirectoryName(path));
+                    var crumbs = PathInfo.GetStorageCrumbs(Path.GetDirectoryName(path));
                     StorageFolder currentFolder = null;
                     foreach (var item in crumbs)
                     {

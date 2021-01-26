@@ -4,7 +4,7 @@ using JumpPoint.Platform.Items.Templates;
 using NittyGritty;
 using SQLite;
 
-namespace JumpPoint.Platform.Models.Workspace
+namespace JumpPoint.Platform.Models
 {
     public class WorkspaceInfo : ObservableObject
     {
