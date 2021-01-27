@@ -524,9 +524,9 @@ namespace JumpPoint.Platform.Services
 
         #region File
 
-        public static bool HasBuiltInIcon(FileBase file)
+        public static bool HasBuiltInIcon(string fileType)
         {
-            return builtInIconFileTypes.Contains(file.FileType.ToLower());
+            return builtInIconFileTypes.Contains(fileType.ToLower());
         }
 
         public static async Task Load(FileBase file)
