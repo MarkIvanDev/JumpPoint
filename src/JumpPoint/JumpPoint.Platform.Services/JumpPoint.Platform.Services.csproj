@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="**\*.shared.cs" />
     <Compile Include="**\*.shared.*.cs" />
+    <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
     <PackageReference Include="NittyGritty" Version="1.9.1" />
     <PackageReference Include="NittyGritty.Platform" Version="1.9.1" />
     <PackageReference Include="NittyGritty.Services" Version="1.9.1" />

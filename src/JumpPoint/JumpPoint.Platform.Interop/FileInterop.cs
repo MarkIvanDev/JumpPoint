@@ -9,7 +9,6 @@ using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform.Items.Templates;
 using JumpPoint.Platform.Interop.Enums;
 using JumpPoint.Platform.Interop.Structs;
-using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Items.LocalStorage;

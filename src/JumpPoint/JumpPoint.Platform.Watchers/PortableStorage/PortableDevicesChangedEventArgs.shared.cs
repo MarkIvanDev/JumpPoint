@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using JumpPoint.Platform.Models;
 
 namespace JumpPoint.Platform.Watchers.PortableStorage
 {

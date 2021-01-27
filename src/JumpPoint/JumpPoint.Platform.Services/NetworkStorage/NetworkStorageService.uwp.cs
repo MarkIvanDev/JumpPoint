@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,8 +7,6 @@ using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform.Items.NetworkStorage;
 using JumpPoint.Platform.Items.Storage;
-using JumpPoint.Platform.Items.Storage.Properties;
-using JumpPoint.Platform.Models;
 using Windows.Storage;
 
 namespace JumpPoint.Platform.Services

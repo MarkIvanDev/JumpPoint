@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform.Items.LocalStorage;
-using JumpPoint.Platform.Items.Storage.Properties;
 using JumpPoint.Platform.Items.Templates;
 using JumpPoint.Platform.Interop;
-using JumpPoint.Platform.Models;
 using NittyGritty.Extensions;
 using Windows.Storage;
 using JumpPoint.Platform.Items.Storage;

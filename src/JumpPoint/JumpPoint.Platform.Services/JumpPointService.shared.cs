@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Models;
-using JumpPoint.Platform.Models.Workspace;
 using NittyGritty.Models;
 using NittyGritty.Services;
 using NGStorage = NittyGritty.Platform.Storage;

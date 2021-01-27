@@ -31,7 +31,6 @@
 
   <ItemGroup>
     <PackageReference Include="Humanizer.Core" Version="2.8.25" />
-    <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
     <PackageReference Include="NittyGritty" Version="1.9.1" />
     <PackageReference Include="NittyGritty.Platform" Version="1.9.1" />
     <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />

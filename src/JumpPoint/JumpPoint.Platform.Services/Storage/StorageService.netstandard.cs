@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Items.Storage.Properties;
-using JumpPoint.Platform.Models;
 
 namespace JumpPoint.Platform.Services
 {

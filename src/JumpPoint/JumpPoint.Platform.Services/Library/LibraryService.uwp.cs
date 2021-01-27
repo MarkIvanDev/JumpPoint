@@ -6,7 +6,6 @@ using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Items.Templates;
-using JumpPoint.Platform.Models;
 using Windows.Storage;
 
 namespace JumpPoint.Platform.Services

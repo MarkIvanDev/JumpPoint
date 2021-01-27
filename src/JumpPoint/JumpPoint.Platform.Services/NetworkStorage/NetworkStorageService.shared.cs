@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Text;
 using System.Threading.Tasks;
 using JumpPoint.Platform.Items.NetworkStorage;
 using JumpPoint.Platform.Items.Storage;
-using JumpPoint.Platform.Items.Storage.Properties;
 
 namespace JumpPoint.Platform.Services
 {

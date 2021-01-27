@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Watchers.PortableStorage;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Portable;

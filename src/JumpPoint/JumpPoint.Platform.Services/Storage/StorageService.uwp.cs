@@ -10,8 +10,6 @@ using JumpPoint.Platform.Items.NetworkStorage;
 using JumpPoint.Platform.Items.PortableStorage;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Items.Storage.Properties;
-using JumpPoint.Platform.Models;
-using JumpPoint.Platform.Utilities;
 using NittyGritty.Platform.Storage;
 using Windows.Storage;
 using CreationCollisionOption = Windows.Storage.CreationCollisionOption;

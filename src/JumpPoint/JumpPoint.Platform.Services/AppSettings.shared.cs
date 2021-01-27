@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
-using JumpPoint.Platform.Models;
 using NittyGritty;
 using Xamarin.Essentials;
 

@@ -56,4 +56,8 @@
     </SDKReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\JumpPoint.Platform\JumpPoint.Platform.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -5,7 +5,6 @@ using System.Text;
 using GalaSoft.MvvmLight.Messaging;
 using Humanizer;
 using JumpPoint.Platform.Items.Templates;
-using JumpPoint.Platform.Models;
 using Windows.Storage;
 
 namespace JumpPoint.Platform.Services

@@ -11,15 +11,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JumpPoint.FullTrust", "Jump
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JumpPoint.Platform", "JumpPoint.Platform\JumpPoint.Platform.csproj", "{657D1E95-1520-4DAB-ABF1-E1DD7718C46F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JumpPoint.Platform.Items", "JumpPoint.Platform.Items\JumpPoint.Platform.Items.csproj", "{424298E1-C917-4B03-9379-26096134E514}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JumpPoint.Platform.Items", "JumpPoint.Platform.Items\JumpPoint.Platform.Items.csproj", "{424298E1-C917-4B03-9379-26096134E514}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JumpPoint.Platform.Services", "JumpPoint.Platform.Services\JumpPoint.Platform.Services.csproj", "{BEEA9C15-90EE-4473-A630-D8E69274C3A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JumpPoint.Platform.Services", "JumpPoint.Platform.Services\JumpPoint.Platform.Services.csproj", "{BEEA9C15-90EE-4473-A630-D8E69274C3A0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3767D794-4942-425C-8319-B8DEF530AB1C} = {3767D794-4942-425C-8319-B8DEF530AB1C}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JumpPoint.Platform.Watchers", "JumpPoint.Platform.Watchers\JumpPoint.Platform.Watchers.csproj", "{2599C9EA-7D83-4861-9D63-7C11D3936498}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JumpPoint.Platform.Watchers", "JumpPoint.Platform.Watchers\JumpPoint.Platform.Watchers.csproj", "{2599C9EA-7D83-4861-9D63-7C11D3936498}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JumpPoint.Platform.Interop", "JumpPoint.Platform.Interop\JumpPoint.Platform.Interop.csproj", "{3767D794-4942-425C-8319-B8DEF530AB1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JumpPoint.Platform.Interop", "JumpPoint.Platform.Interop\JumpPoint.Platform.Interop.csproj", "{3767D794-4942-425C-8319-B8DEF530AB1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JumpPoint.Platform.Models", "JumpPoint.Platform.Models\JumpPoint.Platform.Models.csproj", "{553F43D1-46E2-4652-8335-D5298F75174F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JumpPoint.Platform.Models", "JumpPoint.Platform.Models\JumpPoint.Platform.Models.csproj", "{553F43D1-46E2-4652-8335-D5298F75174F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
