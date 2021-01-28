@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>uap10.0.17763</TargetFramework>
     <DefaultLanguage>en-US</DefaultLanguage>
     <LangVersion>7.3</LangVersion>
     <Configurations>Debug;Release;Debug_BETA;Release_BETA</Configurations>
@@ -28,9 +28,13 @@
     <DebugType>pdbonly</DebugType>
     <DefineConstants>$(DefineConstants);TRACE;BETA</DefineConstants>
   </PropertyGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JumpPoint.Platform.Items\JumpPoint.Platform.Items.csproj" />
   </ItemGroup>
 
 </Project>
