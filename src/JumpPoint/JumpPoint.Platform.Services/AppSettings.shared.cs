@@ -3,16 +3,27 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using NittyGritty;
+using NittyGritty.Platform.Theme;
+using NittyGritty.Services;
 using Xamarin.Essentials;
+using AppTheme = NittyGritty.Platform.Theme.AppTheme;
 
 namespace JumpPoint.Platform.Services
 {
     public class AppSettings : ObservableObject
     {
         private static readonly Lazy<AppSettings> lazyInstance = new Lazy<AppSettings>(() => new AppSettings());
+        private readonly ThemeService themeService;
 
         private AppSettings()
         {
+            themeService = new ThemeService();
+            Themes = new ReadOnlyCollection<AppTheme>(new List<AppTheme>
+            {
+                AppTheme.Default,
+                AppTheme.Light,
+                AppTheme.Dark
+            });
             Layouts = new ReadOnlyCollection<string>(new List<string>
             {
                 LayoutModes.Grid,
@@ -24,6 +35,22 @@ namespace JumpPoint.Platform.Services
         public static AppSettings Instance => lazyInstance.Value;
 
         #region Appearance
+
+        public ReadOnlyCollection<AppTheme> Themes { get; }
+
+        public AppTheme Theme
+        {
+            get { return (AppTheme)Preferences.Get(nameof(Theme), (int)AppTheme.Default); }
+            set
+            {
+                if (Theme != value)
+                {
+                    Preferences.Set(nameof(Theme), (int)value);
+                    RaisePropertyChanged();
+                    themeService.SetTheme(value);
+                }
+            }
+        }
 
         public ReadOnlyCollection<string> Layouts { get; }
 
@@ -108,6 +135,32 @@ namespace JumpPoint.Platform.Services
             }
         }
 
+        public bool ShowBack
+        {
+            get { return Preferences.Get(nameof(ShowBack), true); }
+            set
+            {
+                if (ShowBack != value)
+                {
+                    Preferences.Set(nameof(ShowBack), value);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool ShowForward
+        {
+            get { return Preferences.Get(nameof(ShowForward), true); }
+            set
+            {
+                if (ShowForward != value)
+                {
+                    Preferences.Set(nameof(ShowForward), value);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         public bool ShowUp
         {
             get { return Preferences.Get(nameof(ShowUp), false); }
@@ -116,6 +169,19 @@ namespace JumpPoint.Platform.Services
                 if (ShowUp != value)
                 {
                     Preferences.Set(nameof(ShowUp), value);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool ShowRefresh
+        {
+            get { return Preferences.Get(nameof(ShowRefresh), true); }
+            set
+            {
+                if (ShowRefresh != value)
+                {
+                    Preferences.Set(nameof(ShowRefresh), value);
                     RaisePropertyChanged();
                 }
             }
