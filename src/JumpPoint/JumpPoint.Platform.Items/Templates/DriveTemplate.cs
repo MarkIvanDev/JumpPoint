@@ -11,6 +11,7 @@ namespace JumpPoint.Platform.Items.Templates
         Optical = 2,
         Network = 3,
         Removable = 4,
+        Cloud = 5,
 
         // Local Kinds
         System = 11,
@@ -45,6 +46,9 @@ namespace JumpPoint.Platform.Items.Templates
         SD = 62,
         MicroSD = 63,
         Phone = 64,
-        Camera = 65
+        Camera = 65,
+
+        // Cloud Kinds
+        OneDrive = 501,
     }
 }
