@@ -8,9 +8,9 @@ namespace JumpPoint.Platform.Items.CloudStorage
     public class CloudAccount : ObservableObject
     {
 
-        private CloudStorageService _service;
+        private CloudStorageProvider _service;
 
-        public CloudStorageService Service
+        public CloudStorageProvider Service
         {
             get { return _service; }
             set { Set(ref _service, value); }

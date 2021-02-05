@@ -4,7 +4,7 @@ using System.Text;
 
 namespace JumpPoint.Platform.Items.CloudStorage
 {
-    public enum CloudStorageService
+    public enum CloudStorageProvider
     {
         Unknown = 0,
         OneDrive = 1

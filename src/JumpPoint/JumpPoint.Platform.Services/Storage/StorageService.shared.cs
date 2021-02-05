@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform.Items;
+using JumpPoint.Platform.Items.CloudStorage;
 using JumpPoint.Platform.Items.LocalStorage;
 using JumpPoint.Platform.Items.NetworkStorage;
 using JumpPoint.Platform.Items.PortableStorage;
@@ -71,6 +72,10 @@ namespace JumpPoint.Platform.Services
             {
                 return PathKind.Network;
             }
+            else if (workingPath.StartsWith(@"cloud:\", StringComparison.OrdinalIgnoreCase)) // Cloud
+            {
+                return PathKind.Cloud;
+            }
             else if (workingPath.Length >= 2 && workingPath[1] == ':') // Mounted
             {
                 return PathKind.Mounted;
@@ -122,6 +127,9 @@ namespace JumpPoint.Platform.Services
                 case PathKind.Network:
                     return StorageType.Network;
 
+                case PathKind.Cloud:
+                    return StorageType.Cloud;
+
                 case PathKind.Unknown:
                 default:
                     return null;
@@ -141,6 +149,9 @@ namespace JumpPoint.Platform.Services
                         break;
 
                     case StorageType.Cloud:
+                        await CloudStorageService.Rename(item, name, option);
+                        break;
+
                     default:
                         break;
                 }
@@ -264,7 +275,10 @@ namespace JumpPoint.Platform.Services
                     folders.AddRange(await NetworkStorageService.GetFolders(networkDirectory));
                     break;
 
-                case StorageType.Cloud:
+                case StorageType.Cloud when directory is ICloudDirectory cloudDirectory:
+                    folders.AddRange(await CloudStorageService.GetFolders(cloudDirectory));
+                    break;
+
                 default:
                     break;
             }
@@ -290,7 +304,10 @@ namespace JumpPoint.Platform.Services
                     files.AddRange(await NetworkStorageService.GetFiles(networkDirectory));
                     break;
 
-                case StorageType.Cloud:
+                case StorageType.Cloud when directory is ICloudDirectory cloudDirectory:
+                    files.AddRange(await CloudStorageService.GetFiles(cloudDirectory));
+                    break;
+
                 default:
                     break;
             }
@@ -310,6 +327,8 @@ namespace JumpPoint.Platform.Services
                         return await PlatformCreateFolder(directory, name);
 
                     case StorageType.Cloud:
+                        return await CloudStorageService.CreateFolder(directory, name);
+
                     default:
                         return null;
                 }
@@ -333,6 +352,8 @@ namespace JumpPoint.Platform.Services
                         return await PlatformCreateFile(directory, name);
 
                     case StorageType.Cloud:
+                        return await CloudStorageService.CreateFile(directory, name);
+
                     default:
                         return null;
                 }
@@ -381,6 +402,8 @@ namespace JumpPoint.Platform.Services
                     return await NetworkStorageService.GetDrive(path);
 
                 case StorageType.Cloud:
+                    return await CloudStorageService.GetDrive(path);
+
                 default:
                     return null;
             }
@@ -462,6 +485,8 @@ namespace JumpPoint.Platform.Services
                     return await NetworkStorageService.GetFolder(path);
 
                 case StorageType.Cloud:
+                    return await CloudStorageService.GetFolder(path);
+
                 default:
                     return null;
             }
@@ -580,6 +605,8 @@ namespace JumpPoint.Platform.Services
                     return await NetworkStorageService.GetFile(path);
 
                 case StorageType.Cloud:
+                    return await CloudStorageService.GetFile(path);
+
                 default:
                     return null;
             }

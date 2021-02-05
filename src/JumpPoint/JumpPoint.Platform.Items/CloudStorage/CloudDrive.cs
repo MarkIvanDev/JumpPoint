@@ -10,25 +10,25 @@ namespace JumpPoint.Platform.Items.CloudStorage
     public abstract class CloudDrive : DriveBase, ICloudDirectory
     {
         
-        public CloudDrive(string name, CloudStorageService service,
+        public CloudDrive(string name, CloudStorageProvider service,
             string path, DateTimeOffset? dateAccessed, DateTimeOffset? dateCreated, DateTimeOffset? dateModified, FileAttributes? attributes, ulong? size) :
             base(StorageType.Cloud, name, path, dateAccessed, dateCreated, dateModified, attributes, size)
         {
             Service = service;
             switch (service)
             {
-                case CloudStorageService.OneDrive:
+                case CloudStorageProvider.OneDrive:
                     DriveTemplate = DriveTemplate.OneDrive;
                     break;
 
-                case CloudStorageService.Unknown:
+                case CloudStorageProvider.Unknown:
                 default:
                     DriveTemplate = DriveTemplate.Cloud;
                     break;
             }
         }
 
-        public CloudStorageService Service { get; }
+        public CloudStorageProvider Service { get; }
 
     }
 }
