@@ -12,12 +12,11 @@ namespace JumpPoint.Platform.Services
     {
         public static CloudStorageProvider GetProvider(string path)
         {
-            var workingPath = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-            if (workingPath.StartsWith(@"cloud:\", StringComparison.OrdinalIgnoreCase))
+            if (path.GetPathKind() == PathKind.Cloud)
             {
-                workingPath = workingPath.Remove(0, 7);
 
             }
+            
             return CloudStorageProvider.Unknown;
         }
 

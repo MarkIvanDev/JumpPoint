@@ -14,6 +14,7 @@ namespace JumpPoint.Platform
         SettingLink = 5,
         AppLink = 6,
         Library = 7,
+        CloudStorage = 8,
 
         Favorites = 101,
         Drives = 102,
@@ -21,6 +22,7 @@ namespace JumpPoint.Platform
         Libraries = 104,
         AppLinks = 105,
         SettingLinks = 106,
+        CloudStorages = 107,
 
         Dashboard = 201,
         Settings = 202,

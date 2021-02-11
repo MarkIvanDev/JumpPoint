@@ -7,7 +7,6 @@ using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform.Interop;
 using JumpPoint.Platform.Items.PortableStorage;
 using JumpPoint.Platform.Items.Storage;
-using JumpPoint.Platform.Models;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Portable;
 using Windows.Storage;
@@ -42,7 +41,7 @@ namespace JumpPoint.Platform.Services
                     var drive = StorageDevice.FromId(item.Id);
                     if (drive != null)
                     {
-                        drives.Add(string.IsNullOrEmpty(drive.Path) ? $@"\\?\{drive.DisplayName}" : drive.Path);
+                        drives.Add(string.IsNullOrEmpty(drive.Path) ? $"{Prefix.UNMOUNTED}{drive.DisplayName}" : drive.Path);
                     }
                 }
                 catch (Exception)
@@ -56,7 +55,7 @@ namespace JumpPoint.Platform.Services
         static async Task<IList<StorageItemBase>> PlatformGetItems(IPortableDirectory directory)
         {
             var items = new List<StorageItemBase>();
-            if (directory.Path.StartsWith(@"\\?\")) // Unmounted storage
+            if (directory.Path.GetPathKind() == PathKind.Unmounted)
             {
                 if (directory.Context != null && directory.Context.Context is StorageFolder folder)
                 {
@@ -101,7 +100,7 @@ namespace JumpPoint.Platform.Services
         static async Task<IList<PortableFolder>> PlatformGetFolders(IPortableDirectory directory)
         {
             var items = new List<PortableFolder>();
-            if (directory.Path.StartsWith(@"\\?\")) // Unmounted storage
+            if (directory.Path.GetPathKind() == PathKind.Unmounted)
             {
                 if (directory.Context != null && directory.Context.Context is StorageFolder folder)
                 {
@@ -134,7 +133,7 @@ namespace JumpPoint.Platform.Services
         static async Task<IList<PortableFile>> PlatformGetFiles(IPortableDirectory directory)
         {
             var items = new List<PortableFile>();
-            if (directory.Path.StartsWith(@"\\?\")) // Unmounted storage
+            if (directory.Path.GetPathKind() == PathKind.Unmounted)
             {
                 if (directory.Context != null && directory.Context.Context is StorageFolder folder)
                 {
@@ -191,9 +190,9 @@ namespace JumpPoint.Platform.Services
         {
             try
             {
-                if (path.StartsWith(@"\\?\")) // Unmounted Storage
+                if (path.GetPathKind() == PathKind.Unmounted)
                 {
-                    var deviceName = path.Replace(@"\\?\", string.Empty).Trim('\\');
+                    var deviceName = path.Remove(0, Prefix.UNMOUNTED.Length).Trim('\\');
                     var portableDevices = await DeviceInformation.FindAllAsync(StorageDevice.GetDeviceSelector());
                     foreach (var item in portableDevices)
                     {
@@ -239,9 +238,9 @@ namespace JumpPoint.Platform.Services
         {
             try
             {
-                if (path.StartsWith(@"\\?\")) // Unmounted Storage
+                if (path.GetPathKind() == PathKind.Unmounted)
                 {
-                    var crumbs = PathInfo.GetStorageCrumbs(path);
+                    var crumbs = path.GetBreadcrumbs();
                     StorageFolder currentFolder = null;
                     foreach (var item in crumbs)
                     {
@@ -253,7 +252,7 @@ namespace JumpPoint.Platform.Services
                                 currentFolder = drive.Context.Context as StorageFolder;
                             }
                         }
-                        else
+                        else if (item.PathType == PathType.Folder)
                         {
                             if (currentFolder != null)
                             {
@@ -297,11 +296,11 @@ namespace JumpPoint.Platform.Services
         {
             try
             {
-                if (path.StartsWith(@"\\?\")) // Unmounted Storage
+                if (path.GetPathKind() == PathKind.Unmounted)
                 {
                     var fileName = Path.GetFileName(path);
 
-                    var crumbs = PathInfo.GetStorageCrumbs(Path.GetDirectoryName(path));
+                    var crumbs = Path.GetDirectoryName(path).GetBreadcrumbs();
                     StorageFolder currentFolder = null;
                     foreach (var item in crumbs)
                     {
@@ -313,7 +312,7 @@ namespace JumpPoint.Platform.Services
                                 currentFolder = drive.Context.Context as StorageFolder;
                             }
                         }
-                        else
+                        else if (item.PathType == PathType.Folder)
                         {
                             if (currentFolder != null)
                             {

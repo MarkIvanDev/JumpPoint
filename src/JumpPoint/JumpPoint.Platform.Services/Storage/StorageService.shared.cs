@@ -61,31 +61,9 @@ namespace JumpPoint.Platform.Services
             };
         }
 
-        public static PathKind GetPathKind(string path)
-        {
-            var workingPath = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-            if (workingPath.StartsWith(@"\\?\")) // Unmounted storage
-            {
-                return PathKind.Unmounted;
-            }
-            else if (workingPath.StartsWith(@"\\")) // Network path
-            {
-                return PathKind.Network;
-            }
-            else if (workingPath.StartsWith(@"cloud:\", StringComparison.OrdinalIgnoreCase)) // Cloud
-            {
-                return PathKind.Cloud;
-            }
-            else if (workingPath.Length >= 2 && workingPath[1] == ':') // Mounted
-            {
-                return PathKind.Mounted;
-            }
-            return PathKind.Unknown;
-        }
-
         public static async Task<StorageType?> GetPathStorageType(string path)
         {
-            var kind = GetPathKind(path);
+            var kind = path.GetPathKind();
             switch (kind)
             {
                 case PathKind.Mounted:
@@ -130,6 +108,7 @@ namespace JumpPoint.Platform.Services
                 case PathKind.Cloud:
                     return StorageType.Cloud;
 
+                case PathKind.Local:
                 case PathKind.Unknown:
                 default:
                     return null;
@@ -204,7 +183,7 @@ namespace JumpPoint.Platform.Services
             {
                 foreach (var item in portableItems)
                 {
-                    if (item.Path.StartsWith(@"\\?\"))
+                    if (item.Path.GetPathKind() == PathKind.Unmounted)
                     {
                         if (item is PortableFile pf && pf.Context != null)
                         {
@@ -245,12 +224,13 @@ namespace JumpPoint.Platform.Services
 
         public static async Task<DirectoryBase> GetDirectory(string path)
         {
-            var crumbs = PathInfo.GetStorageCrumbs(path);
-            if (crumbs.Count == 1 && crumbs[0].PathType == PathType.Drive)
+            var crumbs = path.GetBreadcrumbs();
+            var lastCrumb = crumbs.LastOrDefault();
+            if (lastCrumb != null && lastCrumb.PathType == PathType.Drive)
             {
                 return await GetDrive(path);
             }
-            else if (crumbs.Count > 1)
+            else if (lastCrumb != null && lastCrumb.PathType == PathType.Folder)
             {
                 return await GetFolder(path);
             }
@@ -413,46 +393,56 @@ namespace JumpPoint.Platform.Services
         {
             try
             {
-                if (path.StartsWith(@"\\?\"))
+                var pathKind = path.GetPathKind();
+                switch (pathKind)
                 {
-                    return DriveTemplate.Removable;
-                }
+                    case PathKind.Mounted:
+                        var driveInfo = new DriveInfo(path);
+                        var driveRoot = driveInfo.RootDirectory.FullName.NormalizeDirectory();
+                        if (driveRoot == path.NormalizeDirectory())
+                        {
+                            switch (driveInfo.DriveType)
+                            {
+                                case DriveType.CDRom:
+                                    return DriveTemplate.Optical;
 
-                if (path.StartsWith(@"\\"))
-                {
-                    return DriveTemplate.Network;
-                }
+                                case DriveType.Fixed:
+                                    return Path.GetPathRoot(Environment.SystemDirectory).NormalizeDirectory() == driveRoot ?
+                                        DriveTemplate.System :
+                                        DriveTemplate.Local;
 
-                var driveInfo = new DriveInfo(path);
-                var driveRoot = driveInfo.RootDirectory.FullName.NormalizeDirectory();
-                if (driveRoot == path.NormalizeDirectory())
-                {
-                    switch (driveInfo.DriveType)
-                    {
-                        case DriveType.CDRom:
-                            return DriveTemplate.Optical;
+                                case DriveType.Network:
+                                    return DriveTemplate.Network;
 
-                        case DriveType.Fixed:
-                            return Path.GetPathRoot(Environment.SystemDirectory).NormalizeDirectory() == driveRoot ?
-                                DriveTemplate.System :
-                                DriveTemplate.Local;
+                                case DriveType.Removable:
+                                    return DriveTemplate.Removable;
 
-                        case DriveType.Network:
-                            return DriveTemplate.Network;
-
-                        case DriveType.Removable:
-                            return DriveTemplate.Removable;
-
-                        case DriveType.NoRootDirectory:
-                        case DriveType.Ram:
-                        case DriveType.Unknown:
-                        default:
+                                case DriveType.NoRootDirectory:
+                                case DriveType.Ram:
+                                case DriveType.Unknown:
+                                default:
+                                    return DriveTemplate.Unknown;
+                            }
+                        }
+                        else
+                        {
                             return DriveTemplate.Unknown;
-                    }
-                }
-                else
-                {
-                    return DriveTemplate.Unknown;
+                        }
+
+                    case PathKind.Unmounted:
+                        return DriveTemplate.Removable;
+
+                    case PathKind.Network:
+                        return DriveTemplate.Network;
+
+                    case PathKind.Cloud:
+                        return DriveTemplate.Cloud;
+
+                    case PathKind.Local:
+                    case PathKind.Workspace:
+                    case PathKind.Unknown:
+                    default:
+                        return DriveTemplate.Unknown;
                 }
             }
             catch (Exception)
