@@ -7,6 +7,7 @@ using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform.Interop;
 using JumpPoint.Platform.Items.PortableStorage;
 using JumpPoint.Platform.Items.Storage;
+using JumpPoint.Platform.Models.Extensions;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Portable;
 using Windows.Storage;

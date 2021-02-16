@@ -10,7 +10,7 @@ namespace JumpPoint.Platform.Items.CloudStorage
     public abstract class CloudDrive : DriveBase, ICloudDirectory
     {
         
-        public CloudDrive(string name, CloudStorageProvider service,
+        public CloudDrive(CloudStorageProvider service, string name,
             string path, DateTimeOffset? dateAccessed, DateTimeOffset? dateCreated, DateTimeOffset? dateModified, FileAttributes? attributes, ulong? size) :
             base(StorageType.Cloud, name, path, dateAccessed, dateCreated, dateModified, attributes, size)
         {

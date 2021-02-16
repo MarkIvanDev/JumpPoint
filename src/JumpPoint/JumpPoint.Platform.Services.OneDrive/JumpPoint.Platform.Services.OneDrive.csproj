@@ -30,7 +30,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Graph" Version="3.24.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.26.0" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.5.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\JumpPoint.Platform.Items.OneDrive\JumpPoint.Platform.Items.OneDrive.csproj" />
+    <ProjectReference Include="..\JumpPoint.Platform.Models\JumpPoint.Platform.Models.csproj" />
   </ItemGroup>
 
 </Project>

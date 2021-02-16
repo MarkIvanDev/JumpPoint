@@ -6,10 +6,9 @@ using System.Linq;
 using System.Text;
 using Humanizer;
 using JumpPoint.Platform.Items.CloudStorage;
-using JumpPoint.Platform.Models;
 using NittyGritty.Extensions;
 
-namespace JumpPoint.Platform.Services
+namespace JumpPoint.Platform.Models.Extensions
 {
     public static class PathExtensions
     {

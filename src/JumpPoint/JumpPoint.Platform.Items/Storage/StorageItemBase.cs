@@ -28,7 +28,7 @@ namespace JumpPoint.Platform.Items.Storage
             set
             {
                 base.Path = value;
-                Name = System.IO.Path.GetFileName(value);
+                Name = System.IO.Path.GetFileName(value?.TrimEnd('\\'));
             }
         }
 

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using JumpPoint.Platform.Items.CloudStorage;
 using JumpPoint.Platform.Items.Storage;
+using JumpPoint.Platform.Models.Extensions;
 
 namespace JumpPoint.Platform.Services
 {

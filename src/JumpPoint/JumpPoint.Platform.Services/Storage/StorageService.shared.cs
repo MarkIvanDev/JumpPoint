@@ -13,7 +13,7 @@ using JumpPoint.Platform.Items.PortableStorage;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Items.Storage.Properties;
 using JumpPoint.Platform.Items.Templates;
-using JumpPoint.Platform.Models;
+using JumpPoint.Platform.Models.Extensions;
 using NittyGritty.Extensions;
 using NittyGritty.Platform.Storage;
 using NittyGritty.Services;

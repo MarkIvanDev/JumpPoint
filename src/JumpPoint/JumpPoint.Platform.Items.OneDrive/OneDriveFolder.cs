@@ -3,41 +3,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using JumpPoint.Platform.Items.CloudStorage;
+using JumpPoint.Platform.Items.Storage;
 using Microsoft.Graph;
 
 namespace JumpPoint.Platform.Items.OneDrive
 {
     public class OneDriveFolder : CloudFolder
     {
-        public OneDriveFolder(
-            string path, DateTimeOffset? dateAccessed, DateTimeOffset? dateCreated, DateTimeOffset? dateModified, FileAttributes? attributes, ulong? size) :
-            base(CloudStorageProvider.OneDrive, path, dateAccessed, dateCreated, dateModified, attributes, size)
+        public OneDriveFolder(OneDriveAccount account, DriveItem driveItem, string path) :
+            base(CloudStorageProvider.OneDrive, path, null, driveItem.CreatedDateTime, driveItem.LastModifiedDateTime, FileAttributes.Directory, (ulong?)driveItem.Size)
         {
+            Account = account;
+            GraphItem = driveItem;
+            FolderType = FolderType.Regular;
         }
 
-        private string _etag;
+        public OneDriveAccount Account { get; }
 
-        public string ETag
-        {
-            get { return _etag; }
-            set { Set(ref _etag, value); }
-        }
-
-        private string _webUrl;
-
-        public string WebUrl
-        {
-            get { return _webUrl; }
-            set { Set(ref _webUrl, value); }
-        }
-
-        private DriveItem _graphItem;
-
-        public DriveItem GraphItem
-        {
-            get { return _graphItem; }
-            set { Set(ref _graphItem, value); }
-        }
+        public DriveItem GraphItem { get; }
 
     }
 }
