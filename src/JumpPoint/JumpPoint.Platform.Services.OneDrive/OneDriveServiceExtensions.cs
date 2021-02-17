@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using JumpPoint.Platform.Items.OneDrive;
 using JumpPoint.Platform.Items.Storage;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Graph;
 using Microsoft.Identity.Client;
 using NittyGritty.Extensions;
@@ -13,12 +15,29 @@ namespace JumpPoint.Platform.Services.OneDrive
 {
     public static class OneDriveServiceExtensions
     {
-        private const string clientId = "";
-        private const string authority = "https://login.microsoftonline.com/consumers";
-        private const string redirectUri = "https://login.microsoftonline.com/common/oauth2/nativeclient";
-        private const string graph = "https://graph.microsoft.com/v1.0/";
-        private const string pathPrefix = @"/drive/root:";
-        private static readonly IReadOnlyCollection<string> scopes = new List<string> { "User.Read", "Files.ReadWrite.All" }.AsReadOnly();
+        private const string PATH_PREFIX = @"/drive/root:";
+
+        private static readonly string clientId;
+        private static readonly string authority;
+        private static readonly string redirectUri;
+        private static readonly string graph;
+        private static readonly string[] scopes;
+
+        static OneDriveServiceExtensions()
+        {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("onedrive.jps.json", optional: true)
+                .Build();
+            clientId = config[nameof(clientId)];
+            authority = config[nameof(authority)];
+            redirectUri = config[nameof(redirectUri)];
+            graph = config[nameof(graph)];
+            scopes = config
+                .GetSection(nameof(scopes))?
+                .GetChildren()?
+                .Select(c => c.Value)?
+                .ToArray();
+        }
 
         public static IPublicClientApplication CreateClientApp()
         {
@@ -194,8 +213,8 @@ namespace JumpPoint.Platform.Services.OneDrive
         {
             if (driveItem.ParentReference != null)
             {
-                var path = driveItem.ParentReference.Path.StartsWith(pathPrefix) ?
-                    driveItem.ParentReference.Path.Remove(0, pathPrefix.Length) :
+                var path = driveItem.ParentReference.Path.StartsWith(PATH_PREFIX) ?
+                    driveItem.ParentReference.Path.Remove(0, PATH_PREFIX.Length) :
                     driveItem.ParentReference.Path;
                 return $"{path.WithEnding(@"/")}{driveItem.Name}"
                     .TrimStart('/')
