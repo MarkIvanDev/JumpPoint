@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using JumpPoint.Platform.Items.CloudStorage;
+using JumpPoint.Platform.Items.OneDrive;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Models.Extensions;
+using JumpPoint.Platform.Services.OneDrive;
 
 namespace JumpPoint.Platform.Services
 {
@@ -15,7 +18,12 @@ namespace JumpPoint.Platform.Services
         {
             if (path.GetPathKind() == PathKind.Cloud)
             {
-
+                var crumbs = path.GetBreadcrumbs();
+                var providerCrumb = crumbs.FirstOrDefault(c => c.PathType == PathType.CloudStorage);
+                if (providerCrumb != null && Enum.TryParse<CloudStorageProvider>(providerCrumb.DisplayName, out var provider))
+                {
+                    return provider;
+                }
             }
             
             return CloudStorageProvider.Unknown;
@@ -26,29 +34,95 @@ namespace JumpPoint.Platform.Services
             return Task.CompletedTask;
         }
 
-        public static Task<IList<CloudFolder>> GetFolders(ICloudDirectory directory)
+        public static Task Delete(IList<StorageItemBase> items, bool deletePermanently)
         {
-            return Task.FromResult<IList<CloudFolder>>(new List<CloudFolder>());
+            return Task.CompletedTask;
         }
 
-        public static Task<IList<CloudFile>> GetFiles(ICloudDirectory directory)
+        public static async Task<IList<CloudDrive>> GetDrives()
         {
-            return Task.FromResult<IList<CloudFile>>(new List<CloudFile>());
+            var drives = new List<CloudDrive>();
+            drives.AddRange(await GetDrives(CloudStorageProvider.OneDrive));
+            return drives;
         }
 
-        public static Task<CloudDrive> GetDrive(string path)
+        public static async Task<IList<CloudDrive>> GetDrives(CloudStorageProvider provider)
         {
-            return Task.FromResult<CloudDrive>(null);
+            var drives = new List<CloudDrive>();
+            switch (provider)
+            {
+                case CloudStorageProvider.OneDrive:
+                    drives.AddRange(await OneDriveService.GetDrives());
+                    break;
+
+                case CloudStorageProvider.Unknown:
+                default:
+                    break;
+            }
+
+            return drives;
         }
 
-        public static Task<CloudFolder> GetFolder(string path)
+        public static async Task<IList<StorageItemBase>> GetItems(ICloudDirectory directory)
         {
-            return Task.FromResult<CloudFolder>(null);
+            var items = new List<StorageItemBase>();
+            switch (directory.Provider)
+            {
+                case CloudStorageProvider.OneDrive when directory is OneDriveDrive odd:
+                    items.AddRange(await OneDriveService.GetItems(odd));
+                    break;
+                case CloudStorageProvider.OneDrive when directory is OneDriveFolder odf:
+                    items.AddRange(await OneDriveService.GetItems(odf));
+                    break;
+
+                case CloudStorageProvider.Unknown:
+                default:
+                    break;
+            }
+
+            return items;
         }
 
-        public static Task<CloudFile> GetFile(string path)
+        public static async Task<CloudDrive> GetDrive(string path)
         {
-            return Task.FromResult<CloudFile>(null);
+            var provider = GetProvider(path);
+            switch (provider)
+            {
+                case CloudStorageProvider.OneDrive:
+                    return await OneDriveService.GetDrive(path);
+
+                case CloudStorageProvider.Unknown:
+                default:
+                    return null;
+            }
+        }
+
+        public static async Task<CloudFolder> GetFolder(string path)
+        {
+            var provider = GetProvider(path);
+            switch (provider)
+            {
+                case CloudStorageProvider.OneDrive:
+                    return await OneDriveService.GetFolder(path);
+
+                case CloudStorageProvider.Unknown:
+                default:
+                    return null;
+            }
+        }
+
+        public static async Task<CloudFile> GetFile(string path)
+        {
+            var provider = GetProvider(path);
+            switch (provider)
+            {
+                case CloudStorageProvider.OneDrive:
+                    return await OneDriveService.GetFile(path);
+
+                case CloudStorageProvider.Unknown:
+                default:
+                    return null;
+            }
         }
 
         public static Task<CloudFolder> CreateFolder(DirectoryBase directory, string name)

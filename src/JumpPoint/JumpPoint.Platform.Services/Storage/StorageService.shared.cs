@@ -237,6 +237,35 @@ namespace JumpPoint.Platform.Services
             return null;
         }
 
+        public static async Task<IList<StorageItemBase>> GetItems(DirectoryBase directory)
+        {
+            var items = new List<StorageItemBase>();
+
+            switch (directory.StorageType)
+            {
+                case StorageType.Local when directory is ILocalDirectory localDirectory:
+                    items.AddRange(await LocalStorageService.GetItems(localDirectory));
+                    break;
+
+                case StorageType.Portable when directory is IPortableDirectory portableDirectory:
+                    items.AddRange(await PortableStorageService.GetItems(portableDirectory));
+                    break;
+
+                case StorageType.Network when directory is INetworkDirectory networkDirectory:
+                    items.AddRange(await NetworkStorageService.GetItems(networkDirectory));
+                    break;
+
+                case StorageType.Cloud when directory is ICloudDirectory cloudDirectory:
+                    items.AddRange(await CloudStorageService.GetItems(cloudDirectory));
+                    break;
+
+                default:
+                    break;
+            }
+
+            return items;
+        }
+
         public static async Task<IList<FolderBase>> GetFolders(DirectoryBase directory)
         {
             var folders = new List<FolderBase>();
@@ -256,7 +285,7 @@ namespace JumpPoint.Platform.Services
                     break;
 
                 case StorageType.Cloud when directory is ICloudDirectory cloudDirectory:
-                    folders.AddRange(await CloudStorageService.GetFolders(cloudDirectory));
+                    //folders.AddRange(await CloudStorageService.GetFolders(cloudDirectory));
                     break;
 
                 default:
@@ -285,7 +314,7 @@ namespace JumpPoint.Platform.Services
                     break;
 
                 case StorageType.Cloud when directory is ICloudDirectory cloudDirectory:
-                    files.AddRange(await CloudStorageService.GetFiles(cloudDirectory));
+                    //files.AddRange(await CloudStorageService.GetFiles(cloudDirectory));
                     break;
 
                 default:

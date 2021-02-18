@@ -124,6 +124,31 @@ namespace JumpPoint.Platform.Services.OneDrive
             }
         }
 
+        public static async Task<IList<StorageItemBase>> GetItems(OneDriveFolder folder)
+        {
+            var items = new List<StorageItemBase>();
+            try
+            {
+                if (folder.Account != null && graphClients.TryGetValue(folder.Account.Identifier, out var graphClient))
+                {
+                    var driveItems = await graphClient.GetDriveItems(folder.GraphItem);
+                    foreach (var item in driveItems)
+                    {
+                        var i = item.Convert(folder.Account);
+                        if (i != null)
+                        {
+                            items.Add(i);
+                        }
+                    }
+                }
+                return items;
+            }
+            catch (Exception)
+            {
+                return items;
+            }
+        }
+
         public static async Task<OneDriveDrive> GetDrive(string path)
         {
             try

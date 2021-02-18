@@ -8,13 +8,13 @@ namespace JumpPoint.Platform.Items.CloudStorage
 {
     public abstract class CloudFolder : FolderBase, ICloudDirectory
     {
-        public CloudFolder(CloudStorageProvider service,
+        public CloudFolder(CloudStorageProvider provider,
             string path, DateTimeOffset? dateAccessed, DateTimeOffset? dateCreated, DateTimeOffset? dateModified, FileAttributes? attributes, ulong? size) :
             base(StorageType.Cloud, path, dateAccessed, dateCreated, dateModified, attributes, size)
         {
-            Service = service;
+            Provider = provider;
         }
 
-        public CloudStorageProvider Service { get; }
+        public CloudStorageProvider Provider { get; }
     }
 }
