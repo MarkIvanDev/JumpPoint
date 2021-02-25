@@ -28,9 +28,13 @@
     <DebugType>pdbonly</DebugType>
     <DefineConstants>$(DefineConstants);TRACE;BETA</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Graph" Version="3.24.0" />
+  </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <ProjectReference Include="..\JumpPoint.Platform.Items\JumpPoint.Platform.Items.csproj" />
   </ItemGroup>
 
 </Project>
