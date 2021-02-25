@@ -47,62 +47,6 @@ namespace JumpPoint.Platform.Services
             return await Task.FromResult(items);
         }
 
-        static async Task<DirectoryBase> PlatformGetDirectory(string path)
-        {
-            try
-            {
-                if (Path.GetPathRoot(path).NormalizeDirectory().Equals(path.NormalizeDirectory(), StringComparison.OrdinalIgnoreCase))
-                {
-                    return await PlatformGetDrive(path);
-                }
-                else
-                {
-                    return await PlatformGetFolder(path);
-                }
-            }
-            catch (ArgumentException ex)
-            {
-                Messenger.Default.Send(new NotificationMessage<Exception>(ex, $"Path is not valid: {path}"), MessengerTokens.ExceptionManagement);
-                return null;
-            }
-            catch (FileNotFoundException ex)
-            {
-                Messenger.Default.Send(new NotificationMessage<Exception>(ex, $"Folder does not exist: {path}"), MessengerTokens.ExceptionManagement);
-                return null;
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
-                return null;
-            }
-        }
-
-        static async Task<IList<LocalFolder>> PlatformGetFolders(ILocalDirectory directory)
-        {
-            var items = new List<LocalFolder>();
-            foreach (var item in FileInterop.GetFolders(StorageType.Local, directory.Path))
-            {
-                if (item is LocalFolder folder)
-                {
-                    items.Add(folder);
-                }
-            }
-            return await Task.FromResult(items);
-        }
-
-        static async Task<IList<LocalFile>> PlatformGetFiles(ILocalDirectory directory)
-        {
-            var items = new List<LocalFile>();
-            foreach (var item in FileInterop.GetFiles(StorageType.Local, directory.Path))
-            {
-                if (item is LocalFile file)
-                {
-                    items.Add(file);
-                }
-            }
-            return await Task.FromResult(items);
-        }
-        
         static async Task<LocalDrive> PlatformGetDrive(string path)
         {
             try

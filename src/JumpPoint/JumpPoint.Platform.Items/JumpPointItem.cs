@@ -15,7 +15,7 @@ namespace JumpPoint.Platform.Items
 
         private string _name;
 
-        public string Name
+        public virtual string Name
         {
             get { return _name; }
             set { Set(ref _name, value); }

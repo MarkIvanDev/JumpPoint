@@ -6,5 +6,6 @@ namespace JumpPoint.Platform.Items.CloudStorage
 {
     public interface ICloudDirectory
     {
+        CloudStorageProvider Provider { get; }
     }
 }

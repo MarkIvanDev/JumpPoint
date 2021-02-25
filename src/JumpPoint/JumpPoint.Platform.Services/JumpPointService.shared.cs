@@ -37,7 +37,7 @@ namespace JumpPoint.Platform.Services
             await FolderTemplateService.Initialize();
             await WorkspaceService.Initialize();
             await AppLinkService.Initialize();
-            
+            await CloudStorageService.Initialize();
         }
 
         public static async Task Load(JumpPointItem item)
@@ -92,29 +92,26 @@ namespace JumpPoint.Platform.Services
             }
         }
 
-        public static async Task Rename(JumpPointItem item, string name, RenameCollisionOption option)
+        public static async Task<string> Rename(JumpPointItem item, string name, RenameCollisionOption option)
         {
             switch (item.Type)
             {
                 case JumpPointItemType.File:
                 case JumpPointItemType.Folder:
                 case JumpPointItemType.Drive:
-                    await StorageService.Rename((StorageItemBase)item, name, option);
-                    break;
+                    return await StorageService.Rename((StorageItemBase)item, name, option);
 
                 case JumpPointItemType.Workspace:
-                    await WorkspaceService.Rename((Workspace)item, name, option);
-                    break;
+                    return await WorkspaceService.Rename((Workspace)item, name, option);
 
                 case JumpPointItemType.AppLink:
-                    await AppLinkService.Rename((AppLink)item, name, option);
-                    break;
+                    return await AppLinkService.Rename((AppLink)item, name, option);
 
                 case JumpPointItemType.Library:
                 case JumpPointItemType.SettingLink:
                 case JumpPointItemType.Unknown:
                 default:
-                    break;
+                    return string.Empty;
             }
         }
 
@@ -197,10 +194,18 @@ namespace JumpPoint.Platform.Services
                     }.ToString();
                     return uriBuilder.Uri;
 
+                case PathType.CloudStorage:
+                    uriBuilder.Query = new QueryString()
+                    {
+                        { "provider", CloudStorageService.GetProvider(path).ToString() }
+                    }.ToString();
+                    return uriBuilder.Uri;
+
                 case PathType.Dashboard:
                 case PathType.Settings:
                 case PathType.Favorites:
                 case PathType.Drives:
+                case PathType.CloudStorages:
                 case PathType.Workspaces:
                 case PathType.AppLinks:
                 case PathType.SettingLinks:
@@ -209,8 +214,10 @@ namespace JumpPoint.Platform.Services
                 case PathType.Properties:
                 case PathType.Libraries:
                 case PathType.Library:
-                case PathType.Unknown:
+                case PathType.AppLink:
+                case PathType.SettingLink:
                 case PathType.File:
+                case PathType.Unknown:
                 default:
                     return null;
             }

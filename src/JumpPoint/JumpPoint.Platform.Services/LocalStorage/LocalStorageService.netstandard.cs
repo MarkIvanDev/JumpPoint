@@ -15,15 +15,6 @@ namespace JumpPoint.Platform.Services
         static Task<IList<StorageItemBase>> PlatformGetItems(ILocalDirectory folderBase)
             => throw new NotImplementedException();
 
-        static Task<DirectoryBase> PlatformGetDirectory(string path)
-            => throw new NotImplementedException();
-
-        static Task<IList<LocalFolder>> PlatformGetFolders(ILocalDirectory directory)
-            => throw new NotImplementedException();
-
-        static Task<IList<LocalFile>> PlatformGetFiles(ILocalDirectory directory)
-            => throw new NotImplementedException();
-
         static Task<LocalDrive> PlatformGetDrive(string path)
             => throw new NotImplementedException();
 

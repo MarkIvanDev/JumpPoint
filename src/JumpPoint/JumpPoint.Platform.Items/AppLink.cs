@@ -17,7 +17,6 @@ namespace JumpPoint.Platform.Items
             base(JumpPointItemType.AppLink)
         {
             Name = name;
-            DisplayName = name;
             Path = path;
             DisplayType = JumpPointItemType.AppLink.Humanize();
             AppName = appName;
@@ -26,6 +25,16 @@ namespace JumpPoint.Platform.Items
             Background = background;
             InputKeys = new Collection<ValueInfo>(inputKeys);
             LaunchTypes = launchTypes;
+        }
+
+        public override string Name
+        {
+            get { return base.Name; }
+            set
+            {
+                base.Name = value;
+                DisplayName = base.Name;
+            }
         }
 
         private string _appName;

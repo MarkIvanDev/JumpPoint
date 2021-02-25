@@ -7,9 +7,11 @@ namespace JumpPoint.Platform
     public enum PathKind
     {
         Unknown = 0,
-        Mounted = 1,
-        Unmounted = 2,
-        Network = 3,
-        Cloud = 4
+        Local = 1,
+        Mounted = 2,
+        Unmounted = 3,
+        Network = 4,
+        Cloud = 5,
+        Workspace = 6,
     }
 }

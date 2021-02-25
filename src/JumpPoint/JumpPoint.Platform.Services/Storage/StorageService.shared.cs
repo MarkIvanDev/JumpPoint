@@ -6,13 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform.Items;
+using JumpPoint.Platform.Items.CloudStorage;
 using JumpPoint.Platform.Items.LocalStorage;
 using JumpPoint.Platform.Items.NetworkStorage;
 using JumpPoint.Platform.Items.PortableStorage;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Items.Storage.Properties;
 using JumpPoint.Platform.Items.Templates;
-using JumpPoint.Platform.Models;
+using JumpPoint.Platform.Models.Extensions;
 using NittyGritty.Extensions;
 using NittyGritty.Platform.Storage;
 using NittyGritty.Services;
@@ -60,27 +61,9 @@ namespace JumpPoint.Platform.Services
             };
         }
 
-        public static PathKind GetPathKind(string path)
-        {
-            var workingPath = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-            if (workingPath.StartsWith(@"\\?\")) // Unmounted storage
-            {
-                return PathKind.Unmounted;
-            }
-            else if (workingPath.StartsWith(@"\\")) // Network path
-            {
-                return PathKind.Network;
-            }
-            else if (workingPath.Length >= 2 && workingPath[1] == ':') // Mounted
-            {
-                return PathKind.Mounted;
-            }
-            return PathKind.Unknown;
-        }
-
         public static async Task<StorageType?> GetPathStorageType(string path)
         {
-            var kind = GetPathKind(path);
+            var kind = path.GetPathKind();
             switch (kind)
             {
                 case PathKind.Mounted:
@@ -122,13 +105,17 @@ namespace JumpPoint.Platform.Services
                 case PathKind.Network:
                     return StorageType.Network;
 
+                case PathKind.Cloud:
+                    return StorageType.Cloud;
+
+                case PathKind.Local:
                 case PathKind.Unknown:
                 default:
                     return null;
             }
         }
 
-        public static async Task Rename(StorageItemBase item, string name, RenameCollisionOption option)
+        public static async Task<string> Rename(StorageItemBase item, string name, RenameCollisionOption option)
         {
             try
             {
@@ -137,17 +124,19 @@ namespace JumpPoint.Platform.Services
                     case StorageType.Local:
                     case StorageType.Portable:
                     case StorageType.Network:
-                        await PlatformRename(item, name, option);
-                        break;
+                        return await PlatformRename(item, name, option);
 
                     case StorageType.Cloud:
+                        return await CloudStorageService.Rename(item, name, option);
+
                     default:
-                        break;
+                        return string.Empty;
                 }
             }
             catch (Exception ex)
             {
                 Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
+                return string.Empty;
             }
         }
 
@@ -193,7 +182,7 @@ namespace JumpPoint.Platform.Services
             {
                 foreach (var item in portableItems)
                 {
-                    if (item.Path.StartsWith(@"\\?\"))
+                    if (item.Path.GetPathKind() == PathKind.Unmounted)
                     {
                         if (item is PortableFile pf && pf.Context != null)
                         {
@@ -234,68 +223,54 @@ namespace JumpPoint.Platform.Services
 
         public static async Task<DirectoryBase> GetDirectory(string path)
         {
-            var crumbs = PathInfo.GetStorageCrumbs(path);
-            if (crumbs.Count == 1 && crumbs[0].PathType == PathType.Drive)
+            var crumbs = path.GetBreadcrumbs();
+            var lastCrumb = crumbs.LastOrDefault();
+            if (lastCrumb != null && lastCrumb.PathType == PathType.Drive)
             {
                 return await GetDrive(path);
             }
-            else if (crumbs.Count > 1)
+            else if (lastCrumb != null && lastCrumb.PathType == PathType.Folder)
             {
                 return await GetFolder(path);
             }
             return null;
         }
 
-        public static async Task<IList<FolderBase>> GetFolders(DirectoryBase directory)
+        public static async Task<IList<StorageItemBase>> GetItems(DirectoryBase directory)
         {
-            var folders = new List<FolderBase>();
+            var items = new List<StorageItemBase>();
 
             switch (directory.StorageType)
             {
                 case StorageType.Local when directory is ILocalDirectory localDirectory:
-                    folders.AddRange(await LocalStorageService.GetFolders(localDirectory));
+                    items.AddRange(await LocalStorageService.GetItems(localDirectory));
                     break;
 
                 case StorageType.Portable when directory is IPortableDirectory portableDirectory:
-                    folders.AddRange(await PortableStorageService.GetFolders(portableDirectory));
+                    items.AddRange(await PortableStorageService.GetItems(portableDirectory));
                     break;
 
                 case StorageType.Network when directory is INetworkDirectory networkDirectory:
-                    folders.AddRange(await NetworkStorageService.GetFolders(networkDirectory));
+                    items.AddRange(await NetworkStorageService.GetItems(networkDirectory));
                     break;
 
-                case StorageType.Cloud:
+                case StorageType.Cloud when directory is ICloudDirectory cloudDirectory:
+                    items.AddRange(await CloudStorageService.GetItems(cloudDirectory));
+                    break;
+
                 default:
                     break;
             }
 
-            return folders;
-        }
-
-        public static async Task<IList<FileBase>> GetFiles(DirectoryBase directory)
-        {
-            var files = new List<FileBase>();
-
-            switch (directory.StorageType)
-            {
-                case StorageType.Local when directory is ILocalDirectory localDirectory:
-                    files.AddRange(await LocalStorageService.GetFiles(localDirectory));
-                    break;
-
-                case StorageType.Portable when directory is IPortableDirectory portableDirectory:
-                    files.AddRange(await PortableStorageService.GetFiles(portableDirectory));
-                    break;
-
-                case StorageType.Network when directory is INetworkDirectory networkDirectory:
-                    files.AddRange(await NetworkStorageService.GetFiles(networkDirectory));
-                    break;
-
-                case StorageType.Cloud:
-                default:
-                    break;
-            }
-
-            return files;
+            return items
+                .OrderBy(i =>
+                {
+                    var att = i.Attributes.GetValueOrDefault(FileAttributes.Normal);
+                    return (att & FileAttributes.Directory) == FileAttributes.Directory ?
+                        0 : 1;
+                })
+                .ThenBy(i => i.Name)
+                .ToList();
         }
 
         public static async Task<FolderBase> CreateFolder(DirectoryBase directory, string name)
@@ -310,6 +285,8 @@ namespace JumpPoint.Platform.Services
                         return await PlatformCreateFolder(directory, name);
 
                     case StorageType.Cloud:
+                        return await CloudStorageService.CreateFolder(directory, name);
+
                     default:
                         return null;
                 }
@@ -333,6 +310,8 @@ namespace JumpPoint.Platform.Services
                         return await PlatformCreateFile(directory, name);
 
                     case StorageType.Cloud:
+                        return await CloudStorageService.CreateFile(directory, name);
+
                     default:
                         return null;
                 }
@@ -381,6 +360,8 @@ namespace JumpPoint.Platform.Services
                     return await NetworkStorageService.GetDrive(path);
 
                 case StorageType.Cloud:
+                    return await CloudStorageService.GetDrive(path);
+
                 default:
                     return null;
             }
@@ -390,46 +371,56 @@ namespace JumpPoint.Platform.Services
         {
             try
             {
-                if (path.StartsWith(@"\\?\"))
+                var pathKind = path.GetPathKind();
+                switch (pathKind)
                 {
-                    return DriveTemplate.Removable;
-                }
+                    case PathKind.Mounted:
+                        var driveInfo = new DriveInfo(path);
+                        var driveRoot = driveInfo.RootDirectory.FullName.NormalizeDirectory();
+                        if (driveRoot == path.NormalizeDirectory())
+                        {
+                            switch (driveInfo.DriveType)
+                            {
+                                case DriveType.CDRom:
+                                    return DriveTemplate.Optical;
 
-                if (path.StartsWith(@"\\"))
-                {
-                    return DriveTemplate.Network;
-                }
+                                case DriveType.Fixed:
+                                    return Path.GetPathRoot(Environment.SystemDirectory).NormalizeDirectory() == driveRoot ?
+                                        DriveTemplate.System :
+                                        DriveTemplate.Local;
 
-                var driveInfo = new DriveInfo(path);
-                var driveRoot = driveInfo.RootDirectory.FullName.NormalizeDirectory();
-                if (driveRoot == path.NormalizeDirectory())
-                {
-                    switch (driveInfo.DriveType)
-                    {
-                        case DriveType.CDRom:
-                            return DriveTemplate.Optical;
+                                case DriveType.Network:
+                                    return DriveTemplate.Network;
 
-                        case DriveType.Fixed:
-                            return Path.GetPathRoot(Environment.SystemDirectory).NormalizeDirectory() == driveRoot ?
-                                DriveTemplate.System :
-                                DriveTemplate.Local;
+                                case DriveType.Removable:
+                                    return DriveTemplate.Removable;
 
-                        case DriveType.Network:
-                            return DriveTemplate.Network;
-
-                        case DriveType.Removable:
-                            return DriveTemplate.Removable;
-
-                        case DriveType.NoRootDirectory:
-                        case DriveType.Ram:
-                        case DriveType.Unknown:
-                        default:
+                                case DriveType.NoRootDirectory:
+                                case DriveType.Ram:
+                                case DriveType.Unknown:
+                                default:
+                                    return DriveTemplate.Unknown;
+                            }
+                        }
+                        else
+                        {
                             return DriveTemplate.Unknown;
-                    }
-                }
-                else
-                {
-                    return DriveTemplate.Unknown;
+                        }
+
+                    case PathKind.Unmounted:
+                        return DriveTemplate.Removable;
+
+                    case PathKind.Network:
+                        return DriveTemplate.Network;
+
+                    case PathKind.Cloud:
+                        return DriveTemplate.Cloud;
+
+                    case PathKind.Local:
+                    case PathKind.Workspace:
+                    case PathKind.Unknown:
+                    default:
+                        return DriveTemplate.Unknown;
                 }
             }
             catch (Exception)
@@ -462,6 +453,8 @@ namespace JumpPoint.Platform.Services
                     return await NetworkStorageService.GetFolder(path);
 
                 case StorageType.Cloud:
+                    return await CloudStorageService.GetFolder(path);
+
                 default:
                     return null;
             }
@@ -500,19 +493,27 @@ namespace JumpPoint.Platform.Services
         {
             try
             {
-                ulong size = 0;
-                var cfsFiles = await GetFiles(folder);
-                foreach (var fi in cfsFiles)
+                if (folder.Size.HasValue)
                 {
-                    size += fi.Size ?? 0;
+                    return folder.Size.Value;
                 }
-
-                var cfsFolders = await GetFolders(folder);
-                foreach (var fo in cfsFolders)
+                else
                 {
-                    size += await GetFolderSize(fo) ?? 0;
+                    ulong size = 0;
+                    var items = await GetItems(folder);
+                    foreach (var item in items)
+                    {
+                        if (item is FolderBase fo)
+                        {
+                            size += await GetFolderSize(fo) ?? 0;
+                        }
+                        else if (item is FileBase fi)
+                        {
+                            size += fi.Size ?? 0;
+                        }
+                    }
+                    return size;
                 }
-                return size;
             }
             catch (Exception)
             {
@@ -580,6 +581,8 @@ namespace JumpPoint.Platform.Services
                     return await NetworkStorageService.GetFile(path);
 
                 case StorageType.Cloud:
+                    return await CloudStorageService.GetFile(path);
+
                 default:
                     return null;
             }

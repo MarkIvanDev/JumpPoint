@@ -24,6 +24,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JumpPoint.Platform.Interop"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JumpPoint.Platform.Models", "JumpPoint.Platform.Models\JumpPoint.Platform.Models.csproj", "{553F43D1-46E2-4652-8335-D5298F75174F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OneDrive", "OneDrive", "{6EADBEA5-272B-4141-BDE6-1B30B3F8084F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JumpPoint.Platform.Services.OneDrive", "JumpPoint.Platform.Services.OneDrive\JumpPoint.Platform.Services.OneDrive.csproj", "{69F2DC55-9ECA-44BB-B43E-F6B4DEF0EBBF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JumpPoint.Platform.Items.OneDrive", "JumpPoint.Platform.Items.OneDrive\JumpPoint.Platform.Items.OneDrive.csproj", "{79B5D537-B511-4294-87E9-E73B3415AD0F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_BETA|Any CPU = Debug_BETA|Any CPU
@@ -96,6 +102,22 @@ Global
 		{553F43D1-46E2-4652-8335-D5298F75174F}.Release_BETA|Any CPU.Build.0 = Release_BETA|Any CPU
 		{553F43D1-46E2-4652-8335-D5298F75174F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{553F43D1-46E2-4652-8335-D5298F75174F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69F2DC55-9ECA-44BB-B43E-F6B4DEF0EBBF}.Debug_BETA|Any CPU.ActiveCfg = Debug_BETA|Any CPU
+		{69F2DC55-9ECA-44BB-B43E-F6B4DEF0EBBF}.Debug_BETA|Any CPU.Build.0 = Debug_BETA|Any CPU
+		{69F2DC55-9ECA-44BB-B43E-F6B4DEF0EBBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69F2DC55-9ECA-44BB-B43E-F6B4DEF0EBBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69F2DC55-9ECA-44BB-B43E-F6B4DEF0EBBF}.Release_BETA|Any CPU.ActiveCfg = Release_BETA|Any CPU
+		{69F2DC55-9ECA-44BB-B43E-F6B4DEF0EBBF}.Release_BETA|Any CPU.Build.0 = Release_BETA|Any CPU
+		{69F2DC55-9ECA-44BB-B43E-F6B4DEF0EBBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69F2DC55-9ECA-44BB-B43E-F6B4DEF0EBBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79B5D537-B511-4294-87E9-E73B3415AD0F}.Debug_BETA|Any CPU.ActiveCfg = Debug_BETA|Any CPU
+		{79B5D537-B511-4294-87E9-E73B3415AD0F}.Debug_BETA|Any CPU.Build.0 = Debug_BETA|Any CPU
+		{79B5D537-B511-4294-87E9-E73B3415AD0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79B5D537-B511-4294-87E9-E73B3415AD0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79B5D537-B511-4294-87E9-E73B3415AD0F}.Release_BETA|Any CPU.ActiveCfg = Release_BETA|Any CPU
+		{79B5D537-B511-4294-87E9-E73B3415AD0F}.Release_BETA|Any CPU.Build.0 = Release_BETA|Any CPU
+		{79B5D537-B511-4294-87E9-E73B3415AD0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79B5D537-B511-4294-87E9-E73B3415AD0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,6 +125,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{CE17E028-A91A-426D-8E1E-F13430FFDCCC} = {E1426653-7078-45FE-8966-C7A7BDC4369A}
 		{91BC12BD-42D3-4F3A-A1C7-5E83DD0C41E2} = {E1426653-7078-45FE-8966-C7A7BDC4369A}
+		{69F2DC55-9ECA-44BB-B43E-F6B4DEF0EBBF} = {6EADBEA5-272B-4141-BDE6-1B30B3F8084F}
+		{79B5D537-B511-4294-87E9-E73B3415AD0F} = {6EADBEA5-272B-4141-BDE6-1B30B3F8084F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EDF96D69-BD39-429D-AACC-4B162DC402C9}

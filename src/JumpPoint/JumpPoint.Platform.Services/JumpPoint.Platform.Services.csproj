@@ -66,6 +66,7 @@
     <ProjectReference Include="..\JumpPoint.FullTrust.Core\JumpPoint.FullTrust.Core.csproj" />
     <ProjectReference Include="..\JumpPoint.Platform.Items\JumpPoint.Platform.Items.csproj" />
     <ProjectReference Include="..\JumpPoint.Platform.Models\JumpPoint.Platform.Models.csproj" />
+    <ProjectReference Include="..\JumpPoint.Platform.Services.OneDrive\JumpPoint.Platform.Services.OneDrive.csproj" />
   </ItemGroup>
 
 </Project>

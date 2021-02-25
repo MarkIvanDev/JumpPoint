@@ -18,12 +18,6 @@ namespace JumpPoint.Platform.Services
         public static Task<IList<StorageItemBase>> GetItems(IPortableDirectory directory)
             => PlatformGetItems(directory);
 
-        public static Task<IList<PortableFolder>> GetFolders(IPortableDirectory directory)
-            => PlatformGetFolders(directory);
-
-        public static Task<IList<PortableFile>> GetFiles(IPortableDirectory directory)
-            => PlatformGetFiles(directory);
-
         public static Task<PortableDrive> GetDriveFromId(string deviceId)
             => PlatformGetDriveFromId(deviceId);
 

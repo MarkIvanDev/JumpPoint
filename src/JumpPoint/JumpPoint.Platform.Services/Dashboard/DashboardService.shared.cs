@@ -62,7 +62,7 @@ namespace JumpPoint.Platform.Services
                     var faveFiles = await connection.Table<FavoriteFile>().OrderBy(f => f.Path).ToListAsync();
                     foreach (var item in faveFiles)
                     {
-                        var file = await LocalStorageService.GetFile(item.Path);
+                        var file = await StorageService.GetFile(item.Path);
                         if (file != null)
                         {
                             items.Add(file);
@@ -74,7 +74,7 @@ namespace JumpPoint.Platform.Services
                     var faveFolders = await connection.Table<FavoriteFolder>().OrderBy(f => f.Path).ToListAsync();
                     foreach (var item in faveFolders)
                     {
-                        var folder = await LocalStorageService.GetFolder(item.Path);
+                        var folder = await StorageService.GetFolder(item.Path);
                         if (folder != null)
                         {
                             items.Add(folder);
@@ -86,7 +86,7 @@ namespace JumpPoint.Platform.Services
                     var faveDrives = await connection.Table<FavoriteDrive>().OrderBy(f => f.Path).ToListAsync();
                     foreach (var item in faveDrives)
                     {
-                        var drive = await LocalStorageService.GetDrive(item.Path);
+                        var drive = await StorageService.GetDrive(item.Path);
                         if (drive != null)
                         {
                             items.Add(drive);
@@ -98,7 +98,7 @@ namespace JumpPoint.Platform.Services
                     var faveWorkspaces = await connection.Table<FavoriteWorkspace>().OrderBy(f => f.Path).ToListAsync();
                     foreach (var item in faveWorkspaces)
                     {
-                        var workspace = await LocalStorageService.GetFile(item.Path);
+                        var workspace = await WorkspaceService.GetWorkspace(item.Path);
                         if (workspace != null)
                         {
                             items.Add(workspace);
@@ -161,7 +161,7 @@ namespace JumpPoint.Platform.Services
                 case JumpPointItemType.Workspace:
                     return await connection.FindWithQueryAsync<FavoriteWorkspace>(
                         $"SELECT * FROM {nameof(FavoriteWorkspace)} WHERE {nameof(FavoriteWorkspace.Path)} = ?",
-                        item.Path) != null;
+                        item.Name) != null;
 
                 case JumpPointItemType.SettingLink when item is SettingLink settingLink:
                     return await connection.FindWithQueryAsync<FavoriteSettingLink>(
@@ -207,9 +207,9 @@ namespace JumpPoint.Platform.Services
 
                 case JumpPointItemType.Workspace:
                     _ = status ?
-                        await connection.InsertAsync(new FavoriteWorkspace() { Path = item.Path }, "OR IGNORE") :
+                        await connection.InsertAsync(new FavoriteWorkspace() { Path = item.Name }, "OR IGNORE") :
                         await connection.ExecuteAsync($"DELETE FROM {nameof(FavoriteWorkspace)} WHERE {nameof(FavoriteWorkspace.Path)} = ?",
-                            item.Path);
+                            item.Name);
                     break;
 
                 case JumpPointItemType.SettingLink when item is SettingLink settingLink:

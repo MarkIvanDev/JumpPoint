@@ -9,7 +9,7 @@ namespace JumpPoint.Platform.Services
 {
     public static partial class StorageService
     {
-        static Task PlatformRename(StorageItemBase item, string name, RenameCollisionOption option)
+        static Task<string> PlatformRename(StorageItemBase item, string name, RenameCollisionOption option)
             => throw new NotImplementedException();
 
         static Task<FolderBase> PlatformCreateFolder(DirectoryBase directory, string name)

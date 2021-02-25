@@ -14,8 +14,6 @@ namespace JumpPoint.Platform.Items
             Id = id;
             Template = template;
             Name = name;
-            Path = name;
-            DisplayName = name;
             DisplayType = nameof(JumpPointItemType.Workspace);
             DateCreated = dateCreated;
         }
@@ -28,6 +26,17 @@ namespace JumpPoint.Platform.Items
         {
             get { return _template; }
             set { Set(ref _template, value); }
+        }
+
+        public override string Name
+        {
+            get { return base.Name; }
+            set
+            {
+                base.Name = value;
+                Path = $@"workspace:\{base.Name}";
+                DisplayName = base.Name;
+            }
         }
 
         private DateTimeOffset _dateCreated;
