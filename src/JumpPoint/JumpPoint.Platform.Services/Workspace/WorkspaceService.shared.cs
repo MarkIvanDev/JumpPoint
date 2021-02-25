@@ -107,50 +107,49 @@ namespace JumpPoint.Platform.Services
             });
         }
 
+        private static string GetAvailableName(SQLiteConnection db, string desiredName)
+        {
+            var namePart = desiredName.Trim();
+            var name = namePart;
+            var number = 2;
+            while (db.ExecuteScalar<int>(
+                $"SELECT COUNT(*) FROM {nameof(WorkspaceInfo)} WHERE {nameof(WorkspaceInfo.Name)} = ?", name) > 0)
+            {
+                name = $"{namePart} ({number})";
+                number += 1;
+            }
+            return name;
+        }
+
         public static async Task<Workspace> Create(WorkspaceInfo workspace)
         {
             Workspace item = null;
             await connection.RunInTransactionAsync(db =>
             {
-                var name = workspace.Name;
-                var number = 2;
-                while (db.ExecuteScalar<int>(
-                    $"SELECT COUNT(*) FROM {nameof(WorkspaceInfo)} WHERE {nameof(WorkspaceInfo.Name)} = ?", name) > 0)
-                {
-                    name = $"{name} ({number})";
-                    number += 1;
-                }
-                workspace.Name = name;
+                workspace.Name = GetAvailableName(db, workspace.Name);
                 db.Insert(workspace);
                 item = GetWorkspace(workspace);
             });
             return item;
         }
 
-        public static async Task Rename(Workspace workspace, string name, RenameCollisionOption option)
+        public static async Task<string> Rename(Workspace workspace, string name, RenameCollisionOption option)
         {
+            var newName = string.Empty;
             if (!(workspace is null))
             {
                 await connection.RunInTransactionAsync(db =>
                 {
-                    var newName = name;
-                    var number = 2;
-                    while (db.ExecuteScalar<int>(
-                        $"SELECT COUNT(*) FROM {nameof(WorkspaceInfo)} WHERE {nameof(WorkspaceInfo.Name)} = ?", newName) > 0)
-                    {
-                        newName = $"{name} ({number})";
-                        number += 1;
-                    }
-
                     var item = db.Find<WorkspaceInfo>(workspace.Id);
                     if (!(item is null))
                     {
+                        newName = GetAvailableName(db, name);
                         item.Name = newName;
                         db.Update(item);
-                        workspace.Name = newName;
                     }
                 });
             }
+            return newName;
         }
 
         public static async Task Delete(Workspace workspace, bool deletePermanently)

@@ -115,7 +115,7 @@ namespace JumpPoint.Platform.Services
             }
         }
 
-        public static async Task Rename(StorageItemBase item, string name, RenameCollisionOption option)
+        public static async Task<string> Rename(StorageItemBase item, string name, RenameCollisionOption option)
         {
             try
             {
@@ -124,20 +124,19 @@ namespace JumpPoint.Platform.Services
                     case StorageType.Local:
                     case StorageType.Portable:
                     case StorageType.Network:
-                        await PlatformRename(item, name, option);
-                        break;
+                        return await PlatformRename(item, name, option);
 
                     case StorageType.Cloud:
-                        await CloudStorageService.Rename(item, name, option);
-                        break;
+                        return await CloudStorageService.Rename(item, name, option);
 
                     default:
-                        break;
+                        return string.Empty;
                 }
             }
             catch (Exception ex)
             {
                 Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
+                return string.Empty;
             }
         }
 
@@ -263,65 +262,15 @@ namespace JumpPoint.Platform.Services
                     break;
             }
 
-            return items;
-        }
-
-        public static async Task<IList<FolderBase>> GetFolders(DirectoryBase directory)
-        {
-            var folders = new List<FolderBase>();
-
-            switch (directory.StorageType)
-            {
-                case StorageType.Local when directory is ILocalDirectory localDirectory:
-                    folders.AddRange(await LocalStorageService.GetFolders(localDirectory));
-                    break;
-
-                case StorageType.Portable when directory is IPortableDirectory portableDirectory:
-                    folders.AddRange(await PortableStorageService.GetFolders(portableDirectory));
-                    break;
-
-                case StorageType.Network when directory is INetworkDirectory networkDirectory:
-                    folders.AddRange(await NetworkStorageService.GetFolders(networkDirectory));
-                    break;
-
-                case StorageType.Cloud when directory is ICloudDirectory cloudDirectory:
-                    //folders.AddRange(await CloudStorageService.GetFolders(cloudDirectory));
-                    break;
-
-                default:
-                    break;
-            }
-
-            return folders;
-        }
-
-        public static async Task<IList<FileBase>> GetFiles(DirectoryBase directory)
-        {
-            var files = new List<FileBase>();
-
-            switch (directory.StorageType)
-            {
-                case StorageType.Local when directory is ILocalDirectory localDirectory:
-                    files.AddRange(await LocalStorageService.GetFiles(localDirectory));
-                    break;
-
-                case StorageType.Portable when directory is IPortableDirectory portableDirectory:
-                    files.AddRange(await PortableStorageService.GetFiles(portableDirectory));
-                    break;
-
-                case StorageType.Network when directory is INetworkDirectory networkDirectory:
-                    files.AddRange(await NetworkStorageService.GetFiles(networkDirectory));
-                    break;
-
-                case StorageType.Cloud when directory is ICloudDirectory cloudDirectory:
-                    //files.AddRange(await CloudStorageService.GetFiles(cloudDirectory));
-                    break;
-
-                default:
-                    break;
-            }
-
-            return files;
+            return items
+                .OrderBy(i =>
+                {
+                    var att = i.Attributes.GetValueOrDefault(FileAttributes.Normal);
+                    return (att & FileAttributes.Directory) == FileAttributes.Directory ?
+                        0 : 1;
+                })
+                .ThenBy(i => i.Name)
+                .ToList();
         }
 
         public static async Task<FolderBase> CreateFolder(DirectoryBase directory, string name)
@@ -544,19 +493,27 @@ namespace JumpPoint.Platform.Services
         {
             try
             {
-                ulong size = 0;
-                var cfsFiles = await GetFiles(folder);
-                foreach (var fi in cfsFiles)
+                if (folder.Size.HasValue)
                 {
-                    size += fi.Size ?? 0;
+                    return folder.Size.Value;
                 }
-
-                var cfsFolders = await GetFolders(folder);
-                foreach (var fo in cfsFolders)
+                else
                 {
-                    size += await GetFolderSize(fo) ?? 0;
+                    ulong size = 0;
+                    var items = await GetItems(folder);
+                    foreach (var item in items)
+                    {
+                        if (item is FolderBase fo)
+                        {
+                            size += await GetFolderSize(fo) ?? 0;
+                        }
+                        else if (item is FileBase fi)
+                        {
+                            size += fi.Size ?? 0;
+                        }
+                    }
+                    return size;
                 }
-                return size;
             }
             catch (Exception)
             {

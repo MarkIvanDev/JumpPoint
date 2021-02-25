@@ -83,7 +83,7 @@ namespace JumpPoint.Platform.Models.Extensions
 
             switch (pathKind)
             {
-                case PathKind.Local when Enum.TryParse<PathType>(workingPath, true, out var appPath):
+                case PathKind.Local when Enum.TryParse<PathType>(workingPath.TrimEnd('\\'), true, out var appPath):
                     if (crumbs.Count > 1)
                     {
                         crumbs.RemoveRange(1, crumbs.Count - 1);

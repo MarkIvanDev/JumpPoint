@@ -57,40 +57,6 @@ namespace JumpPoint.Platform.Services
             return items;
         }
 
-        static async Task<IList<NetworkFolder>> PlatformGetFolders(INetworkDirectory directory)
-        {
-            var items = new List<NetworkFolder>();
-            var networkDirectory = await StorageFolder.GetFolderFromPathAsync(directory.Path);
-            var networkFolders = await networkDirectory.GetFoldersAsync();
-
-            foreach (var item in networkFolders)
-            {
-                var i = await StorageService.GetFolder(StorageType.Network, item);
-                if (i is NetworkFolder f)
-                {
-                    items.Add(f);
-                }
-            }
-            return items;
-        }
-
-        static async Task<IList<NetworkFile>> PlatformGetFiles(INetworkDirectory directory)
-        {
-            var items = new List<NetworkFile>();
-            var networkDirectory = await StorageFolder.GetFolderFromPathAsync(directory.Path);
-            var networkFiles = await networkDirectory.GetFilesAsync();
-
-            foreach (var item in networkFiles)
-            {
-                var i = await StorageService.GetFile(StorageType.Network, item);
-                if (i is NetworkFile f)
-                {
-                    items.Add(f);
-                }
-            }
-            return items;
-        }
-
         static async Task<NetworkDrive> PlatformGetDrive(string path)
         {
             try

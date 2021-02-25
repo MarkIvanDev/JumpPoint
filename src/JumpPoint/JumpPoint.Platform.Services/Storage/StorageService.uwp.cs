@@ -263,7 +263,7 @@ namespace JumpPoint.Platform.Services
             }
         }
 
-        static async Task PlatformRename(StorageItemBase item, string name, RenameCollisionOption option)
+        static async Task<string> PlatformRename(StorageItemBase item, string name, RenameCollisionOption option)
         {
             if (item is FileBase file)
             {
@@ -271,6 +271,7 @@ namespace JumpPoint.Platform.Services
                 if (storageFile != null)
                 {
                     await storageFile.RenameAsync(name, (NameCollisionOption)option);
+                    return storageFile.Name;
                 }
             }
             else if (item is DirectoryBase directory)
@@ -279,8 +280,10 @@ namespace JumpPoint.Platform.Services
                 if (storageFolder != null)
                 {
                     await storageFolder.RenameAsync(name, (NameCollisionOption)option);
+                    return storageFolder.Name;
                 }
             }
+            return string.Empty;
         }
 
         static async Task<FolderBase> PlatformCreateFolder(DirectoryBase directory, string name)

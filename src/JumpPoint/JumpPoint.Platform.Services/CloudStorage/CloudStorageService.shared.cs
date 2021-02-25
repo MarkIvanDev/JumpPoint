@@ -14,6 +14,75 @@ namespace JumpPoint.Platform.Services
 {
     public static class CloudStorageService
     {
+
+        public static async Task Initialize()
+        {
+            await OneDriveService.Initialize();
+        }
+
+        public static async Task<IList<CloudAccount>> GetAccounts()
+        {
+            var accounts = new List<CloudAccount>();
+            accounts.AddRange(await GetAccounts(CloudStorageProvider.OneDrive));
+            return accounts;
+        }
+
+        public static async Task<IList<CloudAccount>> GetAccounts(CloudStorageProvider provider)
+        {
+            var accounts = new List<CloudAccount>();
+            switch (provider)
+            {
+                case CloudStorageProvider.OneDrive:
+                    accounts.AddRange(await OneDriveService.GetAccounts());
+                    break;
+
+                case CloudStorageProvider.Unknown:
+                default:
+                    break;
+            }
+            return accounts;
+        }
+
+        public static async Task<CloudAccount> AddAccount(CloudStorageProvider provider)
+        {
+            switch (provider)
+            {
+                case CloudStorageProvider.OneDrive:
+                    return await OneDriveService.AddAccount();
+
+                case CloudStorageProvider.Unknown:
+                default:
+                    return null;
+            }
+        }
+
+        public static async Task<string> RenameAccount(CloudAccount account, string newName)
+        {
+            switch (account.Provider)
+            {
+                case CloudStorageProvider.OneDrive:
+                    return await OneDriveService.RenameAccount((OneDriveAccount)account, newName);
+
+                case CloudStorageProvider.Unknown:
+                default:
+                    return account.Name;
+            }
+        }
+
+        public static async Task RemoveAccount(CloudAccount account)
+        {
+            switch (account.Provider)
+            {
+                case CloudStorageProvider.OneDrive:
+                    await OneDriveService.RemoveAccount((OneDriveAccount)account);
+                    break;
+
+                case CloudStorageProvider.Unknown:
+                default:
+                    break;
+            }
+        }
+
         public static CloudStorageProvider GetProvider(string path)
         {
             if (path.GetPathKind() == PathKind.Cloud)
@@ -29,9 +98,9 @@ namespace JumpPoint.Platform.Services
             return CloudStorageProvider.Unknown;
         }
 
-        public static Task Rename(StorageItemBase item, string name, RenameCollisionOption option)
+        public static Task<string> Rename(StorageItemBase item, string name, RenameCollisionOption option)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(string.Empty);
         }
 
         public static Task Delete(IList<StorageItemBase> items, bool deletePermanently)

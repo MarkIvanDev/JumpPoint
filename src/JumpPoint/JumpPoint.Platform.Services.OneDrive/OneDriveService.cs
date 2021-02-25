@@ -43,28 +43,33 @@ namespace JumpPoint.Platform.Services.OneDrive
             }
         }
 
-        private static void InsertAccount(SQLiteConnection db, OneDriveAccount account)
+        private static string GetAvailableName(SQLiteConnection db, string desiredName)
         {
-            var name = account.Name;
+            var namePart = desiredName.Trim();
+            var name = namePart;
             var number = 2;
             while (db.ExecuteScalar<int>(
                 $"SELECT COUNT(*) FROM {nameof(OneDriveAccount)} WHERE {nameof(OneDriveAccount.Name)} = ?", name) > 0)
             {
-                name = $"{name} ({number})";
+                name = $"{namePart} ({number})";
                 number += 1;
             }
-            account.Name = name;
-            db.Insert(account);
+            return name;
+        }
+
+        public static async Task<IList<OneDriveAccount>> GetAccounts()
+        {
+            return await connection.Table<OneDriveAccount>().OrderBy(a => a.Name).ToListAsync();
         }
 
         public static async Task<OneDriveAccount> AddAccount()
         {
             var accounts = await clientApp.GetAccountsAsync().ConfigureAwait(false);
-            var account = await clientApp.GetNewAccount();
+            var account = await clientApp.GetNewAccount().ConfigureAwait(false);
             if (account != null && !accounts.Any(a => string.Equals(a.HomeAccountId.Identifier, account.HomeAccountId.Identifier)))
             {
                 var graphClient = clientApp.GetGraphServiceClient(account);
-                var displayName = await graphClient.GetDisplayName();
+                var displayName = await graphClient.GetDisplayName().ConfigureAwait(false);
                 graphClients[account.HomeAccountId.Identifier] = graphClient;
                 var oneDriveAccount = new OneDriveAccount
                 {
@@ -72,17 +77,35 @@ namespace JumpPoint.Platform.Services.OneDrive
                     Name = displayName ?? "Personal",
                     Email = account.Username
                 };
-                await connection.RunInTransactionAsync(db => InsertAccount(db, oneDriveAccount));
+                await connection.RunInTransactionAsync(db =>
+                {
+                    oneDriveAccount.Name = GetAvailableName(db, oneDriveAccount.Name);
+                    db.Insert(oneDriveAccount);
+                }).ConfigureAwait(false);
                 return oneDriveAccount;
             }
             return null;
         }
 
+        public static async Task<string> RenameAccount(OneDriveAccount account, string newName)
+        {
+            var name = account.Name;
+            await connection.RunInTransactionAsync(db =>
+            {
+                name = GetAvailableName(db, newName);
+                db.Execute($"UPDATE {nameof(OneDriveAccount)} SET {nameof(OneDriveAccount.Name)} = ? " +
+                    $"WHERE {nameof(OneDriveAccount.Identifier)} = ?",
+                    name, account.Identifier);
+            }).ConfigureAwait(false);
+            return name;
+        }
+
         public static async Task RemoveAccount(OneDriveAccount account)
         {
             var a = await clientApp.GetAccountAsync(account.Identifier).ConfigureAwait(false);
-            await clientApp.RemoveAsync(a);
-            await connection.ExecuteAsync($"DELETE FROM {nameof(OneDriveAccount)} WHERE {nameof(OneDriveAccount.Identifier)} = ?", account.Identifier);
+            await clientApp.RemoveAsync(a).ConfigureAwait(false);
+            await connection.ExecuteAsync(
+                $"DELETE FROM {nameof(OneDriveAccount)} WHERE {nameof(OneDriveAccount.Identifier)} = ?", account.Identifier).ConfigureAwait(false);
             graphClients.Remove(account.Identifier);
         }
 

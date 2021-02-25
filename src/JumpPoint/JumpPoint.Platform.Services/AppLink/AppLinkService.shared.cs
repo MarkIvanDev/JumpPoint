@@ -117,6 +117,20 @@ namespace JumpPoint.Platform.Services
                 path) != null;
         }
 
+        private static string GetAvailableName(SQLiteConnection db, string desiredName)
+        {
+            var namePart = desiredName.Trim();
+            var name = namePart;
+            var number = 2;
+            while (db.ExecuteScalar<int>(
+                $"SELECT COUNT(*) FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.DisplayName)} = ?", name) > 0)
+            {
+                name = $"{namePart} ({number})";
+                number += 1;
+            }
+            return name;
+        }
+
         public static async Task<AppLink> Create(AppLinkInfo appLink)
         {
             AppLink link = null;
@@ -127,15 +141,7 @@ namespace JumpPoint.Platform.Services
                     appLink.Path) != null;
                 if (!pathExists)
                 {
-                    var name = appLink.DisplayName;
-                    var number = 2;
-                    while (db.ExecuteScalar<int>(
-                        $"SELECT COUNT(*) FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.DisplayName)} = ?", name) > 0)
-                    {
-                        name = $"{appLink.DisplayName} ({number})";
-                        number += 1;
-                    }
-                    appLink.DisplayName = name;
+                    appLink.DisplayName = GetAvailableName(db, appLink.DisplayName);
                     db.Insert(appLink);
                     link = GetAppLink(appLink);
                 }
@@ -143,30 +149,23 @@ namespace JumpPoint.Platform.Services
             return link;
         }
 
-        public static async Task Rename(AppLink appLink, string name, RenameCollisionOption option)
+        public static async Task<string> Rename(AppLink appLink, string name, RenameCollisionOption option)
         {
+            var newName = string.Empty;
             if (!(appLink is null))
             {
                 await connection.RunInTransactionAsync(db =>
                 {
-                    var newName = name;
-                    var number = 2;
-                    while (db.ExecuteScalar<int>(
-                        $"SELECT COUNT(*) FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.DisplayName)} = ?", newName) > 0)
-                    {
-                        newName = $"{name} ({number})";
-                        number += 1;
-                    }
-
                     var item = db.FindWithQuery<AppLinkInfo>($"SELECT * FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.Path)} = ?", appLink.Path);
                     if (!(item is null))
                     {
+                        newName = GetAvailableName(db, item.DisplayName);
                         item.DisplayName = newName;
                         db.Update(item);
-                        appLink.DisplayName = newName;
                     }
                 });
             }
+            return newName;
         }
 
         public static async Task Delete(AppLink appLink)

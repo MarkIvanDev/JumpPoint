@@ -14,12 +14,7 @@ namespace JumpPoint.Platform.Services
 
         public static Task<IList<StorageItemBase>> GetItems(INetworkDirectory directory)
             => PlatformGetItems(directory);
-        public static Task<IList<NetworkFolder>> GetFolders(INetworkDirectory directory)
-            => PlatformGetFolders(directory);
-
-        public static Task<IList<NetworkFile>> GetFiles(INetworkDirectory directory)
-            => PlatformGetFiles(directory);
-
+        
         public static Task<NetworkDrive> GetDrive(string path)
             => PlatformGetDrive(path);
 

@@ -1,0 +1,10 @@
+{
+  "clientId": "YOUR_CLIENT_ID",
+  "authority": "AUTHORITY",
+  "redirectUri": "REDIRECT_URI",
+  "graph": "GRAPH",
+  "scopes": [
+    "SCOPE_1",
+    "SCOPE_2"
+  ]
+}
