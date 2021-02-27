@@ -47,6 +47,14 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             set { Set(ref _contributors, value); }
         }
 
+        private string _division;
+
+        public string Division
+        {
+            get { return _division; }
+            set { Set(ref _division, value); }
+        }
+
         private string _manager;
 
         public string Manager
@@ -61,6 +69,30 @@ namespace JumpPoint.Platform.Items.Storage.Properties
         {
             get { return _template; }
             set { Set(ref _template, value); }
+        }
+
+        private string _presentationFormat;
+
+        public string PresentationFormat
+        {
+            get { return _presentationFormat; }
+            set { Set(ref _presentationFormat, value); }
+        }
+
+        private string _clientId;
+
+        public string ClientId
+        {
+            get { return _clientId; }
+            set { Set(ref _clientId, value); }
+        }
+
+        private int? _security;
+
+        public int? Security
+        {
+            get { return _security; }
+            set { Set(ref _security, value); }
         }
 
         private DateTimeOffset? _dateCreated;
@@ -135,17 +167,61 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             set { Set(ref _characterCount, value); }
         }
 
+        private int? _byteCount;
+
+        public int? ByteCount
+        {
+            get { return _byteCount; }
+            set { Set(ref _byteCount, value); }
+        }
+
+        private int? _multimediaClipCount;
+
+        public int? MultimediaClipCount
+        {
+            get { return _multimediaClipCount; }
+            set { Set(ref _multimediaClipCount, value); }
+        }
+
+        private int? _noteCount;
+
+        public int? NoteCount
+        {
+            get { return _noteCount; }
+            set { Set(ref _noteCount, value); }
+        }
+
+        private int? _slideCount;
+
+        public int? SlideCount
+        {
+            get { return _slideCount; }
+            set { Set(ref _slideCount, value); }
+        }
+
+        private int? _hiddenSlideCount;
+
+        public int? HiddenSlideCount
+        {
+            get { return _hiddenSlideCount; }
+            set { Set(ref _hiddenSlideCount, value); }
+        }
+
         public static DocumentProperties Extract(IDictionary<string, object> props)
         {
             var documentProperties = new DocumentProperties()
             {
-                DocumentID = (string)props[Key.DocumentID],
+                DocumentID = (string)props[Key.DocumentId],
                 Revision = (string)props[Key.Revision],
                 Version = (string)props[Key.Version],
                 LastAuthor = (string)props[Key.LastAuthor],
                 Contributors = props[Key.Contributors] as IList<string> ?? new List<string>(),
+                Division = (string)props[Key.Division],
                 Manager = (string)props[Key.Manager],
                 Template = (string)props[Key.Template],
+                PresentationFormat = (string)props[Key.PresentationFormat],
+                ClientId = (string)props[Key.ClientId],
+                Security = props[Key.Security] as int?,
 
                 DateCreated = props[Key.DateCreated] as DateTimeOffset?,
                 LastPrinted = props[Key.LastPrinted] as DateTimeOffset?,
@@ -156,20 +232,29 @@ namespace JumpPoint.Platform.Items.Storage.Properties
                 ParagraphCount = props[Key.ParagraphCount] as int?,
                 LineCount = props[Key.LineCount] as int?,
                 WordCount = props[Key.WordCount] as int?,
-                CharacterCount = props[Key.CharacterCount] as int?
+                CharacterCount = props[Key.CharacterCount] as int?,
+                ByteCount = props[Key.ByteCount] as int?,
+                MultimediaClipCount = props[Key.MultimediaClipCount] as int?,
+                NoteCount = props[Key.NoteCount] as int?,
+                SlideCount = props[Key.SlideCount] as int?,
+                HiddenSlideCount = props[Key.HiddenSlideCount] as int?
             };
             return documentProperties;
         }
 
         public static class Key
         {
-            public static string DocumentID => "System.Document.DocumentID";
+            public static string DocumentId => "System.Document.DocumentID";
             public static string Revision => "System.Document.RevisionNumber";
             public static string Version => "System.Document.Version";
             public static string LastAuthor => "System.Document.LastAuthor";
             public static string Contributors => "System.Document.Contributor";
+            public static string Division => "System.Document.Division";
             public static string Manager => "System.Document.Manager";
             public static string Template => "System.Document.Template";
+            public static string PresentationFormat => "System.Document.PresentationFormat";
+            public static string ClientId => "System.Document.ClientID";
+            public static string Security => "System.Document.Security";
 
             public static string DateCreated => "System.Document.DateCreated";
             public static string LastPrinted => "System.Document.DatePrinted";
@@ -181,16 +266,26 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             public static string LineCount => "System.Document.LineCount";
             public static string WordCount => "System.Document.WordCount";
             public static string CharacterCount => "System.Document.CharacterCount";
+            public static string ByteCount => "System.Document.ByteCount";
+            public static string MultimediaClipCount => "System.Document.MultimediaClipCount";
+            public static string NoteCount => "System.Document.NoteCount";
+            public static string SlideCount => "System.Document.SlideCount";
+            public static string HiddenSlideCount => "System.Document.HiddenSlideCount";
+
 
             public static IEnumerable<string> All()
             {
-                yield return DocumentID;
+                yield return DocumentId;
                 yield return Revision;
                 yield return Version;
                 yield return LastAuthor;
                 yield return Contributors;
+                yield return Division;
                 yield return Manager;
                 yield return Template;
+                yield return PresentationFormat;
+                yield return ClientId;
+                yield return Security;
                 
                 yield return DateCreated;
                 yield return LastPrinted;
@@ -202,6 +297,11 @@ namespace JumpPoint.Platform.Items.Storage.Properties
                 yield return LineCount;
                 yield return WordCount;
                 yield return CharacterCount;
+                yield return ByteCount;
+                yield return MultimediaClipCount;
+                yield return NoteCount;
+                yield return SlideCount;
+                yield return HiddenSlideCount;
             }
         }
     }
