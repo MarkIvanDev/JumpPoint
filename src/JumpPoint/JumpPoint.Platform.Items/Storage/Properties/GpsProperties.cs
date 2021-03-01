@@ -80,9 +80,9 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             set { Set(ref _mapDatum, value); }
         }
 
-        private string _versionID;
+        private byte[] _versionID;
 
-        public string VersionID
+        public byte[] VersionID
         {
             get { return _versionID; }
             set { Set(ref _versionID, value); }
@@ -277,7 +277,7 @@ namespace JumpPoint.Platform.Items.Storage.Properties
                 Satellites = (string)props[Key.Satellites],
                 Status = (string)props[Key.Status],
                 MapDatum = (string)props[Key.MapDatum],
-                VersionID = (string)props[Key.VersionId],
+                VersionID = props[Key.VersionId] as byte[],
 
                 Altitude = props[Key.Altitude] as double?,
                 AltitudeReference = props[Key.AltitudeReference] as byte?,

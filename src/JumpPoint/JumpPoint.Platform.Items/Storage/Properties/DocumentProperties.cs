@@ -39,9 +39,9 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             set { Set(ref _lastAuthor, value); }
         }
 
-        private IList<string> _contributors;
+        private string[] _contributors;
 
-        public IList<string> Contributors
+        public string[] Contributors
         {
             get { return _contributors; }
             set { Set(ref _contributors, value); }
@@ -215,7 +215,7 @@ namespace JumpPoint.Platform.Items.Storage.Properties
                 Revision = (string)props[Key.Revision],
                 Version = (string)props[Key.Version],
                 LastAuthor = (string)props[Key.LastAuthor],
-                Contributors = props[Key.Contributors] as IList<string> ?? new List<string>(),
+                Contributors = props[Key.Contributors] as string[] ?? new string[0],
                 Division = (string)props[Key.Division],
                 Manager = (string)props[Key.Manager],
                 Template = (string)props[Key.Template],

@@ -88,6 +88,14 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             set { Set(ref _verticalResolution, value); }
         }
 
+        private ResolutionUnit? _resolutionUnit;
+
+        public ResolutionUnit? ResolutionUnit
+        {
+            get { return _resolutionUnit; }
+            set { Set(ref _resolutionUnit, value); }
+        }
+
         public static ImageProperties Extract(IDictionary<string, object> props)
         {
             var imageProperties = new ImageProperties()
@@ -102,7 +110,8 @@ namespace JumpPoint.Platform.Items.Storage.Properties
                 Width = props[Key.Width] as uint?,
                 Height = props[Key.Height] as uint?,
                 HorizontalResolution = props[Key.HorizontalResolution] as double?,
-                VerticalResolution = props[Key.VerticalResolution] as double?
+                VerticalResolution = props[Key.VerticalResolution] as double?,
+                ResolutionUnit = props[Key.ResolutionUnit] is short ru ? (ResolutionUnit?)ru : null
             };
             return imageProperties;
         }
@@ -120,6 +129,7 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             public static string Height => "System.Image.VerticalSize";
             public static string HorizontalResolution => "System.Image.HorizontalResolution";
             public static string VerticalResolution => "System.Image.VerticalResolution";
+            public static string ResolutionUnit => "System.Image.ResolutionUnit";
 
             public static IEnumerable<string> All()
             {
@@ -134,6 +144,7 @@ namespace JumpPoint.Platform.Items.Storage.Properties
                 yield return Height;
                 yield return HorizontalResolution;
                 yield return VerticalResolution;
+                yield return ResolutionUnit;
             }
         }
 
