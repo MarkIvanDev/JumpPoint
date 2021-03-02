@@ -33,9 +33,9 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             set { Set(ref _description, value); }
         }
 
-        private IList<string> _authors;
+        private string[] _authors;
 
-        public IList<string> Authors
+        public string[] Authors
         {
             get { return _authors; }
             set { Set(ref _authors, value); }
@@ -153,9 +153,9 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             set { Set(ref _computerName, value); }
         }
 
-        private IList<string> _sharedWith;
+        private string[] _sharedWith;
 
-        public IList<string> SharedWith
+        public string[] SharedWith
         {
             get { return _sharedWith; }
             set { Set(ref _sharedWith, value); }
@@ -241,9 +241,9 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             set { Set(ref _comments, value); }
         }
 
-        private IList<string> _keywords;
+        private string[] _keywords;
 
-        public IList<string> Keywords
+        public string[] Keywords
         {
             get { return _keywords; }
             set { Set(ref _keywords, value); }
@@ -264,7 +264,7 @@ namespace JumpPoint.Platform.Items.Storage.Properties
                 Title = (string)props[Key.Title],
                 Subject = (string)props[Key.Subject],
                 Description = (string)props[Key.Description],
-                Authors = props[Key.Authors] as IList<string> ?? new List<string>(),
+                Authors = props[Key.Authors] as string[] ?? new string[0],
                 Company = (string)props[Key.Company],
                 Copyright = (string)props[Key.Copyright],
                 Language = (string)props[Key.Language],
@@ -281,7 +281,7 @@ namespace JumpPoint.Platform.Items.Storage.Properties
                 Owner = (string)props[Key.Owner],
                 OwnerSID = (string)props[Key.OwnerSID],
                 ComputerName = (string)props[Key.ComputerName],
-                SharedWith = props[Key.SharedWith] as IList<string> ?? new List<string>(),
+                SharedWith = props[Key.SharedWith] as string[] ?? new string[0],
                 SharingStatus = props[Key.SharingStatus] is uint ss ? (SharingStatus?)ss : null,
 
                 Application = (string)props[Key.Application],
@@ -293,7 +293,7 @@ namespace JumpPoint.Platform.Items.Storage.Properties
                 Priority = props[Key.Priority] is ushort prior ? (Priority?)prior : null,
                 Sensitivity = props[Key.Sensitivity] is ushort sens ? (Sensitivity?)sens : null,
                 Comments = (string)props[Key.Comments],
-                Keywords = props[Key.Keywords] as IList<string> ?? new List<string>(),
+                Keywords = props[Key.Keywords] as string[] ?? new string[0],
                 Trademarks = (string)props[Key.Trademarks],
             };
             return coreProperties;

@@ -176,9 +176,9 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             set { Set(ref _contentId, value); }
         }
 
-        private string _dlnaProfileId;
+        private string[] _dlnaProfileId;
 
-        public string DlnaProfileId
+        public string[] DlnaProfileId
         {
             get { return _dlnaProfileId; }
             set { Set(ref _dlnaProfileId, value); }
@@ -315,7 +315,7 @@ namespace JumpPoint.Platform.Items.Storage.Properties
                 CollectionGroupId = (string)props[Key.CollectionGroupId],
                 CollectionId = (string)props[Key.CollectionId],
                 ContentId = (string)props[Key.ContentId],
-                DlnaProfileId = (string)props[Key.DlnaProfileId],
+                DlnaProfileId = props[Key.DlnaProfileId] as string[] ?? new string[0],
                 DvdId = (string)props[Key.DvdId],
                 MCDI = (string)props[Key.MCDI],
                 SubscriptionContentId = (string)props[Key.SubscriptionContentId],
