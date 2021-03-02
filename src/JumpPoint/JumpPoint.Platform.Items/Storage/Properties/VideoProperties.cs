@@ -24,9 +24,9 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             set { Set(ref _compression, value); }
         }
 
-        private IList<string> _directors;
+        private string[] _directors;
 
-        public IList<string> Directors
+        public string[] Directors
         {
             get { return _directors; }
             set { Set(ref _directors, value); }
@@ -96,13 +96,61 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             set { Set(ref _totalBitrate, value); }
         }
 
+        private uint? _fourCC;
+
+        public uint? FourCC
+        {
+            get { return _fourCC; }
+            set { Set(ref _fourCC, value); }
+        }
+
+        private bool? _isSpherical;
+
+        public bool? IsSpherical
+        {
+            get { return _isSpherical; }
+            set { Set(ref _isSpherical, value); }
+        }
+
+        private bool? _isStereo;
+
+        public bool? IsStereo
+        {
+            get { return _isStereo; }
+            set { Set(ref _isStereo, value); }
+        }
+
+        private string _streamName;
+
+        public string StreamName
+        {
+            get { return _streamName; }
+            set { Set(ref _streamName, value); }
+        }
+
+        private ushort? _streamNumber;
+
+        public ushort? StreamNumber
+        {
+            get { return _streamNumber; }
+            set { Set(ref _streamNumber, value); }
+        }
+
+        private bool? _transcodedForSync;
+
+        public bool? TranscodedForSync
+        {
+            get { return _transcodedForSync; }
+            set { Set(ref _transcodedForSync, value); }
+        }
+
         public static VideoProperties Extract(IDictionary<string, object> props)
         {
             var videoProperties = new VideoProperties()
             {
                 DataRate = props[Key.DataRate] as uint?,
                 Compression = (string)props[Key.Compression],
-                Directors = props[Key.Directors] as IList<string> ?? new List<string>(),
+                Directors = props[Key.Directors] as string[] ?? new string[0],
                 FrameRate = props[Key.FrameRate] as uint?,
                 FrameWidth = props[Key.FrameWidth] as uint?,
                 FrameHeight = props[Key.FrameHeight] as uint?,
@@ -110,7 +158,14 @@ namespace JumpPoint.Platform.Items.Storage.Properties
                 VerticalAspectRatio = props[Key.VerticalAspectRatio] as uint?,
                 Orientation = props[Key.Orientation] is uint o ? (Orientation?)o : null,
                 SampleSize = props[Key.SampleSize] as uint?,
-                TotalBitrate = props[Key.TotalBitrate] as uint?
+                TotalBitrate = props[Key.TotalBitrate] as uint?,
+
+                FourCC = props[Key.FourCC] as uint?,
+                IsSpherical = props[Key.IsSpherical] as bool?,
+                IsStereo = props[Key.IsStereo] as bool?,
+                StreamName = (string)props[Key.StreamName],
+                StreamNumber = props[Key.StreamNumber] as ushort?,
+                TranscodedForSync = props[Key.TranscodedForSync] as bool?
             };
             return videoProperties;
         }
@@ -129,6 +184,13 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             public static string SampleSize => "System.Video.SampleSize";
             public static string TotalBitrate => "System.Video.TotalBitrate";
 
+            public static string FourCC => "System.Video.FourCC";
+            public static string IsSpherical => "System.Video.IsSpherical";
+            public static string IsStereo => "System.Video.IsStereo";
+            public static string StreamName => "System.Video.StreamName";
+            public static string StreamNumber => "System.Video.StreamNumber";
+            public static string TranscodedForSync => "System.Video.TranscodedForSync";
+
             public static IEnumerable<string> All()
             {
                 yield return DataRate;
@@ -142,6 +204,13 @@ namespace JumpPoint.Platform.Items.Storage.Properties
                 yield return Orientation;
                 yield return SampleSize;
                 yield return TotalBitrate;
+
+                yield return FourCC;
+                yield return IsSpherical;
+                yield return IsStereo;
+                yield return StreamName;
+                yield return StreamNumber;
+                yield return TranscodedForSync;
             }
         }
 

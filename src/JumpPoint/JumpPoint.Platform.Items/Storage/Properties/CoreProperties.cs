@@ -33,9 +33,9 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             set { Set(ref _description, value); }
         }
 
-        private IList<string> _authors;
+        private string[] _authors;
 
-        public IList<string> Authors
+        public string[] Authors
         {
             get { return _authors; }
             set { Set(ref _authors, value); }
@@ -57,12 +57,76 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             set { Set(ref _copyright, value); }
         }
 
+        private string _language;
+
+        public string Language
+        {
+            get { return _language; }
+            set { Set(ref _language, value); }
+        }
+
+        private string _contentType;
+
+        public string ContentType
+        {
+            get { return _contentType; }
+            set { Set(ref _contentType, value); }
+        }
+
+        private string _mimeType;
+
+        public string MIMEType
+        {
+            get { return _mimeType; }
+            set { Set(ref _mimeType, value); }
+        }
+
+        private DateTimeOffset? _dateAcquired;
+
+        public DateTimeOffset? DateAcquired
+        {
+            get { return _dateAcquired; }
+            set { Set(ref _dateAcquired, value); }
+        }
+
+        private DateTimeOffset? _dateArchived;
+
+        public DateTimeOffset? DateArchived
+        {
+            get { return _dateArchived; }
+            set { Set(ref _dateArchived, value); }
+        }
+
+        private DateTimeOffset? _dateCompleted;
+
+        public DateTimeOffset? DateCompleted
+        {
+            get { return _dateCompleted; }
+            set { Set(ref _dateCompleted, value); }
+        }
+
+        private DateTimeOffset? _dateImported;
+
+        public DateTimeOffset? DateImported
+        {
+            get { return _dateImported; }
+            set { Set(ref _dateImported, value); }
+        }
+
         private ulong? _fileReferenceNumber;
 
         public ulong? FileReferenceNumber
         {
             get { return _fileReferenceNumber; }
             set { Set(ref _fileReferenceNumber, value); }
+        }
+
+        private string _fileVersion;
+
+        public string FileVersion
+        {
+            get { return _fileVersion; }
+            set { Set(ref _fileVersion, value); }
         }
 
         private string _owner;
@@ -89,9 +153,9 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             set { Set(ref _computerName, value); }
         }
 
-        private IList<string> _sharedWith;
+        private string[] _sharedWith;
 
-        public IList<string> SharedWith
+        public string[] SharedWith
         {
             get { return _sharedWith; }
             set { Set(ref _sharedWith, value); }
@@ -129,6 +193,46 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             set { Set(ref _status, value); }
         }
 
+        private FlagColor? _flagColor;
+
+        public FlagColor? FlagColor
+        {
+            get { return _flagColor; }
+            set { Set(ref _flagColor, value); }
+        }
+
+        private FlagStatus? _flagStatus;
+
+        public FlagStatus? FlagStatus
+        {
+            get { return _flagStatus; }
+            set { Set(ref _flagStatus, value); }
+        }
+
+        private Importance? _importance;
+
+        public Importance? Importance
+        {
+            get { return _importance; }
+            set { Set(ref _importance, value); }
+        }
+
+        private Priority? _priority;
+
+        public Priority? Priority
+        {
+            get { return _priority; }
+            set { Set(ref _priority, value); }
+        }
+
+        private Sensitivity? _sensitivity;
+
+        public Sensitivity? Sensitivity
+        {
+            get { return _sensitivity; }
+            set { Set(ref _sensitivity, value); }
+        }
+
         private string _comments;
 
         public string Comments
@@ -137,9 +241,9 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             set { Set(ref _comments, value); }
         }
 
-        private IList<string> _keywords;
+        private string[] _keywords;
 
-        public IList<string> Keywords
+        public string[] Keywords
         {
             get { return _keywords; }
             set { Set(ref _keywords, value); }
@@ -160,22 +264,36 @@ namespace JumpPoint.Platform.Items.Storage.Properties
                 Title = (string)props[Key.Title],
                 Subject = (string)props[Key.Subject],
                 Description = (string)props[Key.Description],
-                Authors = props[Key.Authors] as IList<string> ?? new List<string>(),
+                Authors = props[Key.Authors] as string[] ?? new string[0],
                 Company = (string)props[Key.Company],
                 Copyright = (string)props[Key.Copyright],
+                Language = (string)props[Key.Language],
+                ContentType = (string)props[Key.ContentType],
+                MIMEType = (string)props[Key.MIMEType],
+
+                DateAcquired = props[Key.DateAcquired] as DateTimeOffset?,
+                DateArchived = props[Key.DateArchived] as DateTimeOffset?,
+                DateCompleted = props[Key.DateCompleted] as DateTimeOffset?,
+                DateImported = props[Key.DateImported] as DateTimeOffset?,
 
                 FileReferenceNumber = props[Key.FileReferenceNumber] as ulong?,
+                FileVersion = (string)props[Key.FileVersion],
                 Owner = (string)props[Key.Owner],
                 OwnerSID = (string)props[Key.OwnerSID],
                 ComputerName = (string)props[Key.ComputerName],
-                SharedWith = props[Key.SharedWith] as IList<string> ?? new List<string>(),
+                SharedWith = props[Key.SharedWith] as string[] ?? new string[0],
                 SharingStatus = props[Key.SharingStatus] is uint ss ? (SharingStatus?)ss : null,
 
                 Application = (string)props[Key.Application],
                 Rating = props[Key.Rating] as uint?,
                 Status = (string)props[Key.Status],
+                FlagColor = props[Key.FlagColor] is ushort fc ? (FlagColor?)fc : null,
+                FlagStatus = props[Key.FlagStatus] is int fs ? (FlagStatus?)fs : null,
+                Importance = props[Key.Importance] is int imp ? (Importance?)imp : null,
+                Priority = props[Key.Priority] is ushort prior ? (Priority?)prior : null,
+                Sensitivity = props[Key.Sensitivity] is ushort sens ? (Sensitivity?)sens : null,
                 Comments = (string)props[Key.Comments],
-                Keywords = props[Key.Keywords] as IList<string> ?? new List<string>(),
+                Keywords = props[Key.Keywords] as string[] ?? new string[0],
                 Trademarks = (string)props[Key.Trademarks],
             };
             return coreProperties;
@@ -189,8 +307,17 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             public static string Authors => "System.Author";
             public static string Company => "System.Company";
             public static string Copyright => "System.Copyright";
+            public static string Language => "System.Language";
+            public static string ContentType => "System.ContentType";
+            public static string MIMEType => "System.MIMEType";
+
+            public static string DateAcquired => "System.DateAcquired";
+            public static string DateArchived => "System.DateArchived";
+            public static string DateCompleted => "System.DateCompleted";
+            public static string DateImported => "System.DateImported";
 
             public static string FileReferenceNumber => "System.FileFRN";
+            public static string FileVersion => "System.FileVersion";
             public static string Owner => "System.FileOwner";
             public static string OwnerSID => "System.OwnerSID";
             public static string ComputerName => "System.ComputerName";
@@ -200,6 +327,11 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             public static string Application => "System.ApplicationName";
             public static string Rating => "System.SimpleRating";
             public static string Status => "System.Status";
+            public static string FlagColor => "System.FlagColor";
+            public static string FlagStatus => "System.FlagStatus";
+            public static string Importance => "System.Importance";
+            public static string Priority => "System.Priority";
+            public static string Sensitivity => "System.Sensitivity";
             public static string Comments => "System.Comment";
             public static string Keywords => "System.Keywords";
             public static string Trademarks => "System.Trademarks";
@@ -212,8 +344,17 @@ namespace JumpPoint.Platform.Items.Storage.Properties
                 yield return Authors;
                 yield return Company;
                 yield return Copyright;
+                yield return Language;
+                yield return ContentType;
+                yield return MIMEType;
+
+                yield return DateAcquired;
+                yield return DateArchived;
+                yield return DateCompleted;
+                yield return DateImported;
 
                 yield return FileReferenceNumber;
+                yield return FileVersion;
                 yield return Owner;
                 yield return OwnerSID;
                 yield return ComputerName;
@@ -223,6 +364,11 @@ namespace JumpPoint.Platform.Items.Storage.Properties
                 yield return Application;
                 yield return Rating;
                 yield return Status;
+                yield return FlagColor;
+                yield return FlagStatus;
+                yield return Importance;
+                yield return Priority;
+                yield return Sensitivity;
                 yield return Comments;
                 yield return Keywords;
                 yield return Trademarks;
