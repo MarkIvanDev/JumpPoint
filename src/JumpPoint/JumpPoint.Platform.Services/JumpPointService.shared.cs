@@ -16,11 +16,6 @@ namespace JumpPoint.Platform.Services
 {
     public static partial class JumpPointService
     {
-#if BETA
-        private static readonly string SCHEME = "jumppoint-beta";
-#else
-        private static readonly string SCHEME = "jumppoint";
-#endif
         private static readonly LauncherService launcherService;
 
         static JumpPointService()
@@ -33,11 +28,11 @@ namespace JumpPoint.Platform.Services
 
         public static async Task Initialize()
         {
+            await AppLinkService.Initialize();
+            await WorkspaceService.Initialize();
+            await CloudStorageService.Initialize();
             await DashboardService.Initialize();
             await FolderTemplateService.Initialize();
-            await WorkspaceService.Initialize();
-            await AppLinkService.Initialize();
-            await CloudStorageService.Initialize();
         }
 
         public static async Task Load(JumpPointItem item)
@@ -180,7 +175,7 @@ namespace JumpPoint.Platform.Services
         {
             var uriBuilder = new UriBuilder
             {
-                Scheme = SCHEME,
+                Scheme = Prefix.MAIN_SCHEME,
                 Host = pathType.ToString().ToLower()
             };
             switch (pathType)

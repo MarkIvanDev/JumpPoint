@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.Templates;
 using JumpPoint.Platform.Models;
+using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.Platform.Models.Workspace;
 using NittyGritty.Extensions;
 using SQLite;
@@ -31,15 +32,35 @@ namespace JumpPoint.Platform.Services
                 var oldTableExists = db.ExecuteScalar<int>("SELECT COUNT(*) FROM sqlite_master WHERE type = ? AND name = ?", "table", "Workspace") > 0;
                 if (oldTableExists)
                 {
-                    db.Execute("ALTER TABLE Workspace RENAME TO ?", nameof(WorkspaceInfo));
+                    db.Execute($"ALTER TABLE Workspace RENAME TO {nameof(WorkspaceInfo)}");
                 }
+                db.CreateTable<WorkspaceInfo>();
+
+                db.CreateTable<WorkspaceDriveItem>();
+                db.CreateTable<WorkspaceFolderItem>();
+                db.CreateTable<WorkspaceFileItem>();
+                db.CreateTable<WorkspaceSettingItem>();
+
+                db.CreateTable<WorkspaceAppLinkItem>();
+                var applinks = db.Table<WorkspaceAppLinkItem>().ToList().Where(a => a.Path.GetPathKind() != PathKind.AppLink);
+                db.Execute("ATTACH DATABASE ? AS ?", AppLinkService.DataFilePath, nameof(AppLink));
+                foreach (var item in applinks)
+                {
+                    var ali = db.FindWithQuery<AppLinkInfo>($"SELECT * FROM {nameof(AppLink)}.{nameof(AppLinkInfo)} " +
+                        $"WHERE {nameof(AppLinkInfo)}.{nameof(AppLinkInfo.Link)} = ?", item.Path);
+                    if (ali != null)
+                    {
+                        item.Path = PathExtensions.GetAppLinkPath(ali.Name);
+                        _ = db.FindWithQuery<WorkspaceAppLinkItem>($"SELECT * FROM {nameof(WorkspaceAppLinkItem)} WHERE {nameof(WorkspaceAppLinkItem.Path)} = ?", item.Path) != null ?
+                            db.Delete(item) : db.Update(item);
+                    }
+                    else
+                    {
+                        db.Delete(item);
+                    }
+                }
+                db.Execute("DETACH DATABASE ?", nameof(AppLink));
             });
-            await connection.CreateTableAsync<WorkspaceInfo>();
-            await connection.CreateTableAsync<WorkspaceDriveItem>();
-            await connection.CreateTableAsync<WorkspaceFolderItem>();
-            await connection.CreateTableAsync<WorkspaceFileItem>();
-            await connection.CreateTableAsync<WorkspaceSettingItem>();
-            await connection.CreateTableAsync<WorkspaceAppLinkItem>();
         }
 
         public static ReadOnlyCollection<WorkspaceTemplate> GetTemplates()
@@ -72,11 +93,17 @@ namespace JumpPoint.Platform.Services
             return workspaces;
         }
 
-        public static async Task<Workspace> GetWorkspace(string name)
+        public static async Task<Workspace> GetWorkspace(string path)
+        {
+            var crumb = path.GetBreadcrumbs().LastOrDefault();
+            return await GetWorkspaceByName(crumb?.DisplayName);
+        }
+
+        public static async Task<Workspace> GetWorkspaceByName(string name)
         {
             var ws = await connection.FindWithQueryAsync<WorkspaceInfo>(
                 $"SELECT * FROM {nameof(WorkspaceInfo)} WHERE {nameof(WorkspaceInfo.Name)} = ?", name);
-            return ws != null ? new Workspace(ws.Id, ws.Template, ws.Name, ws.DateCreated) : null;
+            return GetWorkspace(ws);
         }
 
         public static Workspace GetWorkspace(WorkspaceInfo workspace)

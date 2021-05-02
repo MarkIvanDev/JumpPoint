@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using JumpPoint.Platform.Items;
+using Newtonsoft.Json;
 using NittyGritty;
 using SQLite;
 
@@ -19,22 +21,30 @@ namespace JumpPoint.Platform.Models
             set { Set(ref _id, value); }
         }
 
-        private string _path;
+        private string _link;
 
         [NotNull, Collation("NOCASE"), Unique]
-        public string Path
+        public string Link
         {
-            get { return _path; }
-            set { Set(ref _path, value); }
+            get { return _link; }
+            set { Set(ref _link, value); }
         }
 
-        private string _displayName;
+        private string _name;
 
         [NotNull, Collation("NOCASE"), Unique]
-        public string DisplayName
+        public string Name
         {
-            get { return _displayName; }
-            set { Set(ref _displayName, value); }
+            get { return _name; }
+            set { Set(ref _name, value); }
+        }
+
+        private string _description;
+
+        public string Description
+        {
+            get { return _description; }
+            set { Set(ref _description, value); }
         }
 
         private string _appName;
@@ -46,13 +56,13 @@ namespace JumpPoint.Platform.Models
             set { Set(ref _appName, value); }
         }
 
-        private string _identifier;
+        private string _appId;
 
         [Collation("NOCASE")]
-        public string Identifier
+        public string AppId
         {
-            get { return _identifier; }
-            set { Set(ref _identifier, value); }
+            get { return _appId; }
+            set { Set(ref _appId, value); }
         }
 
         private byte[] _logo;
@@ -72,13 +82,35 @@ namespace JumpPoint.Platform.Models
             set { Set(ref _background, value); }
         }
 
-        private string _inputKeys;
+        private string[] _queryKeys;
+
+        [Ignore]
+        public string[] QueryKeys
+        {
+            get { return _queryKeys ?? (_queryKeys = Array.Empty<string>()); }
+            set { Set(ref _queryKeys, value); }
+        }
+
+        public string QueryKeysJson
+        {
+            get { return JsonConvert.SerializeObject(QueryKeys); }
+            set { QueryKeys = JsonConvert.DeserializeObject<string[]>(value ?? "[]"); }
+        }
+
+        private Collection<ValueInfo> _inputKeys;
+
+        [Ignore]
+        public Collection<ValueInfo> InputKeys
+        {
+            get { return _inputKeys ?? (_inputKeys = new Collection<ValueInfo>()); }
+            set { Set(ref _inputKeys, value); }
+        }
 
         [NotNull]
-        public string InputKeys
+        public string InputKeysJson
         {
-            get { return _inputKeys ?? (_inputKeys = "[]"); }
-            set { Set(ref _inputKeys, value); }
+            get { return JsonConvert.SerializeObject(InputKeys); }
+            set { InputKeys = JsonConvert.DeserializeObject<Collection<ValueInfo>>(value ?? "[]"); }
         }
 
         private AppLinkLaunchTypes _launchTypes;

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform.Items;
+using NittyGritty.Models;
 using NittyGritty.Platform.Launcher;
 using NittyGritty.Platform.Payloads;
 using Windows.Foundation.Collections;
@@ -25,7 +26,7 @@ namespace JumpPoint.Platform.Services
                 var appUri = await shareTargetPayload.Operation.Data.GetApplicationLinkAsync();
                 var displayName = shareTargetPayload.Operation.Data.Properties.Title;
                 var appName = shareTargetPayload.Operation.Data.Properties.ApplicationName;
-                var identifier = shareTargetPayload.Operation.Data.Properties.PackageFamilyName;
+                var appIdentifier = shareTargetPayload.Operation.Data.Properties.PackageFamilyName;
                 var logo = shareTargetPayload.Operation.Data.Properties.Square30x30Logo != null ?
                     (await shareTargetPayload.Operation.Data.Properties.Square30x30Logo.OpenReadAsync()).AsStream() : null;
                 var background = Color.FromArgb(
@@ -33,8 +34,8 @@ namespace JumpPoint.Platform.Services
                     shareTargetPayload.Operation.Data.Properties.LogoBackgroundColor.R,
                     shareTargetPayload.Operation.Data.Properties.LogoBackgroundColor.G,
                     shareTargetPayload.Operation.Data.Properties.LogoBackgroundColor.B);
-                var launchTypes = await PlatformGetLaunchTypes(appUri, identifier);
-                return new AppLink(displayName, appUri.AbsoluteUri, appName, identifier, logo, background, new Collection<ValueInfo>(), launchTypes);
+                var launchTypes = await PlatformGetLaunchTypes(appUri, appIdentifier);
+                return new AppLink(displayName, string.Empty, appUri.AbsoluteUri, appName, appIdentifier, logo, background, new Collection<ValueInfo>(), new Collection<ValueInfo>(), launchTypes);
             }
             return null;
         }
@@ -55,49 +56,73 @@ namespace JumpPoint.Platform.Services
             return launchTypes;
         }
 
-        static async Task PlatformOpenUri(AppLink appLink, IList<ValueInfo> inputValues)
+        static async Task PlatformOpenUri(AppLink appLink)
         {
+            var builder = new UriBuilder(appLink.Link);
+            if (appLink.Query.Count > 0)
+            {
+                var queryString = QueryString.Parse((builder.Query ?? string.Empty).TrimStart('?'));
+                foreach (var item in appLink.Query)
+                {
+                    var value = item.Value?.ToString();
+                    queryString.Add(item.Key, string.IsNullOrEmpty(value) ? null : value);
+                }
+                builder.Query = queryString.ToString();
+            }
+
             var valueSet = new ValueSet();
-            foreach (var input in inputValues ?? Enumerable.Empty<ValueInfo>())
+            foreach (var input in appLink.InputData)
             {
                 valueSet.Add(input.Key, input.Value);
             }
             _ = valueSet.Count > 0 ?
                 await Launcher.LaunchUriAsync(
-                    new Uri(appLink.Path),
+                    builder.Uri,
                     new LauncherOptions()
                     {
-                        TargetApplicationPackageFamilyName = appLink.Identifier
+                        TargetApplicationPackageFamilyName = appLink.AppId
                     },
                     valueSet) :
                 await Launcher.LaunchUriAsync(
-                    new Uri(appLink.Path),
+                    builder.Uri,
                     new LauncherOptions()
                     {
-                        TargetApplicationPackageFamilyName = appLink.Identifier
+                        TargetApplicationPackageFamilyName = appLink.AppId
                     });
         }
 
-        static async Task<Collection<ValueInfo>> PlatformOpenUriForResults(AppLink appLink, IList<ValueInfo> inputValues)
+        static async Task<Collection<ValueInfo>> PlatformOpenUriForResults(AppLink appLink)
         {
+            var builder = new UriBuilder(appLink.Link);
+            if (appLink.Query.Count > 0)
+            {
+                var queryString = QueryString.Parse((builder.Query ?? string.Empty).TrimStart('?'));
+                foreach (var item in appLink.Query)
+                {
+                    var value = item.Value?.ToString();
+                    queryString.Add(item.Key, string.IsNullOrEmpty(value) ? null : value);
+                }
+                builder.Query = queryString.ToString();
+            }
+
             var valueSet = new ValueSet();
-            foreach (var input in inputValues ?? Enumerable.Empty<ValueInfo>())
+            foreach (var input in appLink.InputData)
             {
                 valueSet.Add(input.Key, input.Value);
             }
             var response = valueSet.Count > 0 ?
                 await Launcher.LaunchUriForResultsAsync(
-                    new Uri(appLink.Path),
+                    builder.Uri,
                     new LauncherOptions()
                     {
-                        TargetApplicationPackageFamilyName = appLink.Identifier
+                        TargetApplicationPackageFamilyName = appLink.AppId
                     },
                     valueSet) :
                 await Launcher.LaunchUriForResultsAsync(
-                    new Uri(appLink.Path),
+                    builder.Uri,
                     new LauncherOptions()
                     {
-                        TargetApplicationPackageFamilyName = appLink.Identifier
+                        TargetApplicationPackageFamilyName = appLink.AppId
                     });
 
             var results = new Collection<ValueInfo>();
@@ -112,25 +137,25 @@ namespace JumpPoint.Platform.Services
             return results;
         }
 
-        static async Task<ReadOnlyCollection<IAppInfo>> PlatformFindAppHandlers(string path)
+        static async Task<IList<IAppInfo>> PlatformFindAppHandlers(string link)
         {
             try
             {
-                var uri = new Uri(path);
+                var uri = new Uri(link);
                 var apps = await Launcher.FindUriSchemeHandlersAsync(uri.Scheme);
                 var appInfos = new List<IAppInfo>();
                 foreach (var item in apps)
                 {
                     var appInfo = new NGAppInfo(item);
-                    appInfo.Logo = await appInfo.GetLogo(new Size(100, 100));
+                    appInfo.Logo = await appInfo.GetLogo(new Size(1, 1));
                     appInfos.Add(appInfo);
                 }
-                return new ReadOnlyCollection<IAppInfo>(appInfos);
+                return appInfos;
             }
             catch (Exception ex)
             {
                 Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
-                return new ReadOnlyCollection<IAppInfo>(new List<IAppInfo>());
+                return new List<IAppInfo>();
             }
         }
 

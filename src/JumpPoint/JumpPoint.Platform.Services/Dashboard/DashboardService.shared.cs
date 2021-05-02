@@ -3,10 +3,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.Templates;
+using JumpPoint.Platform.Models;
+using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.Platform.Models.Favorite;
 using NittyGritty.Extensions;
 using SQLite;
@@ -29,12 +32,43 @@ namespace JumpPoint.Platform.Services
 
         public static async Task Initialize()
         {
-            await connection.CreateTableAsync<FavoriteWorkspace>();
-            await connection.CreateTableAsync<FavoriteDrive>();
-            await connection.CreateTableAsync<FavoriteFolder>();
-            await connection.CreateTableAsync<FavoriteFile>();
-            await connection.CreateTableAsync<FavoriteAppLink>();
-            await connection.CreateTableAsync<FavoriteSettingLink>();
+            await connection.RunInTransactionAsync(db =>
+            {
+                db.CreateTable<FavoriteWorkspace>();
+                var workspaces = db.Table<FavoriteWorkspace>().ToList().Where(w => w.Path.GetPathKind() != PathKind.Workspace);
+                foreach (var item in workspaces)
+                {
+                    item.Path = PathExtensions.GetWorkspacePath(item.Path);
+                    _ = db.FindWithQuery<FavoriteWorkspace>($"SELECT * FROM {nameof(FavoriteWorkspace)} WHERE {nameof(FavoriteWorkspace.Path)} = ?", item.Path) != null ?
+                        db.Delete(item) : db.Update(item);
+                }
+
+                db.CreateTable<FavoriteDrive>();
+                db.CreateTable<FavoriteFolder>();
+                db.CreateTable<FavoriteFile>();
+
+                db.CreateTable<FavoriteAppLink>();
+                var applinks = db.Table<FavoriteAppLink>().ToList().Where(a => a.Path.GetPathKind() != PathKind.AppLink);
+                db.Execute("ATTACH DATABASE ? AS ?", AppLinkService.DataFilePath, nameof(AppLink));
+                foreach (var item in applinks)
+                {
+                    var ali = db.FindWithQuery<AppLinkInfo>($"SELECT * FROM {nameof(AppLink)}.{nameof(AppLinkInfo)} " +
+                        $"WHERE {nameof(AppLinkInfo)}.{nameof(AppLinkInfo.Link)} = ?", item.Path);
+                    if (ali != null)
+                    {
+                        item.Path = PathExtensions.GetAppLinkPath(ali.Name);
+                        _ = db.FindWithQuery<FavoriteAppLink>($"SELECT * FROM {nameof(FavoriteAppLink)} WHERE {nameof(FavoriteAppLink.Path)} = ?", item.Path) != null ?
+                            db.Delete(item) : db.Update(item);
+                    }
+                    else
+                    {
+                        db.Delete(item);
+                    }
+                }
+                db.Execute("DETACH DATABASE ?", nameof(AppLink));
+
+                db.CreateTable<FavoriteSettingLink>();
+            });
             await PlatformInitialize();
         }
 
