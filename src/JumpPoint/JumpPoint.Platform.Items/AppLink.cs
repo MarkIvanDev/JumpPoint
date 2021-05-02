@@ -13,17 +13,20 @@ namespace JumpPoint.Platform.Items
 {
     public class AppLink : JumpPointItem
     {
-        public AppLink(string name, string path, string appName, string identifier, Stream logo, Color background, IList<ValueInfo> inputKeys, AppLinkLaunchTypes launchTypes) :
+        public AppLink(string name, string description, string link, string appName, string appId, Stream logo, Color background, IList<ValueInfo> query, IList<ValueInfo> inputKeys, AppLinkLaunchTypes launchTypes) :
             base(JumpPointItemType.AppLink)
         {
             Name = name;
-            Path = path;
-            DisplayType = JumpPointItemType.AppLink.Humanize();
+            Description = description;
+            Link = link;
+            Path = $@"applink:\{name}";
+            DisplayType = $"{appName} Link";
             AppName = appName;
-            Identifier = identifier;
+            AppId = appId;
             Logo = logo;
             Background = background;
-            InputKeys = new Collection<ValueInfo>(inputKeys);
+            Query = new Collection<ValueInfo>(query);
+            InputData = new Collection<ValueInfo>(inputKeys);
             LaunchTypes = launchTypes;
         }
 
@@ -37,6 +40,22 @@ namespace JumpPoint.Platform.Items
             }
         }
 
+        private string _description;
+
+        public string Description
+        {
+            get { return _description; }
+            set { Set(ref _description, value); }
+        }
+
+        private string _link;
+
+        public string Link
+        {
+            get { return _link; }
+            set { Set(ref _link, value); }
+        }
+
         private string _appName;
 
         public string AppName
@@ -45,12 +64,12 @@ namespace JumpPoint.Platform.Items
             set { Set(ref _appName, value); }
         }
 
-        private string _identifier;
+        private string _appId;
 
-        public string Identifier
+        public string AppId
         {
-            get { return _identifier; }
-            set { Set(ref _identifier, value); }
+            get { return _appId; }
+            set { Set(ref _appId, value); }
         }
 
         private Stream _logo;
@@ -69,12 +88,20 @@ namespace JumpPoint.Platform.Items
             set { Set(ref _background, value); }
         }
 
-        private Collection<ValueInfo> _inputKeys;
+        private Collection<ValueInfo> _query;
 
-        public Collection<ValueInfo> InputKeys
+        public Collection<ValueInfo> Query
         {
-            get { return _inputKeys ?? (_inputKeys = new Collection<ValueInfo>()); }
-            set { Set(ref _inputKeys, value); }
+            get { return _query ?? (_query = new Collection<ValueInfo>()); }
+            set { Set(ref _query, value); }
+        }
+
+        private Collection<ValueInfo> _inputData;
+
+        public Collection<ValueInfo> InputData
+        {
+            get { return _inputData ?? (_inputData = new Collection<ValueInfo>()); }
+            set { Set(ref _inputData, value); }
         }
 
         private AppLinkLaunchTypes _launchTypes;

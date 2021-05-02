@@ -139,7 +139,7 @@ namespace JumpPoint.Platform.Services
             var seedsToken = SharedStorageAccessManager.AddFile(file);
             var properties = new UriBuilder()
             {
-                Scheme = SCHEME,
+                Scheme = Prefix.MAIN_SCHEME,
                 Host = "properties",
                 Query = new QueryString() { { nameof(seedsToken), seedsToken } }.ToString()
             }.Uri;

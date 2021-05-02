@@ -36,6 +36,10 @@ namespace JumpPoint.Platform.Models.Extensions
             {
                 return PathKind.Workspace;
             }
+            else if (workingPath.StartsWith(Prefix.APPLINK, StringComparison.OrdinalIgnoreCase))
+            {
+                return PathKind.AppLink;
+            }
             else if (workingPath.Length >= 2 && workingPath[1] == Path.VolumeSeparatorChar)
             {
                 return PathKind.Mounted;
@@ -152,6 +156,23 @@ namespace JumpPoint.Platform.Models.Extensions
                     });
                     return crumbs;
 
+                case PathKind.AppLink:
+                    if (crumbs.Count > 1)
+                    {
+                        crumbs.RemoveRange(1, crumbs.Count - 1);
+                    }
+                    foreach (var item in crumbs)
+                    {
+                        item.PathType = PathType.AppLink;
+                    }
+                    crumbs.Insert(0, new Breadcrumb()
+                    {
+                        PathType = PathType.AppLinks,
+                        Path = PathType.AppLinks.Humanize(),
+                        DisplayName = PathType.AppLinks.Humanize()
+                    });
+                    return crumbs;
+
                 case PathKind.Unknown:
                 default:
                     return crumbs;
@@ -174,6 +195,9 @@ namespace JumpPoint.Platform.Models.Extensions
 
                 case PathKind.Workspace:
                     return Prefix.WORKSPACE;
+
+                case PathKind.AppLink:
+                    return Prefix.APPLINK;
 
                 case PathKind.Local:
                 case PathKind.Mounted:
@@ -200,6 +224,16 @@ namespace JumpPoint.Platform.Models.Extensions
                 pathInfo.Path = path;
                 pathInfo.DisplayName = string.Empty;
             }
+        }
+
+        public static string GetWorkspacePath(string workspaceName)
+        {
+            return $"{Prefix.WORKSPACE}{workspaceName}";
+        }
+
+        public static string GetAppLinkPath(string appLinkName)
+        {
+            return $"{Prefix.APPLINK}{appLinkName}";
         }
 
     }

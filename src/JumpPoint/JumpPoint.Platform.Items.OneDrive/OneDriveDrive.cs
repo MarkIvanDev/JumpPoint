@@ -12,7 +12,7 @@ namespace JumpPoint.Platform.Items.OneDrive
     {
         public OneDriveDrive(OneDriveAccount account, Drive drive) :
             base(CloudStorageProvider.OneDrive, $"{account.Name} ({account.Email})", $@"cloud:\OneDrive\{account.Name}",
-                null, drive.CreatedDateTime, drive.LastModifiedDateTime, FileAttributes.Directory, null)
+                null, drive?.CreatedDateTime, drive?.LastModifiedDateTime, FileAttributes.Directory, null)
         {
             Account = account;
             GraphItem = drive;

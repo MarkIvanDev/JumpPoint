@@ -18,13 +18,13 @@ namespace JumpPoint.Platform.Services
         static Task<AppLinkLaunchTypes> PlatformGetLaunchTypes(Uri uri, string identifier)
             => throw new NotImplementedException();
 
-        static Task PlatformOpenUri(AppLink appLink, IList<ValueInfo> inputValues)
+        static Task PlatformOpenUri(AppLink appLink)
             => throw new NotImplementedException();
 
-        static Task<Collection<ValueInfo>> PlatformOpenUriForResults(AppLink appLink, IList<ValueInfo> inputValues)
+        static Task<Collection<ValueInfo>> PlatformOpenUriForResults(AppLink appLink)
             => throw new NotImplementedException();
 
-        static Task<ReadOnlyCollection<IAppInfo>> PlatformFindAppHandlers(string path)
+        static Task<IList<IAppInfo>> PlatformFindAppHandlers(string link)
             => throw new NotImplementedException();
 
     }

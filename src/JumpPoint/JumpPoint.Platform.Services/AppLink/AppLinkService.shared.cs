@@ -7,10 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Models;
+using JumpPoint.Platform.Models.Extensions;
 using Newtonsoft.Json;
+using NittyGritty.Extensions;
 using NittyGritty.Models;
 using NittyGritty.Platform.Launcher;
 using NittyGritty.Platform.Payloads;
+using NittyGritty.Utilities;
 using SQLite;
 using Xamarin.Essentials;
 
@@ -23,34 +26,41 @@ namespace JumpPoint.Platform.Services
 
         static AppLinkService()
         {
-            connection = new SQLiteAsyncConnection(Path.Combine(JumpPointService.DataFolder, APPLINK_DATAFILE));
+            DataFilePath = Path.Combine(JumpPointService.DataFolder, APPLINK_DATAFILE);
+            connection = new SQLiteAsyncConnection(DataFilePath);
         }
+
+        public static string DataFilePath { get; }
 
         public static async Task Initialize()
         {
             await connection.RunInTransactionAsync(db =>
             {
-                var oldTableExists = db.ExecuteScalar<int>("SELECT COUNT(*) FROM sqlite_master WHERE type = ? AND name = ?", "table", "AppLink") > 0;
-                if (oldTableExists)
+                var tableSql = db.QueryScalars<string>($@"SELECT sql FROM sqlite_master WHERE type = ? AND name = ?",
+                    "table", nameof(AppLinkInfo)).FirstOrDefault() ?? string.Empty;
+                if (tableSql.IndexOf("\"Path\"", StringComparison.OrdinalIgnoreCase) != -1)
                 {
-                    db.Execute("ALTER TABLE AppLink RENAME TO ?", nameof(AppLinkInfo));
-
-                    var duplicateNames = db.Query<Item<string>>(
-                        $"SELECT {nameof(AppLinkInfo.DisplayName)} AS Data FROM {nameof(AppLinkInfo)} " +
-                        $"GROUP BY {nameof(AppLinkInfo.DisplayName)} HAVING COUNT(*) > 0");
-                    foreach (var item in duplicateNames)
-                    {
-                        var duplicates = db.Query<AppLinkInfo>($"SELECT * FROM {nameof(AppLinkInfo)} " +
-                            $"WHERE {nameof(AppLinkInfo.DisplayName)} = ?", item);
-                        for (int i = 0; i < duplicates.Count; i++)
-                        {
-                            duplicates[i].DisplayName += $" ({i + 1})";
-                            db.Update(duplicates[i]);
-                        }
-                    }
+                    db.Execute("ALTER TABLE AppLinkInfo RENAME COLUMN Path to Link");
+                    db.Execute("DROP INDEX IF EXISTS AppLinkInfo_Path");
                 }
+
+                if (tableSql.IndexOf("\"DisplayName\"", StringComparison.OrdinalIgnoreCase) != -1)
+                {
+                    db.Execute("ALTER TABLE AppLinkInfo RENAME COLUMN DisplayName to Name");
+                    db.Execute("DROP INDEX IF EXISTS AppLinkInfo_DisplayName");
+                }
+
+                if (tableSql.IndexOf("\"Identifier\"", StringComparison.OrdinalIgnoreCase) != -1)
+                {
+                    db.Execute("ALTER TABLE AppLinkInfo RENAME COLUMN Identifier to AppId");
+                }
+
+                if (tableSql.IndexOf("\"InputKeys\"", StringComparison.OrdinalIgnoreCase) != -1)
+                {
+                    db.Execute("ALTER TABLE AppLinkInfo RENAME COLUMN InputKeys to InputKeysJson");
+                }
+                db.CreateTable<AppLinkInfo>();
             });
-            await connection.CreateTableAsync<AppLinkInfo>();
         }
 
         public static ReadOnlyCollection<DataType> GetDataTypes()
@@ -77,10 +87,23 @@ namespace JumpPoint.Platform.Services
 
         public static async Task<AppLink> GetAppLink(string path)
         {
+            var crumb = path.GetBreadcrumbs().LastOrDefault();
+            if (crumb != null && !string.IsNullOrWhiteSpace(crumb.DisplayName))
+            {
+                var appLink = await connection.FindWithQueryAsync<AppLinkInfo>(
+                    $"SELECT * FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.Name)} = ?",
+                    crumb.DisplayName);
+                return GetAppLink(appLink);
+            }
+            return null;
+        }
+
+        public static async Task<bool> LinkExists(string link)
+        {
             var appLink = await connection.FindWithQueryAsync<AppLinkInfo>(
-                $"SELECT * FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.Path)} = ?",
-                path);
-            return GetAppLink(appLink);
+                $"SELECT * FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.Link)} = ?",
+                link);
+            return appLink != null;
         }
 
         public static async Task<AppLink> GetAppLink(IShareTargetPayload payload)
@@ -95,26 +118,19 @@ namespace JumpPoint.Platform.Services
         {
             if (appLink != null)
             {
-                var logo = appLink.Logo != null ? new MemoryStream() : null;
-                logo?.Write(appLink.Logo, 0, appLink.Logo.Length);
                 return new AppLink(
-                    appLink.DisplayName,
-                    appLink.Path,
+                    appLink.Name,
+                    appLink.Description,
+                    appLink.Link,
                     appLink.AppName,
-                    appLink.Identifier,
-                    logo,
-                    ColorConverters.FromHex(appLink.Background),
-                    JsonConvert.DeserializeObject<Collection<ValueInfo>>(appLink.InputKeys),
+                    appLink.AppId,
+                    appLink.Logo.ToMemoryStream(),
+                    appLink.Background.ToColor(),
+                    appLink.QueryKeys.ToQuery(),
+                    appLink.InputKeys,
                     appLink.LaunchTypes);
             }
             return null;
-        }
-
-        public static async Task<bool> AppLinkExists(string path)
-        {
-            return await connection.FindWithQueryAsync<AppLinkInfo>(
-                $"SELECT * FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.Path)} = ?",
-                path) != null;
         }
 
         private static string GetAvailableName(SQLiteConnection db, string desiredName)
@@ -123,7 +139,7 @@ namespace JumpPoint.Platform.Services
             var name = namePart;
             var number = 2;
             while (db.ExecuteScalar<int>(
-                $"SELECT COUNT(*) FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.DisplayName)} = ?", name) > 0)
+                $"SELECT COUNT(*) FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.Name)} = ?", name) > 0)
             {
                 name = $"{namePart} ({number})";
                 number += 1;
@@ -137,11 +153,11 @@ namespace JumpPoint.Platform.Services
             await connection.RunInTransactionAsync(db =>
             {
                 var pathExists = db.FindWithQuery<AppLinkInfo>(
-                    $"SELECT * FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.Path)} = ?",
-                    appLink.Path) != null;
+                    $"SELECT * FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.Link)} = ?",
+                    appLink.Link) != null;
                 if (!pathExists)
                 {
-                    appLink.DisplayName = GetAvailableName(db, appLink.DisplayName);
+                    appLink.Name = GetAvailableName(db, appLink.Name);
                     db.Insert(appLink);
                     link = GetAppLink(appLink);
                 }
@@ -156,11 +172,11 @@ namespace JumpPoint.Platform.Services
             {
                 await connection.RunInTransactionAsync(db =>
                 {
-                    var item = db.FindWithQuery<AppLinkInfo>($"SELECT * FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.Path)} = ?", appLink.Path);
+                    var item = db.FindWithQuery<AppLinkInfo>($"SELECT * FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.Link)} = ?", appLink.Path);
                     if (!(item is null))
                     {
-                        newName = GetAvailableName(db, item.DisplayName);
-                        item.DisplayName = newName;
+                        newName = GetAvailableName(db, item.Name);
+                        item.Name = newName;
                         db.Update(item);
                     }
                 });
@@ -170,12 +186,12 @@ namespace JumpPoint.Platform.Services
 
         public static async Task Delete(AppLink appLink)
         {
-            await connection.ExecuteAsync($"DELETE FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.Path)} = ?", appLink.Path);
+            await connection.ExecuteAsync($"DELETE FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.Link)} = ?", appLink.Link);
         }
 
         public static async Task Delete(IList<AppLink> appLinks)
         {
-            await Delete(appLinks.Select(i => i.Path).ToList());
+            await Delete(appLinks.Select(i => i.Link).ToList());
         }
 
         public static async Task Delete(IList<string> appLinks)
@@ -184,19 +200,19 @@ namespace JumpPoint.Platform.Services
             {
                 foreach (var item in appLinks)
                 {
-                    db.Execute($"DELETE FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.Path)} = ?", item);
+                    db.Execute($"DELETE FROM {nameof(AppLinkInfo)} WHERE {nameof(AppLinkInfo.Link)} = ?", item);
                 }
             });
         }
 
-        public static async Task OpenUri(AppLink appLink, IList<ValueInfo> inputValues)
+        public static async Task OpenUri(AppLink appLink)
         {
-            await PlatformOpenUri(appLink, inputValues);
+            await PlatformOpenUri(appLink);
         }
 
-        public static async Task<Collection<ValueInfo>> OpenUriForResults(AppLink appLink, IList<ValueInfo> inputValues)
+        public static async Task<Collection<ValueInfo>> OpenUriForResults(AppLink appLink)
         {
-            return await PlatformOpenUriForResults(appLink, inputValues);
+            return await PlatformOpenUriForResults(appLink);
         }
 
         public static async Task Load(AppLink appLink)
@@ -204,8 +220,8 @@ namespace JumpPoint.Platform.Services
             appLink.IsFavorite = await DashboardService.GetStatus(appLink);
         }
 
-        public static Task<ReadOnlyCollection<IAppInfo>> FindAppHandlers(string path)
-            => PlatformFindAppHandlers(path);
+        public static Task<IList<IAppInfo>> FindAppHandlers(string link)
+            => PlatformFindAppHandlers(link);
 
     }
 
