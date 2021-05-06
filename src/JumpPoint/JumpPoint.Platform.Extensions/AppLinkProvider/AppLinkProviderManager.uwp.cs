@@ -55,7 +55,7 @@ namespace JumpPoint.Platform.Extensions
             {
                 exts.Add(await ToAppLinkProvider(item));
             }
-            ExtensionInstalled?.Invoke(null, new ExtensionInstalledEventArgs(exts));
+            ExtensionInstalled?.Invoke(null, new ExtensionInstalledEventArgs<AppLinkProvider>(exts));
         }
 
         static async void Catalog_PackageUpdated(AppExtensionCatalog sender, AppExtensionPackageUpdatedEventArgs args)
@@ -65,17 +65,17 @@ namespace JumpPoint.Platform.Extensions
             {
                 exts.Add(await ToAppLinkProvider(item));
             }
-            ExtensionUpdated?.Invoke(null, new ExtensionUpdatedEventArgs(exts));
+            ExtensionUpdated?.Invoke(null, new ExtensionUpdatedEventArgs<AppLinkProvider>(exts));
         }
 
         static void Catalog_PackageUpdating(AppExtensionCatalog sender, AppExtensionPackageUpdatingEventArgs args)
         {
-            ExtensionUpdating?.Invoke(null, new ExtensionUpdatingEventArgs(args.Package.Id.FullName));
+            ExtensionUpdating?.Invoke(null, new ExtensionUpdatingEventArgs(args.Package.Id.FamilyName));
         }
 
         static void Catalog_PackageUninstalling(AppExtensionCatalog sender, AppExtensionPackageUninstallingEventArgs args)
         {
-            ExtensionUninstalling?.Invoke(null, new ExtensionUninstallingEventArgs(args.Package.Id.FullName));
+            ExtensionUninstalling?.Invoke(null, new ExtensionUninstallingEventArgs(args.Package.Id.FamilyName));
         }
 
         static void Catalog_PackageStatusChanged(AppExtensionCatalog sender, AppExtensionPackageStatusChangedEventArgs args)
@@ -84,50 +84,33 @@ namespace JumpPoint.Platform.Extensions
             {
                 if (args.Package.Status.Servicing || args.Package.Status.DeploymentInProgress)
                 {
-                    ExtensionStatusChanged?.Invoke(null, new ExtensionStatusChangedEventArgs(args.Package.Id.FullName, null));
+                    ExtensionStatusChanged?.Invoke(null, new ExtensionStatusChangedEventArgs(args.Package.Id.FamilyName, null));
                 }
                 else
                 {
-                    ExtensionStatusChanged?.Invoke(null, new ExtensionStatusChangedEventArgs(args.Package.Id.FullName, false));
+                    ExtensionStatusChanged?.Invoke(null, new ExtensionStatusChangedEventArgs(args.Package.Id.FamilyName, false));
                 }
             }
             else
             {
-                ExtensionStatusChanged?.Invoke(null, new ExtensionStatusChangedEventArgs(args.Package.Id.FullName, true));
+                ExtensionStatusChanged?.Invoke(null, new ExtensionStatusChangedEventArgs(args.Package.Id.FamilyName, true));
             }
         }
 
         static void PlatformStop()
         {
-            catalog.PackageInstalled += Catalog_PackageInstalled;
-            catalog.PackageUpdated += Catalog_PackageUpdated;
-            catalog.PackageUninstalling += Catalog_PackageUninstalling;
-            catalog.PackageUpdating += Catalog_PackageUpdating;
-            catalog.PackageStatusChanged += Catalog_PackageStatusChanged;
+            catalog.PackageInstalled -= Catalog_PackageInstalled;
+            catalog.PackageUpdated -= Catalog_PackageUpdated;
+            catalog.PackageUninstalling -= Catalog_PackageUninstalling;
+            catalog.PackageUpdating -= Catalog_PackageUpdating;
+            catalog.PackageStatusChanged -= Catalog_PackageStatusChanged;
         }
 
         #endregion
 
         static async Task<AppLinkProvider> ToAppLinkProvider(AppExtension extension)
         {
-            var provider = new AppLinkProvider();
-            provider.Name = extension.DisplayName;
-            provider.Description = extension.Description;
-            provider.PackageId = extension.Package.Id.FamilyName;
-            provider.Package = extension.Package.DisplayName;
-            provider.ExtensionId = extension.Id;
-            provider.Publisher = extension.Package.PublisherDisplayName;
-            provider.Version = $"{extension.Package.Id.Version.Major}.{extension.Package.Id.Version.Minor}.{extension.Package.Id.Version.Build}.{extension.Package.Id.Version.Revision}";
-            provider.IsAvailable = extension.Package.Status.VerifyIsOK();
-            provider.Signature = (ExtensionSignature)extension.Package.SignatureKind;
-
-            var folder = await extension.GetPublicFolderAsync();
-            provider.Folder = folder is null ? null : new NGFolder(folder);
-
-            var logo = folder != null && await folder.TryGetItemAsync("Logo.png") is StorageFile logoFile ?
-                await logoFile.OpenReadAsync() : 
-                await extension.AppInfo.DisplayInfo.GetLogo(new Size(1, 1)).OpenReadAsync();
-            provider.Logo = logo.AsStream();
+            var provider = await ExtensionBase.Extract<AppLinkProvider>(extension);
 
             if (await extension.GetExtensionPropertiesAsync() is PropertySet properties)
             {

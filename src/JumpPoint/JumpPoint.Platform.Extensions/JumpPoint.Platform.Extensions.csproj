@@ -55,6 +55,7 @@
   <ItemGroup>
     <ProjectReference Include="..\JumpPoint.Platform.Items\JumpPoint.Platform.Items.csproj" />
     <ProjectReference Include="..\JumpPoint.Platform.Models\JumpPoint.Platform.Models.csproj" />
+    <ProjectReference Include="..\JumpPoint.Platform.Services\JumpPoint.Platform.Services.csproj" />
   </ItemGroup>
 
 </Project>
