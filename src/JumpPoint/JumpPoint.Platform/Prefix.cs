@@ -20,6 +20,13 @@ namespace JumpPoint.Platform
             @"jumppoint-picker";
 #endif
 
+        public const string TOOL_SCHEME =
+#if BETA
+            @"jumppoint-beta-tool";
+#else
+            @"jumppoint-tool";
+#endif
+
         public const string UNMOUNTED = @"\\?\";
         public const string NETWORK = @"\\";
         public const string CLOUD = @"cloud:\";

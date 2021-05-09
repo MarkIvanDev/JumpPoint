@@ -21,5 +21,8 @@ namespace JumpPoint.Platform.Extensions
         static Task<ToolResult> PlatformRun(Tool tool, IList<JumpPointItem> items)
             => throw new NotImplementedException();
 
+        static Task<IList<ToolPayload>> PlatformExtractPayloads(IReadOnlyDictionary<string, object> data)
+            => throw new NotImplementedException();
+
     }
 }

@@ -51,6 +51,14 @@ namespace JumpPoint.Platform.Extensions
             get { return FileTypes.Contains("."); }
         }
 
+        private bool _includeFileTokens;
+
+        public bool IncludeFileTokens
+        {
+            get { return _includeFileTokens; }
+            set { Set(ref _includeFileTokens, value); }
+        }
+
         public bool IsSupported(IList<JumpPointItem> items)
         {
             var groups = items

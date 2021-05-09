@@ -27,7 +27,8 @@ namespace JumpPoint.Platform.Extensions
         public static async Task<ToolResult> Run(Tool tool, IList<JumpPointItem> items)
             => await PlatformRun(tool, items);
 
-
+        public static async Task<IList<ToolPayload>> ExtractPayloads(IReadOnlyDictionary<string, object> data)
+            => await PlatformExtractPayloads(data);
 
     }
 }
