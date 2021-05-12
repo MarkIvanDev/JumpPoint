@@ -105,6 +105,7 @@ namespace JumpPoint.Platform.Services
                     var folder = await StorageService.GetUserFolder(item);
                     if (!(folder is null))
                     {
+                        folder.DashboardGroup = DashboardGroup.UserFolders;
                         folders.Add(folder);
                     }
                 }
@@ -182,6 +183,7 @@ namespace JumpPoint.Platform.Services
                     var folder = await StorageService.GetSystemFolder(item);
                     if (!(folder is null))
                     {
+                        folder.DashboardGroup = DashboardGroup.SystemFolders;
                         folders.Add(folder);
                     }
                 }

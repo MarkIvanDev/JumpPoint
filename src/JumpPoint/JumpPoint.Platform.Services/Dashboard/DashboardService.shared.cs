@@ -99,6 +99,7 @@ namespace JumpPoint.Platform.Services
                         var file = await StorageService.GetFile(item.Path);
                         if (file != null)
                         {
+                            file.DashboardGroup = DashboardGroup.Favorites;
                             items.Add(file);
                         }
                     }
@@ -111,6 +112,7 @@ namespace JumpPoint.Platform.Services
                         var folder = await StorageService.GetFolder(item.Path);
                         if (folder != null)
                         {
+                            folder.DashboardGroup = DashboardGroup.Favorites;
                             items.Add(folder);
                         }
                     }
@@ -123,6 +125,7 @@ namespace JumpPoint.Platform.Services
                         var drive = await StorageService.GetDrive(item.Path);
                         if (drive != null)
                         {
+                            drive.DashboardGroup = DashboardGroup.Favorites;
                             items.Add(drive);
                         }
                     }
@@ -135,6 +138,7 @@ namespace JumpPoint.Platform.Services
                         var workspace = await WorkspaceService.GetWorkspace(item.Path);
                         if (workspace != null)
                         {
+                            workspace.DashboardGroup = DashboardGroup.Favorites;
                             items.Add(workspace);
                         }
                     }
@@ -147,6 +151,7 @@ namespace JumpPoint.Platform.Services
                         var settingLink = SettingLinkService.GetSettingLink(item.Template);
                         if (settingLink != null)
                         {
+                            settingLink.DashboardGroup = DashboardGroup.Favorites;
                             items.Add(settingLink);
                         }
                     }
@@ -159,6 +164,7 @@ namespace JumpPoint.Platform.Services
                         var appLink = await AppLinkService.GetAppLink(item.Path);
                         if (appLink != null)
                         {
+                            appLink.DashboardGroup = DashboardGroup.Favorites;
                             items.Add(appLink);
                         }
                     }

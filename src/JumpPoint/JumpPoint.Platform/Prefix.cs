@@ -8,14 +8,14 @@ namespace JumpPoint.Platform
     {
         public const string MAIN_SCHEME =
 #if BETA
-            @"jumpppoint-beta";
+            @"jumppoint-beta";
 #else
             @"jumppoint";
 #endif
 
         public const string PICKER_SCHEME =
 #if BETA
-            @"jumpppoint-beta-picker";
+            @"jumppoint-beta-picker";
 #else
             @"jumppoint-picker";
 #endif
