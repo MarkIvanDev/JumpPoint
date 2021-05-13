@@ -172,7 +172,7 @@ namespace JumpPoint.Platform.Interop
                         dateCreated: ComputeDate(data.ftCreationTime),
                         dateModified: ComputeDate(data.ftLastWriteTime),
                         attributes: (FileAttributes?)data.dwFileAttributes,
-                        size: ComputeFileSize(data.nFileSizeHigh, data.nFileSizeLow));
+                        size: null);
 
                 case StorageType.Portable:
                     return new PortableFolder(
@@ -182,7 +182,7 @@ namespace JumpPoint.Platform.Interop
                         dateCreated: ComputeDate(data.ftCreationTime),
                         dateModified: ComputeDate(data.ftLastWriteTime),
                         attributes: (FileAttributes?)data.dwFileAttributes,
-                        size: ComputeFileSize(data.nFileSizeHigh, data.nFileSizeLow));
+                        size: null);
 
                 case StorageType.Network:
                     return new NetworkFolder(
@@ -191,7 +191,7 @@ namespace JumpPoint.Platform.Interop
                         dateCreated: ComputeDate(data.ftCreationTime),
                         dateModified: ComputeDate(data.ftLastWriteTime),
                         attributes: (FileAttributes?)data.dwFileAttributes,
-                        size: ComputeFileSize(data.nFileSizeHigh, data.nFileSizeLow));
+                        size: null);
 
                 case StorageType.Cloud:
                 default:

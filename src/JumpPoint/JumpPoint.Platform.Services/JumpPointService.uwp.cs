@@ -135,7 +135,8 @@ namespace JumpPoint.Platform.Services
         {
             var folder = await ApplicationData.Current.LocalCacheFolder.CreateFolderAsync("Properties", CreationCollisionOption.OpenIfExists);
             var file = await folder.CreateFileAsync(Path.GetRandomFileName(), CreationCollisionOption.GenerateUniqueName);
-            await CreatePropertiesPayload();
+            var contents = JsonConvert.SerializeObject(seeds);
+            await file.WriteText(contents);
             var seedsToken = SharedStorageAccessManager.AddFile(file);
             var properties = new UriBuilder()
             {
@@ -144,31 +145,30 @@ namespace JumpPoint.Platform.Services
                 Query = new QueryString() { { nameof(seedsToken), seedsToken } }.ToString()
             }.Uri;
             await Launcher.LaunchUriAsync(properties);
+        }
 
-            async Task CreatePropertiesPayload()
+        public static async Task WriteText(this StorageFile file, string text)
+        {
+            int retryAttempts = 3;
+            const int ERROR_ACCESS_DENIED = unchecked((int)0x80070005);
+            const int ERROR_SHARING_VIOLATION = unchecked((int)0x80070020);
+            const int ERROR_UNABLE_TO_REMOVE_REPLACED = unchecked((int)0x80070497);
+
+            // Application now has read/write access to the picked file.
+            while (retryAttempts > 0)
             {
-                int retryAttempts = 3;
-                const int ERROR_ACCESS_DENIED = unchecked((int)0x80070005);
-                const int ERROR_SHARING_VIOLATION = unchecked((int)0x80070020);
-                const int ERROR_UNABLE_TO_REMOVE_REPLACED = unchecked((int)0x80070497);
-
-                // Application now has read/write access to the picked file.
-                while (retryAttempts > 0)
+                try
                 {
-                    try
-                    {
-                        retryAttempts--;
-                        var contents = JsonConvert.SerializeObject(seeds);
-                        await FileIO.WriteTextAsync(file, contents, Windows.Storage.Streams.UnicodeEncoding.Utf8);
-                        break;
-                    }
-                    catch (Exception ex) when ((ex.HResult == ERROR_ACCESS_DENIED) ||
-                                               (ex.HResult == ERROR_SHARING_VIOLATION) ||
-                                               (ex.HResult == ERROR_UNABLE_TO_REMOVE_REPLACED))
-                    {
-                        // This might be recovered by retrying, otherwise let the exception be raised.
-                        // The app can decide to wait before retrying.
-                    }
+                    retryAttempts--;
+                    await FileIO.WriteTextAsync(file, text, Windows.Storage.Streams.UnicodeEncoding.Utf8);
+                    break;
+                }
+                catch (Exception ex) when ((ex.HResult == ERROR_ACCESS_DENIED) ||
+                                           (ex.HResult == ERROR_SHARING_VIOLATION) ||
+                                           (ex.HResult == ERROR_UNABLE_TO_REMOVE_REPLACED))
+                {
+                    // This might be recovered by retrying, otherwise let the exception be raised.
+                    // The app can decide to wait before retrying.
                 }
             }
         }

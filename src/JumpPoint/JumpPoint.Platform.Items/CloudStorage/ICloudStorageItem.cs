@@ -4,8 +4,8 @@ using System.Text;
 
 namespace JumpPoint.Platform.Items.CloudStorage
 {
-    public interface ICloudDirectory : ICloudStorageItem
+    public interface ICloudStorageItem
     {
-        
+        CloudStorageProvider Provider { get; }
     }
 }

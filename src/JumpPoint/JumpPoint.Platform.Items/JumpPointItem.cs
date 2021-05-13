@@ -53,5 +53,13 @@ namespace JumpPoint.Platform.Items
             set { Set(ref _isFavorite, value); }
         }
 
+        private DashboardGroup _dashboardGroup;
+
+        public DashboardGroup DashboardGroup
+        {
+            get { return _dashboardGroup; }
+            set { Set(ref _dashboardGroup, value); }
+        }
+
     }
 }

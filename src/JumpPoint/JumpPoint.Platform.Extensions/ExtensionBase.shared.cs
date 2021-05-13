@@ -1,10 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using NittyGritty;
 using NittyGritty.Platform.Storage;
 using Xamarin.Essentials;
+#if UWP
+using Windows.ApplicationModel.AppExtensions;
+using Windows.Foundation;
+using Windows.Storage;
+#endif
 
 namespace JumpPoint.Platform.Extensions
 {
@@ -120,6 +127,32 @@ namespace JumpPoint.Platform.Extensions
             set { Set(ref _isAvailable, value); }
         }
 
+        #if UWP
+        public static async Task<T> Extract<T>(AppExtension extension) where T : ExtensionBase, new()
+        {
+            var extensionBase = new T();
+            extensionBase.Name = extension.DisplayName;
+            extensionBase.Description = extension.Description;
+            extensionBase.PackageId = extension.Package.Id.FamilyName;
+            extensionBase.Package = extension.Package.DisplayName;
+            extensionBase.ExtensionId = extension.Id;
+            extensionBase.Publisher = extension.Package.PublisherDisplayName;
+            extensionBase.Version = $"{extension.Package.Id.Version.Major}.{extension.Package.Id.Version.Minor}.{extension.Package.Id.Version.Build}.{extension.Package.Id.Version.Revision}";
+            extensionBase.IsAvailable = extension.Package.Status.VerifyIsOK();
+            extensionBase.Signature = (ExtensionSignature)extension.Package.SignatureKind;
+
+            var folder = await extension.GetPublicFolderAsync();
+            extensionBase.Folder = folder is null ? null : new NGFolder(folder);
+
+            var logo = folder != null && await folder.TryGetItemAsync("Logo.png") is StorageFile logoFile ?
+                await logoFile.OpenReadAsync() :
+                await extension.AppInfo.DisplayInfo.GetLogo(new Size(1, 1)).OpenReadAsync();
+            extensionBase.Logo = logo.AsStream();
+
+            return extensionBase;
+        }
+        #endif
+
     }
 
     public enum ExtensionSignature
@@ -130,4 +163,68 @@ namespace JumpPoint.Platform.Extensions
         Store = 3,
         System = 4
     }
+
+    public class ExtensionInstalledEventArgs<T> where T : ExtensionBase
+    {
+        public ExtensionInstalledEventArgs(IList<T> extensions)
+        {
+            Extensions = new ReadOnlyCollection<T>(extensions);
+        }
+
+        public IReadOnlyList<T> Extensions { get; }
+    }
+
+    public class ExtensionUpdatedEventArgs<T> where T : ExtensionBase
+    {
+        public ExtensionUpdatedEventArgs(IList<T> extensions)
+        {
+            Extensions = new ReadOnlyCollection<T>(extensions);
+        }
+
+        public IReadOnlyList<T> Extensions { get; }
+    }
+
+    public class ExtensionUpdatingEventArgs
+    {
+        public ExtensionUpdatingEventArgs(string packageId)
+        {
+            PackageId = packageId;
+        }
+
+        public string PackageId { get; }
+    }
+
+    public class ExtensionUninstallingEventArgs
+    {
+        public ExtensionUninstallingEventArgs(string packageId)
+        {
+            PackageId = packageId;
+        }
+
+        public string PackageId { get; }
+    }
+
+    public class ExtensionStatusChangedEventArgs
+    {
+        public ExtensionStatusChangedEventArgs(string packageId, bool? isAvailable)
+        {
+            PackageId = packageId;
+            IsAvailable = isAvailable;
+        }
+
+        public string PackageId { get; }
+        public bool? IsAvailable { get; }
+    }
+
+
+    public delegate void ExtensionInstalledEventHandler<T>(object sender, ExtensionInstalledEventArgs<T> args) where T : ExtensionBase;
+
+    public delegate void ExtensionUpdatedEventHandler<T>(object sender, ExtensionUpdatedEventArgs<T> args) where T : ExtensionBase;
+
+    public delegate void ExtensionUpdatingEventHandler(object sender, ExtensionUpdatingEventArgs args);
+
+    public delegate void ExtensionUninstallingEventHandler(object sender, ExtensionUninstallingEventArgs args);
+
+    public delegate void ExtensionStatusChangedEventHandler(object sender, ExtensionStatusChangedEventArgs args);
+
 }

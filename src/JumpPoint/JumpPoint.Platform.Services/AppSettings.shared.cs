@@ -35,6 +35,8 @@ namespace JumpPoint.Platform.Services
         public static AppSettings Instance => lazyInstance.Value;
 
         #region Appearance
+        
+        #region Theme
 
         public ReadOnlyCollection<AppTheme> Themes { get; }
 
@@ -51,6 +53,10 @@ namespace JumpPoint.Platform.Services
                 }
             }
         }
+
+        #endregion
+
+        #region Layout
 
         public ReadOnlyCollection<string> Layouts { get; }
 
@@ -109,31 +115,9 @@ namespace JumpPoint.Platform.Services
             }
         }
 
-        public bool ShowCheckbox
-        {
-            get { return Preferences.Get(nameof(ShowCheckbox), false); }
-            set
-            {
-                if (ShowCheckbox != value)
-                {
-                    Preferences.Set(nameof(ShowCheckbox), value);
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        public bool ShowFileExtension
-        {
-            get { return Preferences.Get(nameof(ShowFileExtension), true); }
-            set
-            {
-                if (ShowFileExtension != value)
-                {
-                    Preferences.Set(nameof(ShowFileExtension), value);
-                    RaisePropertyChanged();
-                }
-            }
-        }
+        #endregion
+        
+        #region Navigation Bar
 
         public bool ShowBack
         {
@@ -212,6 +196,268 @@ namespace JumpPoint.Platform.Services
                 }
             }
         }
+
+        #endregion
+
+        #endregion
+
+        #region Browser
+
+        public bool ShowCheckbox
+        {
+            get { return Preferences.Get(nameof(ShowCheckbox), false); }
+            set
+            {
+                if (ShowCheckbox != value)
+                {
+                    Preferences.Set(nameof(ShowCheckbox), value);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool ShowFileExtension
+        {
+            get { return Preferences.Get(nameof(ShowFileExtension), true); }
+            set
+            {
+                if (ShowFileExtension != value)
+                {
+                    Preferences.Set(nameof(ShowFileExtension), value);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+        
+        #region SortBy
+
+        public SortBy SortBy
+        {
+            get { return (SortBy)Preferences.Get(nameof(SortBy), (int)SortBy.Name); }
+            set
+            {
+                if (SortBy != value)
+                {
+                    Preferences.Set(nameof(SortBy), (int)value);
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsSortByName));
+                    RaisePropertyChanged(nameof(IsSortByDateModified));
+                    RaisePropertyChanged(nameof(IsSortByDisplayType));
+                    RaisePropertyChanged(nameof(IsSortBySize));
+                }
+            }
+        }
+
+        public bool IsSortByName
+        {
+            get { return SortBy == SortBy.Name; }
+            set
+            {
+                if (SortBy != SortBy.Name && value)
+                {
+                    SortBy = SortBy.Name;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsSortByDateModified
+        {
+            get { return SortBy == SortBy.DateModified; }
+            set
+            {
+                if (SortBy != SortBy.DateModified && value)
+                {
+                    SortBy = SortBy.DateModified;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsSortByDisplayType
+        {
+            get { return SortBy == SortBy.DisplayType; }
+            set
+            {
+                if (SortBy != SortBy.DisplayType && value)
+                {
+                    SortBy = SortBy.DisplayType;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsSortBySize
+        {
+            get { return SortBy == SortBy.Size; }
+            set
+            {
+                if (SortBy != SortBy.Size && value)
+                {
+                    SortBy = SortBy.Size;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsSortAscending
+        {
+            get { return Preferences.Get(nameof(IsSortAscending), true); }
+            set
+            {
+                if (IsSortAscending != value)
+                {
+                    Preferences.Set(nameof(IsSortAscending), value);
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsSortDescending));
+                }
+            }
+        }
+
+        public bool IsSortDescending
+        {
+            get { return !IsSortAscending; }
+            set
+            {
+                if (IsSortDescending != value)
+                {
+                    IsSortAscending = !value;
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsSortAscending));
+                }
+            }
+        }
+
+        #endregion
+
+        #region GroupBy
+
+        public GroupBy GroupBy
+        {
+            get { return (GroupBy)Preferences.Get(nameof(GroupBy), (int)GroupBy.None); }
+            set
+            {
+                if (GroupBy != value)
+                {
+                    Preferences.Set(nameof(GroupBy), (int)value);
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsGroupByNone));
+                    RaisePropertyChanged(nameof(IsGroupByName));
+                    RaisePropertyChanged(nameof(IsGroupByDateModified));
+                    RaisePropertyChanged(nameof(IsGroupByDisplayType));
+                    RaisePropertyChanged(nameof(IsGroupBySize));
+                    RaisePropertyChanged(nameof(IsGroupByItemType));
+                }
+            }
+        }
+
+        public bool IsGroupByNone
+        {
+            get { return GroupBy == GroupBy.None; }
+            set
+            {
+                if (GroupBy != GroupBy.None && value)
+                {
+                    GroupBy = GroupBy.None;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsGroupByName
+        {
+            get { return GroupBy == GroupBy.Name; }
+            set
+            {
+                if (GroupBy != GroupBy.Name && value)
+                {
+                    GroupBy = GroupBy.Name;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsGroupByDateModified
+        {
+            get { return GroupBy == GroupBy.DateModified; }
+            set
+            {
+                if (GroupBy != GroupBy.DateModified && value)
+                {
+                    GroupBy = GroupBy.DateModified;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsGroupByDisplayType
+        {
+            get { return GroupBy == GroupBy.DisplayType; }
+            set
+            {
+                if (GroupBy != GroupBy.DisplayType && value)
+                {
+                    GroupBy = GroupBy.DisplayType;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsGroupBySize
+        {
+            get { return GroupBy == GroupBy.Size; }
+            set
+            {
+                if (GroupBy != GroupBy.Size && value)
+                {
+                    GroupBy = GroupBy.Size;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsGroupByItemType
+        {
+            get { return GroupBy == GroupBy.ItemType; }
+            set
+            {
+                if (GroupBy != GroupBy.ItemType && value)
+                {
+                    GroupBy = GroupBy.ItemType;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsGroupAscending
+        {
+            get { return Preferences.Get(nameof(IsGroupAscending), true); }
+            set
+            {
+                if (IsGroupAscending != value)
+                {
+                    Preferences.Set(nameof(IsGroupAscending), value);
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsGroupDescending));
+                }
+            }
+        }
+
+        public bool IsGroupDescending
+        {
+            get { return !IsGroupAscending; }
+            set
+            {
+                if (IsGroupDescending != value)
+                {
+                    IsGroupAscending = !value;
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsGroupAscending));
+                }
+            }
+        }
+
+        #endregion
 
         #endregion
 
