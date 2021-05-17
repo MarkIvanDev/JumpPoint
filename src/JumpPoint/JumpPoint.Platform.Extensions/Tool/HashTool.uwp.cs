@@ -39,9 +39,8 @@ namespace JumpPoint.Platform.Extensions
                 var hash = GetHash();
                 if (hash is null) return string.Empty;
 
-                var file = !string.IsNullOrEmpty(payload.Token) ?
-                    await SharedStorageAccessManager.RedeemTokenForFileAsync(payload.Token) :
-                    await StorageFile.GetFileFromPathAsync(payload.Path);
+                var file = await ToolManager.GetFile(payload);
+                if (file is null) return string.Empty;
 
                 var capacity = 4096U;
                 var buffer = new Buffer(capacity);

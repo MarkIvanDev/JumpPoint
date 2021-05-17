@@ -270,5 +270,20 @@ namespace JumpPoint.Platform.Extensions
             }
         }
 
+        public static async Task<StorageFile> GetFile(ToolPayload payload)
+        {
+            try
+            {
+                var file = !string.IsNullOrEmpty(payload.Token) ?
+                    await SharedStorageAccessManager.RedeemTokenForFileAsync(payload.Token) :
+                    await StorageFile.GetFileFromPathAsync(payload.Path);
+                return file;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
     }
 }
