@@ -110,17 +110,19 @@ namespace JumpPoint.Platform.Extensions
             
             if (await extension.GetExtensionPropertiesAsync() is PropertySet properties)
             {
-                tool.Link = properties.TryGetValue(nameof(Tool.Link), out var l) && l is PropertySet linkProperty ?
-                    linkProperty["#text"].ToString() : null;
-                tool.Service = properties.TryGetValue(nameof(Tool.Service), out var srv) && srv is PropertySet serviceProperty ?
-                    serviceProperty["#text"].ToString() : null;
-                tool.Group = properties.TryGetValue(nameof(Tool.Group), out var g) && g is PropertySet groupProperty ?
-                    groupProperty["#text"].ToString() : null;
-                var fileTypes = properties.TryGetValue(nameof(Tool.FileTypes), out var ft) && ft is PropertySet fileTypesProperty ?
-                    fileTypesProperty["#text"].ToString().Split(';', StringSplitOptions.RemoveEmptyEntries) : null;
+                tool.Link = properties.TryGetValue(nameof(Tool.Link), out var l) && l is PropertySet lProp ?
+                    lProp["#text"].ToString() : null;
+                tool.Service = properties.TryGetValue(nameof(Tool.Service), out var srv) && srv is PropertySet srvProp ?
+                    srvProp["#text"].ToString() : null;
+                tool.Group = properties.TryGetValue(nameof(Tool.Group), out var g) && g is PropertySet gProp ?
+                    gProp["#text"].ToString() : null;
+                var fileTypes = properties.TryGetValue(nameof(Tool.FileTypes), out var ft) && ft is PropertySet ftProp ?
+                    ftProp["#text"].ToString().Split(';', StringSplitOptions.RemoveEmptyEntries) : null;
                 tool.FileTypes = new HashSet<string>(fileTypes, StringComparer.OrdinalIgnoreCase);
-                tool.IncludeFileTokens = properties.TryGetValue(nameof(Tool.IncludeFileTokens), out var ift) && ift is PropertySet includeFileTokensProperty && bool.TryParse(includeFileTokensProperty["#text"].ToString(), out var includeFileTokens) ?
+                tool.IncludeFileTokens = properties.TryGetValue(nameof(Tool.IncludeFileTokens), out var ift) && ift is PropertySet iftProp && bool.TryParse(iftProp["#text"].ToString(), out var includeFileTokens) ?
                     includeFileTokens : false;
+                tool.SupportsDirectories = properties.TryGetValue(nameof(Tool.SupportsDirectories), out var sd) && sd is PropertySet sdProp && bool.TryParse(sdProp["#text"].ToString(), out var supportsDirectories) ?
+                    supportsDirectories : false;
             }
 
             return tool;
