@@ -48,6 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Nito.AsyncEx.Coordination" Version="5.1.0" />
     <PackageReference Include="NittyGritty" Version="1.9.2" />
     <PackageReference Include="Xamarin.Essentials" Version="1.5.1" />
   </ItemGroup>

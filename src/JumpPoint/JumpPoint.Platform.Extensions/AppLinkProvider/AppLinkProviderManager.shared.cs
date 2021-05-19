@@ -10,27 +10,13 @@ namespace JumpPoint.Platform.Extensions
 {
     public static partial class AppLinkProviderManager
     {
-
-        public static event ExtensionInstalledEventHandler<AppLinkProvider> ExtensionInstalled;
-        public static event ExtensionUpdatedEventHandler<AppLinkProvider> ExtensionUpdated;
-        public static event ExtensionUpdatingEventHandler ExtensionUpdating;
-        public static event ExtensionUninstallingEventHandler ExtensionUninstalling;
-        public static event ExtensionStatusChangedEventHandler ExtensionStatusChanged;
-
-        public static void Start()
-            => PlatformStart();
-
-        public static void Stop()
-            => PlatformStop();
+        public static event EventHandler ExtensionCollectionChanged;
 
         public static async Task<IList<AppLinkProvider>> GetProviders()
             => await PlatformGetProviders();
 
         public static async Task<AppLinkInfo> Pick(AppLinkProvider provider)
             => await PlatformPick(provider);
-
-        public static async Task<IList<AppLinkPayload>> GetLocalAppLinks()
-            => await PlatformGetLocalAppLinks();
 
         public static async Task<IList<AppLinkPayload>> GetPayloads(string service, string packageId)
             => await PlatformGetPayloads(service, packageId);
