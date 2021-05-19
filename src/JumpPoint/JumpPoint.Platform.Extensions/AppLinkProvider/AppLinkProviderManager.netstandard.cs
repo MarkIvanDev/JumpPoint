@@ -24,5 +24,11 @@ namespace JumpPoint.Platform.Extensions
         static Task<IList<AppLinkPayload>> PlatformGetLocalAppLinks()
             => throw new NotImplementedException();
 
+        static Task<IList<AppLinkPayload>> PlatformGetPayloads(string service, string packageId)
+            => throw new NotImplementedException();
+
+        static Task<string> PlatformGetPayloadsToken(IList<AppLinkPayload> payloads)
+            => throw new NotImplementedException();
+
     }
 }

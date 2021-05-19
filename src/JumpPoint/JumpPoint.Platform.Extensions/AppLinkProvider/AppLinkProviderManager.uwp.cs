@@ -17,6 +17,11 @@ using NittyGritty.Platform.Storage;
 using Windows.ApplicationModel;
 using Humanizer;
 using Windows.Storage;
+using Windows.ApplicationModel.AppService;
+using Windows.ApplicationModel.DataTransfer;
+using Newtonsoft.Json;
+using CreationCollisionOption = Windows.Storage.CreationCollisionOption;
+using JumpPoint.Platform.Services;
 
 namespace JumpPoint.Platform.Extensions
 {
@@ -114,8 +119,10 @@ namespace JumpPoint.Platform.Extensions
 
             if (await extension.GetExtensionPropertiesAsync() is PropertySet properties)
             {
-                provider.Link = properties.ContainsKey(nameof(AppLinkProvider.Link)) && properties[nameof(AppLinkProvider.Link)] is PropertySet property ?
-                    property["#text"].ToString() : null;
+                provider.Link = properties.TryGetValue(nameof(AppLinkProvider.Link), out var l) && l is PropertySet lProp ?
+                    lProp["#text"].ToString() : null;
+                provider.Service = properties.TryGetValue(nameof(AppLinkProvider.Service), out var srv) && srv is PropertySet srvProp ?
+                    srvProp["#text"].ToString() : null;
             }
 
             return provider;
@@ -135,13 +142,34 @@ namespace JumpPoint.Platform.Extensions
 
         static async Task<AppLinkInfo> PlatformPick(AppLinkProvider provider)
         {
-            var response = await Launcher.LaunchUriForResultsAsync(
-                new Uri(provider.Link),
-                new LauncherOptions()
-                {
-                    TargetApplicationPackageFamilyName = provider.PackageId
-                });
-            if (response.Status == LaunchUriStatus.Success && response.Result is ValueSet values)
+            LaunchUriResult response = null;
+
+            if (!string.IsNullOrEmpty(provider.Link))
+            {
+                response = await Launcher.LaunchUriForResultsAsync(
+                    new Uri(provider.Link),
+                    new LauncherOptions()
+                    {
+                        TargetApplicationPackageFamilyName = provider.PackageId
+                    });
+            }
+            else if (!string.IsNullOrEmpty(provider.Service))
+            {
+                response = await Launcher.LaunchUriForResultsAsync(
+                    new UriBuilder(Prefix.PICKER_SCHEME, PickerPath.AppLinkProvider.ToString()).Uri,
+                    new LauncherOptions()
+                    {
+                        TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName
+                    },
+                    new ValueSet()
+                    {
+                        { nameof(AppLinkProvider.Name), provider.Name },
+                        { nameof(AppLinkProvider.Service), provider.Service },
+                        { nameof(AppLinkProvider.PackageId), provider.PackageId }
+                    });
+            }
+
+            if (response != null && response.Status == LaunchUriStatus.Success && response.Result is ValueSet values)
             {
                 var payload = new AppLinkPayload();
                 payload.Link = values.TryGetValue(nameof(AppLinkPayload.Link), out var l) && l is string link ?
@@ -166,6 +194,7 @@ namespace JumpPoint.Platform.Extensions
                     inputKeys : Array.Empty<string>();
                 return payload.ToAppLinkInfo();
             }
+
             return null;
         }
 
@@ -200,6 +229,51 @@ namespace JumpPoint.Platform.Extensions
                     LaunchTypes = (int)AppLinkLaunchTypes.Uri,
                     Logo = logo
                 };
+            }
+        }
+
+        static async Task<IList<AppLinkPayload>> PlatformGetPayloads(string service, string packageId)
+        {
+            var payloads = new List<AppLinkPayload>();
+
+            var appService = new AppServiceConnection();
+            appService.AppServiceName = service;
+            appService.PackageFamilyName = packageId;
+
+            var status = await appService.OpenAsync();
+            if (status == AppServiceConnectionStatus.Success)
+            {
+                var response = await appService.SendMessageAsync(new ValueSet() { { "Action", "GetPayloads" } });
+                if (response.Status == AppServiceResponseStatus.Success && response.Message is ValueSet values)
+                {
+                    if (values.TryGetValue(nameof(AppLinkPayload), out var alp))
+                    {
+                        var token = alp?.ToString();
+                        if (!string.IsNullOrEmpty(token))
+                        {
+                            var file = await SharedStorageAccessManager.RedeemTokenForFileAsync(token);
+                            var text = await FileIO.ReadTextAsync(file);
+                            payloads.AddRange(JsonConvert.DeserializeObject<List<AppLinkPayload>>(text));
+                        }
+                    }
+                }
+            }
+
+            return payloads;
+        }
+
+        static async Task<string> PlatformGetPayloadsToken(IList<AppLinkPayload> payloads)
+        {
+            try
+            {
+                var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(Path.GetRandomFileName(), CreationCollisionOption.GenerateUniqueName);
+                var json = JsonConvert.SerializeObject(payloads);
+                await file.WriteText(json);
+                return SharedStorageAccessManager.AddFile(file);
+            }
+            catch (Exception)
+            {
+                return string.Empty;
             }
         }
 

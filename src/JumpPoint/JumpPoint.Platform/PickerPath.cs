@@ -8,6 +8,6 @@ namespace JumpPoint.Platform
     {
         Unknown = 0,
         ManualAppLink = 11,
-        LocalAppLink = 12
+        AppLinkProvider = 12
     }
 }

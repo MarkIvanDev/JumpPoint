@@ -32,6 +32,12 @@ namespace JumpPoint.Platform.Extensions
         public static async Task<IList<AppLinkPayload>> GetLocalAppLinks()
             => await PlatformGetLocalAppLinks();
 
+        public static async Task<IList<AppLinkPayload>> GetPayloads(string service, string packageId)
+            => await PlatformGetPayloads(service, packageId);
+
+        public static async Task<string> GetPayloadsToken(IList<AppLinkPayload> payloads)
+            => await PlatformGetPayloadsToken(payloads);
+
     }
 
 }
