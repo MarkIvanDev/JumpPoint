@@ -20,5 +20,13 @@ namespace JumpPoint.Platform.Extensions
             set { Set(ref _link, value); }
         }
 
+        private string _service;
+
+        public string Service
+        {
+            get { return _service; }
+            set { Set(ref _service, value); }
+        }
+
     }
 }

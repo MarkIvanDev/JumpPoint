@@ -2,21 +2,22 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Models;
 using Windows.ApplicationModel.AppExtensions;
-using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.System;
 using JumpPoint.Platform.Models.Extensions;
-using System.Collections.ObjectModel;
 using NittyGritty.Extensions;
-using NittyGritty.Platform.Storage;
 using Windows.ApplicationModel;
-using Humanizer;
 using Windows.Storage;
+using Windows.ApplicationModel.AppService;
+using Windows.ApplicationModel.DataTransfer;
+using Newtonsoft.Json;
+using CreationCollisionOption = Windows.Storage.CreationCollisionOption;
+using JumpPoint.Platform.Services;
+using Nito.AsyncEx;
 
 namespace JumpPoint.Platform.Extensions
 {
@@ -29,18 +30,17 @@ namespace JumpPoint.Platform.Extensions
             "com.jumppoint.ext.applinkprovider";
 #endif
 
-
+        private static readonly AsyncLock mutex;
+        private static readonly AsyncLazy<Task> lazyInitialize;
+        private static readonly List<AppLinkProvider> providers;
         private static readonly AppExtensionCatalog catalog;
 
         static AppLinkProviderManager()
         {
+            mutex = new AsyncLock();
+            lazyInitialize = new AsyncLazy<Task>(Initialize);
+            providers = new List<AppLinkProvider>();
             catalog = AppExtensionCatalog.Open(EXTENSION_CONTRACT);
-        }
-
-        #region Monitor Changes
-
-        static void PlatformStart()
-        {
             catalog.PackageInstalled += Catalog_PackageInstalled;
             catalog.PackageUpdated += Catalog_PackageUpdated;
             catalog.PackageUninstalling += Catalog_PackageUninstalling;
@@ -48,62 +48,132 @@ namespace JumpPoint.Platform.Extensions
             catalog.PackageStatusChanged += Catalog_PackageStatusChanged;
         }
 
+        #region Monitor Changes
+
+        static async Task<Task> Initialize()
+        {
+            using (await mutex.LockAsync())
+            {
+                var appExtensions = await catalog.FindAllAsync();
+                foreach (var item in appExtensions)
+                {
+                    var picker = await ToAppLinkProvider(item);
+                    providers.Add(picker);
+                }
+            }
+            return Task.CompletedTask;
+        }
+
+        static void AddProvider(AppLinkProvider provider)
+        {
+            var index = providers.FindIndex(i => i.Identifier == provider.Identifier);
+            if (index == -1)
+            {
+                providers.Add(provider);
+            }
+            else
+            {
+                providers[index] = provider;
+            }
+        }
+
+        static void RemoveProviders(string packageId)
+        {
+            var packageExts = providers.Where(i => i.PackageId == packageId);
+            foreach (var item in packageExts)
+            {
+                providers.Remove(item);
+            }
+        }
+
+        static void UpdateStatus(string packageId , bool isAvailable)
+        {
+            var packageExts = providers.Where(i => i.PackageId == packageId);
+            foreach (var item in packageExts)
+            {
+                item.IsAvailable = isAvailable;
+            }
+        }
+
         static async void Catalog_PackageInstalled(AppExtensionCatalog sender, AppExtensionPackageInstalledEventArgs args)
         {
-            var exts = new List<AppLinkProvider>();
-            foreach (var item in args.Extensions)
+            await lazyInitialize;
+
+            using (await mutex.LockAsync())
             {
-                exts.Add(await ToAppLinkProvider(item));
+                foreach (var item in args.Extensions)
+                {
+                    var p = await ToAppLinkProvider(item);
+                    AddProvider(p);
+                }
             }
-            ExtensionInstalled?.Invoke(null, new ExtensionInstalledEventArgs<AppLinkProvider>(exts));
+            ExtensionCollectionChanged?.Invoke(null, EventArgs.Empty);
         }
 
         static async void Catalog_PackageUpdated(AppExtensionCatalog sender, AppExtensionPackageUpdatedEventArgs args)
         {
-            var exts = new List<AppLinkProvider>();
-            foreach (var item in args.Extensions)
+            await lazyInitialize;
+
+            using (await mutex.LockAsync())
             {
-                exts.Add(await ToAppLinkProvider(item));
-            }
-            ExtensionUpdated?.Invoke(null, new ExtensionUpdatedEventArgs<AppLinkProvider>(exts));
-        }
-
-        static void Catalog_PackageUpdating(AppExtensionCatalog sender, AppExtensionPackageUpdatingEventArgs args)
-        {
-            ExtensionUpdating?.Invoke(null, new ExtensionUpdatingEventArgs(args.Package.Id.FamilyName));
-        }
-
-        static void Catalog_PackageUninstalling(AppExtensionCatalog sender, AppExtensionPackageUninstallingEventArgs args)
-        {
-            ExtensionUninstalling?.Invoke(null, new ExtensionUninstallingEventArgs(args.Package.Id.FamilyName));
-        }
-
-        static void Catalog_PackageStatusChanged(AppExtensionCatalog sender, AppExtensionPackageStatusChangedEventArgs args)
-        {
-            if (!args.Package.Status.VerifyIsOK())
-            {
-                if (args.Package.Status.Servicing || args.Package.Status.DeploymentInProgress)
+                foreach (var item in args.Extensions)
                 {
-                    ExtensionStatusChanged?.Invoke(null, new ExtensionStatusChangedEventArgs(args.Package.Id.FamilyName, null));
+                    var p = await ToAppLinkProvider(item);
+                    AddProvider(p);
+                }
+            }
+            ExtensionCollectionChanged?.Invoke(null, EventArgs.Empty);
+        }
+
+        static async void Catalog_PackageUpdating(AppExtensionCatalog sender, AppExtensionPackageUpdatingEventArgs args)
+        {
+            await lazyInitialize;
+
+            using (await mutex.LockAsync())
+            {
+                UpdateStatus(args.Package.Id.FamilyName, args.Package.Status.VerifyIsOK());
+            }
+            ExtensionCollectionChanged?.Invoke(null, EventArgs.Empty);
+        }
+
+        static async void Catalog_PackageUninstalling(AppExtensionCatalog sender, AppExtensionPackageUninstallingEventArgs args)
+        {
+            await lazyInitialize;
+
+            using (await mutex.LockAsync())
+            {
+                RemoveProviders(args.Package.Id.FamilyName);
+            }
+            ExtensionCollectionChanged?.Invoke(null, EventArgs.Empty);
+        }
+
+        static async void Catalog_PackageStatusChanged(AppExtensionCatalog sender, AppExtensionPackageStatusChangedEventArgs args)
+        {
+            await lazyInitialize;
+
+            using (await mutex.LockAsync())
+            {
+                if (!args.Package.Status.VerifyIsOK())
+                {
+                    if (args.Package.Status.PackageOffline)
+                    {
+                        UpdateStatus(args.Package.Id.FamilyName, args.Package.Status.VerifyIsOK());
+                    }
+                    else if (args.Package.Status.Servicing || args.Package.Status.DeploymentInProgress)
+                    {
+                        // if the package is being serviced or deployed, ignore the status events
+                    }
+                    else
+                    {
+                        RemoveProviders(args.Package.Id.FamilyName);
+                    }
                 }
                 else
                 {
-                    ExtensionStatusChanged?.Invoke(null, new ExtensionStatusChangedEventArgs(args.Package.Id.FamilyName, false));
+                    UpdateStatus(args.Package.Id.FamilyName, args.Package.Status.VerifyIsOK());
                 }
             }
-            else
-            {
-                ExtensionStatusChanged?.Invoke(null, new ExtensionStatusChangedEventArgs(args.Package.Id.FamilyName, true));
-            }
-        }
-
-        static void PlatformStop()
-        {
-            catalog.PackageInstalled -= Catalog_PackageInstalled;
-            catalog.PackageUpdated -= Catalog_PackageUpdated;
-            catalog.PackageUninstalling -= Catalog_PackageUninstalling;
-            catalog.PackageUpdating -= Catalog_PackageUpdating;
-            catalog.PackageStatusChanged -= Catalog_PackageStatusChanged;
+            ExtensionCollectionChanged?.Invoke(null, EventArgs.Empty);
         }
 
         #endregion
@@ -114,8 +184,10 @@ namespace JumpPoint.Platform.Extensions
 
             if (await extension.GetExtensionPropertiesAsync() is PropertySet properties)
             {
-                provider.Link = properties.ContainsKey(nameof(AppLinkProvider.Link)) && properties[nameof(AppLinkProvider.Link)] is PropertySet property ?
-                    property["#text"].ToString() : null;
+                provider.Link = properties.TryGetValue(nameof(AppLinkProvider.Link), out var l) && l is PropertySet lProp ?
+                    lProp["#text"].ToString() : null;
+                provider.Service = properties.TryGetValue(nameof(AppLinkProvider.Service), out var srv) && srv is PropertySet srvProp ?
+                    srvProp["#text"].ToString() : null;
             }
 
             return provider;
@@ -123,25 +195,41 @@ namespace JumpPoint.Platform.Extensions
 
         static async Task<IList<AppLinkProvider>> PlatformGetProviders()
         {
-            var pickers = new List<AppLinkProvider>();
-            var appExtensions = await catalog.FindAllAsync();
-            foreach (var item in appExtensions)
-            {
-                var picker = await ToAppLinkProvider(item);
-                pickers.Add(picker);
-            }
-            return pickers;
+            await lazyInitialize;
+
+            return providers;
         }
 
         static async Task<AppLinkInfo> PlatformPick(AppLinkProvider provider)
         {
-            var response = await Launcher.LaunchUriForResultsAsync(
-                new Uri(provider.Link),
-                new LauncherOptions()
-                {
-                    TargetApplicationPackageFamilyName = provider.PackageId
-                });
-            if (response.Status == LaunchUriStatus.Success && response.Result is ValueSet values)
+            LaunchUriResult response = null;
+
+            if (!string.IsNullOrEmpty(provider.Link))
+            {
+                response = await Launcher.LaunchUriForResultsAsync(
+                    new Uri(provider.Link),
+                    new LauncherOptions()
+                    {
+                        TargetApplicationPackageFamilyName = provider.PackageId
+                    });
+            }
+            else if (!string.IsNullOrEmpty(provider.Service))
+            {
+                response = await Launcher.LaunchUriForResultsAsync(
+                    new UriBuilder(Prefix.PICKER_SCHEME, PickerPath.AppLinkProvider.ToString()).Uri,
+                    new LauncherOptions()
+                    {
+                        TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName
+                    },
+                    new ValueSet()
+                    {
+                        { nameof(AppLinkProvider.Name), provider.Name },
+                        { nameof(AppLinkProvider.Service), provider.Service },
+                        { nameof(AppLinkProvider.PackageId), provider.PackageId }
+                    });
+            }
+
+            if (response != null && response.Status == LaunchUriStatus.Success && response.Result is ValueSet values)
             {
                 var payload = new AppLinkPayload();
                 payload.Link = values.TryGetValue(nameof(AppLinkPayload.Link), out var l) && l is string link ?
@@ -166,40 +254,52 @@ namespace JumpPoint.Platform.Extensions
                     inputKeys : Array.Empty<string>();
                 return payload.ToAppLinkInfo();
             }
+
             return null;
         }
 
-        static async Task<IList<AppLinkPayload>> PlatformGetLocalAppLinks()
+        static async Task<IList<AppLinkPayload>> PlatformGetPayloads(string service, string packageId)
         {
-            var appName = Package.Current.DisplayName;
-            var appId = Package.Current.Id.FamilyName;
-            var logoFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri(@"ms-appx:///Assets/Logo.png"));
-            var logoStream = (await logoFile.OpenReadAsync()).AsStream();
-            var logo = logoStream.ToByteArray();
+            var payloads = new List<AppLinkPayload>();
 
-            return new List<AppLinkPayload>()
-            {
-                GetPayload(PathType.Dashboard),
-                GetPayload(PathType.Settings),
-                GetPayload(PathType.Favorites),
-                GetPayload(PathType.Drives),
-                GetPayload(PathType.CloudStorages),
-                GetPayload(PathType.Workspaces),
-                GetPayload(PathType.AppLinks)
-            };
+            var appService = new AppServiceConnection();
+            appService.AppServiceName = service;
+            appService.PackageFamilyName = packageId;
 
-            AppLinkPayload GetPayload(PathType pathType)
+            var status = await appService.OpenAsync();
+            if (status == AppServiceConnectionStatus.Success)
             {
-                return new AppLinkPayload
+                var response = await appService.SendMessageAsync(new ValueSet() { { "Action", "GetPayloads" } });
+                if (response.Status == AppServiceResponseStatus.Success && response.Message is ValueSet values)
                 {
-                    Link = $@"{Prefix.MAIN_SCHEME}://{pathType.ToString().ToLower()}",
-                    Name = $"{appName} {pathType.Humanize()}",
-                    Description = $"{appName} {pathType.Humanize()}",
-                    AppName = appName,
-                    AppId = appId,
-                    LaunchTypes = (int)AppLinkLaunchTypes.Uri,
-                    Logo = logo
-                };
+                    if (values.TryGetValue(nameof(AppLinkPayload), out var alp))
+                    {
+                        var token = alp?.ToString();
+                        if (!string.IsNullOrEmpty(token))
+                        {
+                            var file = await SharedStorageAccessManager.RedeemTokenForFileAsync(token);
+                            var text = await FileIO.ReadTextAsync(file);
+                            payloads.AddRange(JsonConvert.DeserializeObject<List<AppLinkPayload>>(text));
+                        }
+                    }
+                }
+            }
+
+            return payloads;
+        }
+
+        static async Task<string> PlatformGetPayloadsToken(IList<AppLinkPayload> payloads)
+        {
+            try
+            {
+                var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(Path.GetRandomFileName(), CreationCollisionOption.GenerateUniqueName);
+                var json = JsonConvert.SerializeObject(payloads);
+                await file.WriteText(json);
+                return SharedStorageAccessManager.AddFile(file);
+            }
+            catch (Exception)
+            {
+                return string.Empty;
             }
         }
 

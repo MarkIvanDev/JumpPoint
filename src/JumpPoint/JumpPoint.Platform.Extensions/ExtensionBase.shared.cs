@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -163,68 +161,5 @@ namespace JumpPoint.Platform.Extensions
         Store = 3,
         System = 4
     }
-
-    public class ExtensionInstalledEventArgs<T> where T : ExtensionBase
-    {
-        public ExtensionInstalledEventArgs(IList<T> extensions)
-        {
-            Extensions = new ReadOnlyCollection<T>(extensions);
-        }
-
-        public IReadOnlyList<T> Extensions { get; }
-    }
-
-    public class ExtensionUpdatedEventArgs<T> where T : ExtensionBase
-    {
-        public ExtensionUpdatedEventArgs(IList<T> extensions)
-        {
-            Extensions = new ReadOnlyCollection<T>(extensions);
-        }
-
-        public IReadOnlyList<T> Extensions { get; }
-    }
-
-    public class ExtensionUpdatingEventArgs
-    {
-        public ExtensionUpdatingEventArgs(string packageId)
-        {
-            PackageId = packageId;
-        }
-
-        public string PackageId { get; }
-    }
-
-    public class ExtensionUninstallingEventArgs
-    {
-        public ExtensionUninstallingEventArgs(string packageId)
-        {
-            PackageId = packageId;
-        }
-
-        public string PackageId { get; }
-    }
-
-    public class ExtensionStatusChangedEventArgs
-    {
-        public ExtensionStatusChangedEventArgs(string packageId, bool? isAvailable)
-        {
-            PackageId = packageId;
-            IsAvailable = isAvailable;
-        }
-
-        public string PackageId { get; }
-        public bool? IsAvailable { get; }
-    }
-
-
-    public delegate void ExtensionInstalledEventHandler<T>(object sender, ExtensionInstalledEventArgs<T> args) where T : ExtensionBase;
-
-    public delegate void ExtensionUpdatedEventHandler<T>(object sender, ExtensionUpdatedEventArgs<T> args) where T : ExtensionBase;
-
-    public delegate void ExtensionUpdatingEventHandler(object sender, ExtensionUpdatingEventArgs args);
-
-    public delegate void ExtensionUninstallingEventHandler(object sender, ExtensionUninstallingEventArgs args);
-
-    public delegate void ExtensionStatusChangedEventHandler(object sender, ExtensionStatusChangedEventArgs args);
 
 }

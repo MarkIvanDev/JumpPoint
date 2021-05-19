@@ -9,12 +9,6 @@ namespace JumpPoint.Platform.Extensions
     public static partial class ToolManager
     {
 
-        static void PlatformStart()
-            => throw new NotImplementedException();
-
-        static void PlatformStop()
-            => throw new NotImplementedException();
-
         static Task<IList<Tool>> PlatformGetTools()
             => throw new NotImplementedException();
 

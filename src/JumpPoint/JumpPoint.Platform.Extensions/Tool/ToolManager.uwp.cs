@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.Platform.Services;
 using Newtonsoft.Json;
-using NittyGritty.Extensions;
+using Nito.AsyncEx;
 using Windows.ApplicationModel.AppExtensions;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.DataTransfer;
@@ -25,18 +26,17 @@ namespace JumpPoint.Platform.Extensions
             "com.jumppoint.ext.tool";
 #endif
 
-
+        private static readonly AsyncLock mutex;
+        private static readonly AsyncLazy<Task> lazyInitialize;
+        private static readonly List<Tool> tools;
         private static readonly AppExtensionCatalog catalog;
 
         static ToolManager()
         {
+            mutex = new AsyncLock();
+            lazyInitialize = new AsyncLazy<Task>(Initialize);
+            tools = new List<Tool>();
             catalog = AppExtensionCatalog.Open(EXTENSION_CONTRACT);
-        }
-
-        #region Monitor Changes
-
-        static void PlatformStart()
-        {
             catalog.PackageInstalled += Catalog_PackageInstalled;
             catalog.PackageUpdated += Catalog_PackageUpdated;
             catalog.PackageUninstalling += Catalog_PackageUninstalling;
@@ -44,62 +44,132 @@ namespace JumpPoint.Platform.Extensions
             catalog.PackageStatusChanged += Catalog_PackageStatusChanged;
         }
 
+        #region Monitor Changes
+
+        static async Task<Task> Initialize()
+        {
+            using (await mutex.LockAsync())
+            {
+                var appExtensions = await catalog.FindAllAsync();
+                foreach (var item in appExtensions)
+                {
+                    var tool = await ToTool(item);
+                    tools.Add(tool);
+                }
+            }
+            return Task.CompletedTask;
+        }
+
+        static void AddTool(Tool tool)
+        {
+            var index = tools.FindIndex(i => i.Identifier == tool.Identifier);
+            if (index == -1)
+            {
+                tools.Add(tool);
+            }
+            else
+            {
+                tools[index] = tool;
+            }
+        }
+
+        static void RemoveTools(string packageId)
+        {
+            var packageExts = tools.Where(i => i.PackageId == packageId);
+            foreach (var item in packageExts)
+            {
+                tools.Remove(item);
+            }
+        }
+
+        static void UpdateStatus(string packageId, bool isAvailable)
+        {
+            var packageExts = tools.Where(i => i.PackageId == packageId);
+            foreach (var item in packageExts)
+            {
+                item.IsAvailable = isAvailable;
+            }
+        }
+
         static async void Catalog_PackageInstalled(AppExtensionCatalog sender, AppExtensionPackageInstalledEventArgs args)
         {
-            var exts = new List<Tool>();
-            foreach (var item in args.Extensions)
+            await lazyInitialize;
+
+            using (await mutex.LockAsync())
             {
-                exts.Add(await ToTool(item));
+                foreach (var item in args.Extensions)
+                {
+                    var p = await ToTool(item);
+                    AddTool(p);
+                }
             }
-            ExtensionInstalled?.Invoke(null, new ExtensionInstalledEventArgs<Tool>(exts));
+            ExtensionCollectionChanged?.Invoke(null, EventArgs.Empty);
         }
 
         static async void Catalog_PackageUpdated(AppExtensionCatalog sender, AppExtensionPackageUpdatedEventArgs args)
         {
-            var exts = new List<Tool>();
-            foreach (var item in args.Extensions)
+            await lazyInitialize;
+
+            using (await mutex.LockAsync())
             {
-                exts.Add(await ToTool(item));
-            }
-            ExtensionUpdated?.Invoke(null, new ExtensionUpdatedEventArgs<Tool>(exts));
-        }
-
-        static void Catalog_PackageUpdating(AppExtensionCatalog sender, AppExtensionPackageUpdatingEventArgs args)
-        {
-            ExtensionUpdating?.Invoke(null, new ExtensionUpdatingEventArgs(args.Package.Id.FamilyName));
-        }
-
-        static void Catalog_PackageUninstalling(AppExtensionCatalog sender, AppExtensionPackageUninstallingEventArgs args)
-        {
-            ExtensionUninstalling?.Invoke(null, new ExtensionUninstallingEventArgs(args.Package.Id.FamilyName));
-        }
-
-        static void Catalog_PackageStatusChanged(AppExtensionCatalog sender, AppExtensionPackageStatusChangedEventArgs args)
-        {
-            if (!args.Package.Status.VerifyIsOK())
-            {
-                if (args.Package.Status.Servicing || args.Package.Status.DeploymentInProgress)
+                foreach (var item in args.Extensions)
                 {
-                    ExtensionStatusChanged?.Invoke(null, new ExtensionStatusChangedEventArgs(args.Package.Id.FamilyName, null));
+                    var p = await ToTool(item);
+                    AddTool(p);
+                }
+            }
+            ExtensionCollectionChanged?.Invoke(null, EventArgs.Empty);
+        }
+
+        static async void Catalog_PackageUpdating(AppExtensionCatalog sender, AppExtensionPackageUpdatingEventArgs args)
+        {
+            await lazyInitialize;
+
+            using (await mutex.LockAsync())
+            {
+                UpdateStatus(args.Package.Id.FamilyName, args.Package.Status.VerifyIsOK());
+            }
+            ExtensionCollectionChanged?.Invoke(null, EventArgs.Empty);
+        }
+
+        static async void Catalog_PackageUninstalling(AppExtensionCatalog sender, AppExtensionPackageUninstallingEventArgs args)
+        {
+            await lazyInitialize;
+
+            using (await mutex.LockAsync())
+            {
+                RemoveTools(args.Package.Id.FamilyName);
+            }
+            ExtensionCollectionChanged?.Invoke(null, EventArgs.Empty);
+        }
+
+        static async void Catalog_PackageStatusChanged(AppExtensionCatalog sender, AppExtensionPackageStatusChangedEventArgs args)
+        {
+            await lazyInitialize;
+
+            using (await mutex.LockAsync())
+            {
+                if (!args.Package.Status.VerifyIsOK())
+                {
+                    if (args.Package.Status.PackageOffline)
+                    {
+                        UpdateStatus(args.Package.Id.FamilyName, args.Package.Status.VerifyIsOK());
+                    }
+                    else if (args.Package.Status.Servicing || args.Package.Status.DeploymentInProgress)
+                    {
+                        // if the package is being serviced or deployed, ignore the status events
+                    }
+                    else
+                    {
+                        RemoveTools(args.Package.Id.FamilyName);
+                    }
                 }
                 else
                 {
-                    ExtensionStatusChanged?.Invoke(null, new ExtensionStatusChangedEventArgs(args.Package.Id.FamilyName, false));
+                    UpdateStatus(args.Package.Id.FamilyName, args.Package.Status.VerifyIsOK());
                 }
             }
-            else
-            {
-                ExtensionStatusChanged?.Invoke(null, new ExtensionStatusChangedEventArgs(args.Package.Id.FamilyName, true));
-            }
-        }
-
-        static void PlatformStop()
-        {
-            catalog.PackageInstalled -= Catalog_PackageInstalled;
-            catalog.PackageUpdated -= Catalog_PackageUpdated;
-            catalog.PackageUninstalling -= Catalog_PackageUninstalling;
-            catalog.PackageUpdating -= Catalog_PackageUpdating;
-            catalog.PackageStatusChanged -= Catalog_PackageStatusChanged;
+            ExtensionCollectionChanged?.Invoke(null, EventArgs.Empty);
         }
 
         #endregion
@@ -110,17 +180,19 @@ namespace JumpPoint.Platform.Extensions
             
             if (await extension.GetExtensionPropertiesAsync() is PropertySet properties)
             {
-                tool.Link = properties.TryGetValue(nameof(Tool.Link), out var l) && l is PropertySet linkProperty ?
-                    linkProperty["#text"].ToString() : null;
-                tool.Service = properties.TryGetValue(nameof(Tool.Service), out var srv) && srv is PropertySet serviceProperty ?
-                    serviceProperty["#text"].ToString() : null;
-                tool.Group = properties.TryGetValue(nameof(Tool.Group), out var g) && g is PropertySet groupProperty ?
-                    groupProperty["#text"].ToString() : null;
-                var fileTypes = properties.TryGetValue(nameof(Tool.FileTypes), out var ft) && ft is PropertySet fileTypesProperty ?
-                    fileTypesProperty["#text"].ToString().Split(';', StringSplitOptions.RemoveEmptyEntries) : null;
+                tool.Link = properties.TryGetValue(nameof(Tool.Link), out var l) && l is PropertySet lProp ?
+                    lProp["#text"].ToString() : null;
+                tool.Service = properties.TryGetValue(nameof(Tool.Service), out var srv) && srv is PropertySet srvProp ?
+                    srvProp["#text"].ToString() : null;
+                tool.Group = properties.TryGetValue(nameof(Tool.Group), out var g) && g is PropertySet gProp ?
+                    gProp["#text"].ToString() : null;
+                var fileTypes = properties.TryGetValue(nameof(Tool.FileTypes), out var ft) && ft is PropertySet ftProp ?
+                    ftProp["#text"].ToString().Split(';', StringSplitOptions.RemoveEmptyEntries) : null;
                 tool.FileTypes = new HashSet<string>(fileTypes, StringComparer.OrdinalIgnoreCase);
-                tool.IncludeFileTokens = properties.TryGetValue(nameof(Tool.IncludeFileTokens), out var ift) && ift is PropertySet includeFileTokensProperty && bool.TryParse(includeFileTokensProperty["#text"].ToString(), out var includeFileTokens) ?
+                tool.IncludeFileTokens = properties.TryGetValue(nameof(Tool.IncludeFileTokens), out var ift) && ift is PropertySet iftProp && bool.TryParse(iftProp["#text"].ToString(), out var includeFileTokens) ?
                     includeFileTokens : false;
+                tool.SupportsDirectories = properties.TryGetValue(nameof(Tool.SupportsDirectories), out var sd) && sd is PropertySet sdProp && bool.TryParse(sdProp["#text"].ToString(), out var supportsDirectories) ?
+                    supportsDirectories : false;
             }
 
             return tool;
@@ -148,13 +220,8 @@ namespace JumpPoint.Platform.Extensions
 
         static async Task<IList<Tool>> PlatformGetTools()
         {
-            var tools = new List<Tool>();
-            var appExtensions = await catalog.FindAllAsync();
-            foreach (var item in appExtensions)
-            {
-                var tool = await ToTool(item);
-                tools.Add(tool);
-            }
+            await lazyInitialize;
+
             return tools;
         }
 

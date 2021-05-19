@@ -8,18 +8,7 @@ namespace JumpPoint.Platform.Extensions
 {
     public static partial class ToolManager
     {
-
-        public static event ExtensionInstalledEventHandler<Tool> ExtensionInstalled;
-        public static event ExtensionUpdatedEventHandler<Tool> ExtensionUpdated;
-        public static event ExtensionUpdatingEventHandler ExtensionUpdating;
-        public static event ExtensionUninstallingEventHandler ExtensionUninstalling;
-        public static event ExtensionStatusChangedEventHandler ExtensionStatusChanged;
-
-        public static void Start()
-            => PlatformStart();
-
-        public static void Stop()
-            => PlatformStop();
+        public static event EventHandler ExtensionCollectionChanged;
 
         public static async Task<IList<Tool>> GetTools()
             => await PlatformGetTools();

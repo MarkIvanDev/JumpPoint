@@ -59,6 +59,14 @@ namespace JumpPoint.Platform.Extensions
             set { Set(ref _includeFileTokens, value); }
         }
 
+        private bool _supportsDirectories;
+
+        public bool SupportsDirectories
+        {
+            get { return _supportsDirectories; }
+            set { Set(ref _supportsDirectories, value); }
+        }
+
         public bool IsSupported(IList<JumpPointItem> items)
         {
             var groups = items
@@ -69,9 +77,11 @@ namespace JumpPoint.Platform.Extensions
                         case JumpPointItemType.File:
                             return JumpPointItemType.File;
 
-                        // For now, we do not support these item types in tools
                         case JumpPointItemType.Drive:
                         case JumpPointItemType.Folder:
+                            return JumpPointItemType.Folder;
+
+                        // For now, we do not support these item types in tools
                         case JumpPointItemType.Workspace:
                         case JumpPointItemType.SettingLink:
                         case JumpPointItemType.AppLink:
@@ -90,23 +100,55 @@ namespace JumpPoint.Platform.Extensions
             }
 
             // Check tool's file support
-            if (FileTypes.Count > 0 && groups.TryGetValue(JumpPointItemType.File, out var filesGroup))
+            var supportsFiles = false;
+            if (groups.TryGetValue(JumpPointItemType.File, out var filesGroup))
             {
-                var files = filesGroup.Cast<FileBase>().ToList();
-
-                // Support for Cloud files is not yet supported
-                if (files.Any(i => i.StorageType == StorageType.Cloud))
+                if (FileTypes.Count > 0)
                 {
-                    return false;
-                }
+                    var files = filesGroup.Cast<FileBase>().ToList();
 
-                if (!SupportsAnyFileType && files.Any(i => !FileTypes.Contains(i.FileType)))
+                    // Support for Cloud files is not yet supported
+                    if (files.Any(i => i.StorageType == StorageType.Cloud))
+                    {
+                        return false;
+                    }
+
+                    if (!SupportsAnyFileType && files.Any(i => !FileTypes.Contains(i.FileType)))
+                    {
+                        return false;
+                    }
+
+                    supportsFiles = true;
+                }
+                else
                 {
                     return false;
                 }
             }
 
-            return true;
+            // Check tool's Directory support
+            var supportsDirectories = false;
+            if (groups.TryGetValue(JumpPointItemType.Folder, out var directoriesGroup))
+            {
+                if (SupportsDirectories)
+                {
+                    var directories = directoriesGroup.Cast<DirectoryBase>().ToList();
+
+                    // Support for Cloud directories is not yet supported
+                    if (directories.Any(i => i.StorageType == StorageType.Cloud))
+                    {
+                        return false;
+                    }
+
+                    supportsDirectories = true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return supportsFiles || supportsDirectories;
         }
 
     }
