@@ -28,7 +28,8 @@ namespace JumpPoint.Platform.Services
             {
                 LayoutModes.Grid,
                 LayoutModes.Details,
-                LayoutModes.Tiles
+                LayoutModes.Tiles,
+                LayoutModes.List
             });
         }
 
@@ -72,6 +73,7 @@ namespace JumpPoint.Platform.Services
                     RaisePropertyChanged(nameof(IsGridLayout));
                     RaisePropertyChanged(nameof(IsDetailsLayout));
                     RaisePropertyChanged(nameof(IsTilesLayout));
+                    RaisePropertyChanged(nameof(IsListLayout));
                 }
             }
         }
@@ -110,6 +112,19 @@ namespace JumpPoint.Platform.Services
                 if (Layout != LayoutModes.Tiles && value)
                 {
                     Layout = LayoutModes.Tiles;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsListLayout
+        {
+            get { return Layout == LayoutModes.List; }
+            set
+            {
+                if (Layout != LayoutModes.List && value)
+                {
+                    Layout = LayoutModes.List;
                     RaisePropertyChanged();
                 }
             }
