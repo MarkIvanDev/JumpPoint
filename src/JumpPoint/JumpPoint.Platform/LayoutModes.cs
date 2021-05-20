@@ -11,5 +11,7 @@ namespace JumpPoint.Platform
         public static string Details { get; } = nameof(Details);
 
         public static string Tiles { get; } = nameof(Tiles);
+
+        public static string List { get; } = nameof(List);
     }
 }
