@@ -34,7 +34,7 @@ namespace JumpPoint.Platform.Extensions
                 return new AppLinkPayload
                 {
                     Link = $@"{Prefix.MAIN_SCHEME}://{pathType.ToString().ToLower()}",
-                    Name = $"{appName} {pathType.Humanize()}",
+                    Name = $"{pathType.Humanize()} - {appName}",
                     Description = $"{appName} {pathType.Humanize()}",
                     AppName = appName,
                     AppId = appId,

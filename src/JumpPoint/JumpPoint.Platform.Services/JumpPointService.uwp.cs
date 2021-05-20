@@ -133,18 +133,37 @@ namespace JumpPoint.Platform.Services
 
         static async Task PlatformOpenProperties(Collection<Seed> seeds)
         {
-            var folder = await ApplicationData.Current.LocalCacheFolder.CreateFolderAsync("Properties", CreationCollisionOption.OpenIfExists);
-            var file = await folder.CreateFileAsync(Path.GetRandomFileName(), CreationCollisionOption.GenerateUniqueName);
-            var contents = JsonConvert.SerializeObject(seeds);
-            await file.WriteText(contents);
-            var seedsToken = SharedStorageAccessManager.AddFile(file);
-            var properties = new UriBuilder()
+            if (seeds.Count == 1)
             {
-                Scheme = Prefix.MAIN_SCHEME,
-                Host = "properties",
-                Query = new QueryString() { { nameof(seedsToken), seedsToken } }.ToString()
-            }.Uri;
-            await Launcher.LaunchUriAsync(properties);
+                var type = seeds[0].Type;
+                var path = seeds[0].Path;
+                var properties = new UriBuilder()
+                {
+                    Scheme = Prefix.MAIN_SCHEME,
+                    Host = "properties",
+                    Query = new QueryString()
+                    {
+                        { nameof(type), type.ToString() },
+                        { nameof(path), path }
+                    }.ToString()
+                }.Uri;
+                await Launcher.LaunchUriAsync(properties);
+            }
+            else if (seeds.Count > 1)
+            {
+                var folder = await ApplicationData.Current.LocalCacheFolder.CreateFolderAsync("Properties", CreationCollisionOption.OpenIfExists);
+                var file = await folder.CreateFileAsync(Path.GetRandomFileName(), CreationCollisionOption.GenerateUniqueName);
+                var contents = JsonConvert.SerializeObject(seeds);
+                await file.WriteText(contents);
+                var seedsToken = SharedStorageAccessManager.AddFile(file);
+                var properties = new UriBuilder()
+                {
+                    Scheme = Prefix.MAIN_SCHEME,
+                    Host = "properties",
+                    Query = new QueryString() { { nameof(seedsToken), seedsToken } }.ToString()
+                }.Uri;
+                await Launcher.LaunchUriAsync(properties);
+            }
         }
 
         public static async Task WriteText(this StorageFile file, string text)
