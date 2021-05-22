@@ -7,15 +7,20 @@ namespace JumpPoint.Platform
     public enum ProtocolPath
     {
         Unknown = 0,
+
         Dashboard = 1,
         Settings = 2,
         Favorites = 3,
         Drives = 4,
-        CloudStorages = 5,
+        CloudDrives = 5,
         Workspaces = 6,
         AppLinks = 7,
-        SettingLinks = 8,
 
+        Open = 21,
+        Drive = 22,
+        Folder = 23,
+        Workspace = 24,
 
+        Properties = 41
     }
 }
