@@ -1,4 +1,5 @@
-﻿using JumpPoint.Platform.Models;
+﻿using Humanizer;
+using JumpPoint.Platform.Models;
 using NittyGritty.Models;
 using System;
 using System.Collections.Generic;
@@ -56,7 +57,7 @@ namespace JumpPoint.Platform.Services
                         {
                             { nameof(PathInfo.Type), text },
                             { nameof(PathInfo.Path), text }
-                        }.ToString(), text);
+                        }.ToString(), path.Humanize());
                     item.Description = text;
                     item.Logo = new Uri($@"ms-appx:///Assets/Icons/Path/{text}.png");
                     return item;

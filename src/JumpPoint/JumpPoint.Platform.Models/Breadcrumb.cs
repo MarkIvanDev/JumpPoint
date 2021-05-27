@@ -5,12 +5,12 @@ namespace JumpPoint.Platform.Models
     public class Breadcrumb : ObservableObject
     {
 
-        private PathType _pathType;
+        private AppPath _appPath;
 
-        public PathType PathType
+        public AppPath AppPath
         {
-            get { return _pathType; }
-            set { Set(ref _pathType, value); }
+            get { return _appPath; }
+            set { Set(ref _appPath, value); }
         }
 
         private string _path;

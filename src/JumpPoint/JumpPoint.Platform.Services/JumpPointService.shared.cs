@@ -171,7 +171,7 @@ namespace JumpPoint.Platform.Services
         public static Task<IList<NGStorage.IStorageItem>> Convert(IEnumerable<JumpPointItem> items)
             => PlatformConvert(items);
 
-        public static Uri GetAppUri(PathType pathType, string path)
+        public static Uri GetAppUri(AppPath pathType, string path)
         {
             var uriBuilder = new UriBuilder
             {
@@ -180,45 +180,39 @@ namespace JumpPoint.Platform.Services
             };
             switch (pathType)
             {
-                case PathType.Drive:
-                case PathType.Folder:
-                case PathType.Workspace:
+                case AppPath.Drive:
+                case AppPath.Folder:
+                case AppPath.Workspace:
                     uriBuilder.Query = new QueryString()
                     {
                         { "path", path }
                     }.ToString();
                     return uriBuilder.Uri;
 
-                case PathType.CloudStorage:
+                case AppPath.Cloud:
                     uriBuilder.Query = new QueryString()
                     {
                         { "provider", CloudStorageService.GetProvider(path).ToString() }
                     }.ToString();
                     return uriBuilder.Uri;
 
-                case PathType.Dashboard:
-                case PathType.Settings:
-                case PathType.Favorites:
-                case PathType.Drives:
-                case PathType.CloudStorages:
-                case PathType.Workspaces:
-                case PathType.AppLinks:
-                case PathType.SettingLinks:
+                case AppPath.Dashboard:
+                case AppPath.Settings:
+                case AppPath.Favorites:
+                case AppPath.Drives:
+                case AppPath.CloudDrives:
+                case AppPath.Workspaces:
+                case AppPath.AppLinks:
                     return uriBuilder.Uri;
 
-                case PathType.Properties:
-                case PathType.Libraries:
-                case PathType.Library:
-                case PathType.AppLink:
-                case PathType.SettingLink:
-                case PathType.File:
-                case PathType.Unknown:
+                case AppPath.Properties:
+                case AppPath.Unknown:
                 default:
                     return null;
             }
         }
 
-        public static async Task OpenNewWindow(PathType pathType, string path)
+        public static async Task OpenNewWindow(AppPath pathType, string path)
         {
             var uri = GetAppUri(pathType, path);
             if (uri != null)

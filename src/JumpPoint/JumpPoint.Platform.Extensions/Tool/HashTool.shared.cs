@@ -9,5 +9,8 @@ namespace JumpPoint.Platform.Extensions
     {
         public static async Task<string> ComputeHash(HashFunction hashFunction, ToolPayload payload, IProgress<double?> progress = null)
             => await PlatformComputeHash(hashFunction, payload, progress);
+
+        public static string Sha256Hash(string text)
+            => PlatformSha256Hash(text);
     }
 }

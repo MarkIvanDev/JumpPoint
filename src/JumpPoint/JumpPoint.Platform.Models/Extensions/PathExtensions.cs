@@ -44,7 +44,7 @@ namespace JumpPoint.Platform.Models.Extensions
             {
                 return PathKind.Mounted;
             }
-            else if (Enum.TryParse<PathType>(workingPath, true, out var appPath) && appPath != PathType.Unknown)
+            else if (Enum.TryParse<AppPath>(workingPath, true, out var appPath) && appPath != AppPath.Unknown)
             {
                 return PathKind.Local;
             }
@@ -57,6 +57,8 @@ namespace JumpPoint.Platform.Models.Extensions
 
             var workingPath = path.NormalizePath();
             var pathKind = workingPath.GetPathKind();
+            if (pathKind == PathKind.Unknown) return crumbs;
+
             var prefix = GetPrefix(pathKind);
             workingPath = workingPath.Remove(0, prefix.Length).WithEnding(@"\");
 
@@ -87,14 +89,14 @@ namespace JumpPoint.Platform.Models.Extensions
 
             switch (pathKind)
             {
-                case PathKind.Local when Enum.TryParse<PathType>(workingPath.TrimEnd('\\'), true, out var appPath):
+                case PathKind.Local when Enum.TryParse<AppPath>(workingPath.TrimEnd('\\'), true, out var appPath):
                     if (crumbs.Count > 1)
                     {
                         crumbs.RemoveRange(1, crumbs.Count - 1);
                     }
                     foreach (var item in crumbs)
                     {
-                        item.PathType = appPath;
+                        item.AppPath = appPath;
                         item.Path = appPath.Humanize();
                         item.DisplayName = appPath.Humanize();
                     }
@@ -105,15 +107,15 @@ namespace JumpPoint.Platform.Models.Extensions
                 case PathKind.Network:
                     for (int i = 0; i < crumbs.Count; i++)
                     {
-                        crumbs[i].PathType = i == 0 ?
-                            PathType.Drive :
-                            PathType.Folder;
+                        crumbs[i].AppPath = i == 0 ?
+                            AppPath.Drive :
+                            AppPath.Folder;
                     }
                     crumbs.Insert(0, new Breadcrumb()
                     {
-                        PathType = PathType.Drives,
-                        Path = nameof(PathType.Drives),
-                        DisplayName = nameof(PathType.Drives)
+                        AppPath = AppPath.Drives,
+                        Path = nameof(AppPath.Drives),
+                        DisplayName = nameof(AppPath.Drives)
                     });
                     return crumbs;
 
@@ -122,20 +124,20 @@ namespace JumpPoint.Platform.Models.Extensions
                     {
                         if (i == 0)
                         {
-                            crumbs[i].PathType = PathType.CloudStorage;
+                            crumbs[i].AppPath = AppPath.Cloud;
                             crumbs[i].DisplayName = Enum.TryParse<CloudStorageProvider>(crumbs[i].DisplayName, out var provider) ?
                                 provider.Humanize() : CloudStorageProvider.Unknown.Humanize();
                         }
                         else
                         {
-                            crumbs[i].PathType = i == 1 ? PathType.Drive : PathType.Folder;
+                            crumbs[i].AppPath = i == 1 ? AppPath.Drive : AppPath.Folder;
                         }
                     }
                     crumbs.Insert(0, new Breadcrumb()
                     {
-                        PathType = PathType.CloudStorages,
-                        Path = PathType.CloudStorages.Humanize(),
-                        DisplayName = PathType.CloudStorages.Humanize()
+                        AppPath = AppPath.CloudDrives,
+                        Path = AppPath.CloudDrives.Humanize(),
+                        DisplayName = AppPath.CloudDrives.Humanize()
                     });
                     return crumbs;
 
@@ -146,36 +148,29 @@ namespace JumpPoint.Platform.Models.Extensions
                     }
                     foreach (var item in crumbs)
                     {
-                        item.PathType = PathType.Workspace;
+                        item.AppPath = AppPath.Workspace;
                     }
                     crumbs.Insert(0, new Breadcrumb()
                     {
-                        PathType = PathType.Workspaces,
-                        Path = nameof(PathType.Workspaces),
-                        DisplayName = nameof(PathType.Workspaces)
+                        AppPath = AppPath.Workspaces,
+                        Path = nameof(AppPath.Workspaces),
+                        DisplayName = nameof(AppPath.Workspaces)
                     });
                     return crumbs;
 
                 case PathKind.AppLink:
-                    if (crumbs.Count > 1)
-                    {
-                        crumbs.RemoveRange(1, crumbs.Count - 1);
-                    }
-                    foreach (var item in crumbs)
-                    {
-                        item.PathType = PathType.AppLink;
-                    }
+                    crumbs.Clear();
                     crumbs.Insert(0, new Breadcrumb()
                     {
-                        PathType = PathType.AppLinks,
-                        Path = PathType.AppLinks.Humanize(),
-                        DisplayName = PathType.AppLinks.Humanize()
+                        AppPath = AppPath.AppLinks,
+                        Path = AppPath.AppLinks.Humanize(),
+                        DisplayName = AppPath.AppLinks.Humanize()
                     });
                     return crumbs;
 
                 case PathKind.Unknown:
                 default:
-                    return crumbs;
+                    return new List<Breadcrumb>();
             }
 
         }
@@ -214,13 +209,13 @@ namespace JumpPoint.Platform.Models.Extensions
             var lastCrumb = pathInfo.Breadcrumbs.LastOrDefault();
             if (lastCrumb != null)
             {
-                pathInfo.Type = lastCrumb.PathType;
+                pathInfo.Type = lastCrumb.AppPath;
                 pathInfo.Path = lastCrumb.Path;
                 pathInfo.DisplayName = lastCrumb.DisplayName;
             }
             else
             {
-                pathInfo.Type = PathType.Unknown;
+                pathInfo.Type = AppPath.Unknown;
                 pathInfo.Path = path;
                 pathInfo.DisplayName = string.Empty;
             }

@@ -88,7 +88,7 @@ namespace JumpPoint.Platform.Services
             if (path.GetPathKind() == PathKind.Cloud)
             {
                 var crumbs = path.GetBreadcrumbs();
-                var providerCrumb = crumbs.FirstOrDefault(c => c.PathType == PathType.CloudStorage);
+                var providerCrumb = crumbs.FirstOrDefault(c => c.AppPath == AppPath.Cloud);
                 if (providerCrumb != null && Enum.TryParse<CloudStorageProvider>(providerCrumb.DisplayName, out var provider))
                 {
                     return provider;
