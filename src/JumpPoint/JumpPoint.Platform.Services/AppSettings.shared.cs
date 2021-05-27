@@ -186,6 +186,19 @@ namespace JumpPoint.Platform.Services
             }
         }
 
+        public bool ShowDashboard
+        {
+            get { return Preferences.Get(nameof(ShowDashboard), true); }
+            set
+            {
+                if (ShowDashboard != value)
+                {
+                    Preferences.Set(nameof(ShowDashboard), value);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         public bool ShowNewItem
         {
             get { return Preferences.Get(nameof(ShowNewItem), false); }
