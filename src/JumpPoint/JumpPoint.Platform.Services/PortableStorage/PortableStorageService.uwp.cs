@@ -179,7 +179,7 @@ namespace JumpPoint.Platform.Services
                     StorageFolder currentFolder = null;
                     foreach (var item in crumbs)
                     {
-                        if (item.PathType == PathType.Drive)
+                        if (item.AppPath == AppPath.Drive)
                         {
                             var drive = await PlatformGetDrive(item.Path);
                             if (drive != null)
@@ -187,7 +187,7 @@ namespace JumpPoint.Platform.Services
                                 currentFolder = drive.Context.Context as StorageFolder;
                             }
                         }
-                        else if (item.PathType == PathType.Folder)
+                        else if (item.AppPath == AppPath.Folder)
                         {
                             if (currentFolder != null)
                             {
@@ -239,7 +239,7 @@ namespace JumpPoint.Platform.Services
                     StorageFolder currentFolder = null;
                     foreach (var item in crumbs)
                     {
-                        if (item.PathType == PathType.Drive)
+                        if (item.AppPath == AppPath.Drive)
                         {
                             var drive = await PlatformGetDrive(item.Path);
                             if (drive != null)
@@ -247,7 +247,7 @@ namespace JumpPoint.Platform.Services
                                 currentFolder = drive.Context.Context as StorageFolder;
                             }
                         }
-                        else if (item.PathType == PathType.Folder)
+                        else if (item.AppPath == AppPath.Folder)
                         {
                             if (currentFolder != null)
                             {

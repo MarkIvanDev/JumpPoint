@@ -4,7 +4,7 @@ using System.Text;
 
 namespace JumpPoint.Platform
 {
-    public enum ProtocolPath
+    public enum AppPath
     {
         Unknown = 0,
 
@@ -16,7 +16,6 @@ namespace JumpPoint.Platform
         Workspaces = 6,
         AppLinks = 7,
 
-        Open = 21,
         Drive = 22,
         Folder = 23,
         Workspace = 24,

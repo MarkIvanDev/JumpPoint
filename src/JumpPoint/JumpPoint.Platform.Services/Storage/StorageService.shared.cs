@@ -225,11 +225,11 @@ namespace JumpPoint.Platform.Services
         {
             var crumbs = path.GetBreadcrumbs();
             var lastCrumb = crumbs.LastOrDefault();
-            if (lastCrumb != null && lastCrumb.PathType == PathType.Drive)
+            if (lastCrumb != null && lastCrumb.AppPath == AppPath.Drive)
             {
                 return await GetDrive(path);
             }
-            else if (lastCrumb != null && lastCrumb.PathType == PathType.Folder)
+            else if (lastCrumb != null && lastCrumb.AppPath == AppPath.Folder)
             {
                 return await GetFolder(path);
             }

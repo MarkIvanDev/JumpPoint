@@ -20,16 +20,16 @@ namespace JumpPoint.Platform.Extensions
 
             return new List<AppLinkPayload>()
             {
-                await GetPayload(PathType.Dashboard),
-                await GetPayload(PathType.Settings),
-                await GetPayload(PathType.Favorites),
-                await GetPayload(PathType.Drives),
-                await GetPayload(PathType.CloudStorages),
-                await GetPayload(PathType.Workspaces),
-                await GetPayload(PathType.AppLinks)
+                await GetPayload(AppPath.Dashboard),
+                await GetPayload(AppPath.Settings),
+                await GetPayload(AppPath.Favorites),
+                await GetPayload(AppPath.Drives),
+                await GetPayload(AppPath.CloudDrives),
+                await GetPayload(AppPath.Workspaces),
+                await GetPayload(AppPath.AppLinks)
             };
 
-            async Task<AppLinkPayload> GetPayload(PathType pathType)
+            async Task<AppLinkPayload> GetPayload(AppPath pathType)
             {
                 return new AppLinkPayload
                 {
@@ -43,7 +43,7 @@ namespace JumpPoint.Platform.Extensions
                 };
             }
 
-            async Task<byte[]> GetLogo(PathType pathType)
+            async Task<byte[]> GetLogo(AppPath pathType)
             {
                 var logoFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($@"ms-appx:///Assets/Icons/Path/{pathType}.png"));
                 var logoStream = (await logoFile.OpenReadAsync()).AsStream();

@@ -91,5 +91,12 @@ namespace JumpPoint.Platform.Extensions
             }
         }
 
+        static string PlatformSha256Hash(string text)
+        {
+            var buffer = CryptographicBuffer.ConvertStringToBinary(text, BinaryStringEncoding.Utf8);
+            var hash = SHA256.HashData(buffer);
+            return CryptographicBuffer.EncodeToHexString(hash);
+        }
+
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace JumpPoint.Platform
 {
-    public enum ProtocolPath
+    public enum CommandLinePath
     {
         Unknown = 0,
 

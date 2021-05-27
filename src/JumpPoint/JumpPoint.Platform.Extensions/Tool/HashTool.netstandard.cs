@@ -9,5 +9,8 @@ namespace JumpPoint.Platform.Extensions
     {
         static Task<string> PlatformComputeHash(HashFunction hashFunction, ToolPayload payload, IProgress<double?> progress = null)
             => throw new NotImplementedException();
+
+        static string PlatformSha256Hash(string text)
+            => throw new NotImplementedException();
     }
 }
