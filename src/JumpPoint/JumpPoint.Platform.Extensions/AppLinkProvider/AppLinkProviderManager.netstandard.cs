@@ -21,5 +21,8 @@ namespace JumpPoint.Platform.Extensions
         static Task<string> PlatformGetPayloadsToken(IList<AppLinkPayload> payloads)
             => throw new NotImplementedException();
 
+        static Task<byte[]> PlatformGetLogo(Uri logoUri)
+            => throw new NotImplementedException();
+
     }
 }

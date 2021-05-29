@@ -29,6 +29,7 @@ namespace JumpPoint.Platform.Extensions
 #else
             "com.jumppoint.ext.applinkprovider";
 #endif
+        private static readonly List<string> appUriSchemes = new List<string> { "ms-appx", "ms-appx-web", "ms-appdata" };
 
         private static readonly AsyncLock mutex;
         private static readonly AsyncLazy<Task> lazyInitialize;
@@ -239,9 +240,9 @@ namespace JumpPoint.Platform.Extensions
                 payload.Description = values.TryGetValue(nameof(AppLinkPayload.Description), out var ds) && ds is string description ?
                     description : string.Empty;
                 payload.AppName = values.TryGetValue(nameof(AppLinkPayload.AppName), out var an) && an is string appName && !string.IsNullOrWhiteSpace(appName) ?
-                    appName : provider.Package;
+                    appName : null;
                 payload.AppId = values.TryGetValue(nameof(AppLinkPayload.AppId), out var id) && id is string identifier && !string.IsNullOrWhiteSpace(identifier) ?
-                    identifier : provider.PackageId;
+                    identifier : null;
                 payload.Logo = values.TryGetValue(nameof(AppLinkPayload.Logo), out var lg) && lg is byte[] logo ?
                     logo : provider.Logo.ToByteArray();
                 payload.Background = values.TryGetValue(nameof(AppLinkPayload.Background), out var bg) && bg is string background && background.IsHexColor() ?
@@ -300,6 +301,27 @@ namespace JumpPoint.Platform.Extensions
             catch (Exception)
             {
                 return string.Empty;
+            }
+        }
+
+        static async Task<byte[]> PlatformGetLogo(Uri logoUri)
+        {
+            try
+            {
+                if (appUriSchemes.Contains(logoUri.Scheme))
+                {
+                    var file = await StorageFile.GetFileFromApplicationUriAsync(logoUri);
+                    var logoStream = (await file.OpenReadAsync()).AsStream();
+                    return logoStream.ToByteArray();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 

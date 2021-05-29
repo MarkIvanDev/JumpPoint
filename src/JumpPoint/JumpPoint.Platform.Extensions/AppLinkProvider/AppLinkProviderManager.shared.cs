@@ -24,6 +24,9 @@ namespace JumpPoint.Platform.Extensions
         public static async Task<string> GetPayloadsToken(IList<AppLinkPayload> payloads)
             => await PlatformGetPayloadsToken(payloads);
 
+        public static async Task<byte[]> GetLogo(Uri logoUri)
+            => await PlatformGetLogo(logoUri);
+
     }
 
 }

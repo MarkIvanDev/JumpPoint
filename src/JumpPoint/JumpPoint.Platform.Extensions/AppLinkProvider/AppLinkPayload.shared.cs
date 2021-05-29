@@ -22,6 +22,8 @@ namespace JumpPoint.Platform.Extensions
 
         public byte[] Logo { get; set; }
 
+        public Uri LogoUri { get; set; }
+
         public string Background { get; set; }
 
         public int LaunchTypes { get; set; }
