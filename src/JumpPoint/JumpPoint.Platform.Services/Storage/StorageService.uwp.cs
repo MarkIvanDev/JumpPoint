@@ -114,7 +114,7 @@ namespace JumpPoint.Platform.Services
                         return new PortableDrive(
                             name: drive.DisplayName,
                             context: string.IsNullOrEmpty(drive.Path) ? new NGFolder(drive) : null,
-                            path: string.IsNullOrEmpty(drive.Path) ? $@"\\?\{drive.DisplayName}" : drive.Path,
+                            path: string.IsNullOrEmpty(drive.Path) ? $@"{Prefix.UNMOUNTED}{drive.DisplayName}" : drive.Path,
                             dateAccessed: props[BasicProperties.Key.DateAccessed] as DateTimeOffset?,
                             dateCreated: drive.DateCreated,
                             dateModified: props[BasicProperties.Key.DateModified] as DateTimeOffset?,
