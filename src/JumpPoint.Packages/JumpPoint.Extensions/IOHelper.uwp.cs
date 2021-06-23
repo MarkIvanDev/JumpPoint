@@ -1,13 +1,17 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 
 namespace JumpPoint.Extensions
 {
-    public static class IOHelper
+    public static partial class IOHelper
     {
+        private static readonly List<string> appUriSchemes = new List<string> { "ms-appx", "ms-appx-web", "ms-appdata" };
 
         public static async Task WriteText(this StorageFile file, string text)
         {
@@ -32,6 +36,49 @@ namespace JumpPoint.Extensions
                     // This might be recovered by retrying, otherwise let the exception be raised.
                     // The app can decide to wait before retrying.
                 }
+            }
+        }
+
+        static async Task<IList<T>> PlatformReadItems<T>(string token)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                var file = await SharedStorageAccessManager.RedeemTokenForFileAsync(token);
+                var text = await FileIO.ReadTextAsync(file);
+                return JsonConvert.DeserializeObject<List<T>>(text);
+            }
+            else
+            {
+                return new List<T>();
+            }
+        }
+
+        static async Task<string> PlatformWriteItems<T>(IList<T> items)
+        {
+            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(Path.GetRandomFileName(), CreationCollisionOption.GenerateUniqueName);
+            var json = JsonConvert.SerializeObject(items);
+            await file.WriteText(json);
+            return SharedStorageAccessManager.AddFile(file);
+        }
+
+        static async Task<Stream> PlatformGetStream(Uri uri)
+        {
+            try
+            {
+                if (appUriSchemes.Contains(uri.Scheme))
+                {
+                    var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
+                    var stream = await file.OpenReadAsync();
+                    return stream.AsStream();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 

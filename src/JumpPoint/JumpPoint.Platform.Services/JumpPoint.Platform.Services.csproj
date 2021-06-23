@@ -43,9 +43,9 @@
     <Compile Include="**\*.shared.*.cs" />
     <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
     <PackageReference Include="Nito.AsyncEx.Coordination" Version="5.1.0" />
-    <PackageReference Include="NittyGritty" Version="1.9.2" />
-    <PackageReference Include="NittyGritty.Platform" Version="1.9.2" />
-    <PackageReference Include="NittyGritty.Services" Version="1.9.2" />
+    <PackageReference Include="NittyGritty" Version="1.9.3" />
+    <PackageReference Include="NittyGritty.Platform" Version="1.9.3" />
+    <PackageReference Include="NittyGritty.Services" Version="1.9.3" />
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
   </ItemGroup>
 

@@ -1,4 +1,5 @@
 ﻿using Humanizer;
+using JumpPoint.Extensions.AppLinkProviders;
 using JumpPoint.Platform.Items;
 using System;
 using System.Collections.Concurrent;

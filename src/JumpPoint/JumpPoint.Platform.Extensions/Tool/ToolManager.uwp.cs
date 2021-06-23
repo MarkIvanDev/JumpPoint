@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using JumpPoint.Extensions;
+using JumpPoint.Extensions.Tools;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.Platform.Services;
-using Newtonsoft.Json;
 using Nito.AsyncEx;
 using Windows.ApplicationModel.AppExtensions;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
-using Windows.Storage;
 using Windows.System;
 
 namespace JumpPoint.Platform.Extensions
@@ -201,7 +200,7 @@ namespace JumpPoint.Platform.Extensions
         static async Task<ToolPayload> ToToolPayload(JumpPointItem item, bool includeFileTokens)
         {
             var payload = new ToolPayload();
-            payload.ItemType = item.Type;
+            payload.ItemType = item.Type.ToToolPayloadType();
             payload.Path = item.Path;
             if (item is FileBase file)
             {
@@ -225,35 +224,19 @@ namespace JumpPoint.Platform.Extensions
             return tools;
         }
 
-        static async Task<ToolResult> PlatformRun(Tool tool, IList<JumpPointItem> items)
+        static async Task<IList<ToolResultPayload>> PlatformRun(Tool tool, IList<JumpPointItem> items)
         {
-            if (items.Count == 0 || !tool.IsSupported(items)) return ToolResult.Nothing;
+            var results = new List<ToolResultPayload>();
+            if (items.Count == 0 || !tool.IsSupported(items)) return results;
 
-            var inputData = new ValueSet();
             var payloads = new List<ToolPayload>();
-            if (items.Count == 1)
+            foreach (var item in items)
             {
-                var payload = await ToToolPayload(items[0], tool.IncludeFileTokens);
-                inputData.Add(nameof(ToolPayload.ItemType), payload.ItemType.ToString());
-                inputData.Add(nameof(ToolPayload.Path), payload.Path);
-                inputData.Add(nameof(ToolPayload.Token), payload.Token);
+                var payload = await ToToolPayload(item, tool.IncludeFileTokens);
                 payloads.Add(payload);
             }
-            else
-            {
-                foreach (var item in items)
-                {
-                    var payload = await ToToolPayload(item, tool.IncludeFileTokens);
-                    payloads.Add(payload);
-                }
-                var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(Path.GetRandomFileName(), CreationCollisionOption.GenerateUniqueName);
-                var json = JsonConvert.SerializeObject(payloads);
-                await file.WriteText(json);
-                var token = SharedStorageAccessManager.AddFile(file);
-                inputData.Add(nameof(ToolPayload), token);
-            }
+            var inputData = await ToolHelper.GetData(payloads);
 
-            var result = ToolResult.Nothing;
             if (!string.IsNullOrEmpty(tool.Link))
             {
                 var response = await Launcher.LaunchUriForResultsAsync(
@@ -262,13 +245,10 @@ namespace JumpPoint.Platform.Extensions
                     {
                         TargetApplicationPackageFamilyName = tool.PackageId
                     },
-                    inputData);
+                    inputData.ToValueSet());
                 if (response.Status == LaunchUriStatus.Success && response.Result is ValueSet responseResult)
                 {
-                    if (responseResult.TryGetValue(nameof(ToolResult), out var tr) && Enum.TryParse<ToolResult>(tr?.ToString(), true, out var r))
-                    {
-                        result = r;
-                    }
+                    results.AddRange(await ToolHelper.GetResults(responseResult));
                 }
             }
             else if (!string.IsNullOrEmpty(tool.Service))
@@ -280,13 +260,10 @@ namespace JumpPoint.Platform.Extensions
                 var status = await appService.OpenAsync();
                 if (status == AppServiceConnectionStatus.Success)
                 {
-                    var response = await appService.SendMessageAsync(inputData);
+                    var response = await appService.SendMessageAsync(inputData.ToValueSet());
                     if (response.Status == AppServiceResponseStatus.Success && response.Message is ValueSet responseResult)
                     {
-                        if (responseResult.TryGetValue(nameof(ToolResult), out var tr) && Enum.TryParse<ToolResult>(tr?.ToString(), true, out var r))
-                        {
-                            result = r;
-                        }
+                        results.AddRange(await ToolHelper.GetResults(responseResult));
                     }
                 }
             }
@@ -300,56 +277,7 @@ namespace JumpPoint.Platform.Extensions
                 }
             }
 
-            return result;
-        }
-
-        static async Task<IList<ToolPayload>> PlatformExtractPayloads(IReadOnlyDictionary<string, object> data)
-        {
-            try
-            {
-                var payloads = new List<ToolPayload>();
-                if (data.TryGetValue(nameof(ToolPayload), out var tp))
-                {
-                    var token = tp?.ToString();
-                    if (!string.IsNullOrEmpty(token))
-                    {
-                        var file = await SharedStorageAccessManager.RedeemTokenForFileAsync(token);
-                        var text = await FileIO.ReadTextAsync(file);
-                        payloads.AddRange(JsonConvert.DeserializeObject<List<ToolPayload>>(text));
-                    }
-                }
-                else if (data.TryGetValue(nameof(ToolPayload.ItemType), out var it) &&
-                    data.TryGetValue(nameof(ToolPayload.Path), out var p) &&
-                    data.TryGetValue(nameof(ToolPayload.Token), out var t))
-                {
-                    payloads.Add(new ToolPayload
-                    {
-                        ItemType = Enum.TryParse<JumpPointItemType>(it?.ToString(), true, out var itemType) ? itemType : JumpPointItemType.Unknown,
-                        Path = p?.ToString(),
-                        Token = t?.ToString()
-                    });
-                }
-                return payloads;
-            }
-            catch (Exception)
-            {
-                return new List<ToolPayload>();
-            }
-        }
-
-        public static async Task<StorageFile> GetFile(ToolPayload payload)
-        {
-            try
-            {
-                var file = !string.IsNullOrEmpty(payload.Token) ?
-                    await SharedStorageAccessManager.RedeemTokenForFileAsync(payload.Token) :
-                    await StorageFile.GetFileFromPathAsync(payload.Path);
-                return file;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return results;
         }
 
     }

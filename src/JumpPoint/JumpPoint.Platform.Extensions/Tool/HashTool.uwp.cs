@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using NittyGritty.Models;
-using Windows.ApplicationModel.DataTransfer;
+using JumpPoint.Extensions.Tools;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
-using Windows.Storage;
 using Windows.Storage.Streams;
 using Buffer = Windows.Storage.Streams.Buffer;
 
@@ -39,7 +35,7 @@ namespace JumpPoint.Platform.Extensions
                 var hash = GetHash();
                 if (hash is null) return string.Empty;
 
-                var file = await ToolManager.GetFile(payload);
+                var file = await ToolHelper.GetFile(payload);
                 if (file is null) return string.Empty;
 
                 var capacity = 4096U;
