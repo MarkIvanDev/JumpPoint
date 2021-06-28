@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace JumpPoint.Platform.Extensions
+namespace JumpPoint.Extensions.Tools
 {
     public enum ToolResult
     {
-        Nothing = 0,
-        ReadOnly = 1,
-        ContentChanged = 2
+        Unknown = 0,
+        Successful = 1,
+        Failed = 3
     }
-
 }

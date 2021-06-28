@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JumpPoint.Extensions.Tools;
+using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace JumpPoint.Platform.Extensions
 
         public static async Task Rotate(ToolPayload payload, BitmapRotation rotation)
         {
-            var file = await ToolManager.GetFile(payload);
+            var file = await ToolHelper.GetFile(payload);
             if (file is null) return;
 
             using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
@@ -51,7 +52,7 @@ namespace JumpPoint.Platform.Extensions
 
         public static async Task Flip(ToolPayload payload, BitmapFlip flip)
         {
-            var file = await ToolManager.GetFile(payload);
+            var file = await ToolHelper.GetFile(payload);
             if (file is null) return;
 
             using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
@@ -80,7 +81,7 @@ namespace JumpPoint.Platform.Extensions
         {
             if (!UserProfilePersonalizationSettings.IsSupported()) return false;
 
-            var file = await ToolManager.GetFile(payload);
+            var file = await ToolHelper.GetFile(payload);
             if (file is null) return false;
 
             // Cleanup wallpaper folder

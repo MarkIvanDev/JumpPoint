@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
+﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.23">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;uap10.0.17763</TargetFrameworks>
@@ -6,6 +6,12 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <LangVersion>7.3</LangVersion>
     <Configurations>Debug;Release;Debug_BETA;Release_BETA</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)'=='Debug_BETA'">
@@ -48,9 +54,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="JumpPoint.Extensions" Version="0.2.1-beta" />
     <PackageReference Include="Nito.AsyncEx.Coordination" Version="5.1.0" />
-    <PackageReference Include="NittyGritty" Version="1.9.2" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.5.1" />
+    <PackageReference Include="NittyGritty" Version="1.9.3" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using JumpPoint.Extensions.AppLinkProviders;
 using JumpPoint.Platform.Models;
 
 namespace JumpPoint.Platform.Extensions
@@ -16,12 +17,6 @@ namespace JumpPoint.Platform.Extensions
             => throw new NotImplementedException();
 
         static Task<IList<AppLinkPayload>> PlatformGetPayloads(string service, string packageId)
-            => throw new NotImplementedException();
-
-        static Task<string> PlatformGetPayloadsToken(IList<AppLinkPayload> payloads)
-            => throw new NotImplementedException();
-
-        static Task<byte[]> PlatformGetLogo(Uri logoUri)
             => throw new NotImplementedException();
 
     }

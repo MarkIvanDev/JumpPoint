@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31321.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JumpPoint.Extensions", "JumpPoint.Extensions\JumpPoint.Extensions.csproj", "{9EF5EC4B-478A-4F13-BE48-458104E87CEF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9EF5EC4B-478A-4F13-BE48-458104E87CEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EF5EC4B-478A-4F13-BE48-458104E87CEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EF5EC4B-478A-4F13-BE48-458104E87CEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EF5EC4B-478A-4F13-BE48-458104E87CEF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {23ECDB0B-ABEA-4BDF-9FF8-BAFD0341330C}
+	EndGlobalSection
+EndGlobal

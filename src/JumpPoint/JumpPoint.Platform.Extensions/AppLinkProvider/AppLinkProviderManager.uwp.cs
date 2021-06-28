@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 using CreationCollisionOption = Windows.Storage.CreationCollisionOption;
 using JumpPoint.Platform.Services;
 using Nito.AsyncEx;
+using JumpPoint.Extensions.AppLinkProviders;
 
 namespace JumpPoint.Platform.Extensions
 {
@@ -29,7 +30,6 @@ namespace JumpPoint.Platform.Extensions
 #else
             "com.jumppoint.ext.applinkprovider";
 #endif
-        private static readonly List<string> appUriSchemes = new List<string> { "ms-appx", "ms-appx-web", "ms-appdata" };
 
         private static readonly AsyncLock mutex;
         private static readonly AsyncLazy<Task> lazyInitialize;
@@ -273,56 +273,11 @@ namespace JumpPoint.Platform.Extensions
                 var response = await appService.SendMessageAsync(new ValueSet() { { "Action", "GetPayloads" } });
                 if (response.Status == AppServiceResponseStatus.Success && response.Message is ValueSet values)
                 {
-                    if (values.TryGetValue(nameof(AppLinkPayload), out var alp))
-                    {
-                        var token = alp?.ToString();
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            var file = await SharedStorageAccessManager.RedeemTokenForFileAsync(token);
-                            var text = await FileIO.ReadTextAsync(file);
-                            payloads.AddRange(JsonConvert.DeserializeObject<List<AppLinkPayload>>(text));
-                        }
-                    }
+                    return await AppLinkProviderHelper.GetPayloads(values);
                 }
             }
 
             return payloads;
-        }
-
-        static async Task<string> PlatformGetPayloadsToken(IList<AppLinkPayload> payloads)
-        {
-            try
-            {
-                var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(Path.GetRandomFileName(), CreationCollisionOption.GenerateUniqueName);
-                var json = JsonConvert.SerializeObject(payloads);
-                await file.WriteText(json);
-                return SharedStorageAccessManager.AddFile(file);
-            }
-            catch (Exception)
-            {
-                return string.Empty;
-            }
-        }
-
-        static async Task<byte[]> PlatformGetLogo(Uri logoUri)
-        {
-            try
-            {
-                if (appUriSchemes.Contains(logoUri.Scheme))
-                {
-                    var file = await StorageFile.GetFileFromApplicationUriAsync(logoUri);
-                    var logoStream = (await file.OpenReadAsync()).AsStream();
-                    return logoStream.ToByteArray();
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-            }
         }
 
     }

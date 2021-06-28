@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Messaging;
@@ -8,6 +10,7 @@ using JumpPoint.Platform.Interop;
 using JumpPoint.Platform.Items.PortableStorage;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Models.Extensions;
+using Nito.AsyncEx;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Portable;
 using Windows.Storage;
@@ -16,41 +19,122 @@ namespace JumpPoint.Platform.Services
 {
     public static partial class PortableStorageService
     {
-        static async Task<IList<PortableDrive>> PlatformGetDrives()
+        private static readonly AsyncLock mutex;
+        private static readonly AsyncLazy<Task> lazyInitialize;
+        private static readonly List<PortableDrive> drives;
+        private static readonly DeviceWatcher deviceWatcher = null;
+
+        static PortableStorageService()
         {
-            var drives = new List<PortableDrive>();
-            var portableDevices = await DeviceInformation.FindAllAsync(StorageDevice.GetDeviceSelector());
-            foreach (var item in portableDevices)
+            mutex = new AsyncLock();
+            lazyInitialize = new AsyncLazy<Task>(Initialize);
+            drives = new List<PortableDrive>();
+            deviceWatcher = DeviceInformation.CreateWatcher(StorageDevice.GetDeviceSelector());
+            deviceWatcher.EnumerationCompleted += OnEnumerationCompleted;
+            deviceWatcher.Added += OnDeviceAdded;
+            deviceWatcher.Removed += OnDeviceRemoved;
+            deviceWatcher.Updated += OnDeviceUpdated;
+            deviceWatcher.Start();
+        }
+
+        #region Monitor Devices
+
+        static async Task<Task> Initialize()
+        {
+            using (await mutex.LockAsync())
             {
-                var drive = await PlatformGetDriveFromId(item.Id);
-                if (drive != null)
+                var portableDevices = await DeviceInformation.FindAllAsync(StorageDevice.GetDeviceSelector());
+                foreach (var item in portableDevices)
                 {
-                    drives.Add(drive);
+                    var drive = await PlatformGetDriveFromId(item.Id);
+                    if (drive != null)
+                    {
+                        drives.Add(drive);
+                    }
                 }
             }
+            return Task.CompletedTask;
+        }
+
+        private static NotifyCollectionChangedAction AddOrUpdate(PortableDrive drive)
+        {
+            var index = drives.FindIndex(i => i.DeviceId == drive.DeviceId);
+            if (index == -1)
+            {
+                drives.Add(drive);
+                return NotifyCollectionChangedAction.Add;
+            }
+            else
+            {
+                drives[index] = drive;
+                return NotifyCollectionChangedAction.Replace;
+            }
+        }
+
+        private static async void OnDeviceAdded(DeviceWatcher sender, DeviceInformation args)
+        {
+            await lazyInitialize;
+
+            using (await mutex.LockAsync())
+            {
+                var drive = await PlatformGetDriveFromId(args.Id);
+                if (drive != null)
+                {
+                    var action = AddOrUpdate(drive);
+                    PortableDriveCollectionChanged?.Invoke(null, new PortableDriveCollectionChangedEventArgs(action, args.Id, drive));
+                }
+            }
+        }
+
+        private static async void OnDeviceRemoved(DeviceWatcher sender, DeviceInformationUpdate args)
+        {
+            await lazyInitialize;
+
+            using (await mutex.LockAsync())
+            {
+                var index = drives.FindIndex(i => i.DeviceId == args.Id);
+                if (index != -1)
+                {
+                    drives.RemoveAt(index);
+                    PortableDriveCollectionChanged?.Invoke(null, new PortableDriveCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, args.Id, null));
+                }
+            }
+        }
+
+        private static async void OnDeviceUpdated(DeviceWatcher sender, DeviceInformationUpdate args)
+        {
+            await lazyInitialize;
+
+            using (await mutex.LockAsync())
+            {
+                var drive = await PlatformGetDriveFromId(args.Id);
+                if (drive != null)
+                {
+                    var action = AddOrUpdate(drive);
+                    PortableDriveCollectionChanged?.Invoke(null, new PortableDriveCollectionChangedEventArgs(action, args.Id, drive));
+                }
+            }
+        }
+
+        private static async void OnEnumerationCompleted(DeviceWatcher sender, object args)
+        {
+            await lazyInitialize;
+        }
+
+        #endregion
+
+        static async Task<IList<PortableDrive>> PlatformGetDrives()
+        {
+            await lazyInitialize;
+
             return drives;
         }
 
         static async Task<IList<string>> PlatformGetDrivePaths()
         {
-            var drives = new List<string>();
-            var portableDevices = await DeviceInformation.FindAllAsync(StorageDevice.GetDeviceSelector());
-            foreach (var item in portableDevices)
-            {
-                try
-                {
-                    var drive = StorageDevice.FromId(item.Id);
-                    if (drive != null)
-                    {
-                        drives.Add(string.IsNullOrEmpty(drive.Path) ? $"{Prefix.UNMOUNTED}{drive.DisplayName}" : drive.Path);
-                    }
-                }
-                catch (Exception)
-                {
-                    // Ignore drive
-                }
-            }
-            return drives;
+            await lazyInitialize;
+
+            return drives.Select(i => i.Path).ToList();
         }
 
         static async Task<IList<StorageItemBase>> PlatformGetItems(IPortableDirectory directory)

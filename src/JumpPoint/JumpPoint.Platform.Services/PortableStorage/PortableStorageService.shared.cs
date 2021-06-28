@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text;
 using System.Threading.Tasks;
 using JumpPoint.Platform.Items.PortableStorage;
@@ -9,6 +10,8 @@ namespace JumpPoint.Platform.Services
 {
     public static partial class PortableStorageService
     {
+        public static event EventHandler<PortableDriveCollectionChangedEventArgs> PortableDriveCollectionChanged;
+
         public static Task<IList<PortableDrive>> GetDrives()
             => PlatformGetDrives();
 
@@ -30,4 +33,21 @@ namespace JumpPoint.Platform.Services
         public static Task<PortableFile> GetFile(string path)
             => PlatformGetFile(path);
     }
+
+    public class PortableDriveCollectionChangedEventArgs
+    {
+        public PortableDriveCollectionChangedEventArgs(NotifyCollectionChangedAction action, string deviceId, PortableDrive drive)
+        {
+            Action = action;
+            DeviceId = deviceId;
+            Drive = drive;
+        }
+
+        public NotifyCollectionChangedAction Action { get; }
+
+        public string DeviceId { get; }
+
+        public PortableDrive Drive { get; }
+    }
+
 }
