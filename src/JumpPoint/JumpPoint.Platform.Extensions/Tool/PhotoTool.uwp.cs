@@ -23,76 +23,156 @@ namespace JumpPoint.Platform.Extensions
             Directory.CreateDirectory(WALLPAPER_FOLDER);
         }
 
-        public static async Task Rotate(ToolPayload payload, BitmapRotation rotation)
+        public static async Task<ToolResultPayload> Rotate(ToolPayload payload, BitmapRotation rotation)
         {
-            var file = await ToolHelper.GetFile(payload);
-            if (file is null) return;
-
-            using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
-            using (var memory = new InMemoryRandomAccessStream())
+            try
             {
-                var decoder = await BitmapDecoder.CreateAsync(stream);
-                var encoder = await BitmapEncoder.CreateForTranscodingAsync(memory, decoder);
-                encoder.BitmapTransform.Rotation = rotation;
+                var file = await ToolHelper.GetFile(payload);
+                if (file is null) return new ToolResultPayload
+                {
+                    Result = ToolResult.Failed,
+                    Path = payload.Path,
+                    Message = "Problem fetching file"
+                };
 
-                await Flush(encoder);
-                await Save(memory, stream);
+                using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                using (var memory = new InMemoryRandomAccessStream())
+                {
+                    var decoder = await BitmapDecoder.CreateAsync(stream);
+                    var encoder = await BitmapEncoder.CreateForTranscodingAsync(memory, decoder);
+                    encoder.BitmapTransform.Rotation = rotation;
+
+                    await Flush(encoder);
+                    await Save(memory, stream);
+                }
+
+                return new ToolResultPayload
+                {
+                    Result = ToolResult.Successful,
+                    Path = payload.Path
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ToolResultPayload
+                {
+                    Result = ToolResult.Failed,
+                    Path = payload.Path,
+                    Message = ex.Message
+                };
             }
         }
 
-        public static async Task RotateLeft(ToolPayload payload)
+        public static async Task<ToolResultPayload> RotateLeft(ToolPayload payload)
         {
-            await Rotate(payload, BitmapRotation.Clockwise270Degrees);
+            return await Rotate(payload, BitmapRotation.Clockwise270Degrees);
         }
 
-        public static async Task RotateRight(ToolPayload payload)
+        public static async Task<ToolResultPayload> RotateRight(ToolPayload payload)
         {
-            await Rotate(payload, BitmapRotation.Clockwise90Degrees);
+            return await Rotate(payload, BitmapRotation.Clockwise90Degrees);
         }
 
-        public static async Task Flip(ToolPayload payload, BitmapFlip flip)
+        public static async Task<ToolResultPayload> Flip(ToolPayload payload, BitmapFlip flip)
         {
-            var file = await ToolHelper.GetFile(payload);
-            if (file is null) return;
-
-            using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
-            using (var memory = new InMemoryRandomAccessStream())
+            try
             {
-                var decoder = await BitmapDecoder.CreateAsync(stream);
-                var encoder = await BitmapEncoder.CreateForTranscodingAsync(memory, decoder);
-                encoder.BitmapTransform.Flip = flip;
+                var file = await ToolHelper.GetFile(payload);
+                if (file is null) return new ToolResultPayload
+                {
+                    Result = ToolResult.Failed,
+                    Path = payload.Path,
+                    Message = "Problem fetching file"
+                };
 
-                await Flush(encoder);
-                await Save(memory, stream);
+                using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                using (var memory = new InMemoryRandomAccessStream())
+                {
+                    var decoder = await BitmapDecoder.CreateAsync(stream);
+                    var encoder = await BitmapEncoder.CreateForTranscodingAsync(memory, decoder);
+                    encoder.BitmapTransform.Flip = flip;
+
+                    await Flush(encoder);
+                    await Save(memory, stream);
+                }
+
+                return new ToolResultPayload
+                {
+                    Result = ToolResult.Successful,
+                    Path = payload.Path
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ToolResultPayload
+                {
+                    Result = ToolResult.Failed,
+                    Path = payload.Path,
+                    Message = ex.Message
+                };
             }
         }
 
-        public static async Task FlipHorizontal(ToolPayload payload)
+        public static async Task<ToolResultPayload> FlipHorizontal(ToolPayload payload)
         {
-            await Flip(payload, BitmapFlip.Horizontal);
+            return await Flip(payload, BitmapFlip.Horizontal);
         }
 
-        public static async Task FlipVertical(ToolPayload payload)
+        public static async Task<ToolResultPayload> FlipVertical(ToolPayload payload)
         {
-            await Flip(payload, BitmapFlip.Vertical);
+            return await Flip(payload, BitmapFlip.Vertical);
         }
 
-        public static async Task<bool> SetWallpaper(ToolPayload payload)
+        public static async Task<ToolResultPayload> SetWallpaper(ToolPayload payload)
         {
-            if (!UserProfilePersonalizationSettings.IsSupported()) return false;
-
-            var file = await ToolHelper.GetFile(payload);
-            if (file is null) return false;
-
-            // Cleanup wallpaper folder
-            foreach (var item in Directory.EnumerateFiles(WALLPAPER_FOLDER))
+            try
             {
-                File.Delete(item);
-            }
+                if (!UserProfilePersonalizationSettings.IsSupported()) return new ToolResultPayload
+                {
+                    Result = ToolResult.Failed,
+                    Path = payload.Path,
+                    Message = "Device does not support setting the wallpaper"
+                };
 
-            var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("Wallpaper", CreationCollisionOption.OpenIfExists);
-            var localFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName);
-            return await UserProfilePersonalizationSettings.Current.TrySetWallpaperImageAsync(localFile);
+                var file = await ToolHelper.GetFile(payload);
+                if (file is null) return new ToolResultPayload
+                {
+                    Result = ToolResult.Failed,
+                    Path = payload.Path,
+                    Message = "Problem fetching file"
+                };
+
+                // Cleanup wallpaper folder
+                foreach (var item in Directory.EnumerateFiles(WALLPAPER_FOLDER))
+                {
+                    File.Delete(item);
+                }
+
+                var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("Wallpaper", CreationCollisionOption.OpenIfExists);
+                var localFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName);
+                var result = await UserProfilePersonalizationSettings.Current.TrySetWallpaperImageAsync(localFile);
+                return result ?
+                    new ToolResultPayload
+                    {
+                        Result = ToolResult.Successful,
+                        Path = payload.Path
+                    } :
+                    new ToolResultPayload
+                    {
+                        Result = ToolResult.Failed,
+                        Path = payload.Path,
+                        Message = "Problem setting the wallpaper"
+                    };
+            }
+            catch (Exception ex)
+            {
+                return new ToolResultPayload
+                {
+                    Result = ToolResult.Failed,
+                    Path = payload.Path,
+                    Message = ex.Message
+                };
+            }
         }
 
         public static async Task Flush(BitmapEncoder encoder)

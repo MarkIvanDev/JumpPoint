@@ -13,5 +13,7 @@ namespace JumpPoint.Extensions.Tools
 
         public string Path { get; set; }
 
+        public string Message { get; set; }
+
     }
 }

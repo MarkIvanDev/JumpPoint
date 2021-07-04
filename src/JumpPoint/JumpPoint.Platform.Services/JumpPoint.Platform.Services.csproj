@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="**\*.shared.cs" />
     <Compile Include="**\*.shared.*.cs" />
+    <PackageReference Include="Glif.Core.Text" Version="0.3.2-beta" />
     <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
     <PackageReference Include="Nito.AsyncEx.Coordination" Version="5.1.0" />
     <PackageReference Include="NittyGritty" Version="1.9.3" />

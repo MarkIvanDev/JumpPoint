@@ -48,12 +48,14 @@ namespace JumpPoint.Extensions.Tools
                     payloads.AddRange(items);
                 }
                 else if (data.TryGetValue(nameof(ToolResultPayload.Result), out var r) &&
-                    data.TryGetValue(nameof(ToolResultPayload.Path), out var p))
+                    data.TryGetValue(nameof(ToolResultPayload.Path), out var p) &&
+                    data.TryGetValue(nameof(ToolResultPayload.Message), out var m))
                 {
                     payloads.Add(new ToolResultPayload
                     {
                         Result = Enum.TryParse<ToolResult>(r?.ToString(), true, out var result) ? result : ToolResult.Unknown,
-                        Path = p?.ToString()
+                        Path = p?.ToString(),
+                        Message = m?.ToString()
                     });
                 }
                 return payloads;
@@ -96,6 +98,7 @@ namespace JumpPoint.Extensions.Tools
                 {
                     data.Add(nameof(ToolResultPayload.Result), results[0].Result.ToString());
                     data.Add(nameof(ToolResultPayload.Path), results[0].Path);
+                    data.Add(nameof(ToolResultPayload.Message), results[0].Message);
                 }
                 else if (results.Count > 1)
                 {

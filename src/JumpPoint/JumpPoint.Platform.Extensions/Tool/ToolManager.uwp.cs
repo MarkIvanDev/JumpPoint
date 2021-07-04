@@ -74,7 +74,7 @@ namespace JumpPoint.Platform.Extensions
 
         static void RemoveTools(string packageId)
         {
-            var packageExts = tools.Where(i => i.PackageId == packageId);
+            var packageExts = tools.Where(i => i.PackageId == packageId).ToList();
             foreach (var item in packageExts)
             {
                 tools.Remove(item);
@@ -277,6 +277,15 @@ namespace JumpPoint.Platform.Extensions
                 }
             }
 
+            if (results.Count == 0)
+            {
+                results.AddRange(payloads.Select(i => new ToolResultPayload
+                {
+                    Result = ToolResult.Unknown,
+                    Path = i.Path
+                }));
+            }
+            
             return results;
         }
 

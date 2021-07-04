@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using Glif.Core.Text;
 using NittyGritty;
 using NittyGritty.Platform.Theme;
 using NittyGritty.Services;
@@ -31,11 +32,24 @@ namespace JumpPoint.Platform.Services
                 LayoutModes.Tiles,
                 LayoutModes.List
             });
+            CopyPathDelimiters = new ReadOnlyCollection<CopyPathDelimiter>(new List<CopyPathDelimiter>
+            {
+                CopyPathDelimiter.NewLine,
+                CopyPathDelimiter.Tab,
+                CopyPathDelimiter.Comma,
+                CopyPathDelimiter.Pipe,
+                CopyPathDelimiter.Colon,
+                CopyPathDelimiter.Semicolon,
+                CopyPathDelimiter.Slash,
+                CopyPathDelimiter.Backslash,
+                CopyPathDelimiter.Plus,
+                CopyPathDelimiter.Hyphen
+            });
         }
 
         public static AppSettings Instance => lazyInstance.Value;
 
-        #region Appearance
+        #region Personalization
         
         #region Theme
 
@@ -131,7 +145,82 @@ namespace JumpPoint.Platform.Services
         }
 
         #endregion
-        
+
+        #region Font
+
+        public string Font
+        {
+            get { return Preferences.Get(nameof(Font), "Segoe UI"); }
+            set
+            {
+                if (Font != value)
+                {
+                    Preferences.Set(nameof(Font), value);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public FontStyle FontStyle
+        {
+            get { return (FontStyle)Preferences.Get(nameof(FontStyle), (int)FontStyle.Normal); }
+            set
+            {
+                if (FontStyle != value)
+                {
+                    Preferences.Set(nameof(FontStyle), (int)value);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public FontWeight FontWeight
+        {
+            get { return (FontWeight)Preferences.Get(nameof(FontWeight), (ushort)FontWeight.Normal); }
+            set
+            {
+                if (FontWeight != value)
+                {
+                    Preferences.Set(nameof(FontWeight), (ushort)value);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public FontStretch FontStretch
+        {
+            get { return (FontStretch)Preferences.Get(nameof(FontStretch), (int)FontStretch.Normal); }
+            set
+            {
+                if (FontStretch != value)
+                {
+                    Preferences.Set(nameof(FontStretch), (int)value);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        #endregion
+
+        #region Copy Path Delimiter
+
+        public ReadOnlyCollection<CopyPathDelimiter> CopyPathDelimiters { get; }
+
+        public CopyPathDelimiter CopyPathDelimiter
+        {
+            get { return (CopyPathDelimiter)Preferences.Get(nameof(CopyPathDelimiter), (int)CopyPathDelimiter.NewLine); }
+            set
+            {
+                if (CopyPathDelimiter != value)
+                {
+                    Preferences.Set(nameof(CopyPathDelimiter), (int)value);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        #endregion
+
         #region Navigation Bar
 
         public bool ShowBack

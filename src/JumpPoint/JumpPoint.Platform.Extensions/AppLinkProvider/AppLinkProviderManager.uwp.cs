@@ -80,7 +80,7 @@ namespace JumpPoint.Platform.Extensions
 
         static void RemoveProviders(string packageId)
         {
-            var packageExts = providers.Where(i => i.PackageId == packageId);
+            var packageExts = providers.Where(i => i.PackageId == packageId).ToList();
             foreach (var item in packageExts)
             {
                 providers.Remove(item);
