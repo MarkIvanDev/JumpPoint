@@ -1,7 +1,4 @@
-﻿using AdaptiveCards;
-using Humanizer;
-using JumpPoint.Platform.Extensions;
-using JumpPoint.Platform.Items;
+﻿using JumpPoint.Platform.Extensions;
 using JumpPoint.Platform.Items.CloudStorage;
 using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Models.Extensions;
