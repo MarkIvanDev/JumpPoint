@@ -44,9 +44,10 @@
     <PackageReference Include="Glif.Core.Text" Version="0.3.2-beta" />
     <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
     <PackageReference Include="Nito.AsyncEx.Coordination" Version="5.1.0" />
-    <PackageReference Include="NittyGritty" Version="1.9.3" />
-    <PackageReference Include="NittyGritty.Platform" Version="1.9.3" />
-    <PackageReference Include="NittyGritty.Services" Version="1.9.3" />
+    <PackageReference Include="NittyGritty" Version="1.9.4" />
+    <PackageReference Include="NittyGritty.Platform" Version="1.9.4" />
+    <PackageReference Include="NittyGritty.Services" Version="1.9.4" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
   </ItemGroup>
 
@@ -66,6 +67,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JumpPoint.FullTrust.Core\JumpPoint.FullTrust.Core.csproj" />
+    <ProjectReference Include="..\JumpPoint.Platform.Extensions\JumpPoint.Platform.Extensions.csproj" />
     <ProjectReference Include="..\JumpPoint.Platform.Items\JumpPoint.Platform.Items.csproj" />
     <ProjectReference Include="..\JumpPoint.Platform.Models\JumpPoint.Platform.Models.csproj" />
     <ProjectReference Include="..\JumpPoint.Platform.Services.OneDrive\JumpPoint.Platform.Services.OneDrive.csproj" />

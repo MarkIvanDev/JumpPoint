@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using JumpPoint.Extensions;
 using JumpPoint.Extensions.Tools;
+using JumpPoint.Platform.Interop;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Models.Extensions;
-using JumpPoint.Platform.Services;
 using Nito.AsyncEx;
 using Windows.ApplicationModel.AppExtensions;
 using Windows.ApplicationModel.AppService;
@@ -206,7 +206,7 @@ namespace JumpPoint.Platform.Extensions
             {
                 if (includeFileTokens || item.Path.GetPathKind() == PathKind.Unmounted)
                 {
-                    var storageFile = await StorageService.GetStorageFile(file);
+                    var storageFile = await FileInterop.GetStorageFile(file);
                     if (storageFile != null)
                     {
                         var token = SharedStorageAccessManager.AddFile(storageFile);

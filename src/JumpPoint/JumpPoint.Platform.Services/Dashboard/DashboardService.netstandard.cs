@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace JumpPoint.Platform.Services
         static ConcurrentDictionary<UserFolderTemplate, bool> PlatformGetUserFolderDefaults()
             => throw new NotImplementedException();
 
-        static Task<ReadOnlyCollection<FolderBase>> PlatformGetUserFolders()
+        static Task<IList<FolderBase>> PlatformGetUserFolders(bool includeAll)
             => throw new NotImplementedException();
 
         static bool PlatformGetStatus(UserFolderTemplate userFolder)
@@ -28,7 +29,7 @@ namespace JumpPoint.Platform.Services
         static void PlatformSetStatus(UserFolderTemplate userFolder, bool status)
             => throw new NotImplementedException();
 
-        static Task<ReadOnlyCollection<UserFolderSetting>> PlatformGetUserFolderSettings()
+        static Task<IList<UserFolderSetting>> PlatformGetUserFolderSettings()
             => throw new NotImplementedException();
 
         #endregion
@@ -38,7 +39,7 @@ namespace JumpPoint.Platform.Services
         static ConcurrentDictionary<SystemFolderTemplate, bool> PlatformGetSystemFolderDefaults()
             => throw new NotImplementedException();
 
-        static Task<ReadOnlyCollection<FolderBase>> PlatformGetSystemFolders()
+        static Task<IList<FolderBase>> PlatformGetSystemFolders(bool includeAll)
             => throw new NotImplementedException();
 
         static bool PlatformGetStatus(SystemFolderTemplate systemFolder)
@@ -47,7 +48,7 @@ namespace JumpPoint.Platform.Services
         static void PlatformSetStatus(SystemFolderTemplate systemFolder, bool status)
             => throw new NotImplementedException();
 
-        static Task<ReadOnlyCollection<SystemFolderSetting>> PlatformGetSystemFolderSettings()
+        static Task<IList<SystemFolderSetting>> PlatformGetSystemFolderSettings()
             => throw new NotImplementedException();
 
         #endregion

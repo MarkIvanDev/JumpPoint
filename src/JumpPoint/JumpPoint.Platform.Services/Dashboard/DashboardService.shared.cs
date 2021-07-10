@@ -74,7 +74,7 @@ namespace JumpPoint.Platform.Services
 
         #region Favorites
 
-        public static async Task<ReadOnlyCollection<JumpPointItem>> GetFavorites()
+        public static async Task<IList<JumpPointItem>> GetFavorites()
         {
             var items = new List<JumpPointItem>();
             items.AddRange(await GetFavorites(JumpPointItemType.Workspace));
@@ -83,10 +83,10 @@ namespace JumpPoint.Platform.Services
             items.AddRange(await GetFavorites(JumpPointItemType.File));
             items.AddRange(await GetFavorites(JumpPointItemType.AppLink));
             items.AddRange(await GetFavorites(JumpPointItemType.SettingLink));
-            return new ReadOnlyCollection<JumpPointItem>(items);
+            return items;
         }
 
-        public static async Task<ReadOnlyCollection<JumpPointItem>> GetFavorites(JumpPointItemType type)
+        public static async Task<IList<JumpPointItem>> GetFavorites(JumpPointItemType type)
         {
             var items = new List<JumpPointItem>();
 
@@ -176,7 +176,7 @@ namespace JumpPoint.Platform.Services
                     break;
             }
 
-            return new ReadOnlyCollection<JumpPointItem>(items);
+            return items;
         }
 
         public static async Task<bool> GetStatus(JumpPointItem item)
@@ -277,8 +277,8 @@ namespace JumpPoint.Platform.Services
 
         #region User Folders
 
-        public static async Task<ReadOnlyCollection<FolderBase>> GetUserFolders()
-            => await PlatformGetUserFolders();
+        public static async Task<IList<FolderBase>> GetUserFolders(bool includeAll)
+            => await PlatformGetUserFolders(includeAll);
 
         public static bool GetStatus(UserFolderTemplate userFolder)
             => PlatformGetStatus(userFolder);
@@ -286,15 +286,15 @@ namespace JumpPoint.Platform.Services
         public static void SetStatus(UserFolderTemplate userFolder, bool status)
             => PlatformSetStatus(userFolder, status);
 
-        public static async Task<ReadOnlyCollection<UserFolderSetting>> GetUserFolderSettings()
+        public static async Task<IList<UserFolderSetting>> GetUserFolderSettings()
             => await PlatformGetUserFolderSettings();
 
         #endregion
 
         #region System Folders
 
-        public static async Task<ReadOnlyCollection<FolderBase>> GetSystemFolders()
-            => await PlatformGetSystemFolders();
+        public static async Task<IList<FolderBase>> GetSystemFolders(bool includeAll)
+            => await PlatformGetSystemFolders(includeAll);
 
         public static bool GetStatus(SystemFolderTemplate systemFolder)
             => PlatformGetStatus(systemFolder);
@@ -302,7 +302,7 @@ namespace JumpPoint.Platform.Services
         public static void SetStatus(SystemFolderTemplate systemFolder, bool status)
             => PlatformSetStatus(systemFolder, status);
 
-        public static async Task<ReadOnlyCollection<SystemFolderSetting>> GetSystemFolderSettings()
+        public static async Task<IList<SystemFolderSetting>> GetSystemFolderSettings()
             => await PlatformGetSystemFolderSettings();
 
         #endregion

@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Messaging;
+using JumpPoint.Platform.Interop;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.LocalStorage;
 using JumpPoint.Platform.Items.NetworkStorage;
@@ -19,60 +20,6 @@ namespace JumpPoint.Platform.Services
 {
     public static partial class StorageService
     {
-        public static async Task<StorageFolder> GetStorageFolder(DirectoryBase directory)
-        {
-            try
-            {
-                switch (directory.StorageType)
-                {
-                    case StorageType.Local:
-                    case StorageType.Network:
-                        return await StorageFolder.GetFolderFromPathAsync(directory.Path);
-
-                    case StorageType.Portable when directory is IPortableDirectory portableDirectory:
-                        return portableDirectory.Context != null ?
-                            portableDirectory.Context.Context as StorageFolder :
-                            await StorageFolder.GetFolderFromPathAsync(directory.Path);
-
-                    case StorageType.Cloud:
-                    default:
-                        return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
-                return null;
-            }
-        }
-
-        public static async Task<StorageFile> GetStorageFile(FileBase file)
-        {
-            try
-            {
-                switch (file.StorageType)
-                {
-                    case StorageType.Local:
-                    case StorageType.Network:
-                        return await StorageFile.GetFileFromPathAsync(file.Path);
-
-                    case StorageType.Portable when file is PortableFile portableFile:
-                        return portableFile.Context != null ?
-                            portableFile.Context.Context as StorageFile :
-                            await StorageFile.GetFileFromPathAsync(file.Path);
-
-                    case StorageType.Cloud:
-                    default:
-                        return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
-                return null;
-            }
-        }
-
         public static async Task<DriveBase> GetDrive(StorageType storageType, StorageFolder drive)
         {
             try
@@ -267,7 +214,7 @@ namespace JumpPoint.Platform.Services
         {
             if (item is FileBase file)
             {
-                var storageFile = await GetStorageFile(file);
+                var storageFile = await FileInterop.GetStorageFile(file);
                 if (storageFile != null)
                 {
                     await storageFile.RenameAsync(name, (NameCollisionOption)option);
@@ -276,7 +223,7 @@ namespace JumpPoint.Platform.Services
             }
             else if (item is DirectoryBase directory)
             {
-                var storageFolder = await GetStorageFolder(directory);
+                var storageFolder = await FileInterop.GetStorageFolder(directory);
                 if (storageFolder != null)
                 {
                     await storageFolder.RenameAsync(name, (NameCollisionOption)option);
@@ -288,7 +235,7 @@ namespace JumpPoint.Platform.Services
 
         static async Task<FolderBase> PlatformCreateFolder(DirectoryBase directory, string name)
         {
-            var storageFolder = await GetStorageFolder(directory);
+            var storageFolder = await FileInterop.GetStorageFolder(directory);
             if (storageFolder != null)
             {
                 var newFolder = await storageFolder.CreateFolderAsync(name, CreationCollisionOption.GenerateUniqueName);
@@ -299,7 +246,7 @@ namespace JumpPoint.Platform.Services
 
         static async Task<FileBase> PlatformCreateFile(DirectoryBase directory, string name)
         {
-            var storageFile = await GetStorageFolder(directory);
+            var storageFile = await FileInterop.GetStorageFolder(directory);
             if (storageFile != null)
             {
                 var newFile = await storageFile.CreateFileAsync(name, CreationCollisionOption.GenerateUniqueName);
@@ -314,7 +261,7 @@ namespace JumpPoint.Platform.Services
             {
                 if (!HasBuiltInIcon(file.FileType))
                 {
-                    var storageFile = await GetStorageFile(file);
+                    var storageFile = await FileInterop.GetStorageFile(file);
                     if (storageFile is null) return;
 
                     file.DisplayType = storageFile.DisplayType;
@@ -335,7 +282,7 @@ namespace JumpPoint.Platform.Services
         {
             try
             {
-                var storageFile = await GetStorageFile(file);
+                var storageFile = await FileInterop.GetStorageFile(file);
                 if (storageFile is null) return;
 
                 if ((properties & FileBaseProperties.Basic) == FileBaseProperties.Basic)

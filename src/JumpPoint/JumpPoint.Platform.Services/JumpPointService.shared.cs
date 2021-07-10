@@ -173,40 +173,43 @@ namespace JumpPoint.Platform.Services
 
         public static Uri GetAppUri(AppPath pathType, string path)
         {
+            var protocolPath = pathType.ToProtocolPath();
             var uriBuilder = new UriBuilder
             {
                 Scheme = Prefix.MAIN_SCHEME,
-                Host = pathType.ToString().ToLower()
+                Host = protocolPath.ToString().ToLower()
             };
-            switch (pathType)
+            switch (protocolPath)
             {
-                case AppPath.Drive:
-                case AppPath.Folder:
-                case AppPath.Workspace:
+                case ProtocolPath.Dashboard:
+                case ProtocolPath.Settings:
+                case ProtocolPath.Favorites:
+                case ProtocolPath.Drives:
+                case ProtocolPath.CloudDrives:
+                case ProtocolPath.Workspaces:
+                case ProtocolPath.AppLinks:
+                case ProtocolPath.Chat:
+                    return uriBuilder.Uri;
+
+                case ProtocolPath.Open:
+                case ProtocolPath.Drive:
+                case ProtocolPath.Folder:
+                case ProtocolPath.Workspace:
                     uriBuilder.Query = new QueryString()
                     {
                         { "path", path }
                     }.ToString();
                     return uriBuilder.Uri;
 
-                case AppPath.Cloud:
+                case ProtocolPath.Cloud:
                     uriBuilder.Query = new QueryString()
                     {
                         { "provider", CloudStorageService.GetProvider(path).ToString() }
                     }.ToString();
                     return uriBuilder.Uri;
 
-                case AppPath.Dashboard:
-                case AppPath.Settings:
-                case AppPath.Favorites:
-                case AppPath.Drives:
-                case AppPath.CloudDrives:
-                case AppPath.Workspaces:
-                case AppPath.AppLinks:
-                    return uriBuilder.Uri;
-
-                case AppPath.Properties:
-                case AppPath.Unknown:
+                case ProtocolPath.Properties:
+                case ProtocolPath.Unknown:
                 default:
                     return null;
             }

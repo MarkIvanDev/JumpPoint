@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using JumpPoint.Platform.Items;
@@ -11,12 +10,7 @@ using Windows.System;
 using JumpPoint.Platform.Models.Extensions;
 using NittyGritty.Extensions;
 using Windows.ApplicationModel;
-using Windows.Storage;
 using Windows.ApplicationModel.AppService;
-using Windows.ApplicationModel.DataTransfer;
-using Newtonsoft.Json;
-using CreationCollisionOption = Windows.Storage.CreationCollisionOption;
-using JumpPoint.Platform.Services;
 using Nito.AsyncEx;
 using JumpPoint.Extensions.AppLinkProviders;
 

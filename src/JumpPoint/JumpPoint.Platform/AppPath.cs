@@ -21,6 +21,59 @@ namespace JumpPoint.Platform
         Workspace = 24,
         Cloud = 25,
 
-        Properties = 41
+        Properties = 41,
+        Chat = 42
+    }
+
+    public static class AppPathExtensions
+    {
+        public static ProtocolPath ToProtocolPath(this AppPath path)
+        {
+            switch (path)
+            {
+                case AppPath.Dashboard:
+                    return ProtocolPath.Dashboard;
+
+                case AppPath.Settings:
+                    return ProtocolPath.Settings;
+
+                case AppPath.Favorites:
+                    return ProtocolPath.Favorites;
+
+                case AppPath.Drives:
+                    return ProtocolPath.Drives;
+
+                case AppPath.CloudDrives:
+                    return ProtocolPath.CloudDrives;
+
+                case AppPath.Workspaces:
+                    return ProtocolPath.Workspaces;
+
+                case AppPath.AppLinks:
+                    return ProtocolPath.AppLinks;
+
+                case AppPath.Drive:
+                    return ProtocolPath.Drive;
+
+                case AppPath.Folder:
+                    return ProtocolPath.Folder;
+
+                case AppPath.Workspace:
+                    return ProtocolPath.Workspace;
+
+                case AppPath.Cloud:
+                    return ProtocolPath.Cloud;
+
+                case AppPath.Properties:
+                    return ProtocolPath.Properties;
+
+                case AppPath.Chat:
+                    return ProtocolPath.Chat;
+
+                case AppPath.Unknown:
+                default:
+                    return ProtocolPath.Unknown;
+            }
+        }
     }
 }

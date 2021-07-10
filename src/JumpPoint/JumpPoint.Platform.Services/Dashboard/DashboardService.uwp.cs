@@ -95,12 +95,12 @@ namespace JumpPoint.Platform.Services
             return userFolders;
         }
 
-        static async Task<ReadOnlyCollection<FolderBase>> PlatformGetUserFolders()
+        static async Task<IList<FolderBase>> PlatformGetUserFolders(bool includeAll)
         {
             var folders = new List<FolderBase>();
             foreach (var item in FolderTemplateService.GetUserFolderTemplates())
             {
-                if (PlatformGetStatus(item))
+                if (includeAll || PlatformGetStatus(item))
                 {
                     var folder = await StorageService.GetUserFolder(item);
                     if (!(folder is null))
@@ -110,7 +110,7 @@ namespace JumpPoint.Platform.Services
                     }
                 }
             }
-            return new ReadOnlyCollection<FolderBase>(folders);
+            return folders;
         }
 
         static bool PlatformGetDefault(UserFolderTemplate userFolder)
@@ -128,7 +128,7 @@ namespace JumpPoint.Platform.Services
             Preferences.Set(userFolder.ToString(), status, USER_FOLDERS);
         }
 
-        static async Task<ReadOnlyCollection<UserFolderSetting>> PlatformGetUserFolderSettings()
+        static async Task<IList<UserFolderSetting>> PlatformGetUserFolderSettings()
         {
             return await Task.Run(() =>
             {
@@ -137,7 +137,7 @@ namespace JumpPoint.Platform.Services
                 {
                     items.Add(new UserFolderSetting(item));
                 }
-                return new ReadOnlyCollection<UserFolderSetting>(items);
+                return items;
             });
         }
 
@@ -173,12 +173,12 @@ namespace JumpPoint.Platform.Services
             return systemFolders;
         }
 
-        static async Task<ReadOnlyCollection<FolderBase>> PlatformGetSystemFolders()
+        static async Task<IList<FolderBase>> PlatformGetSystemFolders(bool includeAll)
         {
             var folders = new List<FolderBase>();
             foreach (var item in FolderTemplateService.GetSystemFolderTemplates())
             {
-                if (PlatformGetStatus(item))
+                if (includeAll || PlatformGetStatus(item))
                 {
                     var folder = await StorageService.GetSystemFolder(item);
                     if (!(folder is null))
@@ -188,7 +188,7 @@ namespace JumpPoint.Platform.Services
                     }
                 }
             }
-            return new ReadOnlyCollection<FolderBase>(folders);
+            return folders;
         }
 
         static bool PlatformGetDefault(SystemFolderTemplate systemFolder)
@@ -206,7 +206,7 @@ namespace JumpPoint.Platform.Services
             Preferences.Set(systemFolder.ToString(), status, SYSTEM_FOLDERS);
         }
 
-        static async Task<ReadOnlyCollection<SystemFolderSetting>> PlatformGetSystemFolderSettings()
+        static async Task<IList<SystemFolderSetting>> PlatformGetSystemFolderSettings()
         {
             return await Task.Run(() =>
             {
@@ -215,7 +215,7 @@ namespace JumpPoint.Platform.Services
                 {
                     items.Add(new SystemFolderSetting(item));
                 }
-                return new ReadOnlyCollection<SystemFolderSetting>(items);
+                return items;
             });
         }
 

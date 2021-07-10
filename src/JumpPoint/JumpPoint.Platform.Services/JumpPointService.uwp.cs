@@ -14,6 +14,7 @@ using NittyGritty.Models;
 using System.Collections.ObjectModel;
 using JumpPoint.Platform.Models;
 using Newtonsoft.Json;
+using JumpPoint.Platform.Interop;
 
 namespace JumpPoint.Platform.Services
 {
@@ -24,7 +25,7 @@ namespace JumpPoint.Platform.Services
         {
             if (item is FileBase file)
             {
-                var storageFile = await StorageService.GetStorageFile(file);
+                var storageFile = await FileInterop.GetStorageFile(file);
                 if (storageFile != null)
                 {
                     return new NGStorage.NGFile(storageFile);
@@ -32,7 +33,7 @@ namespace JumpPoint.Platform.Services
             }
             else if (item is DirectoryBase directory)
             {
-                var storageFolder = await StorageService.GetStorageFolder(directory);
+                var storageFolder = await FileInterop.GetStorageFolder(directory);
                 if (storageFolder != null)
                 {
                     return new NGStorage.NGFolder(storageFolder);
@@ -93,7 +94,7 @@ namespace JumpPoint.Platform.Services
 
         static async Task<bool> PlatformOpenFile(FileBase file, bool useDefaultHandler)
         {
-            var item = await StorageService.GetStorageFile(file);
+            var item = await FileInterop.GetStorageFile(file);
             return item != null ?
                 await Launcher.LaunchFileAsync(item, new LauncherOptions { DisplayApplicationPicker = !useDefaultHandler }) :
                 false;
@@ -112,7 +113,7 @@ namespace JumpPoint.Platform.Services
                 {
                     if (item is FileBase file)
                     {
-                        var storageFile = await StorageService.GetStorageFile(file);
+                        var storageFile = await FileInterop.GetStorageFile(file);
                         if (storageFile != null)
                         {
                             options.ItemsToSelect.Add(storageFile);
@@ -120,7 +121,7 @@ namespace JumpPoint.Platform.Services
                     }
                     else if (item is DirectoryBase directory)
                     {
-                        var storageFolder = await StorageService.GetStorageFolder(directory);
+                        var storageFolder = await FileInterop.GetStorageFolder(directory);
                         if (storageFolder != null)
                         {
                             options.ItemsToSelect.Add(storageFolder);
