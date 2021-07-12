@@ -39,7 +39,7 @@ namespace JumpPoint.Platform.Services
                 db.CreateTable<WorkspaceDriveItem>();
                 db.CreateTable<WorkspaceFolderItem>();
                 db.CreateTable<WorkspaceFileItem>();
-                db.CreateTable<WorkspaceSettingItem>();
+                db.Execute("DROP TABLE IF EXISTS WorkspaceSettingItem");
 
                 db.CreateTable<WorkspaceAppLinkItem>();
                 var applinks = db.Table<WorkspaceAppLinkItem>().ToList().Where(a => a.Path.GetPathKind() != PathKind.AppLink);
@@ -129,8 +129,6 @@ namespace JumpPoint.Platform.Services
                     $"WHERE {nameof(WorkspaceFolderItem.WorkspaceId)} = ?", workspace.Id);
                 workspace.FileCount = (ulong)db.ExecuteScalar<int>($"SELECT COUNT(*) FROM {nameof(WorkspaceFileItem)} " +
                     $"WHERE {nameof(WorkspaceFileItem.WorkspaceId)} = ?", workspace.Id);
-                workspace.SettingCount = (ulong)db.ExecuteScalar<int>($"SELECT COUNT(*) FROM {nameof(WorkspaceSettingItem)} " +
-                    $"WHERE {nameof(WorkspaceSettingItem.WorkspaceId)} = ?", workspace.Id);
             });
         }
 
@@ -205,7 +203,6 @@ namespace JumpPoint.Platform.Services
                 db.Execute($"DELETE FROM {nameof(WorkspaceDriveItem)} WHERE {nameof(WorkspaceDriveItem.WorkspaceId)} = ?", workspace.Id);
                 db.Execute($"DELETE FROM {nameof(WorkspaceFolderItem)} WHERE {nameof(WorkspaceFolderItem.WorkspaceId)} = ?", workspace.Id);
                 db.Execute($"DELETE FROM {nameof(WorkspaceFileItem)} WHERE {nameof(WorkspaceFileItem.WorkspaceId)} = ?", workspace.Id);
-                db.Execute($"DELETE FROM {nameof(WorkspaceSettingItem)} WHERE {nameof(WorkspaceSettingItem.WorkspaceId)} = ?", workspace.Id);
                 db.Execute($"DELETE FROM {nameof(WorkspaceAppLinkItem)} WHERE {nameof(WorkspaceAppLinkItem.WorkspaceId)} = ?", workspace.Id);
                 db.Delete<WorkspaceInfo>(workspace.Id);
             });
@@ -232,7 +229,6 @@ namespace JumpPoint.Platform.Services
             items.AddRange(await GetItems(id, JumpPointItemType.Folder));
             items.AddRange(await GetItems(id, JumpPointItemType.File));
             items.AddRange(await GetItems(id, JumpPointItemType.AppLink));
-            items.AddRange(await GetItems(id, JumpPointItemType.SettingLink));
             return items;
         }
 
@@ -270,18 +266,6 @@ namespace JumpPoint.Platform.Services
                     foreach (var drive in drives)
                     {
                         var item = await LocalStorageService.GetDrive(drive.Path);
-                        if (item != null)
-                        {
-                            items.Add(item);
-                        }
-                    }
-                    break;
-
-                case JumpPointItemType.SettingLink:
-                    var settingLinks = await connection.Table<WorkspaceSettingItem>().Where(fi => fi.WorkspaceId == id).ToListAsync();
-                    foreach (var settingLink in settingLinks)
-                    {
-                        var item = SettingLinkService.GetSettingLink(settingLink.Setting);
                         if (item != null)
                         {
                             items.Add(item);
@@ -328,11 +312,6 @@ namespace JumpPoint.Platform.Services
                     return await connection.FindWithQueryAsync<WorkspaceDriveItem>($"SELECT * FROM {nameof(WorkspaceDriveItem)} " +
                         $"WHERE {nameof(WorkspaceDriveItem.WorkspaceId)} = ? AND {nameof(WorkspaceDriveItem.Path)} = ?",
                         id, item.Path.NormalizeDirectory()) != null;
-
-                case JumpPointItemType.SettingLink when item is SettingLink setting:
-                    return await connection.FindWithQueryAsync<WorkspaceSettingItem>($"SELECT * FROM {nameof(WorkspaceSettingItem)} " +
-                        $"WHERE {nameof(WorkspaceSettingItem.WorkspaceId)} = ? AND {nameof(WorkspaceSettingItem.Setting)} = ?",
-                        id, setting.Template) != null;
 
                 case JumpPointItemType.AppLink:
                     return await connection.FindWithQueryAsync<WorkspaceAppLinkItem>($"SELECT * FROM {nameof(WorkspaceAppLinkItem)} " +
@@ -405,24 +384,6 @@ namespace JumpPoint.Platform.Services
                     });
                     break;
 
-                case JumpPointItemType.SettingLink when item is SettingLink setting:
-                    await connection.RunInTransactionAsync(db =>
-                    {
-                        var exists = db.FindWithQuery<WorkspaceSettingItem>($"SELECT * FROM {nameof(WorkspaceSettingItem)} " +
-                            $"WHERE {nameof(WorkspaceSettingItem.WorkspaceId)} = ? AND {nameof(WorkspaceSettingItem.Setting)} = ?",
-                            id, setting.Template) != null;
-                        if (!exists)
-                        {
-                            db.Insert(
-                                new WorkspaceSettingItem()
-                                {
-                                    WorkspaceId = id,
-                                    Setting = setting.Template
-                                });
-                        }
-                    });
-                    break;
-
                 case JumpPointItemType.AppLink:
                     await connection.RunInTransactionAsync(db =>
                     {
@@ -469,12 +430,6 @@ namespace JumpPoint.Platform.Services
                     await connection.ExecuteAsync($"DELETE FROM {nameof(WorkspaceDriveItem)} " +
                         $"WHERE {nameof(WorkspaceDriveItem.WorkspaceId)} = ? AND {nameof(WorkspaceDriveItem.Path)} = ?",
                         id, item.Path.NormalizeDirectory());
-                    break;
-
-                case JumpPointItemType.SettingLink when item is SettingLink setting:
-                    await connection.ExecuteAsync($"DELETE FROM {nameof(WorkspaceSettingItem)} " +
-                        $"WHERE {nameof(WorkspaceSettingItem.WorkspaceId)} = ? AND {nameof(WorkspaceSettingItem.Setting)} = ?",
-                        id, setting.Template);
                     break;
 
                 case JumpPointItemType.AppLink:

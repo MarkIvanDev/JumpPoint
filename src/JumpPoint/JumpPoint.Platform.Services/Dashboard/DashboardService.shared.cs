@@ -67,7 +67,7 @@ namespace JumpPoint.Platform.Services
                 }
                 db.Execute("DETACH DATABASE ?", nameof(AppLink));
 
-                db.CreateTable<FavoriteSettingLink>();
+                db.Execute("DROP TABLE IF EXISTS FavoriteSettingLink");
             });
             await PlatformInitialize();
         }
@@ -82,7 +82,6 @@ namespace JumpPoint.Platform.Services
             items.AddRange(await GetFavorites(JumpPointItemType.Folder));
             items.AddRange(await GetFavorites(JumpPointItemType.File));
             items.AddRange(await GetFavorites(JumpPointItemType.AppLink));
-            items.AddRange(await GetFavorites(JumpPointItemType.SettingLink));
             return items;
         }
 
@@ -144,19 +143,6 @@ namespace JumpPoint.Platform.Services
                     }
                     break;
 
-                case JumpPointItemType.SettingLink:
-                    var faveSettingLinks = await connection.Table<FavoriteSettingLink>().OrderBy(f => f.Template).ToListAsync();
-                    foreach (var item in faveSettingLinks)
-                    {
-                        var settingLink = SettingLinkService.GetSettingLink(item.Template);
-                        if (settingLink != null)
-                        {
-                            settingLink.DashboardGroup = DashboardGroup.Favorites;
-                            items.Add(settingLink);
-                        }
-                    }
-                    break;
-
                 case JumpPointItemType.AppLink:
                     var faveAppLinks = await connection.Table<FavoriteAppLink>().OrderBy(f => f.Path).ToListAsync();
                     foreach (var item in faveAppLinks)
@@ -203,11 +189,6 @@ namespace JumpPoint.Platform.Services
                         $"SELECT * FROM {nameof(FavoriteWorkspace)} WHERE {nameof(FavoriteWorkspace.Path)} = ?",
                         item.Name) != null;
 
-                case JumpPointItemType.SettingLink when item is SettingLink settingLink:
-                    return await connection.FindWithQueryAsync<FavoriteSettingLink>(
-                        $"SELECT * FROM {nameof(FavoriteSettingLink)} WHERE {nameof(FavoriteSettingLink.Template)} = ?",
-                        settingLink.Template) != null;
-
                 case JumpPointItemType.AppLink:
                     return await connection.FindWithQueryAsync<FavoriteAppLink>(
                         $"SELECT * FROM {nameof(FavoriteAppLink)} WHERE {nameof(FavoriteAppLink.Path)} = ?",
@@ -250,13 +231,6 @@ namespace JumpPoint.Platform.Services
                         await connection.InsertAsync(new FavoriteWorkspace() { Path = item.Name }, "OR IGNORE") :
                         await connection.ExecuteAsync($"DELETE FROM {nameof(FavoriteWorkspace)} WHERE {nameof(FavoriteWorkspace.Path)} = ?",
                             item.Name);
-                    break;
-
-                case JumpPointItemType.SettingLink when item is SettingLink settingLink:
-                    _ = status ?
-                        await connection.InsertAsync(new FavoriteSettingLink() { Template = settingLink.Template }, "OR IGNORE") :
-                        await connection.ExecuteAsync($"DELETE FROM {nameof(FavoriteSettingLink)} WHERE {nameof(FavoriteSettingLink.Template)} = ?",
-                            settingLink.Template);
                     break;
 
                 case JumpPointItemType.AppLink:

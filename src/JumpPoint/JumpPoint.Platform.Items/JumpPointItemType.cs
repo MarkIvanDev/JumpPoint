@@ -11,7 +11,6 @@ namespace JumpPoint.Platform.Items
         Folder = 2,
         File = 3,
         Workspace = 4,
-        SettingLink = 5,
         AppLink = 6,
         Library = 7,
     }
