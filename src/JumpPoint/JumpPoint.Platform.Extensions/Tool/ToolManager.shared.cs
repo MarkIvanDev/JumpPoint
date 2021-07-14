@@ -39,7 +39,6 @@ namespace JumpPoint.Platform.Extensions
                 case JumpPointItemType.Library:
                     return ToolPayloadType.Library;
 
-                case JumpPointItemType.SettingLink:
                 case JumpPointItemType.Unknown:
                 default:
                     return ToolPayloadType.Unknown;

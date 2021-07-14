@@ -7,7 +7,7 @@ namespace JumpPoint.Platform.Models
 {
     public class ItemStats : ObservableObject
     {
-        public void Update(int? drives = null, int? folders = null, int? files = null, int? workspaces = null, int? settingLinks = null, int? appLinks = null)
+        public void Update(int? drives = null, int? folders = null, int? files = null, int? workspaces = null, int? appLinks = null)
         {
             if (drives.HasValue)
             {
@@ -27,11 +27,6 @@ namespace JumpPoint.Platform.Models
             if (workspaces.HasValue)
             {
                 Workspace = workspaces.Value;
-            }
-
-            if (settingLinks.HasValue)
-            {
-                SettingLink = settingLinks.Value;
             }
 
             if (appLinks.HasValue)
@@ -56,9 +51,6 @@ namespace JumpPoint.Platform.Models
                 case JumpPointItemType.Workspace:
                     Workspace += number;
                     break;
-                case JumpPointItemType.SettingLink:
-                    SettingLink += number;
-                    break;
                 case JumpPointItemType.AppLink:
                     AppLink += number;
                     break;
@@ -71,12 +63,12 @@ namespace JumpPoint.Platform.Models
 
         public void Reset()
         {
-            Update(0, 0, 0, 0, 0, 0);
+            Update(0, 0, 0, 0, 0);
         }
 
         public int Total
         {
-            get { return Drive + Folder + File + Workspace + SettingLink + AppLink; }
+            get { return Drive + Folder + File + Workspace + AppLink; }
         }
 
         private int _drive;
@@ -123,18 +115,6 @@ namespace JumpPoint.Platform.Models
             private set
             {
                 Set(ref _workspace, value);
-                RaisePropertyChanged(nameof(Total));
-            }
-        }
-
-        private int _settingLink;
-
-        public int SettingLink
-        {
-            get { return _settingLink; }
-            private set
-            {
-                Set(ref _settingLink, value);
                 RaisePropertyChanged(nameof(Total));
             }
         }

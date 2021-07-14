@@ -83,7 +83,6 @@ namespace JumpPoint.Platform.Extensions
 
                         // For now, we do not support these item types in tools
                         case JumpPointItemType.Workspace:
-                        case JumpPointItemType.SettingLink:
                         case JumpPointItemType.AppLink:
                         case JumpPointItemType.Library:
                         case JumpPointItemType.Unknown:
