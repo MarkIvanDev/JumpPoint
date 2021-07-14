@@ -55,10 +55,6 @@ namespace JumpPoint.Platform.Services
                     await WorkspaceService.Load(workspace);
                     break;
 
-                case JumpPointItemType.SettingLink when item is SettingLink settingLink:
-                    await SettingLinkService.Load(settingLink);
-                    break;
-
                 case JumpPointItemType.AppLink when item is AppLink appLink:
                     await AppLinkService.Load(appLink);
                     break;
@@ -103,7 +99,6 @@ namespace JumpPoint.Platform.Services
                     return await AppLinkService.Rename((AppLink)item, name, option);
 
                 case JumpPointItemType.Library:
-                case JumpPointItemType.SettingLink:
                 case JumpPointItemType.Unknown:
                 default:
                     return string.Empty;
@@ -137,7 +132,6 @@ namespace JumpPoint.Platform.Services
                     break;
 
                 case JumpPointItemType.Library:
-                case JumpPointItemType.SettingLink:
                 case JumpPointItemType.Unknown:
                 default:
                     break;

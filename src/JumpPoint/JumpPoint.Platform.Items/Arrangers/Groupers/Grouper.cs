@@ -25,8 +25,6 @@ namespace JumpPoint.Platform.Items.Arrangers.Groupers
 
         public static Grouper CloudDrive { get; } = new CloudDriveGrouper();
 
-        public static Grouper SettingLink { get; } = new SettingLinkGrouper();
-
         public static Grouper GetGrouper(GroupBy groupBy, Grouper customGrouper = null)
         {
             switch (groupBy)
