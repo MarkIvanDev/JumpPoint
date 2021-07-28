@@ -30,11 +30,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="CommandLinePath.cs~RF6a369c.TMP" />
-    <None Remove="EnumHelper.cs~RF12528a5.TMP" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
