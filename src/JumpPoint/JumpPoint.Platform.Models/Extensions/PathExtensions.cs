@@ -14,11 +14,15 @@ namespace JumpPoint.Platform.Models.Extensions
     {
         public static string NormalizePath(this string path)
         {
-            return path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar).Trim();
+            return string.IsNullOrEmpty(path) ?
+                path :
+                path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar).Trim();
         }
 
         public static PathKind GetPathKind(this string path)
         {
+            if (string.IsNullOrEmpty(path)) return PathKind.Unknown;
+
             var workingPath = path.NormalizePath();
             if (workingPath.StartsWith(Prefix.UNMOUNTED))
             {
@@ -54,6 +58,8 @@ namespace JumpPoint.Platform.Models.Extensions
         public static IList<Breadcrumb> GetBreadcrumbs(this string path)
         {
             var crumbs = new List<Breadcrumb>();
+
+            if (string.IsNullOrEmpty(path)) return crumbs;
 
             var workingPath = path.NormalizePath();
             var pathKind = workingPath.GetPathKind();

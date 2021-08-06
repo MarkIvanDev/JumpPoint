@@ -22,7 +22,8 @@ namespace JumpPoint.Platform
         Cloud = 25,
 
         Properties = 41,
-        Chat = 42
+        Chat = 42,
+        ClipboardManager = 43,
     }
 
     public static class AppPathExtensions
@@ -69,6 +70,9 @@ namespace JumpPoint.Platform
 
                 case AppPath.Chat:
                     return ProtocolPath.Chat;
+
+                case AppPath.ClipboardManager:
+                    return ProtocolPath.Clipboard;
 
                 case AppPath.Unknown:
                 default:

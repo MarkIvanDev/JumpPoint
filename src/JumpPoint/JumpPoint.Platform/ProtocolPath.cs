@@ -24,6 +24,7 @@ namespace JumpPoint.Platform
 
         Properties = 41,
         Chat = 42,
+        Clipboard = 43,
     }
 
     public static class ProtocolPathExtensions
@@ -70,6 +71,9 @@ namespace JumpPoint.Platform
 
                 case ProtocolPath.Chat:
                     return AppPath.Chat;
+
+                case ProtocolPath.Clipboard:
+                    return AppPath.ClipboardManager;
 
                 case ProtocolPath.Open:
                 case ProtocolPath.Unknown:

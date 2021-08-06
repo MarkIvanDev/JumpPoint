@@ -276,14 +276,12 @@ namespace JumpPoint.Platform.Services
         {
             switch (pathKind)
             {
-                case PathKind.Local when lastCrumb?.AppPath == AppPath.Drive:
                 case PathKind.Mounted when lastCrumb?.AppPath == AppPath.Drive:
                 case PathKind.Unmounted when lastCrumb?.AppPath == AppPath.Drive:
                 case PathKind.Network when lastCrumb?.AppPath == AppPath.Drive:
                 case PathKind.Cloud when lastCrumb?.AppPath == AppPath.Drive:
                     return JumpPointService.GetAppUri(AppPath.Drive, path);
 
-                case PathKind.Local when lastCrumb?.AppPath == AppPath.Folder:
                 case PathKind.Mounted when lastCrumb?.AppPath == AppPath.Folder:
                 case PathKind.Unmounted when lastCrumb?.AppPath == AppPath.Folder:
                 case PathKind.Network when lastCrumb?.AppPath == AppPath.Folder:

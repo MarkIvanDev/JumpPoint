@@ -13,6 +13,12 @@ namespace JumpPoint.Platform.Services
         public static Task Paste(string destination)
             => PlatformPaste(destination);
 
+        public static Task CopyTo(string destination, IList<string> paths)
+            => PlatformCopyTo(destination, paths);
+
+        public static Task MoveTo(string destination, IList<string> paths)
+            => PlatformMoveTo(destination, paths);
+
         public static Task Delete(IList<string> paths, bool deletePermanently)
             => PlatformDelete(paths, deletePermanently);
 

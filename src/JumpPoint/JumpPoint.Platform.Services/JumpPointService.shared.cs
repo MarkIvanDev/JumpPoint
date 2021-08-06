@@ -183,6 +183,7 @@ namespace JumpPoint.Platform.Services
                 case ProtocolPath.Workspaces:
                 case ProtocolPath.AppLinks:
                 case ProtocolPath.Chat:
+                case ProtocolPath.Clipboard:
                     return uriBuilder.Uri;
 
                 case ProtocolPath.Open:
@@ -201,7 +202,6 @@ namespace JumpPoint.Platform.Services
                         { "provider", CloudStorageService.GetProvider(path).ToString() }
                     }.ToString();
                     return uriBuilder.Uri;
-
                 case ProtocolPath.Properties:
                 case ProtocolPath.Unknown:
                 default:

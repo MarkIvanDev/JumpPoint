@@ -13,6 +13,7 @@ using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Items.Storage.Properties;
 using NittyGritty.Platform.Storage;
 using Windows.Storage;
+using WinStorage = Windows.Storage;
 using CreationCollisionOption = Windows.Storage.CreationCollisionOption;
 using NameCollisionOption = Windows.Storage.NameCollisionOption;
 
@@ -210,6 +211,39 @@ namespace JumpPoint.Platform.Services
             }
         }
 
+        public static async Task<string> GetPath(IStorageItem2 item)
+        {
+            if (!string.IsNullOrEmpty(item.Path)) return item.Path;
+
+            var pathBuilder = new StringBuilder();
+            pathBuilder.Append(item.Name);
+            var parent = await item.GetParentAsync();
+            if (!string.IsNullOrEmpty(parent?.Path))
+            {
+                // This happens if the StorageFile is streamed
+                pathBuilder.Insert(0, $"{Prefix.UNMOUNTED}{parent?.Path}{Path.DirectorySeparatorChar}");
+            }
+            else
+            {
+                while (parent != null)
+                {
+                    var name = parent.Name;
+                    var displayName = parent.DisplayName;
+                    parent = await item.GetParentAsync();
+
+                    if (parent != null)
+                    {
+                        pathBuilder.Insert(0, $"{name}{Path.DirectorySeparatorChar}");
+                    }
+                    else
+                    {
+                        pathBuilder.Insert(0, $"{Prefix.UNMOUNTED}{displayName}{Path.DirectorySeparatorChar}");
+                    }
+                }
+            }
+            return pathBuilder.ToString();
+        }
+
         static async Task<string> PlatformRename(StorageItemBase item, string name, RenameCollisionOption option)
         {
             if (item is FileBase file)
@@ -253,6 +287,116 @@ namespace JumpPoint.Platform.Services
                 return await GetFile(directory.StorageType, newFile);
             }
             return null;
+        }
+
+        static async Task PlatformCopyItem(DirectoryBase destination, StorageItemBase item)
+        {
+            try
+            {
+                var destinationFolder = await FileInterop.GetStorageFolder(destination);
+                if (destinationFolder is null) return;
+
+                var storageitem = await FileInterop.GetStorageItem(item);
+                if (storageitem is StorageFile storageFile)
+                {
+                    await storageFile.CopyAsync(destinationFolder, storageFile.Name, NameCollisionOption.GenerateUniqueName);
+                }
+                else if (storageitem is StorageFolder storageFolder)
+                {
+                    await CopyFolder(destinationFolder, storageFolder);
+                }
+            }
+            catch (Exception ex)
+            {
+                Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
+            }
+        }
+
+        static async Task CopyFolder(StorageFolder destination, StorageFolder source)
+        {
+            var destinationFolder = await destination.CreateFolderAsync(source.Name, CreationCollisionOption.OpenIfExists);
+
+            foreach (var file in await source.GetFilesAsync())
+            {
+                await file.CopyAsync(destinationFolder, file.Name, NameCollisionOption.GenerateUniqueName);
+            }
+            foreach (var folder in await source.GetFoldersAsync())
+            {
+                await CopyFolder(destinationFolder, folder);
+            }
+        }
+
+        static async Task PlatformMoveItem(DirectoryBase destination, StorageItemBase item)
+        {
+            try
+            {
+                var destinationFolder = await FileInterop.GetStorageFolder(destination);
+                if (destinationFolder is null) return;
+
+                var storageitem = await FileInterop.GetStorageItem(item);
+                if (storageitem is StorageFile storageFile)
+                {
+                    if ((storageFile.Attributes & WinStorage.FileAttributes.Temporary) == WinStorage.FileAttributes.Temporary)
+                    {
+                        await storageFile.CopyAsync(destinationFolder, storageFile.Name, NameCollisionOption.GenerateUniqueName);
+                    }
+                    else
+                    {
+                        await storageFile.MoveAsync(destinationFolder, storageFile.Name, NameCollisionOption.GenerateUniqueName);
+                    }
+                }
+                else if (storageitem is StorageFolder storageFolder)
+                {
+                    await MoveFolder(destinationFolder, storageFolder);
+                }
+            }
+            catch (Exception ex)
+            {
+                Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
+            }
+        }
+
+        static async Task MoveFolder(StorageFolder destination, StorageFolder source)
+        {
+            var destinationFolder = await destination.CreateFolderAsync(source.Name, CreationCollisionOption.OpenIfExists);
+
+            foreach (var file in await source.GetFilesAsync())
+            {
+                if ((file.Attributes & WinStorage.FileAttributes.Temporary) == WinStorage.FileAttributes.Temporary)
+                {
+                    await file.CopyAsync(destinationFolder, file.Name, NameCollisionOption.GenerateUniqueName);
+                }
+                else
+                {
+                    await file.MoveAsync(destinationFolder, file.Name, NameCollisionOption.GenerateUniqueName);
+                }
+            }
+            foreach (var folder in await source.GetFoldersAsync())
+            {
+                await MoveFolder(destinationFolder, folder);
+            }
+            await source.DeleteAsync();
+        }
+
+        static async Task<bool> PlatformExists(StorageItemBase item)
+        {
+            try
+            {
+                var storageItem = await FileInterop.GetStorageItem(item);
+                if (storageItem != null)
+                {
+                    var props = await storageItem.GetBasicPropertiesAsync();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         static async Task PlatformLoad(FileBase file)
