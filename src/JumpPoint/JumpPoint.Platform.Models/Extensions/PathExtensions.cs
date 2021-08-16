@@ -165,7 +165,14 @@ namespace JumpPoint.Platform.Models.Extensions
                     return crumbs;
 
                 case PathKind.AppLink:
-                    crumbs.Clear();
+                    if (crumbs.Count > 1)
+                    {
+                        crumbs.RemoveRange(1, crumbs.Count - 1);
+                    }
+                    foreach (var item in crumbs)
+                    {
+                        item.AppPath = AppPath.AppLinks;
+                    }
                     crumbs.Insert(0, new Breadcrumb()
                     {
                         AppPath = AppPath.AppLinks,

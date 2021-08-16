@@ -28,11 +28,11 @@ namespace JumpPoint.Platform.Services
 
         public static async Task Initialize()
         {
+            await FolderTemplateService.Initialize();
             await AppLinkService.Initialize();
             await WorkspaceService.Initialize();
             await CloudStorageService.Initialize();
             await DashboardService.Initialize();
-            await FolderTemplateService.Initialize();
         }
 
         public static async Task Load(JumpPointItem item)
@@ -226,6 +226,9 @@ namespace JumpPoint.Platform.Services
 
         public static async Task OpenProperties(Collection<Seed> seeds)
             => await PlatformOpenProperties(seeds);
+
+        public static async Task<bool> Rate()
+            => await PlatformRate();
 
     }
 }

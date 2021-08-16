@@ -10,7 +10,7 @@ namespace JumpPoint.Platform.Models
         public SidebarMessage(CollectionChangedAction action, IList<JumpPointItem> items)
         {
             Action = action;
-            Items = items ?? throw new ArgumentNullException(nameof(items));
+            Items = items ?? new List<JumpPointItem>();
         }
 
         public CollectionChangedAction Action { get; }
