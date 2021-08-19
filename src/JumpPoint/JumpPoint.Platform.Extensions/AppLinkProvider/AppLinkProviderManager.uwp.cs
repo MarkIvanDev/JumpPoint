@@ -18,12 +18,12 @@ namespace JumpPoint.Platform.Extensions
 {
     public static partial class AppLinkProviderManager
     {
-        private const string EXTENSION_CONTRACT =
-#if BETA
-            "com.jumppointbeta.ext.applinkprovider";
-#else
-            "com.jumppoint.ext.applinkprovider";
-#endif
+        private const string EXTENSION_CONTRACT = "com.jumppoint.ext.applinkprovider";
+        //#if BETA
+        //            "com.jumppointbeta.ext.applinkprovider";
+        //#else
+        //            "com.jumppoint.ext.applinkprovider";
+        //#endif
 
         private static readonly AsyncLock mutex;
         private static readonly AsyncLazy<Task> lazyInitialize;
