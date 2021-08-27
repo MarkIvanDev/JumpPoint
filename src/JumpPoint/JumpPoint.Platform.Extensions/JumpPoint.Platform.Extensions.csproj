@@ -35,6 +35,9 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('uap10.0')) ">
+	<TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <DefineConstants>$(DefineConstants);UWP</DefineConstants>
   </PropertyGroup>
 
@@ -57,7 +60,7 @@
   <ItemGroup>
     <PackageReference Include="JumpPoint.Extensions" Version="0.3.1-beta" />
     <PackageReference Include="Nito.AsyncEx.Coordination" Version="5.1.0" />
-    <PackageReference Include="NittyGritty" Version="1.9.5" />
+    <PackageReference Include="NittyGritty" Version="1.9.7" />
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
   </ItemGroup>
 

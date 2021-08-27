@@ -18,12 +18,12 @@ namespace JumpPoint.Platform.Extensions
 {
     public static partial class ToolManager
     {
-        private const string EXTENSION_CONTRACT = "com.jumppoint.ext.tool";
-        //#if BETA
-        //            "com.jumppointbeta.ext.tool";
-        //#else
-        //            "com.jumppoint.ext.tool";
-        //#endif
+        private const string EXTENSION_CONTRACT =
+#if BETA
+            "com.jumppointbeta.ext.tool";
+#else
+            "com.jumppoint.ext.tool";
+#endif
 
         private static readonly AsyncLock mutex;
         private static readonly AsyncLazy<Task> lazyInitialize;
