@@ -1,0 +1,32 @@
+﻿<ContentDialog
+    x:Class="JumpPoint.Uwp.Dialogs.Clipboard.CopyDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JumpPoint.Uwp.Dialogs.Clipboard"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+               xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+               mc:Ignorable="d"
+    Title="Copying">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Text="{x:Bind ViewModel.Items.Count, Converter={StaticResource StringFormatConverter}, ConverterParameter='Copying {0} item(s)'}" />
+        <TextBlock Text="{x:Bind ViewModel.Destination.Path, Converter={StaticResource StringFormatConverter}, ConverterParameter='To: {0}'}"
+                   TextWrapping="Wrap"
+                   Grid.Row="1"/>
+        <winui:ProgressBar Grid.Row="2"
+                           Maximum="{x:Bind ViewModel.ProgressInfo.Total, Mode=OneWay, Converter={StaticResource ZeroWhenNullConverter}}"
+                           Minimum="0"
+                           Value="{x:Bind ViewModel.ProgressInfo.Value, Mode=OneWay}"
+                           IsIndeterminate="{x:Bind ViewModel.ProgressInfo.Total, Mode=OneWay, Converter={StaticResource IsNullConverter}}" />
+        <TextBlock Text="{x:Bind ViewModel.CurrentItem.Path, Converter={StaticResource StringFormatConverter}, ConverterParameter='Current Item: {0}'}"
+                   TextWrapping="Wrap"
+                   Grid.Row="3"/>
+    </Grid>
+</ContentDialog>

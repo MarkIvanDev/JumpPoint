@@ -1,0 +1,1118 @@
+﻿<nguwp:NGPage x:Class="JumpPoint.Uwp.Shell"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:local="using:JumpPoint.Uwp"
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              xmlns:ngmodels="using:NittyGritty.Models"
+              xmlns:nguwp="using:NittyGritty.Uwp"
+              xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+              xmlns:i="using:Microsoft.Xaml.Interactivity"
+              xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+              xmlns:ngconv="using:NittyGritty.UI.Converters"
+              xmlns:selectors="using:NittyGritty.UI.Selectors"
+              xmlns:actions="using:NittyGritty.UI.Interactivity.Actions"
+              xmlns:extensions="using:NittyGritty.Uwp.Extensions"
+              xmlns:humanizer="using:Humanizer"
+              xmlns:converters="using:JumpPoint.Uwp.Converters"
+              xmlns:models="using:JumpPoint.Platform.Models"
+              xmlns:services="using:JumpPoint.Platform.Services"
+              xmlns:store="using:NittyGritty.Platform.Store"
+              xmlns:items="using:JumpPoint.Platform.Items"
+              xmlns:helpers="using:JumpPoint.ViewModels.Helpers"
+              xmlns:controls="using:JumpPoint.Uwp.Controls"
+              xmlns:jpactions="using:JumpPoint.Uwp.Interactivity.Actions"
+              xmlns:gtext="using:Glif.Core.Text"
+              mc:Ignorable="d"
+              extensions:ApplicationViewExtensions.Title="{x:Bind ViewModel.Context.PathInfo.DisplayName, Mode=OneWay}"
+              extensions:TitleBarExtensions.ButtonBackgroundColor="Transparent"
+              extensions:TitleBarExtensions.ButtonInactiveBackgroundColor="Transparent"
+              DataContext="{Binding Source={StaticResource Locator}, Path=Shell}">
+
+    <nguwp:NGPage.Resources>
+        <Thickness x:Key="NavigationViewHeaderMargin">12,0</Thickness>
+        <Thickness x:Key="NavigationViewContentPresenterMargin">0</Thickness>
+        <converters:ShellItemContentTemplateSelector x:Key="ShellItemContentTemplateSelector">
+            <converters:ShellItemContentTemplateSelector.Text>
+                <DataTemplate x:DataType="x:String">
+                    <TextBlock Text="{x:Bind}"
+                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                </DataTemplate>
+            </converters:ShellItemContentTemplateSelector.Text>
+            <converters:ShellItemContentTemplateSelector.JumpPointItem>
+                <DataTemplate x:DataType="items:JumpPointItem">
+                    <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                </DataTemplate>
+            </converters:ShellItemContentTemplateSelector.JumpPointItem>
+        </converters:ShellItemContentTemplateSelector>
+        
+        <DataTemplate x:Key="ItemTemplate"
+                      x:DataType="ngmodels:ShellItem">
+            <winui:NavigationViewItem Icon="{x:Bind converters:IconConverter.GetShellItemIcon(Key, Tag), Mode=OneWay}"
+                                      MenuItemsSource="{x:Bind Children, Mode=OneWay}"
+                                      SelectsOnInvoked="{x:Bind converters:NavigationViewItemConverter.SelectsOnInvoked(Key), Mode=OneWay}"
+                                      Tag="{x:Bind Mode=OneWay}">
+                <ContentControl Content="{x:Bind Content, Mode=OneWay}"
+                                ContentTemplateSelector="{StaticResource ShellItemContentTemplateSelector}"/>
+                <ToolTipService.ToolTip>
+                    <ContentControl Content="{x:Bind Content, Mode=OneWay}"
+                                    ContentTemplateSelector="{StaticResource ShellItemContentTemplateSelector}" />
+                </ToolTipService.ToolTip>
+            </winui:NavigationViewItem>
+        </DataTemplate>
+        <DataTemplate x:Key="HeaderTemplate"
+                      x:DataType="ngmodels:ShellItem">
+            <winui:NavigationViewItemHeader Content="{x:Bind Content, Mode=OneWay}" />
+        </DataTemplate>
+        <DataTemplate x:Key="SeparatorTemplate">
+            <winui:NavigationViewItemSeparator />
+        </DataTemplate>
+        <selectors:ShellItemTemplateSelector x:Key="ShellItemTemplateSelector"
+                                             ItemTemplate="{StaticResource ItemTemplate}"
+                                             HeaderTemplate="{StaticResource HeaderTemplate}"
+                                             SeparatorTemplate="{StaticResource SeparatorTemplate}" />
+    </nguwp:NGPage.Resources>
+
+    <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup  x:Name="AdaptiveVisualStateGroup">
+                <VisualState x:Name="VisualStateNarrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="paneNavigationBar.(Grid.Row)"
+                                Value="0" />
+                        <Setter Target="paneNavigationBar.(Grid.Column)"
+                                Value="0" />
+                        <Setter Target="paneNavigationBar.(Grid.ColumnSpan)"
+                                Value="3" />
+                        <Setter Target="paneNavigationBar.Margin"
+                                Value="0,0,0,4" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateNormal">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="640" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!--TODO: change properties for normal view-->
+                        <Setter Target="paneNavigationBar.(Grid.Row)"
+                                Value="1" />
+                        <Setter Target="paneNavigationBar.(Grid.Column)"
+                                Value="1" />
+                        <Setter Target="paneNavigationBar.(Grid.ColumnSpan)"
+                                Value="1" />
+                        <Setter Target="paneNavigationBar.Margin"
+                                Value="4,0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <RepositionThemeTransition />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32" x:Name="rowTitleBar" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="AppTitleBar"
+              Background="{StaticResource TitleBarBackground}"
+              Height="32"
+              Canvas.ZIndex="200">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftPaddingColumn"
+                                  Width="0" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="RightPaddingColumn"
+                                  Width="0" />
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel.Resources>
+                        <SolidColorBrush x:Key="ButtonBackgroundDisabled"
+                                         Color="Transparent" />
+                    </StackPanel.Resources>
+                    <Button Style="{StaticResource TitleBarButton}">
+                        <FontIcon FontFamily="Segoe MDL2 Assets"
+                                  Glyph="&#xE700;"
+                                  FontSize="14"
+                                  Foreground="White" />
+                        <i:Interaction.Behaviors>
+                            <core:EventTriggerBehavior EventName="Click">
+                                <core:ChangePropertyAction TargetObject="{x:Bind navView}"
+                                                           PropertyName="IsPaneOpen"
+                                                           Value="{x:Bind navView.IsPaneOpen, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}" />
+                            </core:EventTriggerBehavior>
+                        </i:Interaction.Behaviors>
+                    </Button>
+                </StackPanel>
+                <Grid Grid.Column="1"
+                      Background="Transparent"
+                      x:Name="AppDrag"
+                      ColumnSpacing="8"
+                      Padding="12,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Viewbox Width="20"
+                             Height="20">
+                        <IconSourceElement IconSource="{x:Bind converters:IconConverter.GetPathTypeIconSource(ViewModel.Context.PathInfo.Type, ViewModel.Context.PathInfo.Tag), Mode=OneWay}" />
+                    </Viewbox>
+                    <TextBlock Text="{x:Bind ViewModel.Context.PathInfo.DisplayName, Mode=OneWay}"
+                               x:Name="txtTitle"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"
+                               Foreground="White"
+                               Grid.Column="1"
+                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <winui:NavigationView Grid.Row="1"
+                              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                              IsBackButtonVisible="Collapsed"
+                              IsBackEnabled="False"
+                              IsSettingsVisible="False"
+                              IsPaneToggleButtonVisible="False"
+                              MenuItemsSource="{x:Bind ViewModel.ShellItems.Sidebar, Mode=OneWay}"
+                              MenuItemTemplateSelector="{StaticResource ShellItemTemplateSelector}"
+                              FooterMenuItemsSource="{x:Bind ViewModel.ShellItems.Footer, Mode=OneWay}"
+                              x:Name="navView">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Loaded="OnRibbonLoaded"
+                      SizeChanged="OnRibbonSizeChanged"
+                      Canvas.ZIndex="100">
+                    <Border Grid.RowSpan="2"
+                            x:Name="borderShadow"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch">
+
+                    </Border>
+
+                    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                          Padding="4">
+                        <Grid.ChildrenTransitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </Grid.ChildrenTransitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="4"
+                                    Grid.Row="1">
+                            <StackPanel.Resources>
+                                <SolidColorBrush x:Key="ButtonBackgroundDisabled"
+                                                 Color="Transparent" />
+                            </StackPanel.Resources>
+                            <controls:IconButton CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                 Command="{StaticResource BackCommand}"
+                                                 x:Name="navBack"
+                                                 IsEnabled="{x:Bind mainFrame.CanGoBack, Mode=OneWay}"
+                                                 x:Load="{x:Bind services:AppSettings.Instance.ShowBack, Mode=OneWay}"
+                                                 IsCompact="True"/>
+                            <controls:IconButton CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                 Command="{StaticResource ForwardCommand}"
+                                                 x:Name="navForward"
+                                                 IsEnabled="{x:Bind mainFrame.CanGoForward, Mode=OneWay}"
+                                                 x:Load="{x:Bind services:AppSettings.Instance.ShowForward, Mode=OneWay}"
+                                                 IsCompact="True" />
+                            <controls:IconButton CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                 Command="{StaticResource UpCommand}"
+                                                 x:Name="navUp"
+                                                 x:Load="{x:Bind services:AppSettings.Instance.ShowUp, Mode=OneWay}"
+                                                 IsCompact="True" />
+                            <controls:IconButton Command="{StaticResource RefreshCommand}"
+                                                 x:Name="navRefresh"
+                                                 x:Load="{x:Bind services:AppSettings.Instance.ShowRefresh, Mode=OneWay}"
+                                                 IsCompact="True" />
+                            <controls:IconButton CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                 Command="{StaticResource DashboardCommand}"
+                                                 x:Name="navDashboard"
+                                                 x:Load="{x:Bind services:AppSettings.Instance.ShowDashboard, Mode=OneWay}"
+                                                 IsCompact="True" />
+                        </StackPanel>
+
+                        <Grid x:Name="paneNavigationBar"
+                              Grid.Row="1"
+                              Grid.Column="1"
+                              Margin="4,0"
+                              CornerRadius="4"
+                              Background="{ThemeResource SystemChromeMediumLowColor}"
+                              x:Load="{x:Bind ViewModel.IsEditingPath, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <winui:ProgressBar VerticalAlignment="Stretch"
+                                               HorizontalAlignment="Stretch"
+                                               Maximum="{x:Bind ViewModel.Context.ProgressInfo.Total, Mode=OneWay, Converter={StaticResource ZeroWhenNullConverter}}"
+                                               Minimum="0"
+                                               Opacity="0.5"
+                                               Background="Transparent"
+                                               CornerRadius="4"
+                                               Grid.ColumnSpan="3"
+                                               MinHeight="31"
+                                               Value="{x:Bind ViewModel.Context.ProgressInfo.Value, Mode=OneWay}"
+                                               IsIndeterminate="{x:Bind ViewModel.Context.ProgressInfo.Total, Mode=OneWay, Converter={StaticResource IsNullConverter}}"
+                                               Visibility="{x:Bind ViewModel.Context.ProgressInfo.IsRunning, Mode=OneWay, Converter={StaticResource VisibleWhenTrueConverter}}" />
+                            <Button Background="Transparent"
+                                    VerticalAlignment="Stretch"
+                                    BorderThickness="0"
+                                    Margin="2">
+                                <Viewbox Width="16"
+                                         Height="16">
+                                    <IconSourceElement IconSource="{x:Bind converters:IconConverter.GetPathTypeIconSource(ViewModel.Context.PathInfo.Type, ViewModel.Context.PathInfo.Tag), Mode=OneWay}" />
+                                </Viewbox>
+                                <Button.Resources>
+                                    <converters:AppBarSeparatorVisibilityConverter x:Name="pathToolSeparator">
+                                        <ngconv:Binding Value="{x:Bind mnuAddPathToWorkspace.IsEnabled, Mode=OneWay}" />
+                                        <ngconv:Binding Value="{x:Bind mnuAddPathToFavorites.IsEnabled, Mode=OneWay}" />
+                                        <ngconv:Binding Value="{x:Bind mnuRemovePathFromFavorites.IsEnabled, Mode=OneWay}" />
+                                    </converters:AppBarSeparatorVisibilityConverter>
+                                    <converters:AppBarSeparatorVisibilityConverter x:Name="pathTemplateSeparator">
+                                        <ngconv:Binding Value="{x:Bind mnuSetPathWorkspaceTemplate.IsEnabled, Mode=OneWay}" />
+                                        <ngconv:Binding Value="{x:Bind mnuSetPathFolderTemplate.IsEnabled, Mode=OneWay}" />
+                                    </converters:AppBarSeparatorVisibilityConverter>
+                                </Button.Resources>
+                                <Button.Flyout>
+                                    <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                        Command="{StaticResource CopyPathCommand}" />
+                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}" 
+                                                        Command="{StaticResource OpenPathInNewWindowCommand}" />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}" 
+                                                        Command="{StaticResource OpenPathInFileExplorerCommand}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}" 
+                                                        Command="{StaticResource OpenPathInCommandPromptCommand}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                        Command="{StaticResource OpenPathInPowershellCommand}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                                        
+                                        <MenuFlyoutSeparator Visibility="{x:Bind pathToolSeparator.Output, Mode=OneWay}" />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}" 
+                                                        Command="{StaticResource AddPathToWorkspaceCommand}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"
+                                                        x:Name="mnuAddPathToWorkspace"/>
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}" 
+                                                        Command="{StaticResource AddPathToFavoritesCommand}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"
+                                                        x:Name="mnuAddPathToFavorites" />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                        Command="{StaticResource RemovePathFromFavoritesCommand}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"
+                                                        x:Name="mnuRemovePathFromFavorites" />
+
+                                        <MenuFlyoutSeparator Visibility="{x:Bind pathTemplateSeparator.Output, Mode=OneWay}" />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}" 
+                                                        Command="{StaticResource SetPathWorkspaceTemplateCommand}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"
+                                                        x:Name="mnuSetPathWorkspaceTemplate" />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}" 
+                                                        Command="{StaticResource SetPathFolderTemplateCommand}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"
+                                                        x:Name="mnuSetPathFolderTemplate" />
+
+                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}" 
+                                                        Command="{StaticResource SharePathCommand}" />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}" 
+                                                        Command="{StaticResource PathPropertiesCommand}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                            </Button>
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                          VerticalScrollBarVisibility="Hidden"
+                                          VerticalScrollMode="Disabled"
+                                          Grid.Column="1"
+                                          Padding="4,0">
+                                <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Context.PathInfo.Breadcrumbs, Mode=OneWay}"
+                                                    VerticalAlignment="Center">
+                                    <winui:ItemsRepeater.Layout>
+                                        <winui:StackLayout Orientation="Horizontal"
+                                                          Spacing="4" />
+                                    </winui:ItemsRepeater.Layout>
+                                    <winui:ItemsRepeater.ItemTemplate>
+                                        <DataTemplate x:DataType="models:Breadcrumb">
+                                            <HyperlinkButton Padding="0"
+                                                             Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                                             CommandParameter="{x:Bind Mode=OneWay}"
+                                                             Command="{Binding Source={StaticResource Locator}, Path=Shell.BreadcrumbCommand}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                                                               FontSize="14"
+                                                               Margin="0,0,4,0" />
+                                                    <FontIcon FontFamily="Segoe MDL2 Assets"
+                                                              Glyph="&#xE00F;"
+                                                              FontSize="12" />
+                                                </StackPanel>
+                                            </HyperlinkButton>
+                                        </DataTemplate>
+                                    </winui:ItemsRepeater.ItemTemplate>
+                                </winui:ItemsRepeater>
+                            </ScrollViewer>
+                            <StackPanel Grid.Column="2"
+                                        Margin="2"
+                                        Orientation="Horizontal">
+                                <controls:IconButton CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                     Command="{StaticResource PinPathCommand}"
+                                                     IsCompact="True"
+                                                     Visibility="{x:Bind ViewModel.Context.IsPinned, Mode=OneWay, Converter={StaticResource VisibleWhenFalseConverter}}"/>
+                                <controls:IconButton CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                     Command="{StaticResource UnpinPathCommand}"
+                                                     IsCompact="True"
+                                                     Visibility="{x:Bind ViewModel.Context.IsPinned, Mode=OneWay}"/>
+                                <controls:IconButton Command="{StaticResource EditPathCommand}"
+                                                     IsCompact="True" />
+                            </StackPanel>
+                        </Grid>
+                        <AutoSuggestBox Grid.Row="1"
+                                        Grid.Column="1"
+                                        Margin="4,0"
+                                        CornerRadius="4"
+                                        QueryIcon="Forward"
+                                        x:Name="txtPathQuery"
+                                        x:Load="{x:Bind ViewModel.IsEditingPath, Mode=OneWay}"
+                                        Text="{x:Bind ViewModel.PathQuery, Mode=TwoWay}">
+                            <i:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="Loaded">
+                                    <actions:FocusAction />
+                                </core:EventTriggerBehavior>
+                                <core:EventTriggerBehavior EventName="QuerySubmitted">
+                                    <core:InvokeCommandAction Command="{x:Bind ViewModel.CommitPathCommand}" />
+                                </core:EventTriggerBehavior>
+                                <core:EventTriggerBehavior EventName="GotFocus">
+                                    <jpactions:SelectAllAutoSuggestBoxAction />
+                                </core:EventTriggerBehavior>
+                                <core:EventTriggerBehavior EventName="LostFocus">
+                                    <core:InvokeCommandAction Command="{x:Bind ViewModel.RollbackPathCommand}" />
+                                </core:EventTriggerBehavior>
+                            </i:Interaction.Behaviors>
+                        </AutoSuggestBox>
+
+                        <StackPanel Grid.Row="1"
+                                    Grid.Column="2"
+                                    Spacing="4"
+                                    Orientation="Horizontal">
+                            <controls:IconButton x:Name="navNewItem"
+                                                 x:Load="{x:Bind services:AppSettings.Instance.ShowNewItem, Mode=OneWay}"
+                                                 Command="{StaticResource NewItemCommand}"
+                                                 IsCompact="True">
+                                <controls:IconButton.Flyout>
+                                    <MenuFlyout Placement="Bottom">
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}" 
+                                                        Command="{StaticResource NewFolderCommand}" />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                        Command="{StaticResource NewWorkspaceCommand}" />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                        Command="{StaticResource NewAppLinkCommand}" />
+                                    </MenuFlyout>
+                                </controls:IconButton.Flyout>
+                            </controls:IconButton>
+                            <controls:IconButton x:Name="navLayout"
+                                                 x:Load="{x:Bind services:AppSettings.Instance.ShowLayout, Mode=OneWay}"
+                                                 Command="{StaticResource LayoutCommand}"
+                                                 IsCompact="True">
+                                <controls:IconButton.Flyout>
+                                    <MenuFlyout Placement="Bottom">
+                                        <winui:RadioMenuFlyoutItem Command="{StaticResource GridLayoutCommand}"
+                                                                   IsChecked="{x:Bind services:AppSettings.Instance.IsGridLayout, Mode=TwoWay}"
+                                                                   GroupName="Layout"/>
+                                        <winui:RadioMenuFlyoutItem Command="{StaticResource DetailsLayoutCommand}"
+                                                                   IsChecked="{x:Bind services:AppSettings.Instance.IsDetailsLayout, Mode=TwoWay}"
+                                                                   GroupName="Layout"/>
+                                        <winui:RadioMenuFlyoutItem Command="{StaticResource TilesLayoutCommand}"
+                                                                   IsChecked="{x:Bind services:AppSettings.Instance.IsTilesLayout, Mode=TwoWay}"
+                                                                   GroupName="Layout"/>
+                                        <winui:RadioMenuFlyoutItem Command="{StaticResource ListLayoutCommand}"
+                                                                   IsChecked="{x:Bind services:AppSettings.Instance.IsListLayout, Mode=TwoWay}"
+                                                                   GroupName="Layout" />
+                                    </MenuFlyout>
+                                </controls:IconButton.Flyout>
+                            </controls:IconButton>
+                            <Button x:Name="btnSupportDeveloper"
+                                    VerticalAlignment="Stretch"
+                                    Background="Transparent"
+                                    BorderThickness="0">
+                                <Button.Resources>
+                                    <winui:TeachingTip x:Name="supportDeveloperTip"
+                                                       Target="{x:Bind btnSupportDeveloper}"
+                                                       IsLightDismissEnabled="True"
+                                                       PreferredPlacement="BottomRight"
+                                                       Title="Support the Developer"
+                                                       Subtitle="Loving the app? Your support is much appreciated."
+                                                       IsOpen="False"
+                                                       Background="Transparent">
+                                        <winui:TeachingTip.IconSource>
+                                            <winui:BitmapIconSource UriSource="{x:Bind SupportIconUri}"
+                                                                   ShowAsMonochrome="False" />
+                                        </winui:TeachingTip.IconSource>
+                                        <winui:TeachingTip.Content>
+                                            <StackPanel Spacing="4">
+                                                <StackPanel Spacing="4"
+                                                            x:Name="paneNotSubscriber"
+                                                            x:Load="{x:Bind ViewModel.IsSubscriber, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}">
+                                                    <TextBlock Text="Choose from the following monthly subscriptions:"
+                                                               TextWrapping="WrapWholeWords" />
+                                                    <winui:ProgressBar IsIndeterminate="{x:Bind ViewModel.LoadSubscriptionsCommand.IsRunning, Mode=OneWay}"
+                                                                       Visibility="{x:Bind ViewModel.LoadSubscriptionsCommand.IsRunning, Mode=OneWay}" />
+                                                    <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Subscriptions, Mode=OneWay}">
+                                                        <winui:ItemsRepeater.Layout>
+                                                            <winui:UniformGridLayout MinColumnSpacing="4"
+                                                                                     MinRowSpacing="4"
+                                                                                     ItemsJustification="Start"
+                                                                                     ItemsStretch="Fill"
+                                                                                     MinItemWidth="75" />
+                                                        </winui:ItemsRepeater.Layout>
+                                                        <DataTemplate x:DataType="store:SubscriptionAddOn">
+                                                            <Button HorizontalAlignment="Stretch"
+                                                                    HorizontalContentAlignment="Center"
+                                                                    VerticalAlignment="Stretch"
+                                                                    VerticalContentAlignment="Stretch"
+                                                                    Background="Transparent"
+                                                                    CommandParameter="{x:Bind}"
+                                                                    Command="{Binding Source={StaticResource Locator}, Path=Shell.PurchaseSubscriptionCommand}"
+                                                                    Style="{StaticResource ButtonRevealStyle}"
+                                                                    Content="{x:Bind Price}" />
+                                                        </DataTemplate>
+                                                    </winui:ItemsRepeater>
+                                                </StackPanel>
+                                                <StackPanel Spacing="4"
+                                                            x:Name="paneSubscriber"
+                                                            x:Load="{x:Bind ViewModel.IsSubscriber, Mode=OneWay}">
+                                                    <Image Source="/Assets/Icons/Celebrate.png"
+                                                           HorizontalAlignment="Center"
+                                                           Width="48" Height="48"/>
+                                                    <TextBlock Text="Thank you for your support!"
+                                                               HorizontalAlignment="Center"
+                                                               FontSize="16"/>
+                                                    <Button Content="Manage Subscriptions"
+                                                            HorizontalAlignment="Stretch"
+                                                            Command="{x:Bind ViewModel.ManageSubscriptionsCommand}"
+                                                            Style="{StaticResource AccentButtonStyle}" />
+                                                </StackPanel>
+
+                                                <TextBlock Text="You could also:"
+                                                           FontWeight="SemiBold"
+                                                           Margin="0,8,0,0" />
+                                                <Button Content="Rate us on the Microsoft Store"
+                                                        HorizontalAlignment="Stretch"
+                                                        Command="{x:Bind ViewModel.RateCommand}" />
+                                                <Button Content="Submit an issue on Github"
+                                                        HorizontalAlignment="Stretch"
+                                                        Command="{x:Bind ViewModel.GithubIssueCommand}" />
+                                            </StackPanel>
+                                        </winui:TeachingTip.Content>
+                                    </winui:TeachingTip>
+                                </Button.Resources>
+                                <Image Width="18"
+                                       Height="18">
+                                    <Image.Source>
+                                        <BitmapImage DecodePixelHeight="18"
+                                                     DecodePixelWidth="18"
+                                                     DecodePixelType="Logical"
+                                                     UriSource="{x:Bind SupportIconUri}" />
+                                    </Image.Source>
+                                </Image>
+                                <i:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Click">
+                                        <core:ChangePropertyAction TargetObject="{x:Bind supportDeveloperTip}"
+                                                                   PropertyName="IsOpen">
+                                            <core:ChangePropertyAction.Value>
+                                                <x:Boolean>True</x:Boolean>
+                                            </core:ChangePropertyAction.Value>
+                                        </core:ChangePropertyAction>
+                                    </core:EventTriggerBehavior>
+                                </i:Interaction.Behaviors>
+                            </Button>
+                            <controls:IconButton Command="{StaticResource MoreCommand}"
+                                                 IsCompact="True">
+                                <controls:IconButton.Flyout>
+                                    <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                        <MenuFlyoutItem Text="New Window"
+                                                        CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                        Command="{StaticResource OpenPathInNewWindowCommand}" />
+                                        <MenuFlyoutSubItem Text="New Item">
+                                            <MenuFlyoutSubItem.Icon>
+                                                <FontIcon FontFamily="Segoe MDL2 Assets"
+                                                          Glyph="&#xE109;" />
+                                            </MenuFlyoutSubItem.Icon>
+                                            <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                            Command="{StaticResource NewFolderCommand}" />
+                                            <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                            Command="{StaticResource NewWorkspaceCommand}" />
+                                            <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                            Command="{StaticResource NewAppLinkCommand}" />
+                                        </MenuFlyoutSubItem>
+                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutSubItem Text="Layout">
+                                            <MenuFlyoutSubItem.Icon>
+                                                <FontIcon FontFamily="Segoe MDL2 Assets"
+                                                          Glyph="&#xED35;" />
+                                            </MenuFlyoutSubItem.Icon>
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource GridLayoutCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGridLayout, Mode=TwoWay}" />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource DetailsLayoutCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsDetailsLayout, Mode=TwoWay}" />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource TilesLayoutCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsTilesLayout, Mode=TwoWay}" />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource ListLayoutCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsListLayout, Mode=TwoWay}" />
+                                        </MenuFlyoutSubItem>
+                                        <MenuFlyoutSubItem Text="Show/Hide">
+                                            <MenuFlyoutSubItem.Icon>
+                                                <FontIcon FontFamily="Segoe MDL2 Assets"
+                                                          Glyph="&#xE890;" />
+                                            </MenuFlyoutSubItem.Icon>
+                                            <ToggleMenuFlyoutItem Text="Item Checkbox"
+                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowCheckbox, Mode=TwoWay}">
+                                                <ToggleMenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE73A;"
+                                                              FontFamily="Segoe MDL2 Assets" />
+                                                </ToggleMenuFlyoutItem.Icon>
+                                            </ToggleMenuFlyoutItem>
+                                            <ToggleMenuFlyoutItem Text="File Extension"
+                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=TwoWay}">
+                                                <ToggleMenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE97C;"
+                                                              FontFamily="Segoe MDL2 Assets" />
+                                                </ToggleMenuFlyoutItem.Icon>
+                                            </ToggleMenuFlyoutItem>
+                                            <MenuFlyoutSeparator />
+                                            <ToggleMenuFlyoutItem Text="Back button"
+                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowBack, Mode=TwoWay}">
+                                                <ToggleMenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE112;"
+                                                              FontFamily="Segoe MDL2 Assets" />
+                                                </ToggleMenuFlyoutItem.Icon>
+                                            </ToggleMenuFlyoutItem>
+                                            <ToggleMenuFlyoutItem Text="Forward button"
+                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowForward, Mode=TwoWay}">
+                                                <ToggleMenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE111;"
+                                                              FontFamily="Segoe MDL2 Assets" />
+                                                </ToggleMenuFlyoutItem.Icon>
+                                            </ToggleMenuFlyoutItem>
+                                            <ToggleMenuFlyoutItem Text="Up button"
+                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowUp, Mode=TwoWay}">
+                                                <ToggleMenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE110;"
+                                                              FontFamily="Segoe MDL2 Assets" />
+                                                </ToggleMenuFlyoutItem.Icon>
+                                            </ToggleMenuFlyoutItem>
+                                            <ToggleMenuFlyoutItem Text="Refresh button"
+                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowRefresh, Mode=TwoWay}">
+                                                <ToggleMenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE149;"
+                                                              FontFamily="Segoe MDL2 Assets" />
+                                                </ToggleMenuFlyoutItem.Icon>
+                                            </ToggleMenuFlyoutItem>
+                                            <ToggleMenuFlyoutItem Text="Dashboard button"
+                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowDashboard, Mode=TwoWay}">
+                                                <ToggleMenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE10F;"
+                                                              FontFamily="Segoe MDL2 Assets" />
+                                                </ToggleMenuFlyoutItem.Icon>
+                                            </ToggleMenuFlyoutItem>
+                                            <ToggleMenuFlyoutItem Text="New Item button"
+                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowNewItem, Mode=TwoWay}">
+                                                <ToggleMenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE109;"
+                                                              FontFamily="Segoe MDL2 Assets" />
+                                                </ToggleMenuFlyoutItem.Icon>
+                                            </ToggleMenuFlyoutItem>
+                                            <ToggleMenuFlyoutItem Text="Layout button"
+                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowLayout, Mode=TwoWay}">
+                                                <ToggleMenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xED35;"
+                                                              FontFamily="Segoe MDL2 Assets" />
+                                                </ToggleMenuFlyoutItem.Icon>
+                                            </ToggleMenuFlyoutItem>
+                                        </MenuFlyoutSubItem>
+                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                        Command="{StaticResource SettingsCommand}"/>
+                                    </MenuFlyout>
+                                </controls:IconButton.Flyout>
+                            </controls:IconButton>
+                        </StackPanel>
+
+                        <Grid Grid.Row="2"
+                              Grid.ColumnSpan="3"
+                              Margin="0,4,0,0"
+                              Visibility="{x:Bind converters:VisibilityConverter.IsToolbarVisible(ViewModel.Context.PathInfo.Type), Mode=OneWay}">
+                            <Grid.ChildrenTransitions>
+                                <TransitionCollection>
+                                    <RepositionThemeTransition />
+                                </TransitionCollection>
+                            </Grid.ChildrenTransitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                          VerticalScrollBarVisibility="Hidden"
+                                          VerticalScrollMode="Disabled">
+                                <StackPanel Orientation="Horizontal"
+                                            Spacing="4">
+                                    <StackPanel.Resources>
+                                        <SolidColorBrush x:Key="ButtonBackgroundDisabled"
+                                                         Color="Transparent" />
+                                    </StackPanel.Resources>
+                                    <controls:IconSplitButton CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                              Command="{StaticResource CopyCommand}"
+                                                              IsCompact="True">
+                                        <controls:IconSplitButton.Flyout>
+                                            <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                                Command="{StaticResource CutCommand}" />
+                                                <MenuFlyoutSeparator />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                                Command="{StaticResource CopyItemsPathCommand}" />
+                                            </MenuFlyout>
+                                        </controls:IconSplitButton.Flyout>
+                                    </controls:IconSplitButton>
+                                    <controls:IconButton CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                         Command="{StaticResource PasteCommand}" />
+                                    <AppBarSeparator />
+                                    <controls:IconButton CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                         Command="{StaticResource RenameCommand}" />
+                                    <controls:IconSplitButton CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                              Command="{StaticResource DeleteCommand}"
+                                                              IsCompact="True">
+                                        <controls:IconSplitButton.Flyout>
+                                            <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                                Command="{StaticResource DeletePermanentlyCommand}" />
+                                            </MenuFlyout>
+                                        </controls:IconSplitButton.Flyout>
+                                    </controls:IconSplitButton>
+                                    <AppBarSeparator />
+                                    <controls:IconSplitButton CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                              Command="{StaticResource OpenCommand}" >
+                                        <controls:IconSplitButton.Flyout>
+                                            <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                                Command="{StaticResource OpenWithCommand}" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                                Command="{StaticResource OpenItemsInNewWindowCommand}"
+                                                                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                                Command="{StaticResource OpenItemsInFileExplorerCommand}"
+                                                                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                                Command="{StaticResource OpenItemsInCommandPromptCommand}"
+                                                                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                                Command="{StaticResource OpenItemsInPowershellCommand}"
+                                                                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                                            </MenuFlyout>
+                                        </controls:IconSplitButton.Flyout>
+                                    </controls:IconSplitButton>
+                                    <controls:IconButton CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                         Command="{StaticResource ShareItemsCommand}"
+                                                         IsCompact="True" />
+                                    <controls:IconButton CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                         Command="{StaticResource ItemsPropertiesCommand}"
+                                                         IsCompact="True" />
+                                    <AppBarSeparator />
+                                    <controls:IconButton IconSource="{StaticResource ToolsIcon}"
+                                                         Content="Tools">
+                                        <controls:IconButton.Resources>
+                                            <converters:AppBarSeparatorVisibilityConverter x:Name="itemsTemplateSeparator">
+                                                <ngconv:Binding Value="{x:Bind mnuSetItemsWorkspaceTemplate.IsEnabled, Mode=OneWay}" />
+                                                <ngconv:Binding Value="{x:Bind mnuSetItemsFolderTemplate.IsEnabled, Mode=OneWay}" />
+                                            </converters:AppBarSeparatorVisibilityConverter>
+                                        </controls:IconButton.Resources>
+                                        <controls:IconButton.Flyout>
+                                            <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                                Command="{StaticResource AddItemsToWorkspaceCommand}" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                                Command="{StaticResource AddItemsToFavoritesCommand}"
+                                                                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                                Command="{StaticResource RemoveItemsFromFavoritesCommand}"
+                                                                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                                                <MenuFlyoutSeparator Visibility="{x:Bind itemsTemplateSeparator.Output, Mode=OneWay}" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                                Command="{StaticResource SetItemsWorkspaceTemplateCommand}"
+                                                                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"
+                                                                x:Name="mnuSetItemsWorkspaceTemplate" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                                Command="{StaticResource SetItemsFolderTemplateCommand}"
+                                                                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"
+                                                                x:Name="mnuSetItemsFolderTemplate" />
+                                                <MenuFlyoutSeparator />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
+                                                                Command="{StaticResource MoreToolsCommand}" />
+                                            </MenuFlyout>
+                                        </controls:IconButton.Flyout>
+                                    </controls:IconButton>
+                                </StackPanel>
+                            </ScrollViewer>
+                            <StackPanel Grid.Column="1"
+                                        Margin="8,0,0,0"
+                                        Orientation="Horizontal"
+                                        Spacing="4">
+                                <controls:IconButton Command="{StaticResource SortByCommand}"
+                                                     IsCompact="True">
+                                    <controls:IconButton.Flyout>
+                                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource SortByNameCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsSortByName, Mode=TwoWay}"
+                                                                       GroupName="SortBy"/>
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource SortByDateModifiedCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsSortByDateModified, Mode=TwoWay}"
+                                                                       GroupName="SortBy" />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource SortByDisplayTypeCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsSortByDisplayType, Mode=TwoWay}"
+                                                                       GroupName="SortBy" />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource SortBySizeCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsSortBySize, Mode=TwoWay}"
+                                                                       GroupName="SortBy" />
+                                            <MenuFlyoutSeparator />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource SortByAscendingCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsSortAscending, Mode=TwoWay}"
+                                                                       GroupName="SortDirection" />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource SortByDescendingCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsSortDescending, Mode=TwoWay}"
+                                                                       GroupName="SortDirection" />
+                                        </MenuFlyout>
+                                    </controls:IconButton.Flyout>
+                                </controls:IconButton>
+                                <controls:IconButton Command="{StaticResource GroupByCommand}"
+                                                     IsCompact="True">
+                                    <controls:IconButton.Flyout>
+                                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByNoneCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGroupByNone, Mode=TwoWay}"
+                                                                       IsEnabled="{x:Bind ViewModel.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
+                                                                       GroupName="GroupBy" />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByNameCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGroupByName, Mode=TwoWay}"
+                                                                       IsEnabled="{x:Bind ViewModel.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
+                                                                       GroupName="GroupBy" />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByDateModifiedCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGroupByDateModified, Mode=TwoWay}"
+                                                                       IsEnabled="{x:Bind ViewModel.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
+                                                                       GroupName="GroupBy" />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByDisplayTypeCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGroupByDisplayType, Mode=TwoWay}"
+                                                                       IsEnabled="{x:Bind ViewModel.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
+                                                                       GroupName="GroupBy" />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource GroupBySizeCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGroupBySize, Mode=TwoWay}"
+                                                                       IsEnabled="{x:Bind ViewModel.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
+                                                                       GroupName="GroupBy" />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByItemTypeCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGroupByItemType, Mode=TwoWay}"
+                                                                       IsEnabled="{x:Bind ViewModel.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
+                                                                       GroupName="GroupBy" />
+                                            <MenuFlyoutSeparator />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByAscendingCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGroupAscending, Mode=TwoWay}"
+                                                                       GroupName="GroupDirection" />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByDescendingCommand}"
+                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGroupDescending, Mode=TwoWay}"
+                                                                       GroupName="GroupDirection" />
+                                        </MenuFlyout>
+                                    </controls:IconButton.Flyout>
+                                </controls:IconButton>
+                                <controls:IconButton Command="{StaticResource SelectCommand}"
+                                                     IsCompact="True">
+                                    <controls:IconButton.Flyout>
+                                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                            <MenuFlyoutItem Command="{StaticResource SelectAllCommand}" />
+                                            <MenuFlyoutItem Command="{StaticResource SelectNoneCommand}" />
+                                            <MenuFlyoutItem Command="{StaticResource InvertSelectionCommand}" />
+                                        </MenuFlyout>
+                                    </controls:IconButton.Flyout>
+                                </controls:IconButton>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
+
+                <Frame x:Name="mainFrame"
+                       Navigated="MainFrame_Navigated"
+                       Grid.Row="1">
+                    <Frame.ContentTransitions>
+                        <TransitionCollection>
+                            <NavigationThemeTransition />
+                        </TransitionCollection>
+                    </Frame.ContentTransitions>
+                </Frame>
+
+            </Grid>
+            <i:Interaction.Behaviors>
+                <core:EventTriggerBehavior EventName="ItemInvoked">
+                    <core:InvokeCommandAction Command="{x:Bind ViewModel.ShellItemCommand}"
+                                              InputConverter="{StaticResource NavigationViewItemInvokedEventArgsConverter}" />
+                </core:EventTriggerBehavior>
+            </i:Interaction.Behaviors>
+        </winui:NavigationView>
+
+        <winui:TeachingTip x:Name="notifyGrantAccess"
+                          Title="GRANT ACCESS"
+                          Subtitle="File System"
+                          ShouldConstrainToRootBounds="True"
+                          PreferredPlacement="Top"
+                          IsLightDismissEnabled="False"
+                          IsOpen="False"
+                          Grid.Row="2"
+                          Target="{x:Bind statusBar}">
+            <winui:TeachingTip.IconSource>
+                <winui:FontIconSource Glyph="&#xE1F6;" />
+            </winui:TeachingTip.IconSource>
+            <winui:TeachingTip.HeroContent>
+                <Image Source="/Assets/Screens/grant access.png" />
+            </winui:TeachingTip.HeroContent>
+            <StackPanel Spacing="4">
+                <TextBlock Text="You need to grant the app permission to access your file system in settings. You'll need to restart the app once completed."
+                           TextWrapping="WrapWholeWords"
+                           VerticalAlignment="Center" />
+                <Button Style="{StaticResource AccentButtonStyle}"
+                        Content="Allow Access"
+                        HorizontalAlignment="Right"
+                        Click="AllowAccess_Click"/>
+            </StackPanel>
+        </winui:TeachingTip>
+
+        <Grid Grid.Row="2"
+              Background="{StaticResource SystemAccentBrush}"
+              ColumnSpacing="4"
+              x:Name="statusBar">
+            <Grid.Resources>
+                <DataTemplate x:Key="ItemStatsTemplate"
+                              x:DataType="models:ItemStats">
+                    <Grid ColumnSpacing="8"
+                          RowSpacing="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Image Width="24"
+                               Height="24">
+                            <Image.Source>
+                                <BitmapImage DecodePixelHeight="24"
+                                             DecodePixelWidth="24"
+                                             DecodePixelType="Logical"
+                                             UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.Drive)}" />
+                            </Image.Source>
+                        </Image>
+                        <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Drive', Drive, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                                   Grid.Column="1"
+                                   VerticalAlignment="Center" />
+
+                        <Image Width="24"
+                               Height="24"
+                               Grid.Row="1">
+                            <Image.Source>
+                                <BitmapImage DecodePixelHeight="24"
+                                             DecodePixelWidth="24"
+                                             DecodePixelType="Logical"
+                                             UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.Folder)}" />
+                            </Image.Source>
+                        </Image>
+                        <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Folder', Folder, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                                   Grid.Column="1"
+                                   Grid.Row="1"
+                                   VerticalAlignment="Center" />
+
+                        <Image Width="24"
+                               Height="24"
+                               Grid.Row="2">
+                            <Image.Source>
+                                <BitmapImage DecodePixelHeight="24"
+                                             DecodePixelWidth="24"
+                                             DecodePixelType="Logical"
+                                             UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.File)}" />
+                            </Image.Source>
+                        </Image>
+                        <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('File', File, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                                   Grid.Column="1"
+                                   Grid.Row="2"
+                                   VerticalAlignment="Center" />
+
+                        <Image Width="24"
+                               Height="24"
+                               Grid.Row="3">
+                            <Image.Source>
+                                <BitmapImage DecodePixelHeight="24"
+                                             DecodePixelWidth="24"
+                                             DecodePixelType="Logical"
+                                             UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.Workspace)}" />
+                            </Image.Source>
+                        </Image>
+                        <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Workspace', Workspace, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                                   Grid.Column="1"
+                                   Grid.Row="3"
+                                   VerticalAlignment="Center" />
+                        
+                        <Image Width="24"
+                               Height="24"
+                               Grid.Row="4">
+                            <Image.Source>
+                                <BitmapImage DecodePixelHeight="24"
+                                             DecodePixelWidth="24"
+                                             DecodePixelType="Logical"
+                                             UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.AppLink)}" />
+                            </Image.Source>
+                        </Image>
+                        <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('App link', AppLink, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                                   Grid.Column="1"
+                                   Grid.Row="4"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </DataTemplate>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Style="{StaticResource StatusBarButton}"
+                    x:Name="btnProblems">
+                <Grid>
+                    <TextBlock FontFamily="Segoe UI Emoji"
+                               Text="&#x2705;"
+                               FontSize="14"
+                               IsColorFontEnabled="True"
+                               x:Name="iconNoProblems"
+                               Visibility="{x:Bind Problems.Count, Mode=OneWay, Converter={StaticResource VisibleWhenZeroConverter}}" />
+                    <TextBlock FontFamily="Segoe UI Emoji"
+                               Text="&#x26A0;"
+                               FontSize="14"
+                               IsColorFontEnabled="True"
+                               x:Name="iconHasProblems"
+                               Visibility="{x:Bind Problems.Count, Mode=OneWay, Converter={StaticResource VisibleWhenMoreThanZeroConverter}}" />
+                </Grid>
+                <Button.Flyout>
+                    <Flyout Placement="TopEdgeAlignedLeft"
+                            x:Name="flyoutProblems">
+                        <Grid Padding="0,0,96,0"
+                              RowSpacing="4"
+                              MaxHeight="320"
+                              Width="320">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="PROBLEMS ENCOUNTERED"
+                                       FontWeight="SemiBold" />
+                            <ScrollViewer Grid.Row="1">
+                                <winui:ItemsRepeater ItemsSource="{x:Bind Problems, Mode=OneWay}">
+                                    <DataTemplate x:DataType="x:String">
+                                        <TextBlock Text="{x:Bind}"
+                                                   TextWrapping="WrapWholeWords" />
+                                    </DataTemplate>
+                                </winui:ItemsRepeater>
+                            </ScrollViewer>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="0,8,0,0"
+                                        Grid.Row="2"
+                                        Spacing="8">
+                                <Button Content="Clear"
+                                        Style="{StaticResource AccentButtonStyle}"
+                                        Click="ClearProblems_Click" />
+                                <HyperlinkButton Content="Github Issues"
+                                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                                 NavigateUri="https://github.com/MarkIvanDev/JumpPoint/issues" />
+                            </StackPanel>
+                        </Grid>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+            <Button Style="{StaticResource StatusBarButton}"
+                    Grid.Column="1">
+                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('item', ViewModel.Context.ItemStats.Total, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                           Foreground="White"/>
+                <Button.Flyout>
+                    <Flyout Placement="TopEdgeAlignedLeft">
+                        <StackPanel Spacing="4"
+                                    Padding="0,0,96,0"
+                                    MinWidth="160">
+                            <TextBlock Text="ALL ITEMS"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('item', ViewModel.Context.ItemStats.Total, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}" />
+                            <ContentControl Content="{x:Bind ViewModel.Context.ItemStats, Mode=OneWay}"
+                                            ContentTemplate="{StaticResource ItemStatsTemplate}"
+                                            Margin="0,8,0,0" />
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+
+            <Button Style="{StaticResource StatusBarButton}"
+                    Grid.Column="2">
+                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('selected item', ViewModel.Context.SelectedItems.Count, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                           Foreground="White"/>
+                <Button.Flyout>
+                    <Flyout Placement="TopEdgeAlignedLeft">
+                        <StackPanel Spacing="4"
+                                    Padding="0,0,96,0"
+                                    MinWidth="160">
+                            <TextBlock Text="SELECTED ITEMS"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('item', ViewModel.Context.SelectedItems.Count, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}" />
+                            <ContentControl Content="{x:Bind ViewModel.Context.SelectedItemStats, Mode=OneWay}"
+                                            ContentTemplate="{StaticResource ItemStatsTemplate}"
+                                            Margin="0,8,0,0" />
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+        </Grid>
+    </Grid>
+        
+</nguwp:NGPage>

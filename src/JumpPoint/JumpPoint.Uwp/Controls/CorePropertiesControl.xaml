@@ -1,0 +1,260 @@
+﻿<UserControl
+    x:Class="JumpPoint.Uwp.Controls.CorePropertiesControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JumpPoint.Uwp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="using:System"
+             xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+             mc:Ignorable="d"
+    d:DesignHeight="1200"
+    d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="TextWrapping"
+                    Value="WrapWholeWords" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid ColumnSpacing="8"
+          RowSpacing="4"
+          Padding="0,8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Text="Title:" />
+        <TextBlock Text="{x:Bind Core.Title, Mode=OneWay}"
+                   Grid.Column="1" />
+
+        <TextBlock Text="Subject:"
+                   Grid.Row="1" />
+        <TextBlock Text="{x:Bind Core.Subject, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="1" />
+
+        <TextBlock Text="Description:"
+                   Grid.Row="2" />
+        <TextBlock Text="{x:Bind Core.Description, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="2" />
+
+        <TextBlock Text="Authors:"
+                   Grid.Row="3" />
+        <TextBlock Text="{x:Bind sys:String.Join(';', Core.Authors), Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="3" />
+
+        <TextBlock Text="Company:"
+                   Grid.Row="4" />
+        <TextBlock Text="{x:Bind Core.Company, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="4" />
+
+        <TextBlock Text="Copyright:"
+                   Grid.Row="5" />
+        <TextBlock Text="{x:Bind Core.Copyright, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="5" />
+
+        <TextBlock Text="Language:"
+                   Grid.Row="6" />
+        <TextBlock Text="{x:Bind Core.Language, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="6" />
+
+        <TextBlock Text="Content Type:"
+                   Grid.Row="7" />
+        <TextBlock Text="{x:Bind Core.ContentType, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="7" />
+
+        <TextBlock Text="MIME Type:"
+                   Grid.Row="8" />
+        <TextBlock Text="{x:Bind Core.MIMEType, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="8" />
+
+        <MenuFlyoutSeparator Grid.Row="9"
+                             Grid.ColumnSpan="2" />
+
+        <TextBlock Text="Date Acquired:"
+                   Grid.Row="10" />
+        <TextBlock Text="{x:Bind Core.DateAcquired, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="10" />
+
+        <TextBlock Text="Date Archived:"
+                   Grid.Row="11" />
+        <TextBlock Text="{x:Bind Core.DateArchived, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="11" />
+
+        <TextBlock Text="Date Completed:"
+                   Grid.Row="12" />
+        <TextBlock Text="{x:Bind Core.DateCompleted, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="12" />
+
+        <TextBlock Text="Date Imported:"
+                   Grid.Row="13" />
+        <TextBlock Text="{x:Bind Core.DateImported, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="13" />
+
+        <MenuFlyoutSeparator Grid.Row="14"
+                             Grid.ColumnSpan="2" />
+
+        <TextBlock Text="File Reference Number:"
+                   Grid.Row="15" />
+        <TextBlock Text="{x:Bind Core.FileReferenceNumber, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="15" />
+
+        <TextBlock Text="File Version:"
+                   Grid.Row="16" />
+        <TextBlock Text="{x:Bind Core.FileVersion, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="16" />
+
+        <TextBlock Text="Owner:"
+                   Grid.Row="17" />
+        <TextBlock Text="{x:Bind Core.Owner, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="17" />
+
+        <TextBlock Text="Owner SID:"
+                   Grid.Row="18" />
+        <TextBlock Text="{x:Bind Core.OwnerSID, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="18" />
+
+        <TextBlock Text="Computer Name:"
+                   Grid.Row="19" />
+        <TextBlock Text="{x:Bind Core.ComputerName, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="19" />
+
+        <TextBlock Text="Shared with:"
+                   Grid.Row="20" />
+        <TextBlock Text="{x:Bind sys:String.Join('; ', Core.SharedWith), Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="20" />
+
+        <TextBlock Text="Sharing Status:"
+                   Grid.Row="21" />
+        <TextBlock Text="{x:Bind Core.SharingStatus, Converter={StaticResource HumanizerConverter}, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="21" />
+
+        <MenuFlyoutSeparator Grid.Row="22"
+                             Grid.ColumnSpan="2" />
+
+        <TextBlock Text="Application:"
+                   Grid.Row="23" />
+        <TextBlock Text="{x:Bind Core.Application, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="23" />
+
+        <TextBlock Text="Rating:"
+                   Grid.Row="24" />
+        <winui:RatingControl Value="{x:Bind Core.Rating, Converter={StaticResource NegativeOneWhenNullConverter}, Mode=OneWay}"
+                             IsReadOnly="True"
+                             IsClearEnabled="True"
+                             HorizontalAlignment="Left"
+                             Grid.Column="1"
+                             Grid.Row="24" />
+
+        <TextBlock Text="Status:"
+                   Grid.Row="25" />
+        <TextBlock Text="{x:Bind Core.Status, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="25" />
+
+        <TextBlock Text="Flag Color:"
+                   Grid.Row="26" />
+        <TextBlock Text="{x:Bind Core.FlagColor, Converter={StaticResource HumanizerConverter}, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="26" />
+
+        <TextBlock Text="Flag Status:"
+                   Grid.Row="27" />
+        <TextBlock Text="{x:Bind Core.FlagStatus, Converter={StaticResource HumanizerConverter}, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="27" />
+
+        <TextBlock Text="Importance:"
+                   Grid.Row="28" />
+        <TextBlock Text="{x:Bind Core.Importance, Converter={StaticResource HumanizerConverter}, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="28" />
+
+        <TextBlock Text="Priority:"
+                   Grid.Row="29" />
+        <TextBlock Text="{x:Bind Core.Priority, Converter={StaticResource HumanizerConverter}, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="29" />
+
+        <TextBlock Text="Sensitivity:"
+                   Grid.Row="30" />
+        <TextBlock Text="{x:Bind Core.Sensitivity, Converter={StaticResource HumanizerConverter}, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="30" />
+
+        <TextBlock Text="Comments:"
+                   Grid.Row="31" />
+        <TextBlock Text="{x:Bind Core.Comments, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="31" />
+
+        <TextBlock Text="Keywords:"
+                   Grid.Row="32" />
+        <TextBlock Text="{x:Bind sys:String.Join('; ', Core.Keywords), Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="32" />
+
+        <TextBlock Text="Trademarks:"
+                   Grid.Row="33" />
+        <TextBlock Text="{x:Bind Core.Trademarks, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="33" />
+    </Grid>
+</UserControl>

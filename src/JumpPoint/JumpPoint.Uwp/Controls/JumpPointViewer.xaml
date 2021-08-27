@@ -1,0 +1,2103 @@
+﻿<UserControl
+    x:Class="JumpPoint.Uwp.Controls.JumpPointViewer"
+    x:Name="jumpPointViewer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JumpPoint.Uwp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:conv="using:JumpPoint.Uwp.Converters"
+    xmlns:helpers="using:JumpPoint.Uwp.Helpers"
+    xmlns:items="using:JumpPoint.Platform.Items"
+    xmlns:services="using:JumpPoint.Platform.Services"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+    xmlns:ngconv="using:NittyGritty.UI.Converters"
+    xmlns:tkbehaviors="using:Microsoft.Toolkit.Uwp.UI.Behaviors"
+    xmlns:ngbehaviors="using:NittyGritty.UI.Interactivity.Behaviors"
+    xmlns:platform="using:JumpPoint.Platform"
+    xmlns:actions="using:JumpPoint.Uwp.Interactivity.Actions"
+    xmlns:behaviors="using:JumpPoint.Uwp.Interactivity.Behaviors"
+    xmlns:gtext="using:Glif.Core.Text"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <CollectionViewSource x:Key="ItemsViewSource" x:Name="ItemsViewSource"/>
+        <conv:NothingToShowConverter x:Name="NothingToShowConverter">
+            <ngconv:Binding Value="{x:Bind IsLoading, Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind ItemsSource.Count, Mode=OneWay}" />
+        </conv:NothingToShowConverter>
+
+        <conv:AppBarSeparatorVisibilityConverter x:Name="OpenGroupSeparatorConverter">
+            <ngconv:Binding Value="{x:Bind appOpenWith.IsEnabled, Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind appOpenInNewTab.IsEnabled, Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind appOpenInNewWindow.IsEnabled, Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind appOpenInFileExplorer.IsEnabled, Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind appOpenInCommandPrompt.IsEnabled, Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind appOpenInPowershell.IsEnabled, Mode=OneWay}" />
+        </conv:AppBarSeparatorVisibilityConverter>
+        <conv:AppBarSeparatorVisibilityConverter x:Name="ToolsGroupSeparatorConverter">
+            <ngconv:Binding Value="{x:Bind appAddToWorkspace.IsEnabled, Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind appAddToFavorites.IsEnabled, Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind appRemoveFromFavorites.IsEnabled, Mode=OneWay}" />
+        </conv:AppBarSeparatorVisibilityConverter>
+        <conv:AppBarSeparatorVisibilityConverter x:Name="TemplateGroupSeparatorConverter">
+            <ngconv:Binding Value="{x:Bind appSetWorkspaceTemplate.IsEnabled, Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind appSetFolderTemplate.IsEnabled, Mode=OneWay}" />
+        </conv:AppBarSeparatorVisibilityConverter>
+        
+        <winui:CommandBarFlyout x:Key="ItemContextFlyout" Placement="BottomEdgeAlignedLeft">
+            <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                          Command="{StaticResource OpenCommand}" x:Name="appOpen"
+                          Visibility="{x:Bind appOpen.IsEnabled, Mode=OneWay}"/>
+            <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                          Command="{StaticResource CopyCommand}" x:Name="appCopy"
+                          Visibility="{x:Bind appCopy.IsEnabled, Mode=OneWay}"/>
+            <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                          Command="{StaticResource CutCommand}" x:Name="appCut"
+                          Visibility="{x:Bind appCut.IsEnabled, Mode=OneWay}"/>
+            <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                          Command="{StaticResource DeleteCommand}" x:Name="appDelete"
+                          Visibility="{x:Bind appDelete.IsEnabled, Mode=OneWay}"/>
+            <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                          Command="{StaticResource RenameCommand}" x:Name="appRename"
+                          Visibility="{x:Bind appRename.IsEnabled, Mode=OneWay}"/>
+            <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                          Command="{StaticResource ItemsPropertiesCommand}" x:Name="appProperties"
+                          Visibility="{x:Bind appProperties.IsEnabled, Mode=OneWay}"/>
+            <winui:CommandBarFlyout.SecondaryCommands>
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource OpenWithCommand}" x:Name="appOpenWith"
+                              Visibility="{x:Bind appOpenWith.IsEnabled, Mode=OneWay}"/>
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource OpenItemsInNewTabCommand}" x:Name="appOpenInNewTab"
+                              Visibility="{x:Bind appOpenInNewTab.IsEnabled, Mode=OneWay}" />
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource OpenItemsInNewWindowCommand}" x:Name="appOpenInNewWindow"
+                              Visibility="{x:Bind appOpenInNewWindow.IsEnabled, Mode=OneWay}"/>
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource OpenItemsInFileExplorerCommand}" x:Name="appOpenInFileExplorer"
+                              Visibility="{x:Bind appOpenInFileExplorer.IsEnabled, Mode=OneWay}"/>
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource OpenItemsInCommandPromptCommand}" x:Name="appOpenInCommandPrompt"
+                              Visibility="{x:Bind appOpenInCommandPrompt.IsEnabled, Mode=OneWay}"/>
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource OpenItemsInPowershellCommand}" x:Name="appOpenInPowershell"
+                              Visibility="{x:Bind appOpenInPowershell.IsEnabled, Mode=OneWay}"/>
+                <AppBarSeparator Visibility="{x:Bind OpenGroupSeparatorConverter.Output, Mode=OneWay}" />
+
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource AddItemsToWorkspaceCommand}" x:Name="appAddToWorkspace"
+                              Visibility="{x:Bind appAddToWorkspace.IsEnabled, Mode=OneWay}"/>
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource AddItemsToFavoritesCommand}" x:Name="appAddToFavorites"
+                              Visibility="{x:Bind appAddToFavorites.IsEnabled, Mode=OneWay}"/>
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource RemoveItemsFromFavoritesCommand}" x:Name="appRemoveFromFavorites"
+                              Visibility="{x:Bind appRemoveFromFavorites.IsEnabled, Mode=OneWay}"/>
+                <AppBarSeparator Visibility="{x:Bind ToolsGroupSeparatorConverter.Output, Mode=OneWay}" />
+
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource SetItemsWorkspaceTemplateCommand}" x:Name="appSetWorkspaceTemplate"
+                              Visibility="{x:Bind appSetWorkspaceTemplate.IsEnabled, Mode=OneWay}" />
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource SetItemsWorkspaceTemplateCommand}" x:Name="appSetFolderTemplate"
+                              Visibility="{x:Bind appSetFolderTemplate.IsEnabled, Mode=OneWay}" />
+                <AppBarSeparator Visibility="{x:Bind TemplateGroupSeparatorConverter.Output, Mode=OneWay}" />
+
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource CopyItemsPathCommand}" x:Name="appCopyPath"
+                              Visibility="{x:Bind appCopyPath.IsEnabled, Mode=OneWay}"/>
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource ShareItemsCommand}" x:Name="appShare"
+                              Visibility="{x:Bind appShare.IsEnabled, Mode=OneWay}"/>
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource MoreToolsCommand}" />
+            </winui:CommandBarFlyout.SecondaryCommands>
+        </winui:CommandBarFlyout>
+
+        <Style x:Key="AllLayoutItemStyle"
+           TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="Margin" Value="0,2,4,2" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="ContextFlyout" Value="{StaticResource ItemContextFlyout}" />
+        </Style>
+        
+        <!--#region Details View -->
+        <Style x:Key="DetailsLayoutItemStyle"
+               TargetType="ListViewItem" BasedOn="{StaticResource AllLayoutItemStyle}">
+            <Setter Property="Padding" Value="12,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
+                        x:Name="Root"
+                        Control.IsTemplateFocusTarget="True"
+                        FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                        SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
+                        CheckBrush="{ThemeResource ListViewItemCheckBrush}"
+                        CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
+                        DragBackground="{ThemeResource ListViewItemDragBackground}"
+                        DragForeground="{ThemeResource ListViewItemDragForeground}"
+                        FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
+                        FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
+                        PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
+                        PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                        PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
+                        SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
+                        SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
+                        SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
+                        PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                        SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
+                        DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                        DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                        ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        ContentMargin="{TemplateBinding Padding}"
+                        CheckMode="Inline"
+                        RevealBackground="{ThemeResource ListViewItemRevealBackground}"
+                        RevealBorderThickness="{ThemeResource ListViewItemRevealBorderThemeThickness}"
+                        RevealBorderBrush="{ThemeResource ListViewItemRevealBorderBrush}">
+
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="Selected" />
+
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)" Value="PointerOver" />
+                                            <Setter Target="Root.RevealBorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPointerOver}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState x:Name="PointerOverSelected">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)" Value="PointerOver" />
+                                            <Setter Target="Root.RevealBorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPointerOver}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOverPressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)" Value="Pressed" />
+                                            <Setter Target="Root.RevealBorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)" Value="Pressed" />
+                                            <Setter Target="Root.RevealBorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState x:Name="PressedSelected">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)" Value="Pressed" />
+                                            <Setter Target="Root.RevealBorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                </VisualStateGroup>
+
+                                <VisualStateGroup x:Name="DisabledStates">
+                                    <VisualState x:Name="Enabled" />
+
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.RevealBorderThickness" Value="0" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                </VisualStateGroup>
+
+                            </VisualStateManager.VisualStateGroups>
+                        </ListViewItemPresenter>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <DataTemplate x:Key="FolderDetailsTemplate" x:DataType="items:FolderBase">
+            <Grid Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28" />
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                    <ColumnDefinition Width="0.35*" MinWidth="150" />
+                    <ColumnDefinition Width="0.25*" MinWidth="100" />
+                    <ColumnDefinition Width="0.25*" MinWidth="100" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Icon -->
+                <Image VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Width="20"
+                       Height="20"
+                       Loaded="OnIconLoaded">
+                    <Image.Source>
+                        <BitmapImage DecodePixelHeight="24"
+                                     DecodePixelWidth="24"
+                                     DecodePixelType="Logical"
+                                     UriSource="{x:Bind conv:IconConverter.GetFolderIconUri(FolderTemplate), Mode=OneWay}"/>
+                    </Image.Source>
+                </Image>
+
+                <!-- Name -->
+                <HyperlinkButton VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Stretch"
+                                 Margin="8,0"
+                                 Grid.Column="1"
+                                 Padding="0"
+                                 Click="OnItemOpened"
+                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                    <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap"
+                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                </HyperlinkButton>
+
+                <!-- Date -->
+                <TextBlock Text="{x:Bind DateModified, Converter={StaticResource NullableDateTimeOffsetToLocalConverter}, ConverterParameter='N/A', Mode=OneWay}"
+                           Margin="8,0"
+                           Grid.Column="2" VerticalAlignment="Center"
+                           TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+
+                <!-- Type -->
+                <TextBlock Text="{x:Bind DisplayType, Mode=OneWay}" Margin="8,0"
+                           Grid.Column="3" VerticalAlignment="Center"
+                           TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+
+                <!-- Size -->
+                <TextBlock Text="{x:Bind Size, Converter={StaticResource ByteSizeConverter}, Mode=OneWay}"
+                           Grid.Column="4" VerticalAlignment="Center"
+                           HorizontalAlignment="Right" Margin="8,0"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FileDetailsTemplate" x:DataType="items:FileBase">
+            <Grid Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28" />
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                    <ColumnDefinition Width="0.35*" MinWidth="150" />
+                    <ColumnDefinition Width="0.25*" MinWidth="100" />
+                    <ColumnDefinition Width="0.25*" MinWidth="100" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Icon -->
+                <Image Source="{x:Bind conv:FileThumbnailConverter.Convert(FileType, Thumbnail, 24, 0), Mode=OneWay}"
+                       x:Phase="1"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Width="20"
+                       Height="20"
+                       Loaded="OnIconLoaded" />
+
+                <!-- Name -->
+                <HyperlinkButton VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Stretch"
+                                 Margin="8,0"
+                                 Grid.Column="1"
+                                 Padding="0"
+                                 Click="OnItemOpened"
+                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                    <Grid>
+                        <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
+                                   Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=OneWay}"
+                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="Wrap"
+                                   Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"
+                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                    </Grid>
+                </HyperlinkButton>
+
+                <!-- Date -->
+                <TextBlock Text="{x:Bind DateModified, Converter={StaticResource NullableDateTimeOffsetToLocalConverter}, ConverterParameter='N/A', Mode=OneWay}"
+                           Margin="8,0"
+                           Grid.Column="2" VerticalAlignment="Center"
+                           TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+
+                <!-- Type -->
+                <TextBlock Text="{x:Bind DisplayType, Mode=OneWay}" Margin="8,0"
+                           Grid.Column="3" VerticalAlignment="Center"
+                           TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+
+                <!-- Size -->
+                <TextBlock Text="{x:Bind Size, Converter={StaticResource ByteSizeConverter}, Mode=OneWay}"
+                           Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="8,0"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DriveDetailsTemplate" x:DataType="items:DriveBase">
+            <Grid Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28" />
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                    <ColumnDefinition Width="0.35*" MinWidth="150" />
+                    <ColumnDefinition Width="0.25*" MinWidth="100" />
+                    <ColumnDefinition Width="0.25*" MinWidth="100" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Icon -->
+                <Image VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Width="20"
+                       Height="20"
+                       Loaded="OnIconLoaded">
+                    <Image.Source>
+                        <BitmapImage DecodePixelHeight="24"
+                                     DecodePixelWidth="24"
+                                     DecodePixelType="Logical"
+                                     UriSource="{x:Bind conv:IconConverter.GetDriveIconUri(DriveTemplate), Mode=OneWay}" />
+                    </Image.Source>
+                </Image>
+
+                <!-- Name -->
+                <HyperlinkButton VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Stretch"
+                                 Margin="8,0"
+                                 Grid.Column="1"
+                                 Padding="0"
+                                 Click="OnItemOpened"
+                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                    <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="Wrap"
+                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                </HyperlinkButton>
+
+                <!-- Type -->
+                <TextBlock Text="{x:Bind DisplayType, Mode=OneWay}" Margin="8,0"
+                           Grid.Column="3" VerticalAlignment="Center"
+                           TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+
+                <!-- Space -->
+                <TextBlock Grid.Column="4"
+                           VerticalAlignment="Center"
+                           Margin="8,0"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                           Visibility="{x:Bind Capacity, Converter={StaticResource CollapsedWhenNullConverter}, Mode=OneWay}">
+                    <Run Text="{x:Bind FreeSpace, Converter={StaticResource ByteSizeConverter}, Mode=OneWay}" />
+                    <Run Text="free of" />
+                    <Run Text="{x:Bind Capacity, Converter={StaticResource ByteSizeConverter}, Mode=OneWay}" />
+                </TextBlock>
+
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="WorkspaceDetailsTemplate" x:DataType="items:Workspace">
+            <Grid Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28" />
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                    <ColumnDefinition Width="0.35*" MinWidth="150" />
+                    <ColumnDefinition Width="0.25*" MinWidth="100" />
+                    <ColumnDefinition Width="0.25*" MinWidth="100" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Icon -->
+                <Viewbox VerticalAlignment="Center"
+                         HorizontalAlignment="Center"
+                         Width="20"
+                         Height="20"
+                         Loaded="OnIconLoaded">
+                    <TextBlock FontFamily="Segoe UI Emoji"
+                               IsColorFontEnabled="True"
+                               Text="{x:Bind conv:IconConverter.GetWorkspaceGlyph(Template), Mode=OneWay}" />
+                </Viewbox>
+
+                <!-- Name -->
+                <HyperlinkButton VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Stretch"
+                                 Margin="8,0"
+                                 Grid.Column="1"
+                                 Padding="0"
+                                 Click="OnItemOpened"
+                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                    <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap"
+                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                </HyperlinkButton>
+
+                <!-- Date -->
+                <TextBlock Text="{x:Bind DateCreated, Converter={StaticResource NullableDateTimeOffsetToLocalConverter}, ConverterParameter='N/A', Mode=OneWay}"
+                           Margin="8,0"
+                           Grid.Column="2"
+                           VerticalAlignment="Center"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+
+                <!-- Type -->
+                <TextBlock Text="{x:Bind DisplayType, Mode=OneWay}" Margin="8,0"
+                           Grid.Column="3" VerticalAlignment="Center"
+                           TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="LibraryDetailsTemplate" x:DataType="items:Library">
+            <Grid Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28" />
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                    <ColumnDefinition Width="0.35*" MinWidth="150" />
+                    <ColumnDefinition Width="0.25*" MinWidth="100" />
+                    <ColumnDefinition Width="0.25*" MinWidth="100" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Icon -->
+                <Viewbox VerticalAlignment="Center"
+                         HorizontalAlignment="Center"
+                         Width="20"
+                         Height="20"
+                         Loaded="OnIconLoaded">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8F1;"
+                              FontSize="20"/>
+                </Viewbox>
+
+                <!-- Name -->
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="8,0"
+                      Grid.Column="1">
+                    <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
+                               Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=OneWay}"/>
+                    <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis" TextWrapping="Wrap"
+                               Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"/>
+                </Grid>
+
+                <!-- Type -->
+                <TextBlock Text="{x:Bind DisplayType, Mode=OneWay}" Margin="8,0"
+                           Grid.Column="3" VerticalAlignment="Center"
+                           TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="AppLinkDetailsTemplate" x:DataType="items:AppLink">
+            <Grid Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28" />
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                    <ColumnDefinition Width="0.35*" MinWidth="150" />
+                    <ColumnDefinition Width="0.25*" MinWidth="100" />
+                    <ColumnDefinition Width="0.25*" MinWidth="100" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Icon -->
+                <Border Width="20"
+                        Height="20"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        x:Phase="1"
+                        Background="{x:Bind Background, Converter={StaticResource DrawingColorBrushConverter}, Mode=OneWay}"
+                        Loaded="OnIconLoaded">
+                    <Image Source="{x:Bind Logo, Converter={StaticResource AppLinkDetailsLogoConverter}, Mode=OneWay}"
+                           Width="20"
+                           Height="20"/>
+                </Border>
+
+                <!-- Name -->
+                <HyperlinkButton VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Stretch"
+                                 Margin="8,0"
+                                 Grid.Column="1"
+                                 Padding="0"
+                                 Click="OnItemOpened"
+                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                    <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap"
+                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                </HyperlinkButton>
+
+                <!-- DisplayType -->
+                <TextBlock Text="{x:Bind DisplayType, Mode=OneWay}"
+                           Margin="8,0"
+                           Grid.Column="3"
+                           VerticalAlignment="Center"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+            </Grid>
+        </DataTemplate>
+        
+        <helpers:JumpPointItemTemplateSelector x:Key="DetailsTemplateSelector"
+                                               FolderTemplate="{StaticResource FolderDetailsTemplate}"
+                                               FileTemplate="{StaticResource FileDetailsTemplate}"
+                                               DriveTemplate="{StaticResource DriveDetailsTemplate}"
+                                               WorkspaceTemplate="{StaticResource WorkspaceDetailsTemplate}"
+                                               LibraryTemplate="{StaticResource LibraryDetailsTemplate}"
+                                               AppLinkTemplate="{StaticResource AppLinkDetailsTemplate}"/>
+        <!--#endregion -->
+
+        <!--#region Grid View -->
+        <Style x:Key="GridLayoutItemStyle"
+               TargetType="ListViewItem" BasedOn="{StaticResource AllLayoutItemStyle}">
+            <!--<Setter Property="VerticalContentAlignment" Value="Top" />-->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
+                        x:Name="Root"
+                        Control.IsTemplateFocusTarget="True"
+                        FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                        SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
+                        CheckBrush="{ThemeResource ListViewItemCheckBrush}"
+                        CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
+                        DragBackground="{ThemeResource ListViewItemDragBackground}"
+                        DragForeground="{ThemeResource ListViewItemDragForeground}"
+                        FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
+                        FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
+                        PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
+                        PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                        PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
+                        SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
+                        SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
+                        SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
+                        PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                        SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
+                        DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                        DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                        ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        ContentMargin="{TemplateBinding Padding}"
+                        CheckMode="Overlay"
+                        RevealBackground="{ThemeResource ListViewItemRevealBackground}"
+                        RevealBorderThickness="{ThemeResource ListViewItemRevealBorderThemeThickness}"
+                        RevealBorderBrush="{ThemeResource ListViewItemRevealBorderBrush}">
+
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="Selected" />
+
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)" Value="PointerOver" />
+                                            <Setter Target="Root.RevealBorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPointerOver}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState x:Name="PointerOverSelected">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)" Value="PointerOver" />
+                                            <Setter Target="Root.RevealBorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPointerOver}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOverPressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)" Value="Pressed" />
+                                            <Setter Target="Root.RevealBorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)" Value="Pressed" />
+                                            <Setter Target="Root.RevealBorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState x:Name="PressedSelected">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)" Value="Pressed" />
+                                            <Setter Target="Root.RevealBorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                </VisualStateGroup>
+
+                                <VisualStateGroup x:Name="DisabledStates">
+                                    <VisualState x:Name="Enabled" />
+
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.RevealBorderThickness" Value="0" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                </VisualStateGroup>
+
+                            </VisualStateManager.VisualStateGroups>
+                        </ListViewItemPresenter>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <DataTemplate x:Key="FolderGridTemplate" x:DataType="items:FolderBase">
+            <Grid Width="120" Background="Transparent">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Image HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Width="48"
+                       Height="48"
+                       Loaded="OnIconLoaded">
+                    <Image.Source>
+                        <BitmapImage DecodePixelHeight="58"
+                                     DecodePixelWidth="58"
+                                     DecodePixelType="Logical"
+                                     UriSource="{x:Bind conv:IconConverter.GetFolderIconUri(FolderTemplate), Mode=OneWay}" />
+                    </Image.Source>
+                </Image>
+
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="8,0,8,8" Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <HyperlinkButton HorizontalAlignment="Center"
+                                     HorizontalContentAlignment="Stretch"
+                                     Padding="0"
+                                     Click="OnItemOpened"
+                                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                        <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                                   FontSize="14"
+                                   HorizontalTextAlignment="Center"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="Wrap"
+                                   MaxLines="2"
+                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                    </HyperlinkButton>
+                    <TextBlock Grid.Row="1" FontSize="12" HorizontalTextAlignment="Center"
+                               Text="{x:Bind DisplayType, Mode=OneWay}" TextTrimming="CharacterEllipsis"
+                               Visibility="{x:Bind FolderTemplate, Converter={StaticResource CollapsedWhenGeneralFolderConverter}, Mode=OneWay}"
+                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                    <TextBlock Text="" FontSize="14" Grid.Row="2" />
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FileGridTemplate" x:DataType="items:FileBase">
+            <Grid Width="120" Background="Transparent">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Image Source="{x:Bind conv:FileThumbnailConverter.Convert(FileType, Thumbnail, 58, 0), Mode=OneWay}"
+                       x:Phase="1"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Width="48"
+                       Height="48"
+                       Loaded="OnIconLoaded" />
+
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="8,0,8,8" Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <HyperlinkButton HorizontalAlignment="Center"
+                                     HorizontalContentAlignment="Stretch"
+                                     Padding="0"
+                                     Click="OnItemOpened"
+                                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                        <Grid>
+                            <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                                       FontSize="14"
+                                       HorizontalTextAlignment="Center"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="Wrap"
+                                       MaxLines="2"
+                                       Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=OneWay}"
+                                       FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                       FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                            <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                                       FontSize="14"
+                                       HorizontalTextAlignment="Center"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="Wrap"
+                                       MaxLines="2"
+                                       Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"
+                                       FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                       FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                        </Grid>
+                    </HyperlinkButton>
+                    <TextBlock Text="" FontSize="14" Grid.Row="1" />
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DriveGridTemplate" x:DataType="items:DriveBase">
+            <Grid Width="120" Background="Transparent">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Image HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Width="48"
+                       Height="48"
+                       Loaded="OnIconLoaded">
+                    <Image.Source>
+                        <BitmapImage DecodePixelHeight="58"
+                                     DecodePixelWidth="58"
+                                     DecodePixelType="Logical"
+                                     UriSource="{x:Bind conv:IconConverter.GetDriveIconUri(DriveTemplate), Mode=OneWay}" />
+                    </Image.Source>
+                </Image>
+
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="8,0,8,8" Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <HyperlinkButton HorizontalAlignment="Center"
+                                     HorizontalContentAlignment="Stretch"
+                                     Padding="0"
+                                     Click="OnItemOpened"
+                                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                        <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                                   FontSize="14"
+                                   HorizontalTextAlignment="Center"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="Wrap"
+                                   MaxLines="2"
+                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                    </HyperlinkButton>
+                    <ProgressBar Grid.Row="1"
+                                 VerticalAlignment="Stretch"
+                                 Height="12"
+                                 Margin="0,2"
+                                 Maximum="{x:Bind Capacity, Converter={StaticResource NullableUlongToDoubleConverter}, Mode=OneWay}"
+                                 Minimum="0"
+                                 Value="{x:Bind UsedSpace, Converter={StaticResource NullableUlongToDoubleConverter}, Mode=OneWay}" />
+                    <TextBlock Text="" FontSize="14" Grid.Row="2" />
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="WorkspaceGridTemplate" x:DataType="items:Workspace">
+            <Grid Width="120" Background="Transparent">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Viewbox HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         Width="48"
+                         Height="48"
+                         Loaded="OnIconLoaded">
+                    <TextBlock FontFamily="Segoe UI Emoji"
+                               IsColorFontEnabled="True"
+                               Text="{x:Bind conv:IconConverter.GetWorkspaceGlyph(Template), Mode=OneWay}" />
+                </Viewbox>
+
+                <HyperlinkButton HorizontalAlignment="Center"
+                                 VerticalAlignment="Top"
+                                 HorizontalContentAlignment="Stretch"
+                                 Margin="8,0,8,8"
+                                 Grid.Row="1"
+                                 Padding="0"
+                                 Click="OnItemOpened"
+                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                    <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                               FontSize="14"
+                               HorizontalTextAlignment="Center"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="Wrap"
+                               MaxLines="2"
+                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                </HyperlinkButton>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="LibraryGridTemplate" x:DataType="items:Library">
+            <Grid Width="120" Background="Transparent">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Viewbox HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         Width="48"
+                         Height="48"
+                         Loaded="OnIconLoaded">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8F1;" />
+                </Viewbox>
+
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="8,0,8,8" Grid.Row="1">
+                    <TextBlock Text="{x:Bind Name}" FontSize="14" HorizontalTextAlignment="Center"
+                               TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxLines="2"
+                               Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=OneWay}"/>
+                    <TextBlock Text="{x:Bind DisplayName}" FontSize="14" HorizontalTextAlignment="Center"
+                               TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxLines="2"
+                               Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"/>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="AppLinkGridTemplate" x:DataType="items:AppLink">
+            <Grid Width="120"
+                  Background="Transparent">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Border x:Phase="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="48"
+                        Height="48"
+                        Loaded="OnIconLoaded"
+                        Background="{x:Bind Background, Converter={StaticResource DrawingColorBrushConverter}, Mode=OneWay}">
+                    <Image Source="{x:Bind Logo, Converter={StaticResource AppLinkGridTilesLogoConverter}, Mode=OneWay}"
+                           Width="48"
+                           Height="48"/>
+                </Border>
+
+                <Grid HorizontalAlignment="Stretch"
+                      VerticalAlignment="Top"
+                      Margin="8,0,8,8"
+                      Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <HyperlinkButton HorizontalAlignment="Center"
+                                     HorizontalContentAlignment="Stretch"
+                                     Padding="0"
+                                     Click="OnItemOpened"
+                                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                        <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                                   FontSize="14"
+                                   HorizontalTextAlignment="Center"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="Wrap"
+                                   MaxLines="2"
+                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                    </HyperlinkButton>
+                    <TextBlock Grid.Row="1"
+                               FontSize="12"
+                               HorizontalTextAlignment="Center"
+                               Text="{x:Bind DisplayType, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis"
+                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                    <TextBlock Text=""
+                               FontSize="14"
+                               Grid.Row="2" />
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <helpers:JumpPointItemTemplateSelector x:Key="GridTemplateSelector"
+                                               FolderTemplate="{StaticResource FolderGridTemplate}"
+                                               FileTemplate="{StaticResource FileGridTemplate}"
+                                               DriveTemplate="{StaticResource DriveGridTemplate}"
+                                               WorkspaceTemplate="{StaticResource WorkspaceGridTemplate}"
+                                               LibraryTemplate="{StaticResource LibraryGridTemplate}"
+                                               AppLinkTemplate="{StaticResource AppLinkGridTemplate}"/>
+        <!--#endregion-->
+
+        <!--#region Tiles View -->
+        <Style x:Key="TilesLayoutItemStyle"
+               TargetType="ListViewItem" BasedOn="{StaticResource AllLayoutItemStyle}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
+                        x:Name="Root"
+                        Control.IsTemplateFocusTarget="True"
+                        FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                        SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
+                        CheckBrush="{ThemeResource ListViewItemCheckBrush}"
+                        CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
+                        DragBackground="{ThemeResource ListViewItemDragBackground}"
+                        DragForeground="{ThemeResource ListViewItemDragForeground}"
+                        FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
+                        FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
+                        PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
+                        PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                        PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
+                        SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
+                        SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
+                        SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
+                        PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                        SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
+                        DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                        DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                        ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        ContentMargin="{TemplateBinding Padding}"
+                        CheckMode="Inline"
+                        RevealBackground="{ThemeResource ListViewItemRevealBackground}"
+                        RevealBorderThickness="{ThemeResource ListViewItemRevealBorderThemeThickness}"
+                        RevealBorderBrush="{ThemeResource ListViewItemRevealBorderBrush}">
+
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="Selected" />
+
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)" Value="PointerOver" />
+                                            <Setter Target="Root.RevealBorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPointerOver}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState x:Name="PointerOverSelected">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)" Value="PointerOver" />
+                                            <Setter Target="Root.RevealBorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPointerOver}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOverPressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)" Value="Pressed" />
+                                            <Setter Target="Root.RevealBorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)" Value="Pressed" />
+                                            <Setter Target="Root.RevealBorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState x:Name="PressedSelected">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)" Value="Pressed" />
+                                            <Setter Target="Root.RevealBorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                </VisualStateGroup>
+
+                                <VisualStateGroup x:Name="DisabledStates">
+                                    <VisualState x:Name="Enabled" />
+
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.RevealBorderThickness" Value="0" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                </VisualStateGroup>
+
+                            </VisualStateManager.VisualStateGroups>
+                        </ListViewItemPresenter>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <DataTemplate x:Key="FolderTilesTemplate" x:DataType="items:FolderBase">
+            <Grid Width="320" MinHeight="80" Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Image HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Width="48"
+                       Height="48"
+                       Loaded="OnIconLoaded">
+                    <Image.Source>
+                        <BitmapImage DecodePixelHeight="58"
+                                     DecodePixelWidth="58"
+                                     DecodePixelType="Logical"
+                                     UriSource="{x:Bind conv:IconConverter.GetFolderIconUri(FolderTemplate), Mode=OneWay}" />
+                    </Image.Source>
+                </Image>
+
+                <StackPanel Grid.Column="1" Margin="2,12,8,0">
+                    <!-- Name -->
+                    <HyperlinkButton HorizontalContentAlignment="Stretch"
+                                     Padding="0"
+                                     Click="OnItemOpened"
+                                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                        <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                                   HorizontalTextAlignment="Left"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="Wrap"
+                                   MaxLines="2"
+                                   FontSize="14"
+                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                    </HyperlinkButton>
+
+                    <!-- Date -->
+                    <TextBlock Text="{x:Bind DateModified, Mode=OneWay, Converter={StaticResource NullableDateTimeOffsetToLocalConverter}}"
+                               Visibility="{x:Bind FolderTemplate, Converter={StaticResource VisibleWhenGeneralFolderConverter}, Mode=OneWay}"
+                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                               TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+
+                    <!-- Display Type -->
+                    <TextBlock Text="{x:Bind DisplayType, Mode=OneWay}"
+                               Visibility="{x:Bind FolderTemplate, Converter={StaticResource CollapsedWhenGeneralFolderConverter}, Mode=OneWay}"
+                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                               TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FileTilesTemplate" x:DataType="items:FileBase">
+            <Grid Width="320" MinHeight="80" Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Image Source="{x:Bind conv:FileThumbnailConverter.Convert(FileType, Thumbnail, 58, 0), Mode=OneWay}"
+                       x:Phase="1"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Width="48"
+                       Height="48"
+                       Loaded="OnIconLoaded"/>
+
+                <StackPanel Grid.Column="1" Margin="2,12,8,0">
+                    <HyperlinkButton HorizontalContentAlignment="Stretch"
+                                     Padding="0"
+                                     Click="OnItemOpened"
+                                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                        <Grid>
+                            <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                                       HorizontalTextAlignment="Left"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="Wrap"
+                                       MaxLines="2"
+                                       FontSize="14"
+                                       Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=OneWay}"
+                                       FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                       FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                            <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                                       HorizontalTextAlignment="Left"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="Wrap"
+                                       MaxLines="2"
+                                       FontSize="14"
+                                       Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"
+                                       FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                       FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                        </Grid>
+                    </HyperlinkButton>
+
+                    <!-- Date -->
+                    <TextBlock Text="{x:Bind DisplayType, Mode=OneWay}"
+                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                               TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DriveTilesTemplate" x:DataType="items:DriveBase">
+            <Grid Width="320" MinHeight="80" Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Image HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Width="48"
+                       Height="48"
+                       Loaded="OnIconLoaded">
+                    <Image.Source>
+                        <BitmapImage DecodePixelHeight="58"
+                                     DecodePixelWidth="58"
+                                     DecodePixelType="Logical"
+                                     UriSource="{x:Bind conv:IconConverter.GetDriveIconUri(DriveTemplate), Mode=OneWay}" />
+                    </Image.Source>
+                </Image>
+
+                <Grid Grid.Column="1"
+                      Margin="2,12,8,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <!-- Name -->
+                    <HyperlinkButton HorizontalContentAlignment="Stretch"
+                                     Padding="0"
+                                     Click="OnItemOpened"
+                                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                        <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                                   HorizontalTextAlignment="Left"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="Wrap"
+                                   MaxLines="2"
+                                   FontSize="14"
+                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                    </HyperlinkButton>
+
+                    <!-- Space -->
+                    <ProgressBar Grid.Row="1"
+                                 VerticalAlignment="Stretch"
+                                 Height="12"
+                                 Margin="0,2"
+                                 Maximum="{x:Bind Capacity, Converter={StaticResource NullableUlongToDoubleConverter}, Mode=OneWay}"
+                                 Minimum="0"
+                                 Value="{x:Bind UsedSpace, Converter={StaticResource NullableUlongToDoubleConverter}, Mode=OneWay}"/>
+                    <TextBlock Grid.Row="2"
+                               VerticalAlignment="Center"
+                               TextWrapping="NoWrap"
+                               TextTrimming="CharacterEllipsis"
+                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                               Visibility="{x:Bind Capacity, Converter={StaticResource CollapsedWhenNullConverter}, Mode=OneWay}">
+                        <Run Text="{x:Bind FreeSpace, Converter={StaticResource ByteSizeConverter}, Mode=OneWay}" />
+                        <Run Text="free of" />
+                        <Run Text="{x:Bind Capacity, Converter={StaticResource ByteSizeConverter}, Mode=OneWay}" />
+                    </TextBlock>
+                    <TextBlock Text=""
+                               FontSize="14"
+                               Grid.Row="3" />
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="WorkspaceTilesTemplate" x:DataType="items:Workspace">
+            <Grid Width="320" Height="80" Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Viewbox HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         Width="48"
+                         Height="48"
+                         Loaded="OnIconLoaded">
+                    <TextBlock FontFamily="Segoe UI Emoji"
+                               IsColorFontEnabled="True"
+                               Text="{x:Bind conv:IconConverter.GetWorkspaceGlyph(Template), Mode=OneWay}" />
+                </Viewbox>
+
+                <StackPanel Grid.Column="1" Margin="2,12,8,0">
+                    <!-- Name -->
+                    <HyperlinkButton HorizontalContentAlignment="Stretch"
+                                     Padding="0"
+                                     Click="OnItemOpened"
+                                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                        <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                                   HorizontalTextAlignment="Left"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="Wrap"
+                                   MaxLines="2"
+                                   FontSize="14"
+                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                    </HyperlinkButton>
+
+                    <!-- Type -->
+                    <TextBlock Text="{x:Bind DisplayType}"
+                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                               TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="LibraryTilesTemplate" x:DataType="items:Library">
+            <Grid Width="320" Height="80" Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Viewbox HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         Width="48"
+                         Height="48"
+                         Loaded="OnIconLoaded">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8F1;"
+                          FontSize="48" />
+                </Viewbox>
+
+                <StackPanel Grid.Column="1" Margin="2,12,8,0">
+                    <!-- Name -->
+                    <Grid HorizontalAlignment="Stretch">
+                        <TextBlock Text="{x:Bind Name}" HorizontalTextAlignment="Left"
+                                   TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxLines="2" FontSize="14"
+                                   Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=OneWay}"/>
+                        <TextBlock Text="{x:Bind DisplayName}" HorizontalTextAlignment="Left"
+                                   TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxLines="2" FontSize="14"
+                                   Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"/>
+                    </Grid>
+
+                    <!-- Type -->
+                    <TextBlock Text="{x:Bind DisplayType}"
+                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                               TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="AppLinkTilesTemplate"
+                      x:DataType="items:AppLink">
+            <Grid Width="320"
+                  MinHeight="80"
+                  Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border x:Phase="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="48"
+                        Height="48"
+                        Loaded="OnIconLoaded"
+                        Background="{x:Bind Background, Converter={StaticResource DrawingColorBrushConverter}, Mode=OneWay}">
+                    <Image Source="{x:Bind Logo, Converter={StaticResource AppLinkGridTilesLogoConverter}, Mode=OneWay}"
+                           Width="48"
+                           Height="48"/>
+                </Border>
+
+                <Grid Grid.Column="1"
+                      Margin="2,12,8,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <!-- Name -->
+                    <HyperlinkButton HorizontalContentAlignment="Stretch"
+                                     Padding="0"
+                                     Click="OnItemOpened"
+                                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                        <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                                   HorizontalTextAlignment="Left"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="Wrap"
+                                   MaxLines="2"
+                                   FontSize="14"
+                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                    </HyperlinkButton>
+
+                    <!-- DisplayType -->
+                    <TextBlock Text="{x:Bind DisplayType, Mode=OneWay}"
+                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                               TextWrapping="NoWrap"
+                               TextTrimming="CharacterEllipsis"
+                               Grid.Row="1" />
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <helpers:JumpPointItemTemplateSelector x:Key="TilesTemplateSelector"
+                                               FolderTemplate="{StaticResource FolderTilesTemplate}"
+                                               FileTemplate="{StaticResource FileTilesTemplate}"
+                                               DriveTemplate="{StaticResource DriveTilesTemplate}"
+                                               WorkspaceTemplate="{StaticResource WorkspaceTilesTemplate}"
+                                               LibraryTemplate="{StaticResource LibraryTilesTemplate}"
+                                               AppLinkTemplate="{StaticResource AppLinkTilesTemplate}"/>
+        <!--#endregion-->
+
+        <!--#region List View -->
+        <Style x:Key="ListLayoutItemStyle"
+               TargetType="ListViewItem"
+               BasedOn="{StaticResource AllLayoutItemStyle}">
+            <Setter Property="Padding"
+                    Value="12,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
+                                               x:Name="Root"
+                                               Control.IsTemplateFocusTarget="True"
+                                               FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                                               SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
+                                               CheckBrush="{ThemeResource ListViewItemCheckBrush}"
+                                               CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
+                                               DragBackground="{ThemeResource ListViewItemDragBackground}"
+                                               DragForeground="{ThemeResource ListViewItemDragForeground}"
+                                               FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
+                                               FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
+                                               PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
+                                               PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                                               PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
+                                               SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
+                                               SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
+                                               SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
+                                               PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                                               SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
+                                               DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                               DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                               ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                               ContentMargin="{TemplateBinding Padding}"
+                                               CheckMode="Inline"
+                                               RevealBackground="{ThemeResource ListViewItemRevealBackground}"
+                                               RevealBorderThickness="{ThemeResource ListViewItemRevealBorderThemeThickness}"
+                                               RevealBorderBrush="{ThemeResource ListViewItemRevealBorderBrush}">
+
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="Selected" />
+
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)"
+                                                    Value="PointerOver" />
+                                            <Setter Target="Root.RevealBorderBrush"
+                                                    Value="{ThemeResource ListViewItemRevealBorderBrushPointerOver}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState x:Name="PointerOverSelected">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)"
+                                                    Value="PointerOver" />
+                                            <Setter Target="Root.RevealBorderBrush"
+                                                    Value="{ThemeResource ListViewItemRevealBorderBrushPointerOver}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOverPressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)"
+                                                    Value="Pressed" />
+                                            <Setter Target="Root.RevealBorderBrush"
+                                                    Value="{ThemeResource ListViewItemRevealBorderBrushPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)"
+                                                    Value="Pressed" />
+                                            <Setter Target="Root.RevealBorderBrush"
+                                                    Value="{ThemeResource ListViewItemRevealBorderBrushPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState x:Name="PressedSelected">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.(RevealBrush.State)"
+                                                    Value="Pressed" />
+                                            <Setter Target="Root.RevealBorderBrush"
+                                                    Value="{ThemeResource ListViewItemRevealBorderBrushPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                </VisualStateGroup>
+
+                                <VisualStateGroup x:Name="DisabledStates">
+                                    <VisualState x:Name="Enabled" />
+
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Target="Root.RevealBorderThickness"
+                                                    Value="0" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                </VisualStateGroup>
+
+                            </VisualStateManager.VisualStateGroups>
+                        </ListViewItemPresenter>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <DataTemplate x:Key="FolderListTemplate"
+                      x:DataType="items:FolderBase">
+            <Grid Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28" />
+                    <ColumnDefinition Width="*"
+                                      MinWidth="200" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Icon -->
+                <Image VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Width="20"
+                       Height="20"
+                       Loaded="OnIconLoaded">
+                    <Image.Source>
+                        <BitmapImage DecodePixelHeight="24"
+                                     DecodePixelWidth="24"
+                                     DecodePixelType="Logical"
+                                     UriSource="{x:Bind conv:IconConverter.GetFolderIconUri(FolderTemplate), Mode=OneWay}" />
+                    </Image.Source>
+                </Image>
+
+                <!-- Name -->
+                <HyperlinkButton VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Stretch"
+                                 Margin="8,0"
+                                 Grid.Column="1"
+                                 Padding="0"
+                                 Click="OnItemOpened"
+                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                    <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap"
+                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                </HyperlinkButton>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FileListTemplate"
+                      x:DataType="items:FileBase">
+            <Grid Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28" />
+                    <ColumnDefinition Width="*"
+                                      MinWidth="200" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Icon -->
+                <Image Source="{x:Bind conv:FileThumbnailConverter.Convert(FileType, Thumbnail, 24, 0), Mode=OneWay}"
+                       x:Phase="1"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Width="20"
+                       Height="20"
+                       Loaded="OnIconLoaded" />
+
+                <!-- Name -->
+                <HyperlinkButton VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Stretch"
+                                 Margin="8,0"
+                                 Grid.Column="1"
+                                 Padding="0"
+                                 Click="OnItemOpened"
+                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                    <Grid>
+                        <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
+                                   Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=OneWay}"
+                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="Wrap"
+                                   Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"
+                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                    </Grid>
+                </HyperlinkButton>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DriveListTemplate"
+                      x:DataType="items:DriveBase">
+            <Grid Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28" />
+                    <ColumnDefinition Width="*"
+                                      MinWidth="200" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Icon -->
+                <Image VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Width="20"
+                       Height="20"
+                       Loaded="OnIconLoaded">
+                    <Image.Source>
+                        <BitmapImage DecodePixelHeight="24"
+                                     DecodePixelWidth="24"
+                                     DecodePixelType="Logical"
+                                     UriSource="{x:Bind conv:IconConverter.GetDriveIconUri(DriveTemplate), Mode=OneWay}" />
+                    </Image.Source>
+                </Image>
+
+                <!-- Name -->
+                <HyperlinkButton VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Stretch"
+                                 Margin="8,0"
+                                 Grid.Column="1"
+                                 Padding="0"
+                                 Click="OnItemOpened"
+                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                    <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="Wrap"
+                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                </HyperlinkButton>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="WorkspaceListTemplate"
+                      x:DataType="items:Workspace">
+            <Grid Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28" />
+                    <ColumnDefinition Width="*"
+                                      MinWidth="200" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Icon -->
+                <Viewbox VerticalAlignment="Center"
+                         HorizontalAlignment="Center"
+                         Width="20"
+                         Height="20"
+                         Loaded="OnIconLoaded">
+                    <TextBlock FontFamily="Segoe UI Emoji"
+                               IsColorFontEnabled="True"
+                               Text="{x:Bind conv:IconConverter.GetWorkspaceGlyph(Template), Mode=OneWay}" />
+                </Viewbox>
+
+                <!-- Name -->
+                <HyperlinkButton VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Stretch"
+                                 Margin="8,0"
+                                 Grid.Column="1"
+                                 Padding="0"
+                                 Click="OnItemOpened"
+                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                    <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap"
+                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                </HyperlinkButton>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="LibraryListTemplate"
+                      x:DataType="items:Library">
+            <Grid Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28" />
+                    <ColumnDefinition Width="*"
+                                      MinWidth="200" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Icon -->
+                <Viewbox VerticalAlignment="Center"
+                         HorizontalAlignment="Center"
+                         Width="20"
+                         Height="20"
+                         Loaded="OnIconLoaded">
+                    <FontIcon FontFamily="Segoe MDL2 Assets"
+                              Glyph="&#xE8F1;"
+                              FontSize="20" />
+                </Viewbox>
+
+                <!-- Name -->
+                <Grid HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"
+                      Margin="8,0"
+                      Grid.Column="1">
+                    <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap"
+                               Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=OneWay}" />
+                    <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="Wrap"
+                               Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}" />
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="AppLinkListTemplate"
+                      x:DataType="items:AppLink">
+            <Grid Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28" />
+                    <ColumnDefinition Width="*"
+                                      MinWidth="200" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Icon -->
+                <Border Width="20"
+                        Height="20"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        x:Phase="1"
+                        Background="{x:Bind Background, Converter={StaticResource DrawingColorBrushConverter}, Mode=OneWay}"
+                        Loaded="OnIconLoaded">
+                    <Image Source="{x:Bind Logo, Converter={StaticResource AppLinkDetailsLogoConverter}, Mode=OneWay}"
+                           Width="20"
+                           Height="20" />
+                </Border>
+
+                <!-- Name -->
+                <HyperlinkButton VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Stretch"
+                                 Margin="8,0"
+                                 Grid.Column="1"
+                                 Padding="0"
+                                 Click="OnItemOpened"
+                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
+                    <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap"
+                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                </HyperlinkButton>
+            </Grid>
+        </DataTemplate>
+
+        <helpers:JumpPointItemTemplateSelector x:Key="ListTemplateSelector"
+                                               FolderTemplate="{StaticResource FolderListTemplate}"
+                                               FileTemplate="{StaticResource FileListTemplate}"
+                                               DriveTemplate="{StaticResource DriveListTemplate}"
+                                               WorkspaceTemplate="{StaticResource WorkspaceListTemplate}"
+                                               LibraryTemplate="{StaticResource LibraryListTemplate}"
+                                               AppLinkTemplate="{StaticResource AppLinkListTemplate}" />
+        <!--#endregion-->
+
+    </UserControl.Resources>
+
+    <Grid RowSpacing="4">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="GridState">
+                    <VisualState.StateTriggers>
+                        <local:EqualityTrigger LeftValue="{x:Bind services:AppSettings.Instance.Layout, Mode=OneWay}"
+                                               RightValue="{x:Bind platform:LayoutModes.Grid}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="entranceTransition.FromVerticalOffset"
+                                Value="0" />
+                        <Setter Target="entranceTransition.FromHorizontalOffset"
+                                Value="50" />
+                        <Setter Target="allView.Padding"
+                                Value="4,0,4,12" /><!-- 4,0,-10,12 -->
+                        <Setter Target="allView.(ScrollViewer.HorizontalScrollBarVisibility)"
+                                Value="Disabled" />
+                        <Setter Target="allView.(ScrollViewer.HorizontalScrollMode)"
+                                Value="Disabled" />
+                        <Setter Target="allView.(ScrollViewer.IsHorizontalRailEnabled)"
+                                Value="False" />
+                        <Setter Target="allView.ItemTemplateSelector"
+                                Value="{StaticResource GridTemplateSelector}" />
+                        <Setter Target="allView.ItemContainerStyle"
+                                Value="{StaticResource GridLayoutItemStyle}" />
+                        <Setter Target="allView.ItemsPanel">
+                            <Setter.Value>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid Orientation="Horizontal"
+                                                   AreStickyGroupHeadersEnabled="False" />
+                                </ItemsPanelTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="DetailsState">
+                    <VisualState.StateTriggers>
+                        <local:EqualityTrigger LeftValue="{x:Bind services:AppSettings.Instance.Layout, Mode=OneWay}"
+                                               RightValue="{x:Bind platform:LayoutModes.Details}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="entranceTransition.FromVerticalOffset"
+                                Value="50" />
+                        <Setter Target="entranceTransition.FromHorizontalOffset"
+                                Value="0" />
+                        <Setter Target="allView.Padding"
+                                Value="4,0,4,12" />
+                        <Setter Target="allView.(ScrollViewer.HorizontalScrollBarVisibility)"
+                                Value="Auto" />
+                        <Setter Target="allView.(ScrollViewer.HorizontalScrollMode)"
+                                Value="Enabled" />
+                        <Setter Target="allView.(ScrollViewer.IsHorizontalRailEnabled)"
+                                Value="True" />
+                        <Setter Target="allView.ItemTemplateSelector"
+                                Value="{StaticResource DetailsTemplateSelector}" />
+                        <Setter Target="allView.ItemContainerStyle"
+                                Value="{StaticResource DetailsLayoutItemStyle}" />
+                        <Setter Target="allView.ItemsPanel">
+                            <Setter.Value>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel AreStickyGroupHeadersEnabled="False" />
+                                </ItemsPanelTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="TilesState">
+                    <VisualState.StateTriggers>
+                        <local:EqualityTrigger LeftValue="{x:Bind services:AppSettings.Instance.Layout, Mode=OneWay}"
+                                               RightValue="{x:Bind platform:LayoutModes.Tiles}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="entranceTransition.FromVerticalOffset"
+                                Value="0" />
+                        <Setter Target="entranceTransition.FromHorizontalOffset"
+                                Value="50" />
+                        <Setter Target="allView.Padding"
+                                Value="4,0,4,12" />
+                        <Setter Target="allView.(ScrollViewer.HorizontalScrollBarVisibility)"
+                                Value="Disabled" />
+                        <Setter Target="allView.(ScrollViewer.HorizontalScrollMode)"
+                                Value="Disabled" />
+                        <Setter Target="allView.(ScrollViewer.IsHorizontalRailEnabled)"
+                                Value="False" />
+                        <Setter Target="allView.ItemTemplateSelector"
+                                Value="{StaticResource TilesTemplateSelector}" />
+                        <Setter Target="allView.ItemContainerStyle"
+                                Value="{StaticResource TilesLayoutItemStyle}" />
+                        <Setter Target="allView.ItemsPanel">
+                            <Setter.Value>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid Orientation="Horizontal"
+                                                   AreStickyGroupHeadersEnabled="False" />
+                                </ItemsPanelTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ListState">
+                    <VisualState.StateTriggers>
+                        <local:EqualityTrigger LeftValue="{x:Bind services:AppSettings.Instance.Layout, Mode=OneWay}"
+                                               RightValue="{x:Bind platform:LayoutModes.List}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="entranceTransition.FromVerticalOffset"
+                                Value="0" />
+                        <Setter Target="entranceTransition.FromHorizontalOffset"
+                                Value="50" />
+                        <Setter Target="allView.Padding"
+                                Value="4,0,4,12" />
+                        <Setter Target="allView.(ScrollViewer.HorizontalScrollBarVisibility)"
+                                Value="Disabled" />
+                        <Setter Target="allView.(ScrollViewer.HorizontalScrollMode)"
+                                Value="Disabled" />
+                        <Setter Target="allView.(ScrollViewer.IsHorizontalRailEnabled)"
+                                Value="False" />
+                        <Setter Target="allView.ItemTemplateSelector"
+                                Value="{StaticResource ListTemplateSelector}" />
+                        <Setter Target="allView.ItemContainerStyle"
+                                Value="{StaticResource ListLayoutItemStyle}" />
+                        <Setter Target="allView.ItemsPanel">
+                            <Setter.Value>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid Orientation="Horizontal"
+                                                   AreStickyGroupHeadersEnabled="False" />
+                                </ItemsPanelTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.RowSpan="2"
+                    Margin="12"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Visibility="{x:Bind NothingToShowConverter.Output, Mode=OneWay}">
+            <Image HorizontalAlignment="Center"
+                   Width="96"
+                   Height="96">
+                <Image.Source>
+                    <BitmapImage DecodePixelHeight="96"
+                                 DecodePixelWidth="96"
+                                 DecodePixelType="Logical"
+                                 UriSource="/Assets/Icons/Empty.png"/>
+                </Image.Source>
+            </Image>
+            <TextBlock Text="Nothing to show"
+                       Style="{StaticResource SubtitleTextBlockStyle}"
+                       HorizontalAlignment="Center" />
+        </StackPanel>
+
+        <ContentControl Content="{x:Bind Header, Mode=OneWay}"
+                        HorizontalContentAlignment="Stretch"
+                        x:Name="viewHeader"/>
+
+        <SemanticZoom Grid.Row="1"
+                      x:Name="semanticZoom">
+            <SemanticZoom.ZoomedInView>
+                <ListView x:Name="allView"
+                          ScrollViewer.IsVerticalScrollChainingEnabled="False"
+                          IsDoubleTapEnabled="True"
+                          IsMultiSelectCheckBoxEnabled="{x:Bind services:AppSettings.Instance.ShowCheckbox, Mode=OneWay}"
+                          SelectionMode="{x:Bind services:AppSettings.Instance.ShowCheckbox, Converter={StaticResource MultipleWhenTrueConverter}, Mode=OneWay}"
+                          ItemsSource="{x:Bind ItemsViewSource.View, Mode=OneWay}"
+                          AllowDrop="True"
+                          CanDragItems="True">
+                    <ListView.Header>
+                        <Grid x:Name="gridDetailsHeader"
+                              Height="36"
+                              Margin="-4,0"
+                              Padding="16,0,24,0"
+                              Visibility="{x:Bind GetDetailsHeaderVisibility(services:AppSettings.Instance.Layout), Mode=OneWay}"
+                              Background="{ThemeResource SystemChromeAltHighColor}">
+                            <Grid.ChildrenTransitions>
+                                <TransitionCollection>
+                                    <RepositionThemeTransition />
+                                </TransitionCollection>
+                            </Grid.ChildrenTransitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="28" />
+                                <ColumnDefinition Width="*"
+                                                  MinWidth="200" />
+                                <ColumnDefinition Width="0.35*"
+                                                  MinWidth="150" />
+                                <ColumnDefinition Width="0.25*"
+                                                  MinWidth="100" />
+                                <ColumnDefinition Width="0.25*"
+                                                  MinWidth="100" />
+                            </Grid.ColumnDefinitions>
+                            <CheckBox Visibility="{x:Bind services:AppSettings.Instance.ShowCheckbox, Mode=OneWay}"
+                                      Unchecked="OnCheckboxUnchecked"
+                                      Checked="OnCheckboxChecked"
+                                      Margin="0,0,12,0"
+                                      MinWidth="0"
+                                      MinHeight="0"
+                                      Padding="0"
+                                      VerticalAlignment="Center" />
+
+                            <TextBlock Margin="8,0"
+                                       Grid.Column="2"
+                                       Text="Name"
+                                       VerticalAlignment="Center"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Margin="8,0"
+                                       Grid.Column="3"
+                                       Text="Date"
+                                       VerticalAlignment="Center"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Margin="8,0"
+                                       Grid.Column="4"
+                                       Text="Type"
+                                       VerticalAlignment="Center"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Margin="8,0"
+                                       Grid.Column="5"
+                                       Text="Size"
+                                       VerticalAlignment="Center"
+                                       FontWeight="SemiBold" />
+                        </Grid>
+                    </ListView.Header>
+                    <ListView.GroupStyle>
+                        <GroupStyle HidesIfEmpty="True">
+                            <GroupStyle.HeaderContainerStyle>
+                                <Style TargetType="ListViewHeaderItem">
+                                    <Setter Property="FontSize"
+                                            Value="16" />
+                                    <Setter Property="FontWeight"
+                                            Value="SemiBold" />
+                                    <Setter Property="Foreground"
+                                            Value="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <Setter Property="Margin"
+                                            Value="0,2,0,0" />
+                                    <Setter Property="Padding"
+                                            Value="12,4" />
+                                    <Setter Property="HorizontalAlignment"
+                                            Value="Stretch" />
+                                    <Setter Property="HorizontalContentAlignment"
+                                            Value="Stretch" />
+                                    <Setter Property="VerticalContentAlignment"
+                                            Value="Stretch" />
+                                    <Setter Property="MinHeight"
+                                            Value="0" />
+                                    <Setter Property="UseSystemFocusVisuals"
+                                            Value="{StaticResource UseSystemFocusVisuals}" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListViewHeaderItem">
+                                                <ContentPresenter x:Name="ContentPresenter"
+                                                                  Background="{TemplateBinding Background}"
+                                                                  BorderBrush="{TemplateBinding BorderBrush}"
+                                                                  BorderThickness="{TemplateBinding BorderThickness}"
+                                                                  CornerRadius="{TemplateBinding CornerRadius}"
+                                                                  Margin="{TemplateBinding Margin}"
+                                                                  Padding="{TemplateBinding Padding}"
+                                                                  Content="{TemplateBinding Content}"
+                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                  HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.HeaderContainerStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnSpacing="8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Key}" />
+                                        <TextBlock Text="{Binding Items.Count, Converter={StaticResource StringFormatConverter}, ConverterParameter='({0})'}"
+                                                   Grid.Column="1" />
+                                        <MenuFlyoutSeparator Padding="0,2,0,0"
+                                                             VerticalAlignment="Center"
+                                                             Grid.Column="2" />
+                                    </Grid>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                    <ListView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition IsStaggeringEnabled="True"
+                                                     x:Name="entranceTransition" />
+                            <AddDeleteThemeTransition />
+                            <!--<ReorderThemeTransition />
+                    <RepositionThemeTransition />-->
+                        </TransitionCollection>
+                    </ListView.ItemContainerTransitions>
+                    <i:Interaction.Behaviors>
+                        <behaviors:JumpPointItemMultiSelectBehavior SelectedItems="{x:Bind SelectedItems, Mode=OneWay}" />
+                        <behaviors:JumpPointViewerDragDropBehavior Context="{x:Bind Context, Mode=OneWay}"
+                                                                   CopyCommand="{Binding Source={StaticResource Locator}, Path=CommandHelper.CopyToCommand}"
+                                                                   MoveCommand="{Binding Source={StaticResource Locator}, Path=CommandHelper.MoveToCommand}"/>
+                        <ngbehaviors:RightTappedSelectionBehavior />
+                        <core:EventTriggerBehavior EventName="Tapped">
+                            <actions:OpenCommandBarFlyoutAction CommandBarFlyout="{StaticResource ItemContextFlyout}"
+                                                                ShowMode="Transient" />
+                            <actions:TappedSelectionAction AssociatedObject="{x:Bind allView}" />
+                        </core:EventTriggerBehavior>
+                        <core:EventTriggerBehavior EventName="DoubleTapped">
+                            <core:InvokeCommandAction Command="{StaticResource OpenItemCommand}"
+                                                      InputConverter="{StaticResource ItemDoubleClickEventArgsConverter}"
+                                                      InputConverterParameter="{x:Bind Context.TabKey, Mode=OneWay}"/>
+                        </core:EventTriggerBehavior>
+                        <!--<behaviors:RubberBandSelectionBehavior RubberBand="{x:Bind rectRubberBand}" />-->
+                        <tkbehaviors:StickyHeaderBehavior />
+                        <!--<tkbehaviors:FadeHeaderBehavior HeaderElement="{x:Bind viewHeader}" />-->
+                    </i:Interaction.Behaviors>
+                </ListView>
+            </SemanticZoom.ZoomedInView>
+            <SemanticZoom.ZoomedOutView>
+                <ListView ItemsSource="{x:Bind ItemsViewSource.View.CollectionGroups, Mode=OneWay}"
+                          SelectionMode="Single"
+                          Padding="4">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="Padding"
+                                    Value="20,8" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal"
+                                        Spacing="8">
+                                <TextBlock Text="{Binding Group.Key}"
+                                           FontSize="16"
+                                           FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding Group.Items.Count, Converter={StaticResource StringFormatConverter}, ConverterParameter='({0})'}"
+                                           FontSize="16"
+                                           FontWeight="SemiBold" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </SemanticZoom.ZoomedOutView>
+        </SemanticZoom>
+
+        <Canvas HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Grid.Row="1">
+            <Rectangle x:Name="rectRubberBand"
+                       Canvas.Left="0"
+                       Canvas.Top="0"
+                       Width="0"
+                       Height="0"
+                       Fill="{ThemeResource SystemAccentColor}"
+                       Opacity=".5"
+                       Stroke="{ThemeResource SystemAccentColorLight1}"
+                       StrokeThickness="1" />
+        </Canvas>
+    </Grid>
+</UserControl>
