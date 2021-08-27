@@ -18,8 +18,8 @@ namespace JumpPoint.Platform.Services
     {
         private const string FOLDER_DATAFILE = "folders.db";
         private static readonly SQLiteAsyncConnection connection;
-        private static readonly Lazy<ConcurrentDictionary<UserFolderTemplate, string>> userFolders;
-        private static readonly Lazy<ConcurrentDictionary<SystemFolderTemplate, string>> systemFolders;
+        private static ConcurrentDictionary<UserFolderTemplate, string> userFolders;
+        private static ConcurrentDictionary<SystemFolderTemplate, string> systemFolders;
 
         static FolderTemplateService()
         {
@@ -27,13 +27,13 @@ namespace JumpPoint.Platform.Services
                 Path.Combine(JumpPointService.DataFolder, FOLDER_DATAFILE),
                 SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex,
                 true));
-            userFolders = new Lazy<ConcurrentDictionary<UserFolderTemplate, string>>(PlatformGetUserFolderPaths);
-            systemFolders = new Lazy<ConcurrentDictionary<SystemFolderTemplate, string>>(PlatformGetSystemFolderPaths);
         }
 
         public static async Task Initialize()
         {
             await connection.CreateTableAsync<FolderInfo>();
+            userFolders = await PlatformGetUserFolderPaths();
+            systemFolders = PlatformGetSystemFolderPaths();
         }
 
         public static ReadOnlyCollection<FolderTemplate> GetFolderTemplates()
@@ -113,11 +113,11 @@ namespace JumpPoint.Platform.Services
             yield return UserFolderTemplate.Downloads;
             yield return UserFolderTemplate.Favorites;
             yield return UserFolderTemplate.Music;
-            if (userFolders.Value.ContainsKey(UserFolderTemplate.OneDrive)) yield return UserFolderTemplate.OneDrive;
+            if (userFolders.ContainsKey(UserFolderTemplate.OneDrive)) yield return UserFolderTemplate.OneDrive;
             yield return UserFolderTemplate.Pictures;
             yield return UserFolderTemplate.Playlists;
             yield return UserFolderTemplate.SavedPictures;
-            yield return UserFolderTemplate.Screenshots;
+            if (userFolders.ContainsKey(UserFolderTemplate.Screenshots))  yield return UserFolderTemplate.Screenshots;
             yield return UserFolderTemplate.Videos;
 
             yield return UserFolderTemplate.LocalAppData;
@@ -138,14 +138,14 @@ namespace JumpPoint.Platform.Services
 
         public static bool TryGetPath(UserFolderTemplate template, out string path)
         {
-            return userFolders.Value.TryGetValue(template, out path);
+            return userFolders.TryGetValue(template, out path);
         }
 
         public static UserFolderTemplate GetUserFolderTemplate(string path)
         {
             foreach (var item in GetUserFolderTemplates())
             {
-                if (userFolders.Value.TryGetValue(item, out var userFolderPath) &&
+                if (userFolders.TryGetValue(item, out var userFolderPath) &&
                     path.NormalizeDirectory().Equals(userFolderPath.NormalizeDirectory(), StringComparison.OrdinalIgnoreCase))
                 {
                     return item;
@@ -167,8 +167,8 @@ namespace JumpPoint.Platform.Services
 
             yield return SystemFolderTemplate.Fonts;
             //yield return SystemFolderTemplate.ProgramData;
-            if (systemFolders.Value.ContainsKey(SystemFolderTemplate.ProgramFiles)) yield return SystemFolderTemplate.ProgramFiles;
-            if (systemFolders.Value.ContainsKey(SystemFolderTemplate.ProgramFilesX86)) yield return SystemFolderTemplate.ProgramFilesX86;
+            if (systemFolders.ContainsKey(SystemFolderTemplate.ProgramFiles)) yield return SystemFolderTemplate.ProgramFiles;
+            if (systemFolders.ContainsKey(SystemFolderTemplate.ProgramFilesX86)) yield return SystemFolderTemplate.ProgramFilesX86;
 
             yield return SystemFolderTemplate.System;
             yield return SystemFolderTemplate.Windows;
@@ -178,14 +178,14 @@ namespace JumpPoint.Platform.Services
 
         public static bool TryGetPath(SystemFolderTemplate template, out string path)
         {
-            return systemFolders.Value.TryGetValue(template, out path);
+            return systemFolders.TryGetValue(template, out path);
         }
 
         public static SystemFolderTemplate GetSystemFolderTemplate(string path)
         {
             foreach (var item in GetSystemFolderTemplates())
             {
-                if (systemFolders.Value.TryGetValue(item, out var systemFolderPath) &&
+                if (systemFolders.TryGetValue(item, out var systemFolderPath) &&
                     path.NormalizeDirectory().Equals(systemFolderPath.NormalizeDirectory(), StringComparison.OrdinalIgnoreCase))
                 {
                     return item;

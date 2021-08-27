@@ -50,6 +50,7 @@ namespace JumpPoint.Platform.Services
             {
                 var rootCommand = new RootCommand()
                 {
+                    GetCommand(ChatbotCommand.Help),
                     GetCommand(ChatbotCommand.Open),
                     GetCommand(ChatbotCommand.List),
                 };
@@ -60,6 +61,55 @@ namespace JumpPoint.Platform.Services
             {
                 switch (cmd)
                 {
+                    case ChatbotCommand.Help:
+                        {
+                            var command = new Command(cmd.ToString().ToLower())
+                            {
+                                new Command("open")
+                                {
+                                    Handler = CommandHandler.Create(() =>
+                                    {
+                                        response = new CommandListChatMessage(ChatMessageSource.Bot)
+                                        {
+                                            Title = "Open Commands",
+                                            Items =
+                                            {
+                                                CommandInfo.OpenCommands
+                                            }
+                                        };
+                                    })
+                                },
+                                new Command("list")
+                                {
+                                    Handler = CommandHandler.Create(() =>
+                                    {
+                                        response = new CommandListChatMessage(ChatMessageSource.Bot)
+                                        {
+                                            Title = "List Commands",
+                                            Items =
+                                            {
+                                                CommandInfo.ListCommands
+                                            }
+                                        };
+                                    })
+                                }
+                            };
+                            command.Handler = CommandHandler.Create(() =>
+                            {
+                                response = new CommandListChatMessage(ChatMessageSource.Bot)
+                                {
+                                    Title = "Available Commands",
+                                    Items =
+                                    {
+                                        CommandInfo.HelpCommands,
+                                        CommandInfo.OpenCommands,
+                                        CommandInfo.ListCommands
+                                    }
+                                };
+                            });
+                            return command;
+                        }
+
                     case ChatbotCommand.Open:
                     {
                         var command = new Command(cmd.ToString().ToLower())
@@ -96,28 +146,6 @@ namespace JumpPoint.Platform.Services
                             GetListCommand(ListSubCommand.Tools),
                             GetListCommand(ListSubCommand.AppLinkProviders),
                         };
-                        command.Handler = CommandHandler.Create(() =>
-                        {
-                            response = new CommandListChatMessage(ChatMessageSource.Bot)
-                            {
-                                Title = "List commands",
-                                Items =
-                                {
-                                    "list favorites",
-                                    "list workspaces",
-                                    "list drives",
-                                    "list clouddrives",
-                                    "list userfolders",
-                                    "list userfolders --all",
-                                    "list systemfolders",
-                                    "list systemfolders --all",
-                                    "list tools",
-                                    "list tools --all",
-                                    "list applinkproviders",
-                                    "list applinkproviders --all",
-                                }
-                            };
-                        });
                         return command;
                     }
 
@@ -276,14 +304,12 @@ namespace JumpPoint.Platform.Services
         {
             switch (pathKind)
             {
-                case PathKind.Local when lastCrumb?.AppPath == AppPath.Drive:
                 case PathKind.Mounted when lastCrumb?.AppPath == AppPath.Drive:
                 case PathKind.Unmounted when lastCrumb?.AppPath == AppPath.Drive:
                 case PathKind.Network when lastCrumb?.AppPath == AppPath.Drive:
                 case PathKind.Cloud when lastCrumb?.AppPath == AppPath.Drive:
                     return JumpPointService.GetAppUri(AppPath.Drive, path);
 
-                case PathKind.Local when lastCrumb?.AppPath == AppPath.Folder:
                 case PathKind.Mounted when lastCrumb?.AppPath == AppPath.Folder:
                 case PathKind.Unmounted when lastCrumb?.AppPath == AppPath.Folder:
                 case PathKind.Network when lastCrumb?.AppPath == AppPath.Folder:
@@ -318,8 +344,10 @@ namespace JumpPoint.Platform.Services
     public enum ChatbotCommand
     {
         Unknown = 0,
-        Open = 1,
-        List = 2,
+        Help = 1,
+
+        Open = 10,
+        List = 11,
     }
 
     public enum ListSubCommand

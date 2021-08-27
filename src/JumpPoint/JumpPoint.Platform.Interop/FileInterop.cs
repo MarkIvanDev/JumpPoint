@@ -377,6 +377,21 @@ namespace JumpPoint.Platform.Interop
             return null;
         }
     
+        public static async Task<IStorageItem> GetStorageItem(StorageItemBase item)
+        {
+            switch (item)
+            {
+                case DirectoryBase directory:
+                    return await GetStorageFolder(directory);
+
+                case FileBase file:
+                    return await GetStorageFile(file);
+
+                default:
+                    return null;
+            }
+        }
+
         public static async Task<StorageFolder> GetStorageFolder(DirectoryBase directory)
         {
             try

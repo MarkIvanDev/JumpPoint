@@ -13,6 +13,12 @@ namespace JumpPoint.Platform.Services
         static Task PlatformPaste(string destination)
             => throw new NotImplementedException();
 
+        static Task PlatformCopyTo(string destination, IList<string> paths)
+            => throw new NotImplementedException();
+
+        static Task PlatformMoveTo(string destination, IList<string> paths)
+            => throw new NotImplementedException();
+
         static Task PlatformDelete(IList<string> paths, bool deletePermanently)
             => throw new NotImplementedException();
 

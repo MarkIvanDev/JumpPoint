@@ -45,7 +45,7 @@ namespace JumpPoint.Platform.Services
         }
     }
 
-    public class CommandListChatMessage : ListChatMessage<string>
+    public class CommandListChatMessage : ListChatMessage<CommandInfo>
     {
         public CommandListChatMessage(ChatMessageSource source) : base(ChatMessageType.CommandList, source)
         {

@@ -28,11 +28,11 @@ namespace JumpPoint.Platform.Services
 
         public static async Task Initialize()
         {
+            await FolderTemplateService.Initialize();
             await AppLinkService.Initialize();
             await WorkspaceService.Initialize();
             await CloudStorageService.Initialize();
             await DashboardService.Initialize();
-            await FolderTemplateService.Initialize();
         }
 
         public static async Task Load(JumpPointItem item)
@@ -183,6 +183,7 @@ namespace JumpPoint.Platform.Services
                 case ProtocolPath.Workspaces:
                 case ProtocolPath.AppLinks:
                 case ProtocolPath.Chat:
+                case ProtocolPath.Clipboard:
                     return uriBuilder.Uri;
 
                 case ProtocolPath.Open:
@@ -201,7 +202,6 @@ namespace JumpPoint.Platform.Services
                         { "provider", CloudStorageService.GetProvider(path).ToString() }
                     }.ToString();
                     return uriBuilder.Uri;
-
                 case ProtocolPath.Properties:
                 case ProtocolPath.Unknown:
                 default:
@@ -226,6 +226,9 @@ namespace JumpPoint.Platform.Services
 
         public static async Task OpenProperties(Collection<Seed> seeds)
             => await PlatformOpenProperties(seeds);
+
+        public static async Task<bool> Rate()
+            => await PlatformRate();
 
     }
 }

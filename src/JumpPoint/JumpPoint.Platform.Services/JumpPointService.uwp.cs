@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using JumpPoint.Platform.Models;
 using Newtonsoft.Json;
 using JumpPoint.Platform.Interop;
+using Windows.Services.Store;
 
 namespace JumpPoint.Platform.Services
 {
@@ -191,6 +192,13 @@ namespace JumpPoint.Platform.Services
                     // The app can decide to wait before retrying.
                 }
             }
+        }
+
+        static async Task<bool> PlatformRate()
+        {
+            var context = StoreContext.GetDefault();
+            var result = await context.RequestRateAndReviewAppAsync();
+            return result.Status == StoreRateAndReviewStatus.Succeeded;
         }
 
     }

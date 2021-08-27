@@ -15,5 +15,7 @@ namespace JumpPoint.Platform
         public static string JumpPointViewerSelection => nameof(JumpPointViewerSelection);
 
         public static string SidebarManagement => nameof(SidebarManagement);
+
+        public static string TabManagement => nameof(TabManagement);
     }
 }

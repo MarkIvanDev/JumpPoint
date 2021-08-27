@@ -30,7 +30,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JumpPoint.Platform.Services
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JumpPoint.Platform.Items.OneDrive", "JumpPoint.Platform.Items.OneDrive\JumpPoint.Platform.Items.OneDrive.csproj", "{79B5D537-B511-4294-87E9-E73B3415AD0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JumpPoint.Platform.Extensions", "JumpPoint.Platform.Extensions\JumpPoint.Platform.Extensions.csproj", "{59ECC7D4-354C-4B81-B387-E7358BDD9BC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JumpPoint.Platform.Extensions", "JumpPoint.Platform.Extensions\JumpPoint.Platform.Extensions.csproj", "{59ECC7D4-354C-4B81-B387-E7358BDD9BC4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3767D794-4942-425C-8319-B8DEF530AB1C} = {3767D794-4942-425C-8319-B8DEF530AB1C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

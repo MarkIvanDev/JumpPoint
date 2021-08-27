@@ -4,6 +4,9 @@
     <TargetFramework>uap10.0.17763</TargetFramework>
     <DefaultLanguage>en-US</DefaultLanguage>
     <LangVersion>7.3</LangVersion>
+	<TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+	<TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
+	<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <Configurations>Debug;Release;Debug_BETA;Release_BETA</Configurations>
   </PropertyGroup>
 

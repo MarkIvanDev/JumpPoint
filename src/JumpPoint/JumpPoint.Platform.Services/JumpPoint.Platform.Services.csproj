@@ -35,18 +35,21 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('uap10.0')) ">
+	<TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+	<TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
+	<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <DefineConstants>$(DefineConstants);UWP</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="**\*.shared.cs" />
     <Compile Include="**\*.shared.*.cs" />
-    <PackageReference Include="Glif.Core.Text" Version="0.3.2-beta" />
+    <PackageReference Include="Glif.Core.Text" Version="0.4.0-beta" />
     <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
     <PackageReference Include="Nito.AsyncEx.Coordination" Version="5.1.0" />
-    <PackageReference Include="NittyGritty" Version="1.9.4" />
-    <PackageReference Include="NittyGritty.Platform" Version="1.9.4" />
-    <PackageReference Include="NittyGritty.Services" Version="1.9.4" />
+    <PackageReference Include="NittyGritty" Version="1.9.7" />
+    <PackageReference Include="NittyGritty.Platform" Version="1.9.7" />
+    <PackageReference Include="NittyGritty.Services" Version="1.9.7" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
   </ItemGroup>
@@ -59,7 +62,7 @@
   <ItemGroup Condition=" $(TargetFramework.StartsWith('uap10.0')) ">
     <Compile Include="**\*.uwp.cs" />
     <Compile Include="**\*.uwp.*.cs" />
-    <SDKReference Include="WindowsDesktop, Version=10.0.17763.0">
+    <SDKReference Include="WindowsDesktop, Version=10.0.19041.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
     <ProjectReference Include="..\JumpPoint.Platform.Interop\JumpPoint.Platform.Interop.csproj" />
