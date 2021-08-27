@@ -46,14 +46,46 @@ namespace JumpPoint.Platform.Services
                     var items = await content.GetStorageItemsAsync();
                     var data = new ApplicationDataCompositeValue
                     {
-                        [nameof(PastePayload.Operation)] = (PasteOperation)content.RequestedOperation,
+                        [nameof(PastePayload.Operation)] = (uint)(PasteOperation)content.RequestedOperation,
                         [nameof(PastePayload.Destination)] = destination,
                         [nameof(PastePayload.Paths)] = JsonConvert.SerializeObject(new Collection<string>(items.Select(i => i.Path).ToList())),
-                        [nameof(PastePayload.Option)] = PasteCollisionOption.LetMeDecide
+                        [nameof(PastePayload.Option)] = (int)PasteCollisionOption.LetMeDecide
                     };
                     LocalSettings.Values[nameof(PastePayload)] = data;
                     await PlatformLaunchFullTrust(DesktopParameter.Paste);
                 }
+            }
+        }
+
+        static async Task PlatformCopyTo(string destination, IList<string> paths)
+        {
+            if (PlatformIsSupported())
+            {
+                var data = new ApplicationDataCompositeValue
+                {
+                    [nameof(PastePayload.Operation)] = (uint)PasteOperation.Copy,
+                    [nameof(PastePayload.Destination)] = destination,
+                    [nameof(PastePayload.Paths)] = JsonConvert.SerializeObject(paths),
+                    [nameof(PastePayload.Option)] = (int)PasteCollisionOption.LetMeDecide
+                };
+                LocalSettings.Values[nameof(PastePayload)] = data;
+                await PlatformLaunchFullTrust(DesktopParameter.Paste);
+            }
+        }
+
+        static async Task PlatformMoveTo(string destination, IList<string> paths)
+        {
+            if (PlatformIsSupported())
+            {
+                var data = new ApplicationDataCompositeValue
+                {
+                    [nameof(PastePayload.Operation)] = (uint)PasteOperation.Move,
+                    [nameof(PastePayload.Destination)] = destination,
+                    [nameof(PastePayload.Paths)] = JsonConvert.SerializeObject(paths),
+                    [nameof(PastePayload.Option)] = (int)PasteCollisionOption.LetMeDecide
+                };
+                LocalSettings.Values[nameof(PastePayload)] = data;
+                await PlatformLaunchFullTrust(DesktopParameter.Paste);
             }
         }
 

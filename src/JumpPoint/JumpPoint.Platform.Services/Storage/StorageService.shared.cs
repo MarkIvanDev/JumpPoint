@@ -219,17 +219,20 @@ namespace JumpPoint.Platform.Services
             }
         }
 
+        public static async Task<bool> Exists(StorageItemBase item)
+            => await PlatformExists(item);
+
         #region Directory
 
         public static async Task<DirectoryBase> GetDirectory(string path)
         {
             var crumbs = path.GetBreadcrumbs();
             var lastCrumb = crumbs.LastOrDefault();
-            if (lastCrumb != null && lastCrumb.PathType == PathType.Drive)
+            if (lastCrumb != null && lastCrumb.AppPath == AppPath.Drive)
             {
                 return await GetDrive(path);
             }
-            else if (lastCrumb != null && lastCrumb.PathType == PathType.Folder)
+            else if (lastCrumb != null && lastCrumb.AppPath == AppPath.Folder)
             {
                 return await GetFolder(path);
             }
@@ -326,6 +329,52 @@ namespace JumpPoint.Platform.Services
         public static async Task Paste(DirectoryBase directory)
         {
             await DesktopService.Paste(directory.Path);
+        }
+
+        public static async Task CopyTo(DirectoryBase destination, IList<StorageItemBase> items)
+        {
+            var pathKind = destination.Path.GetPathKind();
+            if (pathKind == PathKind.Mounted || pathKind == PathKind.Network)
+            {
+                var regularItems = new List<StorageItemBase>();
+                var unmountedItems = new List<StorageItemBase>();
+                foreach (var item in items)
+                {
+                    if (item.StorageType == StorageType.Local || item.StorageType == StorageType.Network)
+                    {
+                        regularItems.Add(item);
+                    }
+                    else if (item.StorageType == StorageType.Portable)
+                    {
+                        if (item.Path.GetPathKind() == PathKind.Unmounted)
+                        {
+                            unmountedItems.Add(item);
+                        }
+                        else
+                        {
+                            regularItems.Add(item);
+                        }
+                    }
+                }
+                if (regularItems.Count > 0)
+                {
+                    await DesktopService.CopyTo(destination.Path, regularItems.Select(i => i.Path).ToList());
+                }
+            }
+            else if (pathKind == PathKind.Unmounted)
+            {
+
+            }
+        }
+
+        public static async Task CopyItem(DirectoryBase destination, StorageItemBase item)
+        {
+            await PlatformCopyItem(destination, item);
+        }
+
+        public static async Task MoveItem(DirectoryBase destination, StorageItemBase item)
+        {
+            await PlatformMoveItem(destination, item);
         }
 
         #endregion

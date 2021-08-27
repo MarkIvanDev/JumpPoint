@@ -180,7 +180,7 @@ namespace JumpPoint.Platform.Services.OneDrive
                 {
                     var crumbs = path.GetBreadcrumbs();
                     var lastCrumb = crumbs.LastOrDefault();
-                    if (lastCrumb != null && lastCrumb.PathType == PathType.Drive)
+                    if (lastCrumb != null && lastCrumb.AppPath == AppPath.Drive)
                     {
                         var account = await connection.FindWithQueryAsync<OneDriveAccount>(
                             $"SELECT * FROM {nameof(OneDriveAccount)} WHERE {nameof(OneDriveAccount.Name)} = ?", lastCrumb.DisplayName);
@@ -205,7 +205,7 @@ namespace JumpPoint.Platform.Services.OneDrive
                 if (path.GetPathKind() == PathKind.Cloud)
                 {
                     var crumbs = path.GetBreadcrumbs();
-                    var driveCrumb = crumbs.FirstOrDefault(c => c.PathType == PathType.Drive);
+                    var driveCrumb = crumbs.FirstOrDefault(c => c.AppPath == AppPath.Drive);
                     var lastCrumb = crumbs.LastOrDefault();
                     if (driveCrumb != null && lastCrumb != null)
                     {
@@ -234,7 +234,7 @@ namespace JumpPoint.Platform.Services.OneDrive
                 if (path.GetPathKind() == PathKind.Cloud)
                 {
                     var crumbs = path.GetBreadcrumbs();
-                    var driveCrumb = crumbs.FirstOrDefault(c => c.PathType == PathType.Drive);
+                    var driveCrumb = crumbs.FirstOrDefault(c => c.AppPath == AppPath.Drive);
                     var lastCrumb = crumbs.LastOrDefault();
                     if (driveCrumb != null && lastCrumb != null)
                     {

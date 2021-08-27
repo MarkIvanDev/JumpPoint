@@ -79,14 +79,6 @@ namespace JumpPoint.Platform.Items
             set { Set(ref fileCount, value); }
         }
 
-        private ulong settingCount;
-
-        public ulong SettingCount
-        {
-            get { return settingCount; }
-            set { Set(ref settingCount, value); }
-        }
-
     }
 
     public class SelectableWorkspace : SelectableItem<Workspace>

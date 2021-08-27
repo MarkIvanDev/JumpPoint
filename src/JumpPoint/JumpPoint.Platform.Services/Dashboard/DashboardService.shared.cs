@@ -67,14 +67,14 @@ namespace JumpPoint.Platform.Services
                 }
                 db.Execute("DETACH DATABASE ?", nameof(AppLink));
 
-                db.CreateTable<FavoriteSettingLink>();
+                db.Execute("DROP TABLE IF EXISTS FavoriteSettingLink");
             });
             await PlatformInitialize();
         }
 
         #region Favorites
 
-        public static async Task<ReadOnlyCollection<JumpPointItem>> GetFavorites()
+        public static async Task<IList<JumpPointItem>> GetFavorites()
         {
             var items = new List<JumpPointItem>();
             items.AddRange(await GetFavorites(JumpPointItemType.Workspace));
@@ -82,11 +82,10 @@ namespace JumpPoint.Platform.Services
             items.AddRange(await GetFavorites(JumpPointItemType.Folder));
             items.AddRange(await GetFavorites(JumpPointItemType.File));
             items.AddRange(await GetFavorites(JumpPointItemType.AppLink));
-            items.AddRange(await GetFavorites(JumpPointItemType.SettingLink));
-            return new ReadOnlyCollection<JumpPointItem>(items);
+            return items;
         }
 
-        public static async Task<ReadOnlyCollection<JumpPointItem>> GetFavorites(JumpPointItemType type)
+        public static async Task<IList<JumpPointItem>> GetFavorites(JumpPointItemType type)
         {
             var items = new List<JumpPointItem>();
 
@@ -144,19 +143,6 @@ namespace JumpPoint.Platform.Services
                     }
                     break;
 
-                case JumpPointItemType.SettingLink:
-                    var faveSettingLinks = await connection.Table<FavoriteSettingLink>().OrderBy(f => f.Template).ToListAsync();
-                    foreach (var item in faveSettingLinks)
-                    {
-                        var settingLink = SettingLinkService.GetSettingLink(item.Template);
-                        if (settingLink != null)
-                        {
-                            settingLink.DashboardGroup = DashboardGroup.Favorites;
-                            items.Add(settingLink);
-                        }
-                    }
-                    break;
-
                 case JumpPointItemType.AppLink:
                     var faveAppLinks = await connection.Table<FavoriteAppLink>().OrderBy(f => f.Path).ToListAsync();
                     foreach (var item in faveAppLinks)
@@ -176,7 +162,7 @@ namespace JumpPoint.Platform.Services
                     break;
             }
 
-            return new ReadOnlyCollection<JumpPointItem>(items);
+            return items;
         }
 
         public static async Task<bool> GetStatus(JumpPointItem item)
@@ -202,11 +188,6 @@ namespace JumpPoint.Platform.Services
                     return await connection.FindWithQueryAsync<FavoriteWorkspace>(
                         $"SELECT * FROM {nameof(FavoriteWorkspace)} WHERE {nameof(FavoriteWorkspace.Path)} = ?",
                         item.Name) != null;
-
-                case JumpPointItemType.SettingLink when item is SettingLink settingLink:
-                    return await connection.FindWithQueryAsync<FavoriteSettingLink>(
-                        $"SELECT * FROM {nameof(FavoriteSettingLink)} WHERE {nameof(FavoriteSettingLink.Template)} = ?",
-                        settingLink.Template) != null;
 
                 case JumpPointItemType.AppLink:
                     return await connection.FindWithQueryAsync<FavoriteAppLink>(
@@ -252,13 +233,6 @@ namespace JumpPoint.Platform.Services
                             item.Name);
                     break;
 
-                case JumpPointItemType.SettingLink when item is SettingLink settingLink:
-                    _ = status ?
-                        await connection.InsertAsync(new FavoriteSettingLink() { Template = settingLink.Template }, "OR IGNORE") :
-                        await connection.ExecuteAsync($"DELETE FROM {nameof(FavoriteSettingLink)} WHERE {nameof(FavoriteSettingLink.Template)} = ?",
-                            settingLink.Template);
-                    break;
-
                 case JumpPointItemType.AppLink:
                     _ = status ?
                         await connection.InsertAsync(new FavoriteAppLink() { Path = item.Path }, "OR IGNORE") :
@@ -277,8 +251,8 @@ namespace JumpPoint.Platform.Services
 
         #region User Folders
 
-        public static async Task<ReadOnlyCollection<FolderBase>> GetUserFolders()
-            => await PlatformGetUserFolders();
+        public static async Task<IList<FolderBase>> GetUserFolders(bool includeAll)
+            => await PlatformGetUserFolders(includeAll);
 
         public static bool GetStatus(UserFolderTemplate userFolder)
             => PlatformGetStatus(userFolder);
@@ -286,15 +260,15 @@ namespace JumpPoint.Platform.Services
         public static void SetStatus(UserFolderTemplate userFolder, bool status)
             => PlatformSetStatus(userFolder, status);
 
-        public static async Task<ReadOnlyCollection<UserFolderSetting>> GetUserFolderSettings()
+        public static async Task<IList<UserFolderSetting>> GetUserFolderSettings()
             => await PlatformGetUserFolderSettings();
 
         #endregion
 
         #region System Folders
 
-        public static async Task<ReadOnlyCollection<FolderBase>> GetSystemFolders()
-            => await PlatformGetSystemFolders();
+        public static async Task<IList<FolderBase>> GetSystemFolders(bool includeAll)
+            => await PlatformGetSystemFolders(includeAll);
 
         public static bool GetStatus(SystemFolderTemplate systemFolder)
             => PlatformGetStatus(systemFolder);
@@ -302,7 +276,7 @@ namespace JumpPoint.Platform.Services
         public static void SetStatus(SystemFolderTemplate systemFolder, bool status)
             => PlatformSetStatus(systemFolder, status);
 
-        public static async Task<ReadOnlyCollection<SystemFolderSetting>> GetSystemFolderSettings()
+        public static async Task<IList<SystemFolderSetting>> GetSystemFolderSettings()
             => await PlatformGetSystemFolderSettings();
 
         #endregion

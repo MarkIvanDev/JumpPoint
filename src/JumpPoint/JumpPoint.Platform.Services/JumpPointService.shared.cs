@@ -28,11 +28,11 @@ namespace JumpPoint.Platform.Services
 
         public static async Task Initialize()
         {
+            await FolderTemplateService.Initialize();
             await AppLinkService.Initialize();
             await WorkspaceService.Initialize();
             await CloudStorageService.Initialize();
             await DashboardService.Initialize();
-            await FolderTemplateService.Initialize();
         }
 
         public static async Task Load(JumpPointItem item)
@@ -53,10 +53,6 @@ namespace JumpPoint.Platform.Services
 
                 case JumpPointItemType.Workspace when item is Workspace workspace:
                     await WorkspaceService.Load(workspace);
-                    break;
-
-                case JumpPointItemType.SettingLink when item is SettingLink settingLink:
-                    await SettingLinkService.Load(settingLink);
                     break;
 
                 case JumpPointItemType.AppLink when item is AppLink appLink:
@@ -103,7 +99,6 @@ namespace JumpPoint.Platform.Services
                     return await AppLinkService.Rename((AppLink)item, name, option);
 
                 case JumpPointItemType.Library:
-                case JumpPointItemType.SettingLink:
                 case JumpPointItemType.Unknown:
                 default:
                     return string.Empty;
@@ -137,7 +132,6 @@ namespace JumpPoint.Platform.Services
                     break;
 
                 case JumpPointItemType.Library:
-                case JumpPointItemType.SettingLink:
                 case JumpPointItemType.Unknown:
                 default:
                     break;
@@ -171,54 +165,51 @@ namespace JumpPoint.Platform.Services
         public static Task<IList<NGStorage.IStorageItem>> Convert(IEnumerable<JumpPointItem> items)
             => PlatformConvert(items);
 
-        public static Uri GetAppUri(PathType pathType, string path)
+        public static Uri GetAppUri(AppPath pathType, string path)
         {
+            var protocolPath = pathType.ToProtocolPath();
             var uriBuilder = new UriBuilder
             {
                 Scheme = Prefix.MAIN_SCHEME,
-                Host = pathType.ToString().ToLower()
+                Host = protocolPath.ToString().ToLower()
             };
-            switch (pathType)
+            switch (protocolPath)
             {
-                case PathType.Drive:
-                case PathType.Folder:
-                case PathType.Workspace:
+                case ProtocolPath.Dashboard:
+                case ProtocolPath.Settings:
+                case ProtocolPath.Favorites:
+                case ProtocolPath.Drives:
+                case ProtocolPath.CloudDrives:
+                case ProtocolPath.Workspaces:
+                case ProtocolPath.AppLinks:
+                case ProtocolPath.Chat:
+                case ProtocolPath.Clipboard:
+                    return uriBuilder.Uri;
+
+                case ProtocolPath.Open:
+                case ProtocolPath.Drive:
+                case ProtocolPath.Folder:
+                case ProtocolPath.Workspace:
                     uriBuilder.Query = new QueryString()
                     {
                         { "path", path }
                     }.ToString();
                     return uriBuilder.Uri;
 
-                case PathType.CloudStorage:
+                case ProtocolPath.Cloud:
                     uriBuilder.Query = new QueryString()
                     {
                         { "provider", CloudStorageService.GetProvider(path).ToString() }
                     }.ToString();
                     return uriBuilder.Uri;
-
-                case PathType.Dashboard:
-                case PathType.Settings:
-                case PathType.Favorites:
-                case PathType.Drives:
-                case PathType.CloudStorages:
-                case PathType.Workspaces:
-                case PathType.AppLinks:
-                case PathType.SettingLinks:
-                    return uriBuilder.Uri;
-
-                case PathType.Properties:
-                case PathType.Libraries:
-                case PathType.Library:
-                case PathType.AppLink:
-                case PathType.SettingLink:
-                case PathType.File:
-                case PathType.Unknown:
+                case ProtocolPath.Properties:
+                case ProtocolPath.Unknown:
                 default:
                     return null;
             }
         }
 
-        public static async Task OpenNewWindow(PathType pathType, string path)
+        public static async Task OpenNewWindow(AppPath pathType, string path)
         {
             var uri = GetAppUri(pathType, path);
             if (uri != null)
@@ -235,6 +226,9 @@ namespace JumpPoint.Platform.Services
 
         public static async Task OpenProperties(Collection<Seed> seeds)
             => await PlatformOpenProperties(seeds);
+
+        public static async Task<bool> Rate()
+            => await PlatformRate();
 
     }
 }

@@ -26,5 +26,8 @@ namespace JumpPoint.Platform.Services
 
         static Task PlatformOpenProperties(Collection<Seed> seeds)
             => throw new NotImplementedException();
+
+        static Task<bool> PlatformRate()
+            => throw new NotImplementedException();
     }
 }

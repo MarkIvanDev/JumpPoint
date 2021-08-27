@@ -28,7 +28,7 @@
     <DebugType>pdbonly</DebugType>
     <DefineConstants>$(DefineConstants);TRACE;BETA</DefineConstants>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>

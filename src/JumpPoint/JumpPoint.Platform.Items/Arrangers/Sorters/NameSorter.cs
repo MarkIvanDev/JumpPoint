@@ -13,13 +13,13 @@ namespace JumpPoint.Platform.Items.Arrangers.Sorters
             {
                 return items
                     .OrderBy(i => i.Type)
-                    .ThenBy(i => i.Name);
+                    .ThenBy(i => i.Type == JumpPointItemType.Drive ? i.Path : i.Name);
             }
             else
             {
                 return items
                     .OrderByDescending(i => i.Type)
-                    .ThenByDescending(i => i.Name);
+                    .ThenByDescending(i => i.Type == JumpPointItemType.Drive ? i.Path : i.Name);
             }
         }
     }

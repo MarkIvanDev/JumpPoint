@@ -13,13 +13,13 @@ namespace JumpPoint.Platform.Models
     {
         public PathInfo()
         {
-            Type = PathType.Unknown;
+            Type = AppPath.Unknown;
             Path = string.Empty;
         }
 
-        private PathType _type;
+        private AppPath _type;
 
-        public PathType Type
+        public AppPath Type
         {
             get { return _type; }
             set { Set(ref _type, value); }

@@ -14,6 +14,9 @@ using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Items.LocalStorage;
 using JumpPoint.Platform.Items.PortableStorage;
 using JumpPoint.Platform.Items.NetworkStorage;
+using Windows.Storage;
+using System.Threading.Tasks;
+using FileAttributes = System.IO.FileAttributes;
 
 namespace JumpPoint.Platform.Interop
 {
@@ -373,5 +376,75 @@ namespace JumpPoint.Platform.Interop
             }
             return null;
         }
+    
+        public static async Task<IStorageItem> GetStorageItem(StorageItemBase item)
+        {
+            switch (item)
+            {
+                case DirectoryBase directory:
+                    return await GetStorageFolder(directory);
+
+                case FileBase file:
+                    return await GetStorageFile(file);
+
+                default:
+                    return null;
+            }
+        }
+
+        public static async Task<StorageFolder> GetStorageFolder(DirectoryBase directory)
+        {
+            try
+            {
+                switch (directory.StorageType)
+                {
+                    case StorageType.Local:
+                    case StorageType.Network:
+                        return await StorageFolder.GetFolderFromPathAsync(directory.Path);
+
+                    case StorageType.Portable when directory is IPortableDirectory portableDirectory:
+                        return portableDirectory.Context != null ?
+                            portableDirectory.Context.Context as StorageFolder :
+                            await StorageFolder.GetFolderFromPathAsync(directory.Path);
+
+                    case StorageType.Cloud:
+                    default:
+                        return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
+                return null;
+            }
+        }
+
+        public static async Task<StorageFile> GetStorageFile(FileBase file)
+        {
+            try
+            {
+                switch (file.StorageType)
+                {
+                    case StorageType.Local:
+                    case StorageType.Network:
+                        return await StorageFile.GetFileFromPathAsync(file.Path);
+
+                    case StorageType.Portable when file is PortableFile portableFile:
+                        return portableFile.Context != null ?
+                            portableFile.Context.Context as StorageFile :
+                            await StorageFile.GetFileFromPathAsync(file.Path);
+
+                    case StorageType.Cloud:
+                    default:
+                        return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
+                return null;
+            }
+        }
+
     }
 }

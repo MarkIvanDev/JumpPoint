@@ -14,6 +14,8 @@ using NittyGritty.Models;
 using System.Collections.ObjectModel;
 using JumpPoint.Platform.Models;
 using Newtonsoft.Json;
+using JumpPoint.Platform.Interop;
+using Windows.Services.Store;
 
 namespace JumpPoint.Platform.Services
 {
@@ -24,7 +26,7 @@ namespace JumpPoint.Platform.Services
         {
             if (item is FileBase file)
             {
-                var storageFile = await StorageService.GetStorageFile(file);
+                var storageFile = await FileInterop.GetStorageFile(file);
                 if (storageFile != null)
                 {
                     return new NGStorage.NGFile(storageFile);
@@ -32,7 +34,7 @@ namespace JumpPoint.Platform.Services
             }
             else if (item is DirectoryBase directory)
             {
-                var storageFolder = await StorageService.GetStorageFolder(directory);
+                var storageFolder = await FileInterop.GetStorageFolder(directory);
                 if (storageFolder != null)
                 {
                     return new NGStorage.NGFolder(storageFolder);
@@ -93,7 +95,7 @@ namespace JumpPoint.Platform.Services
 
         static async Task<bool> PlatformOpenFile(FileBase file, bool useDefaultHandler)
         {
-            var item = await StorageService.GetStorageFile(file);
+            var item = await FileInterop.GetStorageFile(file);
             return item != null ?
                 await Launcher.LaunchFileAsync(item, new LauncherOptions { DisplayApplicationPicker = !useDefaultHandler }) :
                 false;
@@ -112,7 +114,7 @@ namespace JumpPoint.Platform.Services
                 {
                     if (item is FileBase file)
                     {
-                        var storageFile = await StorageService.GetStorageFile(file);
+                        var storageFile = await FileInterop.GetStorageFile(file);
                         if (storageFile != null)
                         {
                             options.ItemsToSelect.Add(storageFile);
@@ -120,7 +122,7 @@ namespace JumpPoint.Platform.Services
                     }
                     else if (item is DirectoryBase directory)
                     {
-                        var storageFolder = await StorageService.GetStorageFolder(directory);
+                        var storageFolder = await FileInterop.GetStorageFolder(directory);
                         if (storageFolder != null)
                         {
                             options.ItemsToSelect.Add(storageFolder);
@@ -133,18 +135,37 @@ namespace JumpPoint.Platform.Services
 
         static async Task PlatformOpenProperties(Collection<Seed> seeds)
         {
-            var folder = await ApplicationData.Current.LocalCacheFolder.CreateFolderAsync("Properties", CreationCollisionOption.OpenIfExists);
-            var file = await folder.CreateFileAsync(Path.GetRandomFileName(), CreationCollisionOption.GenerateUniqueName);
-            var contents = JsonConvert.SerializeObject(seeds);
-            await file.WriteText(contents);
-            var seedsToken = SharedStorageAccessManager.AddFile(file);
-            var properties = new UriBuilder()
+            if (seeds.Count == 1)
             {
-                Scheme = Prefix.MAIN_SCHEME,
-                Host = "properties",
-                Query = new QueryString() { { nameof(seedsToken), seedsToken } }.ToString()
-            }.Uri;
-            await Launcher.LaunchUriAsync(properties);
+                var type = seeds[0].Type;
+                var path = seeds[0].Path;
+                var properties = new UriBuilder()
+                {
+                    Scheme = Prefix.MAIN_SCHEME,
+                    Host = "properties",
+                    Query = new QueryString()
+                    {
+                        { nameof(type), type.ToString() },
+                        { nameof(path), path }
+                    }.ToString()
+                }.Uri;
+                await Launcher.LaunchUriAsync(properties);
+            }
+            else if (seeds.Count > 1)
+            {
+                var folder = await ApplicationData.Current.LocalCacheFolder.CreateFolderAsync("Properties", CreationCollisionOption.OpenIfExists);
+                var file = await folder.CreateFileAsync(Path.GetRandomFileName(), CreationCollisionOption.GenerateUniqueName);
+                var contents = JsonConvert.SerializeObject(seeds);
+                await file.WriteText(contents);
+                var seedsToken = SharedStorageAccessManager.AddFile(file);
+                var properties = new UriBuilder()
+                {
+                    Scheme = Prefix.MAIN_SCHEME,
+                    Host = "properties",
+                    Query = new QueryString() { { nameof(seedsToken), seedsToken } }.ToString()
+                }.Uri;
+                await Launcher.LaunchUriAsync(properties);
+            }
         }
 
         public static async Task WriteText(this StorageFile file, string text)
@@ -171,6 +192,13 @@ namespace JumpPoint.Platform.Services
                     // The app can decide to wait before retrying.
                 }
             }
+        }
+
+        static async Task<bool> PlatformRate()
+        {
+            var context = StoreContext.GetDefault();
+            var result = await context.RequestRateAndReviewAppAsync();
+            return result.Status == StoreRateAndReviewStatus.Succeeded;
         }
 
     }
