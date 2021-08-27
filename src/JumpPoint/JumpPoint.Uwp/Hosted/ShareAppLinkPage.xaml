@@ -1,0 +1,213 @@
+﻿<nguwp:NGPage
+    xmlns:nguwp="using:NittyGritty.Uwp"
+    x:Class="JumpPoint.Uwp.Hosted.ShareAppLinkPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JumpPoint.Uwp.Hosted"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+    xmlns:converters="using:JumpPoint.Uwp.Converters"
+    xmlns:items="using:JumpPoint.Platform.Items"
+    mc:Ignorable="d"
+    d:DesignWidth="500"
+    d:DesignHeight="500"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <XamlUICommand x:Key="RemoveQueryKeyCommand"
+                       Command="{x:Bind ViewModel.RemoveQueryKeyCommand}" />
+        <XamlUICommand x:Key="RemoveInputKeyCommand"
+                       Command="{x:Bind ViewModel.RemoveInputKeyCommand}" />
+    </Page.Resources>
+
+    <Grid Padding="12,12,0,12"
+          RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Padding="0,0,12,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Style="{StaticResource TitleTextBlockStyle}"
+                       Text="Import App Link" />
+            <ProgressRing Grid.Column="1"
+                          IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                          Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
+        </Grid>
+        <ScrollViewer Grid.Row="1"
+                      Padding="0,0,12,0">
+            <StackPanel Spacing="4">
+
+                <Grid ColumnSpacing="8"
+                      Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Width="48"
+                            Height="48"
+                            Background="{x:Bind ViewModel.Background, Mode=OneWay, Converter={StaticResource DrawingColorBrushConverter}}">
+                        <Image Source="{x:Bind ViewModel.Logo, Converter={StaticResource AppLinkGridTilesLogoConverter}, Mode=OneWay}"
+                               Width="48"
+                               Height="48" />
+                    </Border>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="{x:Bind ViewModel.AppName, Mode=OneWay}"
+                                   FontSize="16" />
+                        <TextBlock Text="{x:Bind ViewModel.AppId, Mode=OneWay}"
+                                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                   FontSize="16" />
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="NAME: *"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                <TextBox Margin="0,0,0,12"
+                         Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         PlaceholderText="Required" />
+
+                <TextBlock Text="DESCRIPTION:"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                <TextBox Margin="0,0,0,12"
+                         Text="{x:Bind ViewModel.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         PlaceholderText="Optional" />
+
+                <TextBlock Text="LINK:"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                <TextBlock Text="{x:Bind ViewModel.Link, Mode=OneWay}"
+                           Margin="0,0,0,12"
+                           TextWrapping="WrapWholeWords"
+                           FontSize="16" />
+
+                <TextBlock Text="SUPPORTED LAUNCH TYPES:"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                <StackPanel Orientation="Horizontal"
+                            Spacing="8"
+                            Margin="0,0,0,12">
+                    <Grid>
+                        <FontIcon FontFamily="Segoe MDL2 Assets"
+                                  Glyph="&#xE002;"
+                                  Foreground="{StaticResource SystemAccentBrush}" />
+                        <FontIcon FontFamily="Segoe MDL2 Assets"
+                                  Glyph="&#xE001;"
+                                  Foreground="White"
+                                  Visibility="{x:Bind converters:AppLinkUtilityConverter.IsLaunchTypeVisible(ViewModel.LaunchTypes, items:AppLinkLaunchTypes.Uri), Mode=OneWay}" />
+                    </Grid>
+                    <TextBlock Text="Uri"
+                               VerticalAlignment="Center"
+                               Margin="0,0,8,0"
+                               FontSize="16" />
+
+                    <Grid>
+                        <FontIcon FontFamily="Segoe MDL2 Assets"
+                                  Glyph="&#xE002;"
+                                  Foreground="{StaticResource SystemAccentBrush}" />
+                        <FontIcon FontFamily="Segoe MDL2 Assets"
+                                  Glyph="&#xE001;"
+                                  Foreground="White"
+                                  Visibility="{x:Bind converters:AppLinkUtilityConverter.IsLaunchTypeVisible(ViewModel.LaunchTypes, items:AppLinkLaunchTypes.UriForResults), Mode=OneWay}" />
+                    </Grid>
+                    <TextBlock Text="Uri for Results"
+                               VerticalAlignment="Center"
+                               FontSize="16" />
+                </StackPanel>
+
+                <TextBlock Text="QUERY KEYS:"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                <Button Command="{x:Bind ViewModel.AddQueryKeyCommand}">
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="4">
+                        <FontIcon FontFamily="Segoe MDL2 Assets"
+                                  Glyph="&#xE109;"
+                                  FontSize="14" />
+                        <TextBlock Text="Add Query Key" />
+                    </StackPanel>
+                </Button>
+                <winui:ItemsRepeater Margin="0,0,0,12"
+                                     ItemsSource="{x:Bind ViewModel.QueryKeys, Mode=OneWay}">
+                    <winui:ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="items:ValueInfo">
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox VerticalAlignment="Center"
+                                         Text="{x:Bind Key, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         PlaceholderText="Required" />
+                                <AppBarButton Grid.Column="1"
+                                              Icon="Delete"
+                                              Width="40"
+                                              Height="40"
+                                              CommandParameter="{x:Bind Mode=OneWay}"
+                                              Command="{Binding Source={StaticResource RemoveQueryKeyCommand}}" />
+                            </Grid>
+                        </DataTemplate>
+                    </winui:ItemsRepeater.ItemTemplate>
+                </winui:ItemsRepeater>
+
+                <TextBlock Text="INPUT KEYS:"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                <Button Command="{x:Bind ViewModel.AddInputKeyCommand}">
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="4">
+                        <FontIcon FontFamily="Segoe MDL2 Assets"
+                                  Glyph="&#xE109;"
+                                  FontSize="14" />
+                        <TextBlock Text="Add Input Key" />
+                    </StackPanel>
+                </Button>
+                <winui:ItemsRepeater Margin="0,0,0,12"
+                                     ItemsSource="{x:Bind ViewModel.InputKeys, Mode=OneWay}">
+                    <winui:ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="items:ValueInfo">
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox VerticalAlignment="Center"
+                                         Text="{x:Bind Key, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         PlaceholderText="Required" />
+                                <AppBarButton Grid.Column="1"
+                                              Icon="Delete"
+                                              Width="40"
+                                              Height="40"
+                                              CommandParameter="{x:Bind Mode=OneWay}"
+                                              Command="{Binding Source={StaticResource RemoveInputKeyCommand}}" />
+                            </Grid>
+                        </DataTemplate>
+                    </winui:ItemsRepeater.ItemTemplate>
+                </winui:ItemsRepeater>
+            </StackPanel>
+        </ScrollViewer>
+        <Grid ColumnSpacing="8"
+              Grid.Row="2"
+              Padding="0,0,12,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="* App Link already exists."
+                       Foreground="Red"
+                       Visibility="{x:Bind ViewModel.Exists, Mode=OneWay}" />
+            <Button Style="{StaticResource AccentButtonStyle}"
+                    Content="Share"
+                    Command="{x:Bind ViewModel.ShareCommand}"
+                    Width="120"
+                    Grid.Column="1"
+                    IsEnabled="{x:Bind ViewModel.IsValid, Mode=OneWay}" />
+        </Grid>
+    </Grid>
+</nguwp:NGPage>

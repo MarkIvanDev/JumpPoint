@@ -1,0 +1,735 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:behaviors="using:JumpPoint.Uwp.Interactivity.Behaviors">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ms-appx:///Themes/IconSources.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <XamlUICommand x:Key="MoreCommand"
+                   IconSource="{StaticResource MoreIcon}"
+                   Label="More"
+                   Description="More"/>
+
+    <!--#region Navigation Bar -->
+    
+    <!--#region Direction Commands -->
+    <XamlUICommand x:Key="BackCommand"
+                   IconSource="{StaticResource BackIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.BackCommand}"
+                   Label="Back"
+                   Description="Back">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control"
+                                 Key="Left" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="ForwardCommand"
+                   IconSource="{StaticResource ForwardIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.ForwardCommand}"
+                   Label="Forward"
+                   Description="Forward">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control"
+                                 Key="Right" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="UpCommand"
+                   IconSource="{StaticResource UpIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.UpCommand}"
+                   Label="Up"
+                   Description="Up">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control"
+                                 Key="Up" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="RefreshCommand"
+                   IconSource="{StaticResource RefreshIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=TabbedShell.CurrentTab.Context.RefreshCommand}"
+                   Label="Refresh"
+                   Description="Refresh">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Key="F5" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="DashboardCommand"
+                   IconSource="{StaticResource DashboardIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.DashboardCommand}"
+                   Label="Dashboard"
+                   Description="Dashboard">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Key="Home"
+                                 Modifiers="Control" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="SettingsCommand"
+                   IconSource="{StaticResource SettingsIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.SettingsCommand}"
+                   Label="Settings"
+                   Description="Settings">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control,Shift"
+                                 Key="I" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <!--#endregion-->
+
+    <XamlUICommand x:Key="CopyPathCommand"
+                   IconSource="{StaticResource CopyPathIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.CopyPathCommand}"
+                   Label="Copy Path"
+                   Description="Copy Path">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+
+    <!--#region Tabs -->
+    <XamlUICommand x:Key="NewTabCommand"
+                   IconSource="{StaticResource NewTabIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=TabbedShell.NewTabCommand}"
+                   Label="New Tab"
+                   Description="Open New Tab">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control"
+                                 Key="T" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="DuplicateTabCommand"
+                   IconSource="{StaticResource DuplicateTabIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=TabbedShell.DuplicateTabCommand}"
+                   Label="Duplicate Tab"
+                   Description="Duplicate Tab">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control, Shift"
+                                 Key="K" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="MoveTabToNewWindowCommand"
+                   IconSource="{StaticResource MoveTabToNewWindowIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=TabbedShell.MoveTabToNewWindowCommand}"
+                   Label="Move Tab to New Window"
+                   Description="Move Tab to New Window">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="CloseTabCommand"
+                   IconSource="{StaticResource CloseTabIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=TabbedShell.CloseTabCommand}"
+                   Label="Close Tab"
+                   Description="Close Tab">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="CloseOtherTabsCommand"
+                   IconSource="{StaticResource CloseOtherTabsIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=TabbedShell.CloseOtherTabsCommand}"
+                   Label="Close Other Tabs"
+                   Description="Close Other Tabs">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <!--#endregion-->
+
+    <!--#region Open -->
+    <XamlUICommand x:Key="NewWindowCommand"
+                   IconSource="{StaticResource NewWindowIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.NewWindowCommand}"
+                   Label="New Window"
+                   Description="New Window">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control"
+                                 Key="N" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="OpenPathInNewWindowCommand"
+                   IconSource="{StaticResource OpenPathInNewWindowIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenPathInNewWindowCommand}"
+                   Label="Open in New Window"
+                   Description="Open in New Window">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="OpenPathInFileExplorerCommand"
+                   IconSource="{StaticResource OpenPathInFileExplorerIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenPathInFileExplorerCommand}"
+                   Label="Open in File Explorer"
+                   Description="Open in File Explorer">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="OpenPathInCommandPromptCommand"
+                   IconSource="{StaticResource OpenPathInCommandPromptIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenPathInCommandPromptCommand}"
+                   Label="Open in Command Prompt"
+                   Description="Open in Command Prompt">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="OpenPathInPowershellCommand"
+                   IconSource="{StaticResource OpenPathInPowershellIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenPathInPowershellCommand}"
+                   Label="Open in Powershell"
+                   Description="Open in Powershell">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <!--#endregion-->
+
+    <XamlUICommand x:Key="AddPathToWorkspaceCommand"
+                   IconSource="{StaticResource AddPathToWorkspaceIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.AddPathToWorkspaceCommand}"
+                   Label="Add to Workspace"
+                   Description="Add to Workspace">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="AddPathToFavoritesCommand"
+                   IconSource="{StaticResource AddPathToFavoritesIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.AddPathToFavoritesCommand}"
+                   Label="Add to Favorites"
+                   Description="Add to Favorites">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="RemovePathFromFavoritesCommand"
+                   IconSource="{StaticResource RemovePathFromFavoritesIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.RemovePathFromFavoritesCommand}"
+                   Label="Remove from Favorites"
+                   Description="Remove from Favorites">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+
+    <XamlUICommand x:Key="SetPathWorkspaceTemplateCommand"
+                   IconSource="{StaticResource SetPathWorkspaceTemplateIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.SetPathWorkspaceTemplateCommand}"
+                   Label="Set Workspace Template"
+                   Description="Set Workspace Template">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="SetPathFolderTemplateCommand"
+                   IconSource="{StaticResource SetPathFolderTemplateIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.SetPathFolderTemplateCommand}"
+                   Label="Set Folder Template"
+                   Description="Set Folder Template">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+
+    <XamlUICommand x:Key="SharePathCommand"
+                   IconSource="{StaticResource SharePathIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.SharePathCommand}"
+                   Label="Share"
+                   Description="Share">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="PathPropertiesCommand"
+                   IconSource="{StaticResource PathPropertiesIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.PathPropertiesCommand}"
+                   Label="Properties"
+                   Description="Properties">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+
+    <XamlUICommand x:Key="PinPathCommand"
+                   IconSource="{StaticResource PinPathIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.PinPathCommand}"
+                   Label="Pin to Start"
+                   Description="Pin to Start">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="UnpinPathCommand"
+                   IconSource="{StaticResource UnpinPathIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.UnpinPathCommand}"
+                   Label="Unpin from Start"
+                   Description="Unpin from Start">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="EditPathCommand"
+                   IconSource="{StaticResource EditPathIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=TabbedShell.EditPathCommand}"
+                   Label="Edit Path"
+                   Description="Edit Path">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control"
+                                 Key="E" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+
+    <!--#region New Item -->
+    <XamlUICommand x:Key="NewItemCommand"
+                   IconSource="{StaticResource NewItemIcon}"
+                   Label="New Item"
+                   Description="New Item" />
+    <XamlUICommand x:Key="NewFolderCommand"
+                   IconSource="{StaticResource NewFolderIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.NewFolderCommand}"
+                   Label="New Folder"
+                   Description="New Folder">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control,Shift"
+                                 Key="N" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="NewWorkspaceCommand"
+                   IconSource="{StaticResource NewWorkspaceIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.NewWorkspaceCommand}"
+                   Label="New Worskpace"
+                   Description="New Worskpace">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control,Shift"
+                                 Key="W" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="NewAppLinkCommand"
+                   IconSource="{StaticResource NewAppLinkIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.NewAppLinkCommand}"
+                   Label="New App Link"
+                   Description="New App Link">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control,Shift"
+                                 Key="A" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <!--#endregion-->
+
+    <!--#region Layout -->
+    <XamlUICommand x:Key="LayoutCommand"
+                   IconSource="{StaticResource LayoutIcon}"
+                   Label="Layout"
+                   Description="Layout" />
+    <XamlUICommand x:Key="GridLayoutCommand"
+                   IconSource="{StaticResource GridLayoutIcon}"
+                   Label="Grid View"
+                   Description="Grid View" />
+    <XamlUICommand x:Key="DetailsLayoutCommand"
+                   IconSource="{StaticResource DetailsLayoutIcon}"
+                   Label="Details View"
+                   Description="Details View" />
+    <XamlUICommand x:Key="TilesLayoutCommand"
+                   IconSource="{StaticResource TilesLayoutIcon}"
+                   Label="Tiles View"
+                   Description="Tiles View" />
+    <XamlUICommand x:Key="ListLayoutCommand"
+                   IconSource="{StaticResource ListLayoutIcon}"
+                   Label="List View"
+                   Description="List View" />
+    <!--#endregion-->
+
+    <!--#endregion-->
+    
+    <!--#region Toolbar -->
+    <XamlUICommand x:Key="CopyCommand"
+                   IconSource="{StaticResource CopyIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.CopyCommand}"
+                   Label="Copy"
+                   Description="Copy">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control"
+                                 Key="C" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="CutCommand"
+                   IconSource="{StaticResource CutIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.CutCommand}"
+                   Label="Cut"
+                   Description="Cut">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control"
+                                 Key="X" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="ClipboardManagerCommand"
+                   IconSource="{StaticResource ClipboardManagerIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.ClipboardManagerCommand}"
+                   Label="Clipboard Manager"
+                   Description="Clipboard Manager">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="CopyItemsPathCommand"
+                   IconSource="{StaticResource CopyItemsPathIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.CopyItemsPathCommand}"
+                   Label="Copy Path"
+                   Description="Copy Path">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="PasteCommand"
+                   IconSource="{StaticResource PasteIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.PasteCommand}"
+                   Label="Paste"
+                   Description="Paste">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control"
+                                 Key="V" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+
+    <XamlUICommand x:Key="RenameCommand"
+                   IconSource="{StaticResource RenameIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.RenameCommand}"
+                   Label="Rename"
+                   Description="Rename">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Key="F2" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="DeleteCommand"
+                   IconSource="{StaticResource DeleteIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.DeleteCommand}"
+                   Label="Delete"
+                   Description="Delete">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Key="Delete" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="DeletePermanentlyCommand"
+                   IconSource="{StaticResource DeletePermanentlyIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.DeletePermanentlyCommand}"
+                   Label="Delete Permanently"
+                   Description="Delete Permanently">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Shift"
+                                 Key="Delete" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+
+    <!--#region Open -->
+    <XamlUICommand x:Key="OpenCommand"
+                   IconSource="{StaticResource OpenIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenCommand}"
+                   Label="Open"
+                   Description="Open">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control"
+                                 Key="Enter" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="OpenWithCommand"
+                   IconSource="{StaticResource OpenWithIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenWithCommand}"
+                   Label="Open With"
+                   Description="Open With">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control"
+                                 Key="O" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="OpenItemsInNewTabCommand"
+                   IconSource="{StaticResource OpenItemsInNewTabIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=TabbedShell.OpenItemsInNewTabCommand}"
+                   Label="Open in New Tab"
+                   Description="Open in New Tab">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="OpenItemsInNewWindowCommand"
+                   IconSource="{StaticResource OpenItemsInNewWindowIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemsInNewWindowCommand}"
+                   Label="Open in New Window"
+                   Description="Open in New Window">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="OpenItemsInFileExplorerCommand"
+                   IconSource="{StaticResource OpenItemsInFileExplorerIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemsInFileExplorerCommand}"
+                   Label="Open in File Explorer"
+                   Description="Open in File Explorer">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="OpenItemsInCommandPromptCommand"
+                   IconSource="{StaticResource OpenItemsInCommandPromptIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemsInCommandPromptCommand}"
+                   Label="Open in Command Prompt"
+                   Description="Open in Command Prompt">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="OpenItemsInPowershellCommand"
+                   IconSource="{StaticResource OpenItemsInPowershellIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemsInPowershellCommand}"
+                   Label="Open in Powershell"
+                   Description="Open in Powershell">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="OpenItemCommand"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemCommand}" />
+    <!--#endregion-->
+
+    <XamlUICommand x:Key="ShareItemsCommand"
+                   IconSource="{StaticResource ShareItemsIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.ShareItemsCommand}"
+                   Label="Share"
+                   Description="Share">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control,Shift"
+                                 Key="H" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="ItemsPropertiesCommand"
+                   IconSource="{StaticResource ItemsPropertiesIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.ItemsPropertiesCommand}"
+                   Label="Properties"
+                   Description="Properties">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control,Shift"
+                                 Key="P" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+
+    <XamlUICommand x:Key="SortByCommand"
+                   IconSource="{StaticResource SortByIcon}"
+                   Label="Sort by"
+                   Description="Sort by" />
+    <XamlUICommand x:Key="SortByNameCommand"
+                   Label="Name"
+                   Description="Sort by Name" />
+    <XamlUICommand x:Key="SortByDateModifiedCommand"
+                   Label="Date Modified"
+                   Description="Sort by Date Modified" />
+    <XamlUICommand x:Key="SortByDisplayTypeCommand"
+                   Label="Display Type"
+                   Description="Sort by Display Type" />
+    <XamlUICommand x:Key="SortBySizeCommand"
+                   Label="Size"
+                   Description="Sort by Size" />
+    <XamlUICommand x:Key="SortByAscendingCommand"
+                   Label="Ascending"
+                   Description="Sort in ascending order" />
+    <XamlUICommand x:Key="SortByDescendingCommand"
+                   Label="Descending"
+                   Description="Sort in descending order" />
+
+    <XamlUICommand x:Key="GroupByCommand"
+                   IconSource="{StaticResource GroupByIcon}"
+                   Label="Group by"
+                   Description="Group by" />
+    <XamlUICommand x:Key="GroupByNoneCommand"
+                   Label="None"
+                   Description="Ungroup" />
+    <XamlUICommand x:Key="GroupByNameCommand"
+                   Label="Name"
+                   Description="Group by Name" />
+    <XamlUICommand x:Key="GroupByDateModifiedCommand"
+                   Label="Date Modified"
+                   Description="Group by Date Modified" />
+    <XamlUICommand x:Key="GroupByDisplayTypeCommand"
+                   Label="Display Type"
+                   Description="Group by Display Type" />
+    <XamlUICommand x:Key="GroupBySizeCommand"
+                   Label="Size"
+                   Description="Group by Size" />
+    <XamlUICommand x:Key="GroupByItemTypeCommand"
+                   Label="Item Type"
+                   Description="Group by Item Type" />
+    <XamlUICommand x:Key="GroupByAscendingCommand"
+                   Label="Ascending"
+                   Description="Group in ascending order" />
+    <XamlUICommand x:Key="GroupByDescendingCommand"
+                   Label="Descending"
+                   Description="Group in descending order" />
+
+    <XamlUICommand x:Key="SelectCommand"
+                   IconSource="{StaticResource SelectIcon}"
+                   Label="Selection Options"
+                   Description="Selection Options" />
+    <XamlUICommand x:Key="InvertSelectionCommand"
+                   IconSource="{StaticResource InvertSelectionIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.InvertSelectionCommand}"
+                   Label="Invert Selection"
+                   Description="Invert Selection">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="SelectAllCommand"
+                   IconSource="{StaticResource SelectAllIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.SelectAllCommand}"
+                   Label="Select All"
+                   Description="Select All">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control"
+                                 Key="A" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="SelectNoneCommand"
+                   IconSource="{StaticResource SelectNoneIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.SelectNoneCommand}"
+                   Label="Clear Selection"
+                   Description="Clear Selection">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Key="Escape" />
+        </XamlUICommand.KeyboardAccelerators>
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <!--#endregion-->
+    
+    <!--#region Contextual -->
+    <XamlUICommand x:Key="AddItemsToWorkspaceCommand"
+                   IconSource="{StaticResource AddItemsToWorkspaceIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.AddItemsToWorkspaceCommand}"
+                   Label="Add to Workspace"
+                   Description="Add to Workspace">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="AddItemsToFavoritesCommand"
+                   IconSource="{StaticResource AddItemsToFavoritesIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.AddItemsToFavoritesCommand}"
+                   Label="Add to Favorites"
+                   Description="Add to Favorites">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="RemoveItemsFromFavoritesCommand"
+                   IconSource="{StaticResource RemoveItemsFromFavoritesIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.RemoveItemsFromFavoritesCommand}"
+                   Label="Remove from Favorites"
+                   Description="Remove from Favorites">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+
+    <XamlUICommand x:Key="SetItemsWorkspaceTemplateCommand"
+                   IconSource="{StaticResource SetItemsWorkspaceTemplateIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.SetItemsWorkspaceTemplateCommand}"
+                   Label="Set Workspace Template"
+                   Description="Set Workspace Template">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="SetItemsFolderTemplateCommand"
+                   IconSource="{StaticResource SetItemsFolderTemplateIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.SetItemsFolderTemplateCommand}"
+                   Label="Set Folder Template"
+                   Description="Set Folder Template">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <XamlUICommand x:Key="MoreToolsCommand"
+                   IconSource="{StaticResource MoreToolsIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.MoreToolsCommand}"
+                   Label="More Tools..."
+                   Description="More Tools">
+        <i:Interaction.Behaviors>
+            <behaviors:NotifyCommandBehavior />
+        </i:Interaction.Behaviors>
+    </XamlUICommand>
+    <!--#endregion-->
+    
+</ResourceDictionary>

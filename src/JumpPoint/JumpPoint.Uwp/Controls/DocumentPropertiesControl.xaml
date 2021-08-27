@@ -1,0 +1,211 @@
+﻿<UserControl
+    x:Class="JumpPoint.Uwp.Controls.DocumentPropertiesControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JumpPoint.Uwp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:sys="using:System"
+             mc:Ignorable="d"
+    d:DesignHeight="1200"
+    d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="TextWrapping"
+                    Value="WrapWholeWords" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid ColumnSpacing="8"
+          RowSpacing="4"
+          Padding="0,8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Text="Document ID:" />
+        <TextBlock Text="{x:Bind Document.DocumentID, Mode=OneWay}"
+                   Grid.Column="1" />
+
+        <TextBlock Text="Revision:"
+                   Grid.Row="1" />
+        <TextBlock Text="{x:Bind Document.Revision, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="1" />
+
+        <TextBlock Text="Version:"
+                   Grid.Row="2" />
+        <TextBlock Text="{x:Bind Document.Version, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="2" />
+
+        <TextBlock Text="Last Author:"
+                   Grid.Row="3" />
+        <TextBlock Text="{x:Bind Document.LastAuthor, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="3" />
+
+        <TextBlock Text="Contributors:"
+                   Grid.Row="4" />
+        <TextBlock Text="{x:Bind sys:String.Join('; ', Document.Contributors), Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="4" />
+
+        <TextBlock Text="Division:"
+                   Grid.Row="5" />
+        <TextBlock Text="{x:Bind Document.Division, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="5" />
+
+        <TextBlock Text="Manager:"
+                   Grid.Row="6" />
+        <TextBlock Text="{x:Bind Document.Manager, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="6" />
+
+        <TextBlock Text="Template:"
+                   Grid.Row="7" />
+        <TextBlock Text="{x:Bind Document.Template, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="7" />
+
+        <TextBlock Text="Presentaion Format:"
+                   Grid.Row="8" />
+        <TextBlock Text="{x:Bind Document.PresentationFormat, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="8" />
+
+        <TextBlock Text="Client ID:"
+                   Grid.Row="9" />
+        <TextBlock Text="{x:Bind Document.ClientId, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="9" />
+
+        <TextBlock Text="Security:"
+                   Grid.Row="10" />
+        <TextBlock Text="{x:Bind Document.Security, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="10" />
+
+        <MenuFlyoutSeparator Grid.Row="11"
+                             Grid.ColumnSpan="2" />
+
+        <TextBlock Text="Date Created:"
+                   Grid.Row="12" />
+        <TextBlock Text="{x:Bind Document.DateCreated, Converter={StaticResource NullableDateTimeOffsetToLocalConverter}, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="12" />
+
+        <TextBlock Text="Last Printed:"
+                   Grid.Row="13" />
+        <TextBlock Text="{x:Bind Document.LastPrinted, Converter={StaticResource NullableDateTimeOffsetToLocalConverter}, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="13" />
+
+        <TextBlock Text="Last Saved:"
+                   Grid.Row="14" />
+        <TextBlock Text="{x:Bind Document.LastSaved, Converter={StaticResource NullableDateTimeOffsetToLocalConverter}, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="14" />
+
+        <TextBlock Text="Total Editing Time:"
+                   Grid.Row="15" />
+        <TextBlock Text="{x:Bind Document.TotalEditingTime, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="15" />
+
+        <MenuFlyoutSeparator Grid.Row="16"
+                             Grid.ColumnSpan="2" />
+
+        <TextBlock Text="Page Count:"
+                   Grid.Row="17" />
+        <TextBlock Text="{x:Bind Document.PageCount, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="17" />
+
+        <TextBlock Text="Paragraph Count:"
+                   Grid.Row="18" />
+        <TextBlock Text="{x:Bind Document.ParagraphCount, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="18" />
+
+        <TextBlock Text="Line Count:"
+                   Grid.Row="19" />
+        <TextBlock Text="{x:Bind Document.LineCount, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="19" />
+
+        <TextBlock Text="Word Count:"
+                   Grid.Row="20" />
+        <TextBlock Text="{x:Bind Document.WordCount, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="20" />
+
+        <TextBlock Text="Character Count:"
+                   Grid.Row="21" />
+        <TextBlock Text="{x:Bind Document.CharacterCount, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="21" />
+
+        <TextBlock Text="Byte Count:"
+                   Grid.Row="22" />
+        <TextBlock Text="{x:Bind Document.ByteCount, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="22" />
+
+        <TextBlock Text="Multimedia Clip Count:"
+                   Grid.Row="23" />
+        <TextBlock Text="{x:Bind Document.MultimediaClipCount, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="23" />
+
+        <TextBlock Text="Note Count:"
+                   Grid.Row="24" />
+        <TextBlock Text="{x:Bind Document.NoteCount, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="24" />
+
+        <TextBlock Text="Slide Count:"
+                   Grid.Row="25" />
+        <TextBlock Text="{x:Bind Document.SlideCount, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="25" />
+
+        <TextBlock Text="Hidden Slide Count:"
+                   Grid.Row="26" />
+        <TextBlock Text="{x:Bind Document.HiddenSlideCount, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="26" />
+
+    </Grid>
+</UserControl>

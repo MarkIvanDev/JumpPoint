@@ -1,0 +1,1315 @@
+﻿<uwp:NGPage xmlns:uwp="using:NittyGritty.Uwp"
+            x:Class="JumpPoint.Uwp.Standalone.PropertiesPage"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:local="using:JumpPoint.Uwp.Standalone"
+            xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:converters="using:JumpPoint.Uwp.Converters"
+            xmlns:properties="using:JumpPoint.Uwp.Converters.Properties"
+            xmlns:items="using:JumpPoint.Platform.Items"
+            xmlns:models="using:JumpPoint.Platform.Models"
+            xmlns:ngconv="using:NittyGritty.UI.Converters"
+            xmlns:humanizer="using:Humanizer"
+            xmlns:io="using:System.IO"
+            xmlns:controls="using:JumpPoint.Uwp.Controls"
+            xmlns:sys="using:System"
+            xmlns:helper="using:JumpPoint.ViewModels.Helpers"
+            xmlns:i="using:Microsoft.Xaml.Interactivity"
+            xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+            xmlns:helpers="using:JumpPoint.Uwp.Helpers"
+            xmlns:sa="using:JumpPoint.ViewModels.Standalone"
+            xmlns:extensions="using:NittyGritty.Uwp.Extensions"
+            xmlns:platform="using:JumpPoint.Platform"
+            xmlns:services="using:JumpPoint.Platform.Services"
+            xmlns:gtext="using:Glif.Core.Text"
+            xmlns:behaviors="using:JumpPoint.Uwp.Interactivity.Behaviors"
+            extensions:ApplicationViewExtensions.Title="Properties"
+            extensions:TitleBarExtensions.ButtonBackgroundColor="Transparent"
+            extensions:TitleBarExtensions.ButtonInactiveBackgroundColor="Transparent"
+            mc:Ignorable="d"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            x:Name="rootPage"
+            DataContext="{Binding Source={StaticResource Locator}, Path=Properties}">
+
+    <uwp:NGPage.Resources>
+        <Style TargetType="PivotHeaderItem">
+            <Setter Property="Height"
+                    Value="40" />
+        </Style>
+        <Style TargetType="MenuFlyoutSeparator">
+            <Setter Property="Padding"
+                    Value="0,4" />
+        </Style>
+        <Style TargetType="HyperlinkButton">
+            <Setter Property="Padding"
+                    Value="0" />
+
+        </Style>
+        <properties:PropertyValueConverter x:Key="PropertyValueConverter" />
+        <properties:AttributeIconConverter x:Key="AttributeIconConverter" />
+        <ngconv:IsMoreThanZeroConverter x:Key="IsMoreThanZeroConverter" />
+        <ngconv:ChainConverter x:Key="VisibleWhenMoreThanZeroConverter">
+            <ngconv:IsMoreThanZeroConverter />
+            <ngconv:BooleanValueConverter>
+                <ngconv:BooleanValueConverter.TrueValue>
+                    <Visibility>Visible</Visibility>
+                </ngconv:BooleanValueConverter.TrueValue>
+                <ngconv:BooleanValueConverter.FalseValue>
+                    <Visibility>Collapsed</Visibility>
+                </ngconv:BooleanValueConverter.FalseValue>
+            </ngconv:BooleanValueConverter>
+        </ngconv:ChainConverter>
+        <ngconv:BooleanValueConverter x:Key="FavoriteStatusConverter">
+            <ngconv:BooleanValueConverter.TrueValue>
+                <x:String>Favorite</x:String>
+            </ngconv:BooleanValueConverter.TrueValue>
+            <ngconv:BooleanValueConverter.FalseValue>
+                <x:String>Not Favorite</x:String>
+            </ngconv:BooleanValueConverter.FalseValue>
+        </ngconv:BooleanValueConverter>
+        <ngconv:ChainConverter x:Key="CollapsedWhenZeroConverter">
+            <ngconv:IsZeroConverter />
+            <ngconv:BooleanValueConverter>
+                <ngconv:BooleanValueConverter.TrueValue>
+                    <Visibility>Collapsed</Visibility>
+                </ngconv:BooleanValueConverter.TrueValue>
+                <ngconv:BooleanValueConverter.FalseValue>
+                    <Visibility>Visible</Visibility>
+                </ngconv:BooleanValueConverter.FalseValue>
+            </ngconv:BooleanValueConverter>
+        </ngconv:ChainConverter>
+    </uwp:NGPage.Resources>
+
+    <Grid x:Name="root">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid x:Name="AppTitleBar"
+              Background="{StaticResource TitleBarBackground}"
+              Height="32">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftPaddingColumn"
+                                  Width="0" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="RightPaddingColumn"
+                                  Width="0" />
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="1"
+                  Background="Transparent"
+                  x:Name="AppDrag"
+                  Padding="12,0"
+                  ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Viewbox Width="20"
+                         Height="20">
+                    <ContentControl Content="{x:Bind converters:IconConverter.GetPathTypeIconElement(platform:AppPath.Properties, x:Null)}" />
+                </Viewbox>
+                <TextBlock Text="Properties"
+                           x:Name="txtTitle"
+                           VerticalAlignment="Center"
+                           FontWeight="SemiBold"
+                           Foreground="White"
+                           Grid.Column="1"
+                           FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                           FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                           FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+            </Grid>
+        </Grid>
+        <Pivot Grid.Row="1">
+            <Pivot.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                               FontWeight="SemiBold"
+                               Text="{Binding}" />
+                </DataTemplate>
+            </Pivot.HeaderTemplate>
+            <PivotItem Header="GENERAL"
+                       Margin="0,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ScrollViewer>
+                        <StackPanel Padding="12,12,20,64"
+                                    Spacing="4">
+                                <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Items.Values, Mode=OneWay}"
+                                                     HorizontalAlignment="Center">
+                                    <winui:ItemsRepeater.Layout>
+                                        <winui:UniformGridLayout Orientation="Horizontal"
+                                                                 MinRowSpacing="4"
+                                                                 MinColumnSpacing="12"
+                                                                 ItemsJustification="SpaceEvenly"
+                                                                 MinItemWidth="100"/>
+                                        <!--<winui:StackLayout Orientation="Horizontal"
+                                                           Spacing="24" />-->
+                                    </winui:ItemsRepeater.Layout>
+                                    <DataTemplate x:DataType="sa:JPGroup">
+                                        <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Center">
+                                            <TextBlock VerticalAlignment="Center"
+                                                       FontSize="16"
+                                                       FontWeight="SemiBold"
+                                                       Text="{x:Bind Items.Count}" />
+                                            <Image Width="28"
+                                                   Height="28"
+                                                   Margin="4,0,0,0">
+                                                <Image.Source>
+                                                    <BitmapImage DecodePixelHeight="28"
+                                                                 DecodePixelWidth="28"
+                                                                 DecodePixelType="Logical"
+                                                                 UriSource="{x:Bind Key, Converter={StaticResource ItemIconConverter}}" />
+                                                </Image.Source>
+                                            </Image>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </winui:ItemsRepeater>
+
+                            <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Items.Values, Mode=OneWay}">
+                                <properties:GeneralPropertiesTemplateSelector>
+                                    <properties:GeneralPropertiesTemplateSelector.DrivesTemplate>
+                                        <DataTemplate x:DataType="sa:JPGroup">
+                                            <Grid Visibility="{x:Bind Items.Count, Converter={StaticResource VisibleWhenMoreThanZeroConverter}}"
+                                                  RowSpacing="4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="0.5*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <MenuFlyoutSeparator Grid.ColumnSpan="2" />
+
+                                                <Grid Grid.Row="1"
+                                                      Grid.ColumnSpan="2">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Image Width="28"
+                                                           Height="28">
+                                                        <Image.Source>
+                                                            <BitmapImage DecodePixelHeight="28"
+                                                                         DecodePixelWidth="28"
+                                                                         DecodePixelType="Logical"
+                                                                         UriSource="{x:Bind Key, Converter={StaticResource ItemIconConverter}}" />
+                                                        </Image.Source>
+                                                    </Image>
+                                                    <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity(Key, Items.Count, humanizer:ShowQuantityAs.Numeric)}"
+                                                               Grid.Column="1"
+                                                               Margin="8,0"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               VerticalAlignment="Center"
+                                                               FontSize="16"
+                                                               FontWeight="SemiBold"
+                                                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}"
+                                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                                </Grid>
+
+                                                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Name', Items.Count, humanizer:ShowQuantityAs.None)}"
+                                                           Grid.Row="2" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Name'}"
+                                                           Grid.Row="2"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Type', Items.Count, humanizer:ShowQuantityAs.None)}"
+                                                           Grid.Row="3" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Type'}"
+                                                           Grid.Row="3"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Path', Items.Count, humanizer:ShowQuantityAs.None)}"
+                                                           Grid.Row="4" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Path'}"
+                                                           Grid.Row="4"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="Free Space:"
+                                                           Grid.Row="5" />
+                                                <TextBlock Text="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalFreeSpaceDrives, Converter={StaticResource ByteSizeConverter}}"
+                                                           Grid.Row="5"
+                                                           Grid.Column="1" />
+
+                                                <TextBlock Text="SIZE: *"
+                                                           FontWeight="SemiBold"
+                                                           FontSize="16"
+                                                           Grid.Row="6" />
+                                                <TextBlock Text="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalSizeDrives, Converter={StaticResource ByteSizeConverter}}"
+                                                           FontWeight="SemiBold"
+                                                           FontSize="16"
+                                                           Grid.Row="6"
+                                                           Grid.Column="1" />
+                                                <TextBlock Text="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalSizeDrives, Converter={StaticResource StringFormatConverter}, ConverterParameter='({0:N0} B)'}"
+                                                           Grid.Row="7"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="* Drives' combined capacity"
+                                                           Grid.Row="8"
+                                                           Grid.Column="1"
+                                                           Style="{StaticResource CaptionTextBlockStyle}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </properties:GeneralPropertiesTemplateSelector.DrivesTemplate>
+                                    <properties:GeneralPropertiesTemplateSelector.FoldersTemplate>
+                                        <DataTemplate x:DataType="sa:JPGroup">
+                                            <Grid Visibility="{x:Bind Items.Count, Converter={StaticResource VisibleWhenMoreThanZeroConverter}}"
+                                                  RowSpacing="4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="0.5*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <MenuFlyoutSeparator Grid.ColumnSpan="2" />
+
+                                                <Grid Grid.Row="1"
+                                                      Grid.ColumnSpan="2">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Image Width="28"
+                                                           Height="28">
+                                                        <Image.Source>
+                                                            <BitmapImage DecodePixelHeight="28"
+                                                                         DecodePixelWidth="28"
+                                                                         DecodePixelType="Logical"
+                                                                         UriSource="{x:Bind Key, Converter={StaticResource ItemIconConverter}}" />
+                                                        </Image.Source>
+                                                    </Image>
+                                                    <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity(Key, Items.Count, humanizer:ShowQuantityAs.Numeric)}"
+                                                               Grid.Column="1"
+                                                               Margin="8,0"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               VerticalAlignment="Center"
+                                                               FontSize="16"
+                                                               FontWeight="SemiBold"
+                                                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}"
+                                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                                </Grid>
+
+                                                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Name', Items.Count, humanizer:ShowQuantityAs.None)}"
+                                                           Grid.Row="2" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Name'}"
+                                                           Grid.Row="2"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Type', Items.Count, humanizer:ShowQuantityAs.None)}"
+                                                           Grid.Row="3" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Type'}"
+                                                           Grid.Row="3"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Path', Items.Count, humanizer:ShowQuantityAs.None)}"
+                                                           Grid.Row="4" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Path'}"
+                                                           Grid.Row="4"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="Date Created:"
+                                                           Grid.Row="5" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Date Created'}"
+                                                           Grid.Row="5"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="Date Modified:"
+                                                           Grid.Row="6" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Date Modified'}"
+                                                           Grid.Row="6"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="Date Accessed:"
+                                                           Grid.Row="7" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Date Accessed'}"
+                                                           Grid.Row="7"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="File Count:"
+                                                           Grid.Row="8" />
+                                                <TextBlock Text="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalFileCountFolders, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0:n0}'}"
+                                                           Grid.Row="8"
+                                                           Grid.Column="1" />
+
+                                                <TextBlock Text="Folder Count:"
+                                                           Grid.Row="9" />
+                                                <TextBlock Text="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalFolderCountFolders, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0:n0}'}"
+                                                           Grid.Row="9"
+                                                           Grid.Column="1" />
+
+                                                <TextBlock Text="Attributes:"
+                                                           Grid.Row="10" />
+                                                <winui:ItemsRepeater ItemsSource="{Binding Source={StaticResource Locator}, Path=Properties.Attributes}"
+                                                                     Grid.Row="10"
+                                                                     Grid.Column="1">
+                                                    <winui:ItemsRepeater.Layout>
+                                                        <winui:StackLayout Orientation="Horizontal" />
+                                                    </winui:ItemsRepeater.Layout>
+                                                    <DataTemplate x:DataType="io:FileAttributes">
+                                                        <controls:AttributeIcon Attribute="{x:Bind}"
+                                                                                Data="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalAttributesFolders}"
+                                                                                IconWidth="20"
+                                                                                IconHeight="20" />
+                                                    </DataTemplate>
+                                                </winui:ItemsRepeater>
+
+                                                <TextBlock Text="SIZE:"
+                                                           FontWeight="SemiBold"
+                                                           FontSize="16"
+                                                           Grid.Row="11" />
+                                                <TextBlock Text="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalSizeFolders, Converter={StaticResource ByteSizeConverter}}"
+                                                           FontWeight="SemiBold"
+                                                           FontSize="16"
+                                                           Grid.Row="11"
+                                                           Grid.Column="1" />
+                                                <TextBlock Text="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalSizeFolders, Converter={StaticResource StringFormatConverter}, ConverterParameter='({0:N0} bytes)'}"
+                                                           Grid.Row="12"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </properties:GeneralPropertiesTemplateSelector.FoldersTemplate>
+                                    <properties:GeneralPropertiesTemplateSelector.FilesTemplate>
+                                        <DataTemplate x:DataType="sa:JPGroup">
+                                            <Grid Visibility="{x:Bind Items.Count, Converter={StaticResource VisibleWhenMoreThanZeroConverter}}"
+                                                  RowSpacing="4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="0.5*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <MenuFlyoutSeparator Grid.ColumnSpan="2" />
+
+                                                <Grid Grid.Row="1"
+                                                      Grid.ColumnSpan="2">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Image Width="28"
+                                                           Height="28">
+                                                        <Image.Source>
+                                                            <BitmapImage DecodePixelHeight="28"
+                                                                         DecodePixelWidth="28"
+                                                                         DecodePixelType="Logical"
+                                                                         UriSource="{x:Bind Key, Converter={StaticResource ItemIconConverter}}" />
+                                                        </Image.Source>
+                                                    </Image>
+                                                    <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity(Key, Items.Count, humanizer:ShowQuantityAs.Numeric)}"
+                                                               Grid.Column="1"
+                                                               Margin="8,0"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               VerticalAlignment="Center"
+                                                               FontSize="16"
+                                                               FontWeight="SemiBold"
+                                                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}"
+                                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                                </Grid>
+
+                                                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Name', Items.Count, humanizer:ShowQuantityAs.None)}"
+                                                           Grid.Row="2" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Name'}"
+                                                           Grid.Row="2"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Type', Items.Count, humanizer:ShowQuantityAs.None)}"
+                                                           Grid.Row="3" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Type'}"
+                                                           Grid.Row="3"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Path', Items.Count, humanizer:ShowQuantityAs.None)}"
+                                                           Grid.Row="4" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Path'}"
+                                                           Grid.Row="4"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="Date Created:"
+                                                           Grid.Row="5" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Date Created'}"
+                                                           Grid.Row="5"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="Date Modified:"
+                                                           Grid.Row="6" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Date Modified'}"
+                                                           Grid.Row="6"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="Date Accessed:"
+                                                           Grid.Row="7" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Date Accessed'}"
+                                                           Grid.Row="7"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="Attributes:"
+                                                           Grid.Row="8" />
+                                                <winui:ItemsRepeater ItemsSource="{Binding Source={StaticResource Locator}, Path=Properties.Attributes}"
+                                                                     Grid.Row="8"
+                                                                     Grid.Column="1">
+                                                    <winui:ItemsRepeater.Layout>
+                                                        <winui:StackLayout Orientation="Horizontal" />
+                                                    </winui:ItemsRepeater.Layout>
+                                                    <DataTemplate x:DataType="io:FileAttributes">
+                                                        <controls:AttributeIcon Attribute="{x:Bind}"
+                                                                                Data="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalAttributesFiles}"
+                                                                                IconWidth="20"
+                                                                                IconHeight="20" />
+                                                    </DataTemplate>
+                                                </winui:ItemsRepeater>
+
+                                                <TextBlock Text="SIZE:"
+                                                           FontWeight="SemiBold"
+                                                           Grid.Row="9" />
+                                                <TextBlock Text="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalSizeFiles, Converter={StaticResource ByteSizeConverter}}"
+                                                           FontWeight="SemiBold"
+                                                           FontSize="16"
+                                                           Grid.Row="9"
+                                                           Grid.Column="1" />
+                                                <TextBlock Text="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalSizeFiles, Converter={StaticResource StringFormatConverter}, ConverterParameter='({0:N0} bytes)'}"
+                                                           Grid.Row="10"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </properties:GeneralPropertiesTemplateSelector.FilesTemplate>
+                                    <properties:GeneralPropertiesTemplateSelector.WorkspacesTemplate>
+                                        <DataTemplate x:DataType="sa:JPGroup">
+                                            <Grid Visibility="{x:Bind Items.Count, Converter={StaticResource VisibleWhenMoreThanZeroConverter}}"
+                                                  RowSpacing="4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="0.5*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <MenuFlyoutSeparator Grid.ColumnSpan="2" />
+
+                                                <Grid Grid.Row="1"
+                                                      Grid.ColumnSpan="2">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Image Width="28"
+                                                           Height="28">
+                                                        <Image.Source>
+                                                            <BitmapImage DecodePixelHeight="28"
+                                                                         DecodePixelWidth="28"
+                                                                         DecodePixelType="Logical"
+                                                                         UriSource="{x:Bind Key, Converter={StaticResource ItemIconConverter}}" />
+                                                        </Image.Source>
+                                                    </Image>
+                                                    <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity(Key, Items.Count, humanizer:ShowQuantityAs.Numeric)}"
+                                                               Grid.Column="1"
+                                                               Margin="8,0"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               VerticalAlignment="Center"
+                                                               FontSize="16"
+                                                               FontWeight="SemiBold"
+                                                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}"
+                                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                                </Grid>
+
+                                                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Name', Items.Count, humanizer:ShowQuantityAs.None)}"
+                                                           Grid.Row="2" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Name'}"
+                                                           Grid.Row="2"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Type', Items.Count, humanizer:ShowQuantityAs.None)}"
+                                                           Grid.Row="3" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Type'}"
+                                                           Grid.Row="3"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Path', Items.Count, humanizer:ShowQuantityAs.None)}"
+                                                           Grid.Row="4" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Path'}"
+                                                           Grid.Row="4"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="Drive Count:"
+                                                           Grid.Row="5" />
+                                                <TextBlock Text="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalDriveCountWorkspaces, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0:n0}'}"
+                                                           Grid.Row="5"
+                                                           Grid.Column="1" />
+
+                                                <TextBlock Text="Folder Count:"
+                                                           Grid.Row="6" />
+                                                <TextBlock Text="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalFolderCountWorkspaces, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0:n0}'}"
+                                                           Grid.Row="6"
+                                                           Grid.Column="1" />
+                                                
+                                                <TextBlock Text="File Count:"
+                                                           Grid.Row="7" />
+                                                <TextBlock Text="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalFileCountWorkspaces, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0:n0}'}"
+                                                           Grid.Row="7"
+                                                           Grid.Column="1" />
+
+                                                <TextBlock Text="SIZE:"
+                                                           FontWeight="SemiBold"
+                                                           FontSize="16"
+                                                           Grid.Row="8" />
+                                                <TextBlock Text="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalSizeWorkspaces, Converter={StaticResource ByteSizeConverter}}"
+                                                           FontWeight="SemiBold"
+                                                           FontSize="16"
+                                                           Grid.Row="8"
+                                                           Grid.Column="1" />
+                                                <TextBlock Text="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalSizeWorkspaces, Converter={StaticResource StringFormatConverter}, ConverterParameter='({0:N0} B)'}"
+                                                           Grid.Row="9"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </properties:GeneralPropertiesTemplateSelector.WorkspacesTemplate>
+                                    <properties:GeneralPropertiesTemplateSelector.AppTemplate>
+                                        <DataTemplate x:DataType="sa:JPGroup">
+                                            <Grid Visibility="{x:Bind Items.Count, Converter={StaticResource VisibleWhenMoreThanZeroConverter}}"
+                                                  RowSpacing="4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="0.5*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <MenuFlyoutSeparator Grid.ColumnSpan="2" />
+
+                                                <Grid Grid.Row="1"
+                                                      Grid.ColumnSpan="2">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Image Width="28"
+                                                           Height="28">
+                                                        <Image.Source>
+                                                            <BitmapImage DecodePixelHeight="28"
+                                                                         DecodePixelWidth="28"
+                                                                         DecodePixelType="Logical"
+                                                                         UriSource="{x:Bind Key, Converter={StaticResource ItemIconConverter}}" />
+                                                        </Image.Source>
+                                                    </Image>
+                                                    <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity(Key, Items.Count, humanizer:ShowQuantityAs.Numeric)}"
+                                                               Grid.Column="1"
+                                                               Margin="8,0"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               VerticalAlignment="Center"
+                                                               FontSize="16"
+                                                               FontWeight="SemiBold"
+                                                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}"
+                                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                                </Grid>
+
+                                                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Name', Items.Count, humanizer:ShowQuantityAs.None)}"
+                                                           Grid.Row="2" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Name'}"
+                                                           Grid.Row="2"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Type', Items.Count, humanizer:ShowQuantityAs.None)}"
+                                                           Grid.Row="3" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Type'}"
+                                                           Grid.Row="3"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Path', Items.Count, humanizer:ShowQuantityAs.None)}"
+                                                           Grid.Row="4" />
+                                                <TextBlock Text="{x:Bind Items, Converter={StaticResource PropertyValueConverter}, ConverterParameter='Path'}"
+                                                           Grid.Row="4"
+                                                           Grid.Column="1"
+                                                           TextTrimming="CharacterEllipsis" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </properties:GeneralPropertiesTemplateSelector.AppTemplate>
+                                </properties:GeneralPropertiesTemplateSelector>
+                            </winui:ItemsRepeater>
+
+                        </StackPanel>
+                    </ScrollViewer>
+                    <Grid Padding="12,4"
+                          ColumnSpacing="4"
+                          Grid.Row="1"
+                          Background="{StaticResource SystemAccentBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.5*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
+                                   FontWeight="SemiBold"
+                                   Foreground="White"
+                                   Text="TOTAL SIZE:" />
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
+                                   FontWeight="SemiBold"
+                                   Foreground="White"
+                                   Grid.Column="1"
+                                   Text="{x:Bind ViewModel.Total, Mode=OneWay, Converter={StaticResource ByteSizeConverter}}" />
+                        <TextBlock Text="{x:Bind ViewModel.Total, Converter={StaticResource StringFormatConverter}, ConverterParameter='({0:N0} bytes)', Mode=OneWay}"
+                                   Grid.Row="1"
+                                   Grid.Column="1"
+                                   Foreground="White"
+                                   TextTrimming="CharacterEllipsis" />
+                    </Grid>
+                </Grid>
+            </PivotItem>
+            <PivotItem Header="DRIVES"
+                       Margin="12,0,0,0"
+                       x:Name="pivotDrives"
+                       x:Load="{x:Bind ViewModel.Items['Drive'].Items.Count, Converter={StaticResource IsMoreThanZeroConverter}, Mode=OneWay}">
+                <ScrollViewer>
+                    <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Items['Drive'].Items, Mode=OneWay}"
+                                         Margin="0,12,20,64"
+                                         x:Name="listDrives">
+                        <DataTemplate x:DataType="items:DriveBase">
+                            <Grid RowSpacing="4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.5*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.ColumnSpan="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Width="28"
+                                           Height="28">
+                                        <Image.Source>
+                                            <BitmapImage DecodePixelHeight="28"
+                                                         DecodePixelWidth="28"
+                                                         DecodePixelType="Logical"
+                                                         UriSource="{x:Bind converters:IconConverter.GetDriveIconUri(DriveTemplate), Mode=OneWay}" />
+                                        </Image.Source>
+                                    </Image>
+                                    <TextBlock Text="{x:Bind DisplayName}"
+                                               Grid.Column="1"
+                                               Margin="8,0"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center"
+                                               FontSize="16"
+                                               FontWeight="SemiBold"
+                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}">
+                                        <i:Interaction.Behaviors>
+                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
+                                        </i:Interaction.Behaviors>
+                                    </TextBlock>
+                                </Grid>
+
+                                <TextBlock Text="Drive Type:"
+                                           Grid.Row="1" />
+                                <TextBlock Text="{x:Bind DisplayType}"
+                                           Grid.Row="1"
+                                           Grid.Column="1" />
+
+                                <TextBlock Text="File System:"
+                                           Grid.Row="2" />
+                                <TextBlock Text="{x:Bind FileSystem}"
+                                           Grid.Row="2"
+                                           Grid.Column="1" />
+
+                                <TextBlock Text="Used Space:"
+                                           Grid.Row="3" />
+                                <TextBlock Text="{x:Bind UsedSpace, Converter={StaticResource ByteSizeConverter}}"
+                                           Grid.Row="3"
+                                           Grid.Column="1" />
+
+                                <TextBlock Text="Free Space:"
+                                           Grid.Row="4" />
+                                <TextBlock Text="{x:Bind FreeSpace, Converter={StaticResource ByteSizeConverter}}"
+                                           Grid.Row="4"
+                                           Grid.Column="1" />
+
+                                <TextBlock Text="Capacity:"
+                                           Grid.Row="5" />
+                                <TextBlock Text="{x:Bind Capacity, Converter={StaticResource ByteSizeConverter}}"
+                                           Grid.Row="5"
+                                           Grid.Column="1" />
+
+                                <ProgressBar Grid.ColumnSpan="2"
+                                             Grid.Row="6"
+                                             Margin="0,2"
+                                             Height="18"
+                                             CornerRadius="4"
+                                             Maximum="{x:Bind Capacity, Converter={StaticResource NullableUlongToDoubleConverter}}"
+                                             Value="{x:Bind UsedSpace, Converter={StaticResource NullableUlongToDoubleConverter}}" />
+
+                                <winui:SplitButton Grid.Row="7"
+                                                   HorizontalAlignment="Right"
+                                                   Grid.Column="1"
+                                                   Margin="0,4"
+                                                   Content="Storage Sense"
+                                                   Command="{Binding Source={StaticResource Locator}, Path=Properties.StorageSenseCommand}">
+                                    <winui:SplitButton.Flyout>
+                                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                            <MenuFlyoutItem Text="Open in New Window"
+                                                            CommandParameter="{x:Bind}"
+                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenCommand}" />
+                                            <MenuFlyoutItem Text="Open in File Explorer"
+                                                            CommandParameter="{x:Bind}"
+                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenFileExplorerCommand}" />
+                                            <MenuFlyoutItem Text="Open in Command Prompt"
+                                                            CommandParameter="{x:Bind}"
+                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenCommandPromptCommand}" />
+                                            <MenuFlyoutItem Text="Open in Powershell"
+                                                            CommandParameter="{x:Bind}"
+                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenPowershellCommand}" />
+                                            <MenuFlyoutSeparator />
+                                            <MenuFlyoutItem Text="Clean Manager"
+                                                            CommandParameter="{x:Bind}"
+                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.CleanManagerCommand}" />
+                                        </MenuFlyout>
+                                    </winui:SplitButton.Flyout>
+                                </winui:SplitButton>
+
+                                <MenuFlyoutSeparator Grid.ColumnSpan="2"
+                                                     Grid.Row="8" />
+
+                            </Grid>
+                        </DataTemplate>
+                    </winui:ItemsRepeater>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="FOLDERS"
+                       Margin="12,0,0,0"
+                       x:Name="pivotFolders"
+                       x:Load="{x:Bind ViewModel.Items['Folder'].Items.Count, Converter={StaticResource IsMoreThanZeroConverter}, Mode=OneWay}">
+                <ScrollViewer>
+                    <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Items['Folder'].Items, Mode=OneWay}"
+                                         Margin="0,12,20,64">
+                        <DataTemplate x:DataType="items:FolderBase">
+                            <Grid RowSpacing="4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.5*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.ColumnSpan="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Width="28"
+                                           Height="28">
+                                        <Image.Source>
+                                            <BitmapImage DecodePixelHeight="28"
+                                                         DecodePixelWidth="28"
+                                                         DecodePixelType="Logical"
+                                                         UriSource="{x:Bind converters:IconConverter.GetFolderIconUri(FolderTemplate), Mode=OneWay}" />
+                                        </Image.Source>
+                                    </Image>
+                                    <TextBlock Text="{x:Bind DisplayName}"
+                                               Grid.Column="1"
+                                               Margin="8,0"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center"
+                                               FontSize="16"
+                                               FontWeight="SemiBold"
+                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}">
+                                        <i:Interaction.Behaviors>
+                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
+                                        </i:Interaction.Behaviors>
+                                    </TextBlock>
+                                </Grid>
+
+                                <TextBlock Text="Folder Type:"
+                                           Grid.Row="1" />
+                                <TextBlock Text="{x:Bind DisplayType}"
+                                           Grid.Row="1"
+                                           Grid.Column="1" />
+
+                                <TextBlock Text="File Count:"
+                                           Grid.Row="2" />
+                                <TextBlock Text="{x:Bind FileCount, Mode=OneWay}"
+                                           Grid.Row="2"
+                                           Grid.Column="1" />
+
+                                <TextBlock Text="Folder Count:"
+                                           Grid.Row="3" />
+                                <TextBlock Text="{x:Bind FolderCount, Mode=OneWay}"
+                                           Grid.Row="3"
+                                           Grid.Column="1" />
+
+                                <TextBlock Text="Favorite Status:"
+                                           Grid.Row="4" />
+                                <TextBlock Text="{x:Bind IsFavorite, Converter={StaticResource FavoriteStatusConverter}}"
+                                           Grid.Row="4"
+                                           Grid.Column="1" />
+
+                                <TextBlock Text="Path:"
+                                           Grid.Row="5" />
+                                <TextBlock Text="{x:Bind Path}"
+                                           Grid.Row="5"
+                                           Grid.Column="1"
+                                           TextWrapping="Wrap" />
+
+                                <winui:SplitButton Grid.Row="6"
+                                                   HorizontalAlignment="Right"
+                                                   Grid.Column="1"
+                                                   Margin="0,4"
+                                                   Content="Open in New Window"
+                                                   CommandParameter="{x:Bind}"
+                                                   Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenCommand}">
+                                    <winui:SplitButton.Flyout>
+                                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                            <MenuFlyoutItem Text="Open in File Explorer"
+                                                            CommandParameter="{x:Bind}"
+                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenFileExplorerCommand}" />
+                                            <MenuFlyoutItem Text="Open in Command Prompt"
+                                                            CommandParameter="{x:Bind}"
+                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenCommandPromptCommand}" />
+                                            <MenuFlyoutItem Text="Open in Powershell"
+                                                            CommandParameter="{x:Bind}"
+                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenPowershellCommand}" />
+                                        </MenuFlyout>
+                                    </winui:SplitButton.Flyout>
+                                </winui:SplitButton>
+
+                                <MenuFlyoutSeparator Grid.Row="7"
+                                                     Grid.ColumnSpan="2" />
+                            </Grid>
+                        </DataTemplate>
+                    </winui:ItemsRepeater>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="FILES"
+                       Margin="12,0,0,0"
+                       x:Name="pivotFiles"
+                       x:Load="{x:Bind ViewModel.Items['File'].Items.Count, Converter={StaticResource IsMoreThanZeroConverter}, Mode=OneWay}">
+                <ScrollViewer>
+                    <StackPanel Spacing="4"
+                                Padding="0,12,20,64">
+                        <StackPanel.ChildrenTransitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </StackPanel.ChildrenTransitions>
+
+                        <ComboBox ItemsSource="{x:Bind ViewModel.Items['File'].Items, Mode=OneWay}"
+                                  SelectedItem="{x:Bind ViewModel.CurrentFile, Mode=TwoWay, Converter={StaticResource ChangeTypeConverter}}"
+                                  HorizontalAlignment="Stretch">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="items:FileBase">
+                                    <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}">
+                                        <i:Interaction.Behaviors>
+                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
+                                        </i:Interaction.Behaviors>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+
+                        <controls:Expander Header="Core"
+                                           x:Name="coreHeader">
+                            <controls:CorePropertiesControl Core="{x:Bind ViewModel.CurrentFile.CoreProperties, Mode=OneWay}"
+                                                            x:Name="coreProperties"
+                                                            x:Load="{x:Bind coreHeader.IsOpen, Mode=OneWay}" />
+                        </controls:Expander>
+
+                        <controls:Expander Header="Document"
+                                           x:Name="documentHeader">
+                            <controls:DocumentPropertiesControl Document="{x:Bind ViewModel.CurrentFile.DocumentProperties, Mode=OneWay}"
+                                                                x:Name="documentProperties"
+                                                                x:Load="{x:Bind documentHeader.IsOpen, Mode=OneWay}" />
+                        </controls:Expander>
+
+                        <controls:Expander Header="Image"
+                                           x:Name="imageHeader">
+                            <controls:ImagePropertiesControl Image="{x:Bind ViewModel.CurrentFile.ImageProperties, Mode=OneWay}"
+                                                             x:Name="imageProperties"
+                                                             x:Load="{x:Bind imageHeader.IsOpen, Mode=OneWay}" />
+                        </controls:Expander>
+
+                        <controls:Expander Header="Photo"
+                                           x:Name="photoHeader">
+                            <controls:PhotoPropertiesControl Photo="{x:Bind ViewModel.CurrentFile.PhotoProperties, Mode=OneWay}"
+                                                             x:Name="photoProperties"
+                                                             x:Load="{x:Bind photoHeader.IsOpen, Mode=OneWay}" />
+                        </controls:Expander>
+
+                        <controls:Expander Header="Media"
+                                        x:Name="mediaHeader">
+                            <controls:MediaPropertiesControl Media="{x:Bind ViewModel.CurrentFile.MediaProperties, Mode=OneWay}"
+                                                             x:Name="mediaProperties"
+                                                             x:Load="{x:Bind mediaHeader.IsOpen, Mode=OneWay}" />
+                        </controls:Expander>
+
+                        <controls:Expander Header="Audio"
+                                           x:Name="audioHeader">
+                            <controls:AudioPropertiesControl Audio="{x:Bind ViewModel.CurrentFile.AudioProperties, Mode=OneWay}"
+                                                             x:Name="audioProperties"
+                                                             x:Load="{x:Bind audioHeader.IsOpen, Mode=OneWay}" />
+                        </controls:Expander>
+
+                        <controls:Expander Header="Music"
+                                           x:Name="musicHeader">
+                            <controls:MusicPropertiesControl Music="{x:Bind ViewModel.CurrentFile.MusicProperties, Mode=OneWay}"
+                                                             x:Name="musicProperties"
+                                                             x:Load="{x:Bind musicHeader.IsOpen, Mode=OneWay}" />
+                        </controls:Expander>
+
+                        <controls:Expander Header="Video"
+                                           x:Name="videoHeader">
+                            <controls:VideoPropertiesControl Video="{x:Bind ViewModel.CurrentFile.VideoProperties, Mode=OneWay}"
+                                                             x:Name="videoProperties"
+                                                             x:Load="{x:Bind videoHeader.IsOpen, Mode=OneWay}" />
+                        </controls:Expander>
+
+                        <controls:Expander Header="DRM"
+                                           x:Name="drmHeader">
+                            <controls:DrmPropertiesControl Drm="{x:Bind ViewModel.CurrentFile.DrmProperties, Mode=OneWay}"
+                                                           x:Name="drmProperties"
+                                                           x:Load="{x:Bind drmHeader.IsOpen, Mode=OneWay}" />
+                        </controls:Expander>
+
+                        <controls:Expander Header="GPS"
+                                           x:Name="gpsHeader">
+                            <controls:GpsPropertiesControl Gps="{x:Bind ViewModel.CurrentFile.GpsProperties, Mode=OneWay}"
+                                                           x:Name="gpsProperties"
+                                                           x:Load="{x:Bind gpsHeader.IsOpen, Mode=OneWay}" />
+                        </controls:Expander>
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="WORKSPACES"
+                       Margin="12,0,0,0"
+                       x:Name="pivotWorkspaces"
+                       x:Load="{x:Bind ViewModel.Items['Workspace'].Items.Count, Converter={StaticResource IsMoreThanZeroConverter}, Mode=OneWay}">
+                <ScrollViewer>
+                    <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Items['Workspace'].Items, Mode=OneWay}"
+                                         Margin="0,12,20,64">
+                        <DataTemplate x:DataType="items:Workspace">
+                            <Grid RowSpacing="4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.5*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.ColumnSpan="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock IsColorFontEnabled="True"
+                                               FontFamily="Segoe UI Emoji"
+                                               FontSize="21"
+                                               Text="{x:Bind converters:IconConverter.GetWorkspaceGlyph(Template)}" />
+                                    <TextBlock Text="{x:Bind DisplayName}"
+                                               Grid.Column="1"
+                                               Margin="8,0"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center"
+                                               FontSize="16"
+                                               FontWeight="SemiBold"
+                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}">
+                                        <i:Interaction.Behaviors>
+                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
+                                        </i:Interaction.Behaviors>
+                                    </TextBlock>
+                                </Grid>
+
+                                <TextBlock Text="Date Created:"
+                                           Grid.Row="1" />
+                                <TextBlock Text="{x:Bind DateCreated.LocalDateTime.ToString()}"
+                                           Grid.Row="1"
+                                           Grid.Column="1" />
+
+                                <TextBlock Text="File Count:"
+                                           Grid.Row="2" />
+                                <TextBlock Text="{x:Bind FileCount, Mode=OneWay}"
+                                           Grid.Row="2"
+                                           Grid.Column="1" />
+
+                                <TextBlock Text="Folder Count:"
+                                           Grid.Row="3" />
+                                <TextBlock Text="{x:Bind FolderCount, Mode=OneWay}"
+                                           Grid.Row="3"
+                                           Grid.Column="1" />
+
+                                <Button Content="Open in New Window"
+                                        Grid.Row="4"
+                                        HorizontalAlignment="Right"
+                                        Grid.Column="1"
+                                        Margin="0,4"
+                                        CommandParameter="{x:Bind}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenCommand}" />
+
+                                <MenuFlyoutSeparator Grid.Row="5"
+                                                     Grid.ColumnSpan="2" />
+
+                            </Grid>
+                        </DataTemplate>
+                    </winui:ItemsRepeater>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="APP LINKS"
+                       Margin="12,0,0,0"
+                       x:Name="pivotApps"
+                       x:Load="{x:Bind ViewModel.Items['AppLink'].Items.Count, Converter={StaticResource IsMoreThanZeroConverter}, Mode=OneWay}">
+                <ScrollViewer>
+                    <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Items['AppLink'].Items, Mode=OneWay}"
+                                         Margin="0,12,20,64">
+                        <DataTemplate x:DataType="items:AppLink">
+                            <Grid RowSpacing="4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.5*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.ColumnSpan="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border x:Phase="1"
+                                            Width="28"
+                                            Height="28"
+                                            Background="{x:Bind Background, Converter={StaticResource DrawingColorBrushConverter}, Mode=OneWay}">
+                                        <Image Source="{x:Bind Logo, Converter={StaticResource AppLinkGridTilesLogoConverter}, Mode=OneWay}"
+                                               Width="28"
+                                               Height="28" />
+                                    </Border>
+
+                                    <TextBlock Text="{x:Bind DisplayName}"
+                                               Grid.Column="1"
+                                               Margin="8,0"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center"
+                                               FontSize="16"
+                                               FontWeight="SemiBold"
+                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}">
+                                        <i:Interaction.Behaviors>
+                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
+                                        </i:Interaction.Behaviors>
+                                    </TextBlock>
+                                </Grid>
+
+                                <TextBlock Text="App Name:"
+                                           Grid.Row="1" />
+                                <TextBlock Text="{x:Bind AppName, Converter={StaticResource StringEmptyConverter}, ConverterParameter='Not set'}"
+                                           Grid.Row="1"
+                                           Grid.Column="1"
+                                           TextWrapping="Wrap" />
+
+                                <TextBlock Text="App Identifier:"
+                                           Grid.Row="2" />
+                                <TextBlock Text="{x:Bind AppId, Converter={StaticResource StringEmptyConverter}, ConverterParameter='Not set'}"
+                                           Grid.Row="2"
+                                           Grid.Column="1"
+                                           TextWrapping="Wrap"/>
+
+                                <TextBlock Text="Link:"
+                                           Grid.Row="3" />
+                                <TextBlock Text="{x:Bind Link}"
+                                           Grid.Row="3"
+                                           Grid.Column="1"
+                                           TextWrapping="Wrap" />
+
+                                <TextBlock Text="Launch Types:"
+                                           Grid.Row="4" />
+                                <StackPanel Grid.Row="4"
+                                            Grid.Column="1">
+                                    <TextBlock Text="Uri"
+                                               Visibility="{x:Bind converters:AppLinkUtilityConverter.IsLaunchTypeVisible(LaunchTypes, items:AppLinkLaunchTypes.Uri), Mode=OneWay}"/>
+                                    <TextBlock Text="Uri for Results"
+                                               Visibility="{x:Bind converters:AppLinkUtilityConverter.IsLaunchTypeVisible(LaunchTypes, items:AppLinkLaunchTypes.UriForResults), Mode=OneWay}"/>
+                                </StackPanel>
+
+                                <Button Content="Launch"
+                                        Grid.Row="5"
+                                        HorizontalAlignment="Right"
+                                        Grid.Column="1"
+                                        Margin="0,4"
+                                        CommandParameter="{x:Bind}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenCommand}" />
+
+                                <MenuFlyoutSeparator Grid.ColumnSpan="2"
+                                                     Grid.Row="6" />
+                            </Grid>
+                        </DataTemplate>
+                    </winui:ItemsRepeater>
+                </ScrollViewer>
+            </PivotItem>
+        </Pivot>
+        <ProgressRing HorizontalAlignment="Center"
+                      Grid.Row="1"
+                      Width="36"
+                      Height="36"
+                      IsActive="{x:Bind ViewModel.RefreshCommand.IsRunning, Mode=OneWay}"
+                      Visibility="{x:Bind ViewModel.RefreshCommand.IsRunning, Mode=OneWay}"/>
+        <winui:TeachingTip x:Name="notifyGrantAccess"
+                          Title="GRANT ACCESS"
+                          Subtitle="File System"
+                          ShouldConstrainToRootBounds="True"
+                          PreferredPlacement="Center"
+                          IsLightDismissEnabled="False"
+                          HeroContentPlacement="Bottom"
+                          IsOpen="False"
+                          Target="{x:Bind root}">
+            <winui:TeachingTip.IconSource>
+                <winui:FontIconSource Glyph="&#xE1F6;" />
+            </winui:TeachingTip.IconSource>
+            <winui:TeachingTip.HeroContent>
+                <Image Source="/Assets/Screens/grant access.png" />
+            </winui:TeachingTip.HeroContent>
+            <StackPanel Spacing="4">
+                <TextBlock Text="You need to grant the app permission to access your file system in settings. You'll need to restart the app once completed."
+                           TextWrapping="WrapWholeWords"
+                           VerticalAlignment="Center" />
+                <Button Content="Allow Access"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Click="AllowAccess_Click" />
+            </StackPanel>
+        </winui:TeachingTip>
+
+        <winui:TeachingTip x:Name="notifyProblem"
+                          Title="Problem Encountered"
+                          ShouldConstrainToRootBounds="True"
+                          PreferredPlacement="Bottom"
+                          IsLightDismissEnabled="True"
+                          IsOpen="False"
+                          Grid.Row="1"
+                          Target="{x:Bind root}">
+            <winui:TeachingTip.IconSource>
+                <winui:FontIconSource Glyph="&#xE1F6;" />
+            </winui:TeachingTip.IconSource>
+            <i:Interaction.Behaviors>
+                <core:DataTriggerBehavior Binding="{Binding ElementName=notifyProblem, Path=IsOpen}">
+                    <core:DataTriggerBehavior.Value>
+                        <x:Boolean>True</x:Boolean>
+                    </core:DataTriggerBehavior.Value>
+                    <helpers:TimeoutAction Milliseconds="2000">
+                        <core:ChangePropertyAction TargetObject="{Binding ElementName=notifyProblem}"
+                                                   PropertyName="IsOpen">
+                            <core:ChangePropertyAction.Value>
+                                <x:Boolean>False</x:Boolean>
+                            </core:ChangePropertyAction.Value>
+                        </core:ChangePropertyAction>
+                    </helpers:TimeoutAction>
+                </core:DataTriggerBehavior>
+            </i:Interaction.Behaviors>
+        </winui:TeachingTip>
+    </Grid>
+</uwp:NGPage>

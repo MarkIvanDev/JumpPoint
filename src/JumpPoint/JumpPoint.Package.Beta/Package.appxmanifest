@@ -1,0 +1,306 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+  IgnorableNamespaces="uap uap3 uap5 rescap desktop desktop4">
+
+  <Identity
+    Name="25654MarkIvanBasto.JumpPointbeta"
+    Publisher="CN=18D56243-BECE-4C8B-8C6B-085DBDD122F0"
+    Version="0.0.1.0" />
+
+  <Properties>
+    <DisplayName>Jump Point (beta)</DisplayName>
+    <PublisherDisplayName>Mark Ivan Basto</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="x-generate"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="JumpPoint.Uwp.App"
+      desktop4:SupportsMultipleInstances="true">
+      <uap:VisualElements
+        DisplayName="Jump Point (beta)"
+        Description="JumpPoint.Package.Beta"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile
+          Wide310x150Logo="Assets\Wide310x150Logo.png"
+          ShortName="Jump Point"
+          Square310x310Logo="Assets\LargeTile.png"
+          Square71x71Logo="Assets\SmallTile.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo"/>
+            <uap:ShowOn Tile="wide310x150Logo"/>
+            <uap:ShowOn Tile="square310x310Logo" />
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
+        <uap:SplashScreen Image="Assets\SplashScreen.png" uap5:Optional="true" />
+      </uap:VisualElements>
+      <Extensions>
+        <desktop:Extension Category="windows.fullTrustProcess" Executable="JumpPoint.FullTrust\JumpPoint.FullTrust.exe">
+          <desktop:FullTrustProcess>
+            <desktop:ParameterGroup GroupId="Open" Parameters="/open" />
+            <desktop:ParameterGroup GroupId="Paste" Parameters="/paste" />
+            <desktop:ParameterGroup GroupId="Delete" Parameters="/delete" />
+            <desktop:ParameterGroup GroupId="CommandPrompt" Parameters="/cmd" />
+            <desktop:ParameterGroup GroupId="Powershell" Parameters="/powershell" />
+            <desktop:ParameterGroup GroupId="CleanManager" Parameters="/cleanmgr" />
+            <desktop:ParameterGroup GroupId="SystemApps" Parameters="/sysapp" />
+          </desktop:FullTrustProcess>
+        </desktop:Extension>
+        <uap5:Extension Category="windows.appExecutionAlias"
+                        Executable="JumpPoint.Uwp.exe"
+                        EntryPoint="JumpPoint.Uwp.App">
+          <uap5:AppExecutionAlias>
+            <uap5:ExecutionAlias Alias="jumppoint-beta.exe"/>
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
+        
+        <Extension Category="windows.updateTask" EntryPoint="JumpPoint.Uwp.Tasks.Update" />
+        
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="jumppoint-beta" ReturnResults="none" />
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="jumppoint-beta-picker" ReturnResults="always"/>
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="jumppoint-beta-tool" ReturnResults="always"/>
+        </uap:Extension>
+        <uap:Extension Category="windows.shareTarget">
+          <uap:ShareTarget>
+            <uap:SupportedFileTypes>
+              <uap:SupportsAnyFileType/>
+            </uap:SupportedFileTypes>
+            <uap:DataFormat>ApplicationLink</uap:DataFormat>
+          </uap:ShareTarget>
+        </uap:Extension>
+        
+        <uap3:Extension Category="windows.appExtensionHost">
+          <uap3:AppExtensionHost>
+            <uap3:Name>com.jumppointbeta.ext.applinkprovider</uap3:Name>
+            <uap3:Name>com.jumppointbeta.ext.tool</uap3:Name>
+          </uap3:AppExtensionHost>
+        </uap3:Extension>
+        
+        <!-- App Link Providers -->
+        <uap:Extension Category="windows.appService" EntryPoint="JumpPoint.Uwp.Tasks.AppLinkProviders.LocalProvider">
+          <uap3:AppService Name="com.jumppointbeta.svc.localalp" uap4:SupportsMultipleInstances="true" />
+        </uap:Extension>
+        <uap:Extension Category="windows.appService" EntryPoint="JumpPoint.Uwp.Tasks.AppLinkProviders.SettingsProvider">
+          <uap3:AppService Name="com.jumppointbeta.svc.settingsalp" uap4:SupportsMultipleInstances="true" />
+        </uap:Extension>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Id="applinkprovider.manual"
+                             Name="com.jumppointbeta.ext.applinkprovider"
+                             DisplayName="Create App Link Manually"
+                             Description="Manually enter App Link details"
+                             PublicFolder="Extensions\AppLinkProvider\Manual">
+            <uap3:Properties>
+              <Link>jumppoint-beta-picker://manualapplink</Link>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Id="applinkprovider.local"
+                             Name="com.jumppointbeta.ext.applinkprovider"
+                             DisplayName="Jump Point App Links"
+                             Description="The local app link picker of Jump Point"
+                             PublicFolder="Extensions\AppLinkProvider\Local">
+            <uap3:Properties>
+              <Service>com.jumppointbeta.svc.localalp</Service>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Id="applinkprovider.settings"
+                             Name="com.jumppointbeta.ext.applinkprovider"
+                             DisplayName="Windows Settings"
+                             Description="App Links to Windows Settings"
+                             PublicFolder="Extensions\AppLinkProvider\Settings">
+            <uap3:Properties>
+              <Service>com.jumppointbeta.svc.settingsalp</Service>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+        
+        <!-- Hash Tools -->  
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Id="tool.hash.md5"
+                             Name="com.jumppointbeta.ext.tool"
+                             DisplayName="MD5"
+                             Description="Compute the MD5 hash of a file"
+                             PublicFolder="Extensions\Tool\Hash">
+            <uap3:Properties>
+              <Link>jumppoint-beta-tool://hash/?function=MD5</Link>
+              <Group>Hash Functions</Group>
+              <FileTypes>.</FileTypes>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Id="tool.hash.sha1"
+                             Name="com.jumppointbeta.ext.tool"
+                             DisplayName="SHA-1"
+                             Description="Compute the SHA-1 hash of a file"
+                             PublicFolder="Extensions\Tool\Hash">
+            <uap3:Properties>
+              <Link>jumppoint-beta-tool://hash/?function=SHA1</Link>
+              <Group>Hash Functions</Group>
+              <FileTypes>.</FileTypes>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Id="tool.hash.sha256"
+                             Name="com.jumppointbeta.ext.tool"
+                             DisplayName="SHA-256"
+                             Description="Compute the SHA-256 hash of a file"
+                             PublicFolder="Extensions\Tool\Hash">
+            <uap3:Properties>
+              <Link>jumppoint-beta-tool://hash/?function=SHA256</Link>
+              <Group>Hash Functions</Group>
+              <FileTypes>.</FileTypes>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Id="tool.hash.sha384"
+                             Name="com.jumppointbeta.ext.tool"
+                             DisplayName="SHA-384"
+                             Description="Compute the SHA-384 hash of a file"
+                             PublicFolder="Extensions\Tool\Hash">
+            <uap3:Properties>
+              <Link>jumppoint-beta-tool://hash/?function=SHA384</Link>
+              <Group>Hash Functions</Group>
+              <FileTypes>.</FileTypes>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Id="tool.hash.sha512"
+                             Name="com.jumppointbeta.ext.tool"
+                             DisplayName="SHA-512"
+                             Description="Compute the SHA-512 hash of a file"
+                             PublicFolder="Extensions\Tool\Hash">
+            <uap3:Properties>
+              <Link>jumppoint-beta-tool://hash/?function=SHA512</Link>
+              <Group>Hash Functions</Group>
+              <FileTypes>.</FileTypes>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+        
+        <!-- Photo Tools -->
+        <uap:Extension Category="windows.appService" EntryPoint="JumpPoint.Uwp.Tasks.PhotoTools.SetWallpaper">
+          <uap3:AppService Name="com.jumppointbeta.svc.setwallpaper" uap4:SupportsMultipleInstances="true" />
+        </uap:Extension>
+        <uap:Extension Category="windows.appService" EntryPoint="JumpPoint.Uwp.Tasks.PhotoTools.RotateLeft">
+          <uap3:AppService Name="com.jumppointbeta.svc.rotateleft" uap4:SupportsMultipleInstances="true" />
+        </uap:Extension>
+        <uap:Extension Category="windows.appService" EntryPoint="JumpPoint.Uwp.Tasks.PhotoTools.RotateRight">
+          <uap3:AppService Name="com.jumppointbeta.svc.rotateright" uap4:SupportsMultipleInstances="true" />
+        </uap:Extension>
+        <uap:Extension Category="windows.appService" EntryPoint="JumpPoint.Uwp.Tasks.PhotoTools.FlipHorizontal">
+          <uap3:AppService Name="com.jumppointbeta.svc.fliphorizontal" uap4:SupportsMultipleInstances="true" />
+        </uap:Extension>
+        <uap:Extension Category="windows.appService" EntryPoint="JumpPoint.Uwp.Tasks.PhotoTools.FlipVertical">
+          <uap3:AppService Name="com.jumppointbeta.svc.flipvertical" uap4:SupportsMultipleInstances="true" />
+        </uap:Extension>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Id="tool.photo.setwallpaper"
+                             Name="com.jumppointbeta.ext.tool"
+                             DisplayName="Set as Wallpaper"
+                             Description="Set picture as wallpaper"
+                             PublicFolder="Extensions\Tool\Photo\SetWallpaper">
+            <uap3:Properties>
+              <Service>com.jumppointbeta.svc.setwallpaper</Service>
+              <Group>Photo Tools</Group>
+              <FileTypes>.jpg;.jpeg;.bmp;.dib;.png;.jfif;.jpe;.gif;.tif;.tiff;.wdp;.heic;.heif;.heics;.heifs;.avci;.avcs;.avif;.avifs</FileTypes>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Id="tool.photo.rotateleft"
+                             Name="com.jumppointbeta.ext.tool"
+                             DisplayName="Rotate Left"
+                             Description="Rotate picture to the left"
+                             PublicFolder="Extensions\Tool\Photo\RotateLeft">
+            <uap3:Properties>
+              <Service>com.jumppointbeta.svc.rotateleft</Service>
+              <Group>Photo Tools</Group>
+              <FileTypes>.bmp;.dib;.rle;.gif;.jpeg;.jpe;.jpg;.jfif;.exif;.png;.tiff;.tif;.wdp;.jxr;.dds;.heic;.heif</FileTypes>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Id="tool.photo.rotateright"
+                             Name="com.jumppointbeta.ext.tool"
+                             DisplayName="Rotate Right"
+                             Description="Rotate picture to the right"
+                             PublicFolder="Extensions\Tool\Photo\RotateRight">
+            <uap3:Properties>
+              <Service>com.jumppointbeta.svc.rotateright</Service>
+              <Group>Photo Tools</Group>
+              <FileTypes>.bmp;.dib;.rle;.gif;.jpeg;.jpe;.jpg;.jfif;.exif;.png;.tiff;.tif;.wdp;.jxr;.dds;.heic;.heif</FileTypes>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Id="tool.photo.fliphorizontal"
+                             Name="com.jumppointbeta.ext.tool"
+                             DisplayName="Flip Horizontal"
+                             Description="Flip picture horizontally"
+                             PublicFolder="Extensions\Tool\Photo\FlipHorizontal">
+            <uap3:Properties>
+              <Service>com.jumppointbeta.svc.fliphorizontal</Service>
+              <Group>Photo Tools</Group>
+              <FileTypes>.bmp;.dib;.rle;.gif;.jpeg;.jpe;.jpg;.jfif;.exif;.png;.tiff;.tif;.wdp;.jxr;.dds;.heic;.heif</FileTypes>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Id="tool.photo.flipvertical"
+                             Name="com.jumppointbeta.ext.tool"
+                             DisplayName="Flip Vertical"
+                             Description="Flip picture vertically"
+                             PublicFolder="Extensions\Tool\Photo\FlipVertical">
+            <uap3:Properties>
+              <Service>com.jumppointbeta.svc.flipvertical</Service>
+              <Group>Photo Tools</Group>
+              <FileTypes>.bmp;.dib;.rle;.gif;.jpeg;.jpe;.jpg;.jfif;.exif;.png;.tiff;.tif;.wdp;.jxr;.dds;.heic;.heif</FileTypes>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <Capability Name="internetClient" />
+    <Capability Name="internetClientServer" />
+    <Capability Name="privateNetworkClientServer" />
+    <uap:Capability Name="removableStorage" />
+    <rescap:Capability Name="runFullTrust" />
+    <rescap:Capability Name="broadFileSystemAccess" />
+  </Capabilities>
+</Package>
