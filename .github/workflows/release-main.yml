@@ -41,6 +41,13 @@ jobs:
       uses: dotnet/nbgv@v0.4.0
       with:
         setAllVars: true
+        
+    - name: Get Version
+      id: get-version
+      run: |
+        echo "::set-output name=fullVersion::v${{ env.NBGV_SimpleVersion }}.0"
+        echo "::set-output name=version::${{ env.NBGV_SimpleVersion }}.0"
+        echo "::set-output name=fullName::JumpPoint.v${{ env.NBGV_SimpleVersion }}.0.Store"
 
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.0
@@ -48,7 +55,7 @@ jobs:
     - name: Update manifest version
       run: |
         [xml]$manifest = get-content ".\$env:PackagingProjectDirectory\Package.appxmanifest"
-        $manifest.Package.Identity.Version = "$env:NBGV_SimpleVersion.0"
+        $manifest.Package.Identity.Version = "${{ steps.get-version.outputs.version }}"
         $manifest.save(".\$env:PackagingProjectDirectory\Package.appxmanifest")
 
     - name: Decode the Pfx
@@ -72,16 +79,28 @@ jobs:
       run: Remove-Item -path $env:PackagingProjectDirectory/$env:SigningCertificate
 
     - name: Create archive
-      run: Compress-Archive -Path $env:AppxPackageDirectory\* -DestinationPath $env:AppxPackageDirectory\JumpPoint.$env:NBGV_SimpleVersion.0.Store.zip
+      run: Compress-Archive -Path $env:AppxPackageDirectory\* -DestinationPath $env:AppxPackageDirectory\${{ steps.get-version.outputs.fullName }}.zip
+      
+    - name: Create tag
+      uses: actions/github-script@v3
+      with:
+        github-token: ${{ github.token }}
+        script: |
+          github.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: "refs/tags/${process.steps.get-version.outputs.fullVersion}"
+            sha: context.sha
+          })
 
     - name: Create release
-      id: create_release
+      id: create-release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: $env:NBGV_SimpleVersion.0
-        release_name: JumpPoint.$env:NBGV_SimpleVersion.0.Store
+        tag_name: ${{ steps.get-version.outputs.fullVersion }}
+        release_name: ${{ steps.get-version.outputs.fullName }}
         draft: true
         prerelease: false
         
@@ -91,7 +110,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: $env:AppxPackageDirectory\JumpPoint.$env:NBGV_SimpleVersion.0.Store.zip
-        asset_name: JumpPoint.$env:NBGV_SimpleVersion.0.Store.zip
+        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        asset_path: ${{ env.AppxPackageDirectory }}\${{ steps.get-version.outputs.fullName }}.zip
+        asset_name: ${{ steps.get-version.outputs.fullName }}.zip
         asset_content_type: application/zip
