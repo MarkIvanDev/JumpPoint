@@ -1,0 +1,289 @@
+﻿<UserControl
+    x:Class="JumpPoint.Uwp.Controls.MediaPropertiesControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JumpPoint.Uwp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="using:System"
+    mc:Ignorable="d"
+    d:DesignHeight="1200"
+    d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="TextWrapping"
+                    Value="WrapWholeWords" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid ColumnSpacing="8"
+          RowSpacing="4"
+          Padding="0,8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Text="Subtitle:" />
+        <TextBlock Text="{x:Bind Media.Subtitle, Mode=OneWay}"
+                   Grid.Column="1" />
+
+        <TextBlock Text="Date Encoded:"
+                   Grid.Row="1" />
+        <TextBlock Text="{x:Bind Media.DateEncoded, Converter={StaticResource NullableDateTimeOffsetToLocalConverter}, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="1" />
+
+        <TextBlock Text="Date Released:"
+                   Grid.Row="2" />
+        <TextBlock Text="{x:Bind Media.DateReleased, Converter={StaticResource NullableDateTimeOffsetToLocalConverter}, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="2" />
+
+        <TextBlock Text="Duration:"
+                   Grid.Row="3" />
+        <TextBlock Text="{x:Bind Media.Duration, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="3" />
+
+        <TextBlock Text="Frame Count:"
+                   Grid.Row="4" />
+        <TextBlock Text="{x:Bind Media.FrameCount, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="4" />
+
+        <TextBlock Text="Producers:"
+                   Grid.Row="5" />
+        <TextBlock Text="{x:Bind sys:String.Join('; ', Media.Producers), Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="5" />
+
+        <TextBlock Text="Publisher:"
+                   Grid.Row="6" />
+        <TextBlock Text="{x:Bind Media.Publisher, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="6" />
+
+        <TextBlock Text="Writers:"
+                   Grid.Row="7" />
+        <TextBlock Text="{x:Bind sys:String.Join('; ', Media.Writers), Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="7" />
+
+        <TextBlock Text="Year:"
+                   Grid.Row="8" />
+        <TextBlock Text="{x:Bind Media.Year, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="8" />
+
+        <TextBlock Text="Average Level:"
+                   Grid.Row="9" />
+        <TextBlock Text="{x:Bind Media.AverageLevel, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="9" />
+
+        <TextBlock Text="Encoded By:"
+                   Grid.Row="10" />
+        <TextBlock Text="{x:Bind Media.EncodedBy, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="10" />
+
+        <TextBlock Text="Encoding Settings:"
+                   Grid.Row="11" />
+        <TextBlock Text="{x:Bind Media.EncodingSettings, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="11" />
+
+        <TextBlock Text="Protection Type:"
+                   Grid.Row="12" />
+        <TextBlock Text="{x:Bind Media.ProtectionType, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="12" />
+
+        <MenuFlyoutSeparator Grid.Row="13"
+                             Grid.ColumnSpan="2" />
+
+        <TextBlock Text="Series Name:"
+                   Grid.Row="14" />
+        <TextBlock Text="{x:Bind Media.SeriesName, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="14" />
+
+        <TextBlock Text="Season Number:"
+                   Grid.Row="15" />
+        <TextBlock Text="{x:Bind Media.SeasonNumber, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="15" />
+
+        <TextBlock Text="Episode Number:"
+                   Grid.Row="16" />
+        <TextBlock Text="{x:Bind Media.EpisodeNumber, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="16" />
+
+        <MenuFlyoutSeparator Grid.Row="17"
+                             Grid.ColumnSpan="2" />
+
+        <TextBlock Text="Class Primary ID:"
+                   Grid.Row="18" />
+        <TextBlock Text="{x:Bind Media.ClassPrimaryId, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="18" />
+
+        <TextBlock Text="Class Secondary ID:"
+                   Grid.Row="19" />
+        <TextBlock Text="{x:Bind Media.ClassSecondaryId, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="19" />
+
+        <TextBlock Text="Collection Group ID:"
+                   Grid.Row="20" />
+        <TextBlock Text="{x:Bind Media.CollectionGroupId, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="20" />
+
+        <TextBlock Text="Collection ID:"
+                   Grid.Row="21" />
+        <TextBlock Text="{x:Bind Media.CollectionId, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="21" />
+
+        <TextBlock Text="Content ID:"
+                   Grid.Row="22" />
+        <TextBlock Text="{x:Bind Media.ContentId, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="22" />
+
+        <TextBlock Text="DLNA Profile ID:"
+                   Grid.Row="23" />
+        <TextBlock Text="{x:Bind sys:String.Join('; ', Media.DlnaProfileId), Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="23" />
+
+        <TextBlock Text="DVD ID:"
+                   Grid.Row="24" />
+        <TextBlock Text="{x:Bind Media.DvdId, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="24" />
+
+        <TextBlock Text="MCDI:"
+                   Grid.Row="25" />
+        <TextBlock Text="{x:Bind Media.MCDI, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="25" />
+
+        <TextBlock Text="Subscription Content ID:"
+                   Grid.Row="26" />
+        <TextBlock Text="{x:Bind Media.SubscriptionContentId, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="26" />
+
+        <TextBlock Text="Unique File Identifier:"
+                   Grid.Row="27" />
+        <TextBlock Text="{x:Bind Media.UniqueFileIdentifier, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="27" />
+
+        <MenuFlyoutSeparator Grid.Row="28"
+                             Grid.ColumnSpan="2" />
+
+        <TextBlock Text="Content Distributor:"
+                   Grid.Row="29" />
+        <TextBlock Text="{x:Bind Media.ContentDistributor, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="29" />
+
+        <TextBlock Text="Creator Application:"
+                   Grid.Row="30" />
+        <TextBlock Text="{x:Bind Media.CreatorApplication, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="30" />
+
+        <TextBlock Text="Creator Application Version:"
+                   Grid.Row="31" />
+        <TextBlock Text="{x:Bind Media.CreatorApplicationVersion, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="31" />
+
+        <TextBlock Text="Metadata Content Provider:"
+                   Grid.Row="32" />
+        <TextBlock Text="{x:Bind Media.MetadataContentProvider, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="32" />
+
+        <TextBlock Text="Provider Rating:"
+                   Grid.Row="33" />
+        <TextBlock Text="{x:Bind Media.ProviderRating, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="33" />
+
+        <TextBlock Text="Provider Style:"
+                   Grid.Row="34" />
+        <TextBlock Text="{x:Bind Media.ProviderStyle, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="34" />
+
+        <MenuFlyoutSeparator Grid.Row="35"
+                             Grid.ColumnSpan="2" />
+
+        <TextBlock Text="Author Url:"
+                   Grid.Row="36" />
+        <TextBlock Text="{x:Bind Media.AuthorUrl, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="36" />
+
+        <TextBlock Text="Promotion Url:"
+                   Grid.Row="37" />
+        <TextBlock Text="{x:Bind Media.PromotionUrl, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="37" />
+
+        <TextBlock Text="User Web Url:"
+                   Grid.Row="38" />
+        <TextBlock Text="{x:Bind Media.UserWebUrl, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="38" />
+
+    </Grid>
+</UserControl>

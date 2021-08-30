@@ -1,0 +1,667 @@
+﻿<uwp:NGPage xmlns:uwp="using:NittyGritty.Uwp"
+            x:Class="JumpPoint.Uwp.Views.SettingsPage"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:local="using:JumpPoint.Uwp.Views"
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+            xmlns:models="using:JumpPoint.Platform.Models"
+            xmlns:xamarin="using:Xamarin.Essentials"
+            xmlns:converters="using:JumpPoint.Uwp.Converters"
+            xmlns:cloud="using:JumpPoint.Platform.Items.CloudStorage"
+            xmlns:humanizer="using:Humanizer"
+            xmlns:services="using:JumpPoint.Platform.Services"
+            xmlns:extensions="using:JumpPoint.Platform.Extensions"
+            xmlns:io="using:System.IO"
+            xmlns:gtext="using:Glif.Core.Text"
+            xmlns:controls="using:JumpPoint.Uwp.Controls"
+            xmlns:platform="using:JumpPoint.Platform"
+            xmlns:i="using:Microsoft.Xaml.Interactivity"
+            xmlns:behaviors="using:JumpPoint.Uwp.Interactivity.Behaviors"
+            mc:Ignorable="d">
+
+    <uwp:NGPage.Resources>
+        <XamlUICommand x:Key="AddAccountCommand"
+                       Command="{x:Bind ViewModel.AddAccountCommand}">
+            <i:Interaction.Behaviors>
+                <behaviors:NotifyCommandBehavior />
+            </i:Interaction.Behaviors>
+        </XamlUICommand>
+        <XamlUICommand x:Key="RenameAccountCommand"
+                       Command="{x:Bind ViewModel.RenameAccountCommand}">
+            <i:Interaction.Behaviors>
+                <behaviors:NotifyCommandBehavior />
+            </i:Interaction.Behaviors>
+        </XamlUICommand>
+        <XamlUICommand x:Key="RemoveAccountCommand"
+                       Command="{x:Bind ViewModel.RemoveAccountCommand}">
+            <i:Interaction.Behaviors>
+                <behaviors:NotifyCommandBehavior />
+            </i:Interaction.Behaviors>
+        </XamlUICommand>
+    </uwp:NGPage.Resources>
+
+    <Grid>
+        <Pivot Margin="8,8,0,0">
+            <Pivot.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                               FontWeight="SemiBold"
+                               Text="{Binding}"/>
+                </DataTemplate>
+            </Pivot.HeaderTemplate>
+            <PivotItem Header="PREFERENCES">
+                <ScrollViewer Margin="0,0,-12,0">
+                    <StackPanel Margin="0,12,20,120"
+                                Spacing="12">
+                        <TextBlock Text="Personalization"
+                                   FontWeight="SemiBold"
+                                   FontSize="18"
+                                   Margin="0,0,0,8"/>
+                        
+                        <ComboBox Header="Theme"
+                                  Width="150"
+                                  ItemsSource="{x:Bind services:AppSettings.Instance.Themes}"
+                                  SelectedItem="{Binding Source={StaticResource Locator}, Path=AppSettings.Theme, Mode=TwoWay}" />
+                        
+                        <TextBlock Text="Navigation Bar"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="4">
+                            <ToggleButton Padding="12"
+                                          IsChecked="{x:Bind services:AppSettings.Instance.ShowBack, Mode=TwoWay}">
+                                <IconSourceElement IconSource="{StaticResource BackIcon}" />
+                            </ToggleButton>
+                            <ToggleButton Padding="12"
+                                          IsChecked="{x:Bind services:AppSettings.Instance.ShowForward, Mode=TwoWay}">
+                                <IconSourceElement IconSource="{StaticResource ForwardIcon}" />
+                            </ToggleButton>
+                            <ToggleButton Padding="12"
+                                          IsChecked="{x:Bind services:AppSettings.Instance.ShowUp, Mode=TwoWay}">
+                                <IconSourceElement IconSource="{StaticResource UpIcon}" />
+                            </ToggleButton>
+                            <ToggleButton Padding="12"
+                                          IsChecked="{x:Bind services:AppSettings.Instance.ShowRefresh, Mode=TwoWay}">
+                                <IconSourceElement IconSource="{StaticResource RefreshIcon}" />
+                            </ToggleButton>
+                            <ToggleButton Padding="12"
+                                          IsChecked="{x:Bind services:AppSettings.Instance.ShowDashboard, Mode=TwoWay}">
+                                <IconSourceElement IconSource="{StaticResource DashboardIcon}" />
+                            </ToggleButton>
+                            <ToggleButton Padding="12"
+                                          IsChecked="{x:Bind services:AppSettings.Instance.ShowNewItem, Mode=TwoWay}">
+                                <IconSourceElement IconSource="{StaticResource NewItemIcon}" />
+                            </ToggleButton>
+                            <ToggleButton Padding="12"
+                                          IsChecked="{x:Bind services:AppSettings.Instance.ShowLayout, Mode=TwoWay}">
+                                <IconSourceElement IconSource="{StaticResource LayoutIcon}" />
+                            </ToggleButton>
+                        </StackPanel>
+
+                        <TextBlock Text="Font" />
+                        <Grid HorizontalAlignment="Left"
+                              ColumnSpacing="4"
+                              RowSpacing="4"
+                              Width="360">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <controls:IconButton IsCompact="True">
+                                <controls:IconButton.IconSource>
+                                    <FontIconSource FontFamily="Segoe MDL2 Assets" Glyph="&#xE946;" />
+                                </controls:IconButton.IconSource>
+                                <controls:IconButton.Flyout>
+                                    <Flyout Placement="Bottom">
+                                        <StackPanel Spacing="8">
+                                            <TextBlock>
+                                                <Run Text="Font:" />
+                                                <Run Text="{x:Bind io:Path.GetFileName(services:AppSettings.Instance.Font), Mode=OneWay}" />
+                                            </TextBlock>
+                                            <TextBlock>
+                                                <Run Text="Font Style:" />
+                                                <Run Text="{x:Bind services:AppSettings.Instance.FontStyle, Mode=OneWay, Converter={StaticResource HumanizerConverter}}" />
+                                            </TextBlock>
+                                            <TextBlock>
+                                                <Run Text="Font Weight:" />
+                                                <Run Text="{x:Bind services:AppSettings.Instance.FontWeight, Mode=OneWay, Converter={StaticResource HumanizerConverter}}" />
+                                            </TextBlock>
+                                            <TextBlock>
+                                                <Run Text="Font Stretch:" />
+                                                <Run Text="{x:Bind services:AppSettings.Instance.FontStretch, Mode=OneWay, Converter={StaticResource HumanizerConverter}}" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Flyout>
+                                </controls:IconButton.Flyout>
+                            </controls:IconButton>
+                            <TextBlock Text="{x:Bind io:Path.GetFileName(services:AppSettings.Instance.Font), Mode=OneWay}"
+                                       ToolTipService.ToolTip="{x:Bind io:Path.GetFileName(services:AppSettings.Instance.Font), Mode=OneWay}"
+                                       VerticalAlignment="Center"
+                                       Grid.Column="1"/>
+                            <Button Grid.Column="2"
+                                    Content="Change"
+                                    Command="{x:Bind ViewModel.ChangeFontCommand}"/>
+                            
+                            <Border Grid.Row="1"
+                                    Grid.ColumnSpan="3"
+                                    Padding="12"
+                                    CornerRadius="4"
+                                    Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+                                <TextBlock Text="Preview Text"
+                                           HorizontalTextAlignment="Center"
+                                           FontSize="14"
+                                           FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
+                                           FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
+                                           FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
+                                           FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}"/>
+                            </Border>
+                        </Grid>
+
+                        <TextBlock Text="Browser"
+                                   FontWeight="SemiBold"
+                                   Margin="0,8"
+                                   FontSize="18" />
+                        <ToggleSwitch Header="Show Item Checkbox"
+                                      IsOn="{x:Bind services:AppSettings.Instance.ShowCheckbox, Mode=TwoWay}" />
+                        <ToggleSwitch Header="Show File Extension"
+                                      IsOn="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=TwoWay}" />
+
+                        <ComboBox Header="Copy Path Delimiter"
+                                  ItemsSource="{x:Bind services:AppSettings.Instance.CopyPathDelimiters}"
+                                  SelectedItem="{Binding Source={StaticResource Locator}, Path=AppSettings.CopyPathDelimiter, Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="platform:CopyPathDelimiter">
+                                    <TextBlock Text="{x:Bind Converter={StaticResource HumanizerConverter}}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="ACCOUNTS">
+                <ScrollViewer Margin="0,0,-12,0">
+                    <winui:ItemsRepeater Margin="0,8,20,120"
+                                         ItemsSource="{x:Bind ViewModel.Accounts, Mode=OneWay}">
+                        <winui:ItemsRepeater.Layout>
+                            <winui:StackLayout Orientation="Vertical"
+                                               Spacing="12" />
+                        </winui:ItemsRepeater.Layout>
+                        <DataTemplate x:DataType="cloud:CloudAccountGroup">
+                            <Grid RowSpacing="8">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{x:Bind humanizer:EnumHumanizeExtensions.Humanize(Key)}"
+                                           FontWeight="SemiBold"
+                                           FontSize="18"
+                                           VerticalAlignment="Center"/>
+                                <Button Grid.Column="1"
+                                        CommandParameter="{x:Bind Key}"
+                                        Command="{StaticResource AddAccountCommand}">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8"
+                                                Margin="0,2">
+                                        <IconSourceElement IconSource="{StaticResource AddAccountIcon}" />
+                                        <TextBlock Text="Add Account"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                                <winui:ItemsRepeater ItemsSource="{x:Bind Items, Mode=OneWay}"
+                                                     Grid.Row="1"
+                                                     Grid.ColumnSpan="2">
+                                    <winui:ItemsRepeater.Layout>
+                                        <winui:UniformGridLayout ItemsJustification="Start"
+                                                                 ItemsStretch="Fill"
+                                                                 MinColumnSpacing="8"
+                                                                 MinRowSpacing="8"
+                                                                 MinItemWidth="320" />
+                                    </winui:ItemsRepeater.Layout>
+                                    <DataTemplate x:DataType="cloud:CloudAccount">
+                                        <Grid ColumnSpacing="12"
+                                              RowSpacing="2"
+                                              CornerRadius="8"
+                                              Padding="12"
+                                              Background="{ThemeResource SystemChromeMediumColor}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <Image Height="36"
+                                                   Width="36"
+                                                   VerticalAlignment="Center"
+                                                   Grid.RowSpan="2">
+                                                <Image.Source>
+                                                    <BitmapImage DecodePixelHeight="36"
+                                                                 DecodePixelWidth="36"
+                                                                 DecodePixelType="Logical"
+                                                                 UriSource="{x:Bind converters:IconConverter.GetCloudStorageIconUri(Provider)}" />
+                                                </Image.Source>
+                                            </Image>
+                                            <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                                                       FontSize="16"
+                                                       FontWeight="SemiBold"
+                                                       Grid.Column="1"/>
+                                            <TextBlock Text="{x:Bind Email, Mode=OneWay}"
+                                                       Grid.Column="1"
+                                                       Grid.Row="1"/>
+                                            <Button VerticalAlignment="Top"
+                                                    Grid.Column="2"
+                                                    Grid.RowSpan="2"
+                                                    Background="Transparent"
+                                                    BorderThickness="0">
+                                                <FontIcon FontFamily="Segoe MDL2 Assets"
+                                                          Glyph="&#xE10C;"
+                                                          FontSize="16"/>
+                                                <Button.Flyout>
+                                                    <MenuFlyout Placement="Bottom">
+                                                        <MenuFlyoutItem Text="Rename"
+                                                                        CommandParameter="{x:Bind Mode=OneWay}"
+                                                                        Command="{StaticResource RenameAccountCommand}">
+                                                            <MenuFlyoutItem.Icon>
+                                                                <FontIcon FontFamily="Segoe MDL2 Assets"
+                                                                          Glyph="&#xE104;"
+                                                                          FontSize="16" />
+                                                            </MenuFlyoutItem.Icon>
+                                                        </MenuFlyoutItem>
+                                                        <MenuFlyoutItem Text="Sign out"
+                                                                        CommandParameter="{x:Bind Mode=OneWay}"
+                                                                        Command="{StaticResource RemoveAccountCommand}">
+                                                            <MenuFlyoutItem.Icon>
+                                                                <FontIcon FontFamily="Segoe MDL2 Assets"
+                                                                          Glyph="&#xE10A;"
+                                                                          FontSize="16" />
+                                                            </MenuFlyoutItem.Icon>
+                                                        </MenuFlyoutItem>
+                                                    </MenuFlyout>
+                                                </Button.Flyout>
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </winui:ItemsRepeater>
+                            </Grid>
+                        </DataTemplate>
+                    </winui:ItemsRepeater>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="EXTENSIONS">
+                <ScrollViewer Margin="0,0,-12,0">
+                    <StackPanel Margin="0,8,20,120">
+                        <TextBlock Text="App Link Providers"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8"
+                                   FontSize="18" />
+                        <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.AppLinkProviders, Mode=OneWay}">
+                            <winui:ItemsRepeater.Layout>
+                                <winui:UniformGridLayout ItemsJustification="Start"
+                                                         ItemsStretch="Fill"
+                                                         MinColumnSpacing="8"
+                                                         MinRowSpacing="8"
+                                                         MinItemWidth="320"
+                                                         MinItemHeight="120"/>
+                            </winui:ItemsRepeater.Layout>
+                            <DataTemplate x:DataType="extensions:ExtensionBase">
+                                <Grid ColumnSpacing="12"
+                                      RowSpacing="2"
+                                      CornerRadius="8"
+                                      Background="{ThemeResource SystemChromeMediumColor}"
+                                      Padding="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Image Source="{x:Bind converters:IconConverter.GetImageSourceFromStream(Logo, 36, 36), Mode=OneWay}"
+                                           Width="36"
+                                           Height="36"
+                                           VerticalAlignment="Top"
+                                           Grid.RowSpan="2"/>
+                                    
+                                    <TextBlock FontSize="16"
+                                               FontWeight="SemiBold"
+                                               Text="{x:Bind Name, Mode=OneWay}"
+                                               Grid.Column="1"/>
+                                    <TextBlock Text="{x:Bind Description, Mode=OneWay, Converter={StaticResource StringEmptyConverter}, ConverterParameter='No description set'}"
+                                               TextWrapping="WrapWholeWords"
+                                               TextTrimming="CharacterEllipsis"
+                                               MaxLines="2"
+                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                               Grid.Column="1"
+                                               Grid.Row="1"/>
+                                    
+                                    <ToggleSwitch Grid.Row="2"
+                                                  Grid.Column="1"
+                                                  IsEnabled="{x:Bind IsAvailable, Mode=OneWay}"
+                                                  IsOn="{x:Bind IsEnabled, Mode=TwoWay}"
+                                                  Margin="0,-5,-4,-5"/>
+                                    <Button Grid.Column="2"
+                                            Grid.RowSpan="2"
+                                            VerticalAlignment="Top"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Padding="8">
+                                        <IconSourceElement IconSource="{StaticResource ItemsPropertiesIcon}" />
+                                        <Button.Flyout>
+                                            <Flyout>
+                                                <StackPanel Spacing="4">
+                                                    <TextBlock Text="{x:Bind Package, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Package: {0}'}" />
+                                                    <TextBlock Text="{x:Bind Version, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Version: {0}'}" />
+                                                    <TextBlock Text="{x:Bind Publisher, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Publisher: {0}'}" />
+                                                    <TextBlock Text="{x:Bind Signature, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Signature: {0}'}" />
+                                                </StackPanel>
+                                            </Flyout>
+                                        </Button.Flyout>
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </winui:ItemsRepeater>
+
+                        <TextBlock Text="Tools"
+                                   FontWeight="SemiBold"
+                                   Margin="0,16,0,8"
+                                   FontSize="18" />
+                        <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Tools, Mode=OneWay}">
+                            <winui:ItemsRepeater.Layout>
+                                <winui:UniformGridLayout ItemsJustification="Start"
+                                                         ItemsStretch="Fill"
+                                                         MinColumnSpacing="8"
+                                                         MinRowSpacing="8"
+                                                         MinItemWidth="320"
+                                                         MinItemHeight="120"/>
+                            </winui:ItemsRepeater.Layout>
+                            <DataTemplate x:DataType="extensions:ExtensionBase">
+                                <Grid ColumnSpacing="12"
+                                      RowSpacing="2"
+                                      CornerRadius="8"
+                                      Background="{ThemeResource SystemChromeMediumColor}"
+                                      Padding="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Image Source="{x:Bind converters:IconConverter.GetImageSourceFromStream(Logo, 36, 36), Mode=OneWay}"
+                                           Width="36"
+                                           Height="36"
+                                           VerticalAlignment="Top"
+                                           Grid.RowSpan="2"/>
+
+                                    <TextBlock FontSize="16"
+                                               FontWeight="SemiBold"
+                                               Text="{x:Bind Name, Mode=OneWay}"
+                                               Grid.Column="1" />
+                                    <TextBlock Text="{x:Bind Description, Mode=OneWay, Converter={StaticResource StringEmptyConverter}, ConverterParameter='No description set'}"
+                                               TextWrapping="WrapWholeWords"
+                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                               Grid.Column="1"
+                                               Grid.Row="1"/>
+                                    
+                                    <ToggleSwitch Grid.Column="1"
+                                                  Grid.Row="2"
+                                                  IsEnabled="{x:Bind IsAvailable, Mode=OneWay}"
+                                                  IsOn="{x:Bind IsEnabled, Mode=TwoWay}"
+                                                  Margin="0,-5,-4,-5"/>
+                                    <Button Grid.Column="2"
+                                            Grid.RowSpan="2"
+                                            VerticalAlignment="Top"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Padding="8">
+                                        <IconSourceElement IconSource="{StaticResource ItemsPropertiesIcon}" />
+                                        <Button.Flyout>
+                                            <Flyout>
+                                                <StackPanel Spacing="4">
+                                                    <TextBlock Text="{x:Bind Package, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Package: {0}'}" />
+                                                    <TextBlock Text="{x:Bind Version, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Version: {0}'}" />
+                                                    <TextBlock Text="{x:Bind Publisher, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Publisher: {0}'}" />
+                                                    <TextBlock Text="{x:Bind Signature, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Signature: {0}'}" />
+                                                </StackPanel>
+                                            </Flyout>
+                                        </Button.Flyout>
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </winui:ItemsRepeater>
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="DASHBOARD">
+                <ScrollViewer Margin="0,0,-12,0">
+                    <StackPanel Margin="0,8,20,120">
+                        <TextBlock Text="User Folders"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8"
+                                   FontSize="18"/>
+                        <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.DashboardUserFolders, Mode=OneWay}">
+                            <winui:ItemsRepeater.Layout>
+                                <winui:UniformGridLayout MinColumnSpacing="8"
+                                                         MinRowSpacing="8"
+                                                         ItemsJustification="Start"
+                                                         ItemsStretch="Fill"
+                                                         MinItemWidth="240"/>
+                            </winui:ItemsRepeater.Layout>
+                            <DataTemplate x:DataType="services:UserFolderSetting">
+                                <Grid ColumnSpacing="12"
+                                      CornerRadius="8"
+                                      Background="{ThemeResource SystemChromeMediumColor}"
+                                      Padding="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Height="36"
+                                           Width="36"
+                                           VerticalAlignment="Center">
+                                        <Image.Source>
+                                            <BitmapImage DecodePixelHeight="36"
+                                                         DecodePixelWidth="36"
+                                                         DecodePixelType="Logical"
+                                                         UriSource="{x:Bind converters:IconConverter.GetDashboardItemIconUri(Template)}" />
+                                        </Image.Source>
+                                    </Image>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="{x:Bind humanizer:EnumHumanizeExtensions.Humanize(Template)}"
+                                                   FontSize="16"
+                                                   FontWeight="SemiBold" />
+                                        <ToggleSwitch IsOn="{x:Bind IsOn, Mode=TwoWay}" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </winui:ItemsRepeater>
+
+                        <TextBlock Text="System Folders"
+                                   FontWeight="SemiBold"
+                                   Margin="0,16,0,8"
+                                   FontSize="18"/>
+                        <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.DashboardSystemFolders, Mode=OneWay}">
+                            <winui:ItemsRepeater.Layout>
+                                <winui:UniformGridLayout MinColumnSpacing="4"
+                                                         MinRowSpacing="4"
+                                                         ItemsJustification="Start"
+                                                         ItemsStretch="Fill"
+                                                         MinItemWidth="240"/>
+                            </winui:ItemsRepeater.Layout>
+                            <DataTemplate x:DataType="services:SystemFolderSetting">
+                                <Grid CornerRadius="8"
+                                      ColumnSpacing="12"
+                                      Background="{ThemeResource SystemChromeMediumColor}"
+                                      Padding="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Height="36"
+                                           Width="36"
+                                           VerticalAlignment="Center">
+                                        <Image.Source>
+                                            <BitmapImage DecodePixelHeight="36"
+                                                         DecodePixelWidth="36"
+                                                         DecodePixelType="Logical"
+                                                         UriSource="{x:Bind converters:IconConverter.GetDashboardItemIconUri(Template)}" />
+                                        </Image.Source>
+                                    </Image>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="{x:Bind humanizer:EnumHumanizeExtensions.Humanize(Template)}"
+                                                   FontSize="16"
+                                                   FontWeight="SemiBold" />
+                                        <ToggleSwitch IsOn="{x:Bind IsOn, Mode=TwoWay}" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </winui:ItemsRepeater>
+                        
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+            <!--<PivotItem Header="DEVELOPERS">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                              VerticalScrollBarVisibility="Auto">
+                    <controls:MarkdownTextBlock Text="{x:Bind ViewModel.ProtocolActivation, Mode=OneWay}"
+                                                Padding="0,0,20,0"/>
+                </ScrollViewer>
+            </PivotItem>-->
+            <PivotItem Header="ABOUT">
+                <ScrollViewer Margin="0,0,-12,0">
+                    <StackPanel Margin="0,8,20,120">
+                        <Image Stretch="Uniform"
+                               Height="100"
+                               Width="100"
+                               Margin="0,0,0,8"
+                               HorizontalAlignment="Left">
+                            <Image.Source>
+                                <BitmapImage DecodePixelHeight="100"
+                                             DecodePixelWidth="100"
+                                             DecodePixelType="Logical"
+                                             UriSource="/Assets/Logo.png" />
+                            </Image.Source>
+                        </Image>
+
+                        <TextBlock FontSize="20"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8"
+                                   Text="{x:Bind xamarin:AppInfo.Name}" />
+                        <TextBlock FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,20"
+                                   Text="{x:Bind xamarin:AppInfo.VersionString, Converter={StaticResource StringFormatConverter}, ConverterParameter='Version {0}'}" />
+                        
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,0,0,8">
+                            <BitmapIcon UriSource="/Assets/Icons/Developer.png"
+                                        Width="24"
+                                        Height="24"
+                                        ShowAsMonochrome="False"
+                                        Margin="0,0,4,0" />
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                       FontWeight="SemiBold"
+                                       Text="CONTACT THE DEVELOPER"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel VerticalAlignment="Center"
+                                    Spacing="4"
+                                    Margin="0,0,0,20">
+                            <TextBlock Text="If you have feature requests and other concerns, you can contact me here:"
+                                       FontSize="16"
+                                       Margin="0,0,0,12"
+                                       TextWrapping="WrapWholeWords"/>
+                            <StackPanel Orientation="Horizontal"
+                                        Spacing="8">
+                                <Button Command="{x:Bind ViewModel.EmailCommand}">
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="8,0"
+                                                Spacing="8">
+                                        <BitmapIcon UriSource="/Assets/Icons/ThirdParty/Email.png"
+                                                    Width="24"
+                                                    Height="24"
+                                                    ShowAsMonochrome="False"
+                                                    Margin="0,0,4,0" />
+                                        <TextBlock Text="Email"
+                                                   FontWeight="SemiBold"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Command="{x:Bind ViewModel.GithubCommand}">
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="8,0"
+                                                Spacing="8">
+                                        <BitmapIcon UriSource="/Assets/Icons/ThirdParty/Github.png"
+                                                    Width="24"
+                                                    Height="24"
+                                                    ShowAsMonochrome="False"
+                                                    Margin="0,0,4,0" />
+                                        <TextBlock Text="Github"
+                                                   FontWeight="SemiBold"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Command="{x:Bind ViewModel.TwitterCommand}">
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="8,0"
+                                                Spacing="8">
+                                        <BitmapIcon UriSource="/Assets/Icons/ThirdParty/Twitter.png"
+                                                    Width="24"
+                                                    Height="24"
+                                                    ShowAsMonochrome="False"
+                                                    Margin="0,0,4,0" />
+                                        <TextBlock Text="Twitter"
+                                                   FontWeight="SemiBold"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <TextBlock Text="Acknowledgments"
+                                   Style="{StaticResource SubtitleTextBlockStyle}"
+                                   Margin="0,0,0,12"/>
+                        <StackPanel Margin="0,0,0,8">
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="0,0,0,4">
+                                <BitmapIcon UriSource="/Assets/Icons/ThirdParty/Icons8.png"
+                                            Width="24"
+                                            Height="24"
+                                            ShowAsMonochrome="False"
+                                            Margin="0,0,4,0" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"
+                                           Text="ICONS8" />
+                            </StackPanel>
+                            <TextBlock FontSize="16">
+                                <Run Text="Some icons used in the app are from" />
+                                <Hyperlink NavigateUri="https://icons8.com/">
+                                    <Run Text="icons8" />
+                                </Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+        </Pivot>
+    </Grid>
+</uwp:NGPage>

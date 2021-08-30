@@ -1,0 +1,66 @@
+﻿<ContentDialog
+    x:Class="JumpPoint.Uwp.Dialogs.AddWorkspaceDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JumpPoint.Uwp.Dialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:actions="using:NittyGritty.UI.Interactivity.Actions"
+    xmlns:converters="using:JumpPoint.Uwp.Converters"
+    xmlns:templates="using:JumpPoint.Platform.Items.Templates"
+    xmlns:service="using:JumpPoint.Platform.Services"
+    mc:Ignorable="d"
+    Title="Add Workspace"
+    PrimaryButtonText="Add"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.IsValid, Mode=OneWay}">
+
+    <StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Width="44" Height="44" Padding="0"
+                    VerticalContentAlignment="Center" HorizontalAlignment="Center"
+                    Style="{StaticResource ButtonRevealStyle}"
+                    Background="Transparent">
+                <Button.Content>
+                    <TextBlock FontFamily="Segoe UI Emoji" FontSize="24"
+                               Text="{x:Bind converters:IconConverter.GetWorkspaceGlyph(ViewModel.Template), Mode=OneWay}"
+                               IsColorFontEnabled="True" />
+                </Button.Content>
+                <Button.Flyout>
+                    <Flyout Placement="BottomEdgeAlignedLeft">
+                        <GridView SelectionMode="None"
+                                  IsItemClickEnabled="True"
+                                  ItemsSource="{x:Bind service:WorkspaceService.GetTemplates()}"
+                                  MaxWidth="320" MaxHeight="280">
+                            <GridView.ItemTemplate>
+                                <DataTemplate x:DataType="templates:WorkspaceTemplate">
+                                    <TextBlock FontFamily="Segoe UI Emoji" FontSize="16"
+                                               Text="{x:Bind converters:IconConverter.GetWorkspaceGlyph((templates:WorkspaceTemplate))}"
+                                               IsColorFontEnabled="True" />
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                            <i:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="ItemClick">
+                                    <core:InvokeCommandAction Command="{x:Bind ViewModel.SetTemplateCommand}"
+                                                              InputConverter="{StaticResource ItemClickEventArgsConverter}" />
+                                    <actions:CloseFlyoutAction />
+                                </core:EventTriggerBehavior>
+                            </i:Interaction.Behaviors>
+                        </GridView>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+            
+            <TextBox PlaceholderText="Workspace name" Grid.Column="1"
+                     VerticalAlignment="Center"
+                     Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+    </StackPanel>
+</ContentDialog>

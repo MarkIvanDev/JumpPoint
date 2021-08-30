@@ -1,0 +1,31 @@
+﻿<ContentDialog
+    x:Class="JumpPoint.Uwp.Dialogs.WorkspaceTemplatePicker"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JumpPoint.Uwp.Dialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:templates="using:JumpPoint.Platform.Items.Templates"
+    xmlns:converters="using:JumpPoint.Uwp.Converters"
+    mc:Ignorable="d"
+    Title="Workspace Templates"
+    PrimaryButtonText="Pick"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.IsValid, Mode=OneWay}">
+
+    <Grid>
+        <GridView SelectionMode="Single"
+                  ItemsSource="{x:Bind ViewModel.WorkspaceTemplates, Mode=OneWay}"
+                  SelectedItem="{Binding Template, Mode=TwoWay}">
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="templates:WorkspaceTemplate">
+                    <TextBlock FontFamily="Segoe UI Emoji"
+                               FontSize="24"
+                               Text="{x:Bind converters:IconConverter.GetWorkspaceGlyph((templates:WorkspaceTemplate))}"
+                               IsColorFontEnabled="True" />
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+    </Grid>
+</ContentDialog>

@@ -1,0 +1,25 @@
+﻿<uwp:NGPage
+    xmlns:uwp="using:NittyGritty.Uwp"
+    x:Class="JumpPoint.Uwp.Views.DrivesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JumpPoint.Uwp.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:JumpPoint.Uwp.Controls"
+    xmlns:services="using:JumpPoint.Platform.Services"
+    xmlns:grouper="using:JumpPoint.Platform.Items.Arrangers.Groupers"
+    mc:Ignorable="d">
+
+    <Grid>
+        <controls:JumpPointViewer Context="{x:Bind ViewModel, Mode=OneWay}"
+                                  SortBy="{x:Bind services:AppSettings.Instance.SortBy, Mode=OneWay}"
+                                  IsSortAscending="{x:Bind services:AppSettings.Instance.IsSortAscending, Mode=OneWay}"
+                                  GroupBy="Custom"
+                                  IsGroupAscending="{x:Bind services:AppSettings.Instance.IsGroupAscending, Mode=OneWay}"
+                                  CustomGrouper="{x:Bind grouper:Grouper.DriveStorageType}"
+                                  IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                                  SelectedItems="{x:Bind ViewModel.SelectedItems, Mode=OneWay}"
+                                  ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"/>
+    </Grid>
+</uwp:NGPage>

@@ -1,0 +1,98 @@
+﻿<UserControl
+    x:Class="JumpPoint.Uwp.Controls.AudioPropertiesControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JumpPoint.Uwp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:helper="using:JumpPoint.ViewModels.Helpers"
+             mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="TextWrapping"
+                    Value="WrapWholeWords" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid ColumnSpacing="8"
+          RowSpacing="4"
+          Padding="0,8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Text="Bitrate:" />
+        <TextBlock Text="{x:Bind helper:PropertyHelper.ConvertToKilo(Audio.Bitrate, 'kbps'), Mode=OneWay}"
+                   Grid.Column="1" />
+
+        <TextBlock Text="Is Variable Rate:"
+                   Grid.Row="1" />
+        <TextBlock Text="{x:Bind Audio.IsVariableBitrate, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="1" />
+
+        <TextBlock Text="Peak Value:"
+                   Grid.Row="2" />
+        <TextBlock Text="{x:Bind Audio.PeakValue, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="2" />
+
+        <TextBlock Text="Channel Count:"
+                   Grid.Row="3" />
+        <TextBlock Text="{x:Bind Audio.ChannelCount, Converter={StaticResource HumanizerConverter}, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="3" />
+
+        <TextBlock Text="Compression:"
+                   Grid.Row="4" />
+        <TextBlock Text="{x:Bind Audio.Compression, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="4" />
+
+        <TextBlock Text="Format:"
+                   Grid.Row="5" />
+        <TextBlock Text="{x:Bind Audio.Format, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="5" />
+
+        <TextBlock Text="Sample Rate:"
+                   Grid.Row="6" />
+        <TextBlock Text="{x:Bind Audio.SampleRate, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="6" />
+
+        <TextBlock Text="Sample Size:"
+                   Grid.Row="7" />
+        <TextBlock Text="{x:Bind Audio.SampleSize, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="7" />
+
+        <TextBlock Text="Stream Name:"
+                   Grid.Row="8" />
+        <TextBlock Text="{x:Bind Audio.StreamName, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="8" />
+
+        <TextBlock Text="Stream Number:"
+                   Grid.Row="9" />
+        <TextBlock Text="{x:Bind Audio.StreamNumber, Mode=OneWay}"
+                   Grid.Column="1"
+                   Grid.Row="9" />
+
+    </Grid>
+</UserControl>

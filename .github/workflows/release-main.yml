@@ -1,0 +1,116 @@
+# This worflow creates a release based on main branch
+
+name: Release Main
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events but only for the main branch
+  push:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+
+  release:
+  
+    runs-on: windows-latest
+
+    env:
+      SigningCertificate: JumpPoint_Certificate.pfx
+      SolutionPath: JumpPoint\JumpPoint.sln
+      PackagingProjectDirectory: JumpPoint\JumpPoint.Package
+      AppxPackageDirectory: C:\DeployOutput
+
+    steps:
+
+    - name: Configure Pagefile
+      uses: al-cheb/configure-pagefile-action@v1.2
+      with:
+        minimum-size: 32GB
+        maximum-size: 32GB
+        disk-root: "C:"
+
+    - name: Checkout
+      uses: actions/checkout@2
+      with:
+        fetch-depth: 0
+
+    - name: Nerdbank.GitVersioning
+      uses: dotnet/nbgv@v0.4.0
+      with:
+        setAllVars: true
+        
+    - name: Get Version
+      id: get-version
+      run: |
+        echo "::set-output name=fullVersion::v${{ env.NBGV_SimpleVersion }}.0"
+        echo "::set-output name=version::${{ env.NBGV_SimpleVersion }}.0"
+        echo "::set-output name=fullName::JumpPoint.v${{ env.NBGV_SimpleVersion }}.0.Store"
+
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.0
+      
+    - name: Update manifest version
+      run: |
+        [xml]$manifest = get-content ".\$env:PackagingProjectDirectory\Package.appxmanifest"
+        $manifest.Package.Identity.Version = "${{ steps.get-version.outputs.version }}"
+        $manifest.save(".\$env:PackagingProjectDirectory\Package.appxmanifest")
+
+    - name: Decode the Pfx
+      run: |
+        $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.STORE_BASE64_PFX }}")
+        $currentDirectory = Get-Location
+        $certificatePath = Join-Path -Path $currentDirectory -ChildPath $env:PackagingProjectDirectory -AdditionalChildPath $env:SigningCertificate
+        [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+
+    - name: Build the solution
+      run: msbuild $env:SolutionPath /p:Platform=$env:Platform /p:AppxBundle=$env:AppxBundle /p:AppxBundlePlatforms=$env:AppxBundlePlatforms /p:UapAppxPackageBuildMode=$env:BuildMode /p:Configuration=$env:Configuration /p:GenerateAppInstallerFile=$env:GenerateAppInstallerFile /p:AppxPackageDir=$env:AppxPackageDirectory /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.STORE_PFX_KEY }} /p:AppxPackageSigningEnabled=True /restore
+      env:
+        Platform: x86
+        AppxBundle: Always
+        AppxBundlePlatforms: x86|x64|ARM|ARM64
+        BuildMode: CI # Generate the .msixupload file only
+        Configuration: Release
+        GenerateAppInstallerFile: False
+
+    - name: Remove the .pfx
+      run: Remove-Item -path $env:PackagingProjectDirectory/$env:SigningCertificate
+
+    - name: Create archive
+      run: Compress-Archive -Path $env:AppxPackageDirectory\* -DestinationPath $env:AppxPackageDirectory\${{ steps.get-version.outputs.fullName }}.zip
+      
+    - name: Create tag
+      uses: actions/github-script@v3
+      with:
+        github-token: ${{ github.token }}
+        script: |
+          github.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: "refs/tags/${process.steps.get-version.outputs.fullVersion}"
+            sha: context.sha
+          })
+
+    - name: Create release
+      id: create-release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.get-version.outputs.fullVersion }}
+        release_name: ${{ steps.get-version.outputs.fullName }}
+        draft: true
+        prerelease: false
+        
+    - name: Upload release
+      id: upload-release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        asset_path: ${{ env.AppxPackageDirectory }}\${{ steps.get-version.outputs.fullName }}.zip
+        asset_name: ${{ steps.get-version.outputs.fullName }}.zip
+        asset_content_type: application/zip

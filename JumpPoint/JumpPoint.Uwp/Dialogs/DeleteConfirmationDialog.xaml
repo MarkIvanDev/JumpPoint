@@ -1,0 +1,35 @@
+﻿<ContentDialog
+    x:Class="JumpPoint.Uwp.Dialogs.DeleteConfirmationDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JumpPoint.Uwp.Dialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Delete"
+    PrimaryButtonText="Delete"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Text="Are you sure you want to delete the items you selected?" />
+
+        <CheckBox Grid.Row="1" IsChecked="{Binding DeletePermanently, Mode=TwoWay}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Text="Delete Permanently" />
+                <TextBlock Grid.Row="1"
+                           Text="In case of workspaces, this will also delete the items inside it permanently"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                           TextWrapping="WrapWholeWords"/>
+            </Grid>
+        </CheckBox>
+    </Grid>
+</ContentDialog>
