@@ -22,6 +22,7 @@ jobs:
       SolutionPath: JumpPoint\JumpPoint.sln
       PackagingProjectDirectory: JumpPoint\JumpPoint.Package
       AppxPackageDirectory: C:\DeployOutput
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
     steps:
 
