@@ -339,5 +339,5 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 
-# Jump Point Service configuration files
+# Jump Point Secrets configuration files
 *.jps.json
