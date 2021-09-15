@@ -5,7 +5,7 @@
   <Properties>
     <DisplayName>Jump Point</DisplayName>
     <PublisherDisplayName>Mark Ivan Basto</PublisherDisplayName>
-    <Logo>Assets\Images\Logo.png</Logo>
+    <Logo>Assets\Images\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
@@ -15,15 +15,15 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="JumpPoint.Uwp.App" desktop4:SupportsMultipleInstances="true">
-      <uap:VisualElements DisplayName="Jump Point" Square150x150Logo="Assets\Images\Logo.png" Description="A modern File Explorer and more" BackgroundColor="#323133" Square44x44Logo="Assets\Images\Logo.png">
-        <uap:DefaultTile ShortName="Jump Point" Wide310x150Logo="Assets\Images\Logo.png" Square71x71Logo="Assets\Images\SmallTile.png" Square310x310Logo="Assets\Images\LargeTile.png">
+      <uap:VisualElements DisplayName="Jump Point" Square150x150Logo="Assets\Images\Square150x150Logo.png" Description="A modern File Explorer and more" BackgroundColor="transparent" Square44x44Logo="Assets\Images\Square44x44Logo.png">
+        <uap:DefaultTile ShortName="Jump Point" Wide310x150Logo="Assets\Images\Wide310x150Logo.png" Square310x310Logo="Assets\Images\LargeTile.png" Square71x71Logo="Assets\Images\SmallTile.png">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="wide310x150Logo"/>
             <uap:ShowOn Tile="square150x150Logo"/>
             <uap:ShowOn Tile="square310x310Logo"/>
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
-        <uap:SplashScreen BackgroundColor="#323133"  Image="Assets\Images\Logo.png"/>
+        <uap:SplashScreen Image="Assets\Images\SplashScreen.png"/>
       </uap:VisualElements>
     </Application>
   </Applications>
