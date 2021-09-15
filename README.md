@@ -20,10 +20,8 @@ You can contribute by submitting:
 + [Feature requests](https://github.com/MarkIvanDev/JumpPoint/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=PROPOSAL%3A+%5BInsert+title+here%5D)
 + [Questions](https://github.com/MarkIvanDev/JumpPoint/issues/new?assignees=&labels=question&template=question.md&title=QUESTION%3A+%5BInsert+question+here%5D)
 
-In the future, this repo will include code and contributions will be greatly appreciated when that time comes.
-
-### Roadmap
-You can view the roadmap through the repo's [milestones](https://github.com/MarkIvanDev/JumpPoint/milestones).
+### Documentation
+You can view the documentation [here](https://github.com/MarkIvanDev/JumpPoint/wiki)
 
 ### License
 This is licensed under the MIT License

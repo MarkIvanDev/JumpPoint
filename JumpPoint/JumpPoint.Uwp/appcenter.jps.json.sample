@@ -1,0 +1,4 @@
+﻿{
+  "mainKey": "MAIN_APPCENTER_SECRET",
+  "betaKey": "BETA_APPCENTER_SECRET"
+}

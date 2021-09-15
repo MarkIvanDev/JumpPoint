@@ -753,34 +753,59 @@
     <Content Include="Assets\Images\LargeTile.scale-150.png" />
     <Content Include="Assets\Images\LargeTile.scale-200.png" />
     <Content Include="Assets\Images\LargeTile.scale-400.png" />
-    <Content Include="Assets\Images\Logo.altform-lightunplated_targetsize-16.png" />
-    <Content Include="Assets\Images\Logo.altform-lightunplated_targetsize-24.png" />
-    <Content Include="Assets\Images\Logo.altform-lightunplated_targetsize-256.png" />
-    <Content Include="Assets\Images\Logo.altform-lightunplated_targetsize-32.png" />
-    <Content Include="Assets\Images\Logo.altform-lightunplated_targetsize-48.png" />
-    <Content Include="Assets\Images\Logo.altform-unplated_targetsize-16.png" />
-    <Content Include="Assets\Images\Logo.altform-unplated_targetsize-24.png" />
-    <Content Include="Assets\Images\Logo.altform-unplated_targetsize-256.png" />
-    <Content Include="Assets\Images\Logo.altform-unplated_targetsize-32.png" />
-    <Content Include="Assets\Images\Logo.altform-unplated_targetsize-48.png" />
-    <Content Include="Assets\Images\Logo.scale-100.png" />
-    <Content Include="Assets\Images\Logo.scale-125.png" />
-    <Content Include="Assets\Images\Logo.scale-150.png" />
-    <Content Include="Assets\Images\Logo.scale-200.png" />
-    <Content Include="Assets\Images\Logo.scale-400.png" />
-    <Content Include="Assets\Images\Logo.targetsize-16.png" />
-    <Content Include="Assets\Images\Logo.targetsize-24.png" />
-    <Content Include="Assets\Images\Logo.targetsize-256.png" />
-    <Content Include="Assets\Images\Logo.targetsize-32.png" />
-    <Content Include="Assets\Images\Logo.targetsize-48.png" />
+    <Content Include="Assets\Images\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\Images\SmallTile.scale-100.png" />
     <Content Include="Assets\Images\SmallTile.scale-125.png" />
     <Content Include="Assets\Images\SmallTile.scale-150.png" />
     <Content Include="Assets\Images\SmallTile.scale-200.png" />
     <Content Include="Assets\Images\SmallTile.scale-400.png" />
+    <Content Include="Assets\Images\SplashScreen.scale-100.png" />
+    <Content Include="Assets\Images\SplashScreen.scale-125.png" />
+    <Content Include="Assets\Images\SplashScreen.scale-150.png" />
+    <Content Include="Assets\Images\SplashScreen.scale-200.png" />
+    <Content Include="Assets\Images\SplashScreen.scale-400.png" />
+    <Content Include="Assets\Images\Square150x150Logo.scale-100.png" />
+    <Content Include="Assets\Images\Square150x150Logo.scale-125.png" />
+    <Content Include="Assets\Images\Square150x150Logo.scale-150.png" />
+    <Content Include="Assets\Images\Square150x150Logo.scale-200.png" />
+    <Content Include="Assets\Images\Square150x150Logo.scale-400.png" />
+    <Content Include="Assets\Images\Square44x44Logo.altform-lightunplated_targetsize-16.png" />
+    <Content Include="Assets\Images\Square44x44Logo.altform-lightunplated_targetsize-24.png" />
+    <Content Include="Assets\Images\Square44x44Logo.altform-lightunplated_targetsize-256.png" />
+    <Content Include="Assets\Images\Square44x44Logo.altform-lightunplated_targetsize-32.png" />
+    <Content Include="Assets\Images\Square44x44Logo.altform-lightunplated_targetsize-48.png" />
+    <Content Include="Assets\Images\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="Assets\Images\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <Content Include="Assets\Images\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <Content Include="Assets\Images\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <Content Include="Assets\Images\Square44x44Logo.scale-100.png" />
+    <Content Include="Assets\Images\Square44x44Logo.scale-125.png" />
+    <Content Include="Assets\Images\Square44x44Logo.scale-150.png" />
+    <Content Include="Assets\Images\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Images\Square44x44Logo.scale-400.png" />
+    <Content Include="Assets\Images\Square44x44Logo.targetsize-16.png" />
+    <Content Include="Assets\Images\Square44x44Logo.targetsize-24.png" />
+    <Content Include="Assets\Images\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="Assets\Images\Square44x44Logo.targetsize-256.png" />
+    <Content Include="Assets\Images\Square44x44Logo.targetsize-32.png" />
+    <Content Include="Assets\Images\Square44x44Logo.targetsize-48.png" />
+    <Content Include="Assets\Images\StoreLogo.scale-100.png" />
+    <Content Include="Assets\Images\StoreLogo.scale-125.png" />
+    <Content Include="Assets\Images\StoreLogo.scale-150.png" />
+    <Content Include="Assets\Images\StoreLogo.scale-200.png" />
+    <Content Include="Assets\Images\StoreLogo.scale-400.png" />
+    <Content Include="Assets\Images\Wide310x150Logo.scale-100.png" />
+    <Content Include="Assets\Images\Wide310x150Logo.scale-125.png" />
+    <Content Include="Assets\Images\Wide310x150Logo.scale-150.png" />
+    <Content Include="Assets\Images\Wide310x150Logo.scale-200.png" />
+    <Content Include="Assets\Images\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\Logo.png" />
     <Content Include="Assets\Screens\grant access.png" />
     <Content Include="Fonts\FluentSystemIcons-Regular.ttf" />
+    <None Include="appcenter.jps.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="appcenter.jps.json.sample" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\Tiles\Cloud\OneDrive-Large.scale-100.png" />
     <Content Include="Assets\Tiles\Cloud\OneDrive-Large.scale-125.png" />
@@ -4685,6 +4710,15 @@
     </PackageReference>
     <PackageReference Include="JumpPoint.Extensions">
       <Version>0.3.1-beta</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AppCenter.Analytics">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AppCenter.Crashes">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json">
+      <Version>5.0.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.11</Version>
