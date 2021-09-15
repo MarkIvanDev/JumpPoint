@@ -73,10 +73,16 @@ jobs:
         [IO.File]::WriteAllBytes("$certificatePath", $base64Pfx)
         # OneDrive Service
         $secretsPath = Join-Path -Path $currentDirectory -ChildPath $env:OneDriveServiceProjectDirectory -AdditionalChildPath $env:OneDriveServiceSecretsFileName
-        [IO.File]::WriteAllText("$secretsPath", "${{ secrets.ONEDRIVE_SERVICE }}")
+        $content = @"
+          ${{ secrets.ONEDRIVE_SERVICE }}
+        "@
+        [IO.File]::WriteAllText("$secretsPath", "$content")
         # App Center
         $secretsPath = Join-Path -Path $currentDirectory -ChildPath $env:UwpProjectDirectory -AdditionalChildPath $env:AppCenterSecretsFileName
-        [IO.File]::WriteAllText("$secretsPath", "${{ secrets.APPCENTER }}")
+        $content = @"
+          ${{ secrets.APPCENTER }}
+        "@
+        [IO.File]::WriteAllText("$secretsPath", "$content")
 
     - name: Build the solution
       run: msbuild $env:SolutionPath /p:Platform=$env:Platform /p:AppxBundle=$env:AppxBundle /p:AppxBundlePlatforms=$env:AppxBundlePlatforms /p:UapAppxPackageBuildMode=$env:BuildMode /p:Configuration=$env:Configuration /p:GenerateAppInstallerFile=$env:GenerateAppInstallerFile /p:AppxPackageDir=$env:AppxPackageDirectory /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.STORE_PFX_KEY }} /p:AppxPackageSigningEnabled=True /restore
