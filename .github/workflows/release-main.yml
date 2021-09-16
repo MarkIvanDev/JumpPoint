@@ -85,7 +85,7 @@ jobs:
         [IO.File]::WriteAllText("$secretsPath", "$content")
 
     - name: Build the solution
-      run: msbuild $env:PackagingProjectDirectory/$env:PackagingProject /p:Platform=$env:Platform /p:AppxBundle=$env:AppxBundle /p:AppxBundlePlatforms=$env:AppxBundlePlatforms /p:UapAppxPackageBuildMode=$env:BuildMode /p:Configuration=$env:Configuration /p:GenerateAppInstallerFile=$env:GenerateAppInstallerFile /p:AppxPackageDir=$env:AppxPackageDirectory /p:AppxPackageSigningEnabled=False /restore
+      run: msbuild $env:SolutionPath /p:Platform=$env:Platform /p:AppxBundle=$env:AppxBundle /p:AppxBundlePlatforms=$env:AppxBundlePlatforms /p:UapAppxPackageBuildMode=$env:BuildMode /p:Configuration=$env:Configuration /p:GenerateAppInstallerFile=$env:GenerateAppInstallerFile /p:AppxPackageDir=$env:AppxPackageDirectory /p:AppxPackageSigningEnabled=False /restore
       env:
         Platform: x86
         AppxBundle: Always
