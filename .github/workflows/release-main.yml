@@ -90,7 +90,7 @@ jobs:
         Platform: x86
         AppxBundle: Always
         AppxBundlePlatforms: x86|x64|ARM|ARM64
-        BuildMode: CI # Generate the .msixupload file only
+        BuildMode: StoreUpload # Generate the .msixupload file and test folder
         Configuration: Release
         GenerateAppInstallerFile: False
 
