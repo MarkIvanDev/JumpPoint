@@ -30,10 +30,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Humanizer.Core" Version="2.11.10" />
-    <PackageReference Include="NittyGritty" Version="1.9.7" />
-    <PackageReference Include="NittyGritty.Platform" Version="1.9.7" />
-    <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
+    <PackageReference Include="Humanizer.Core" Version="2.14.1" />
+    <PackageReference Include="NittyGritty" Version="1.9.8" />
+    <PackageReference Include="NittyGritty.Platform" Version="1.9.8" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
   </ItemGroup>
 
   <ItemGroup>

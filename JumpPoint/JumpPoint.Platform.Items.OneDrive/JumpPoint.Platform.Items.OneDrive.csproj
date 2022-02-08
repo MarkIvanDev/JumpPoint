@@ -36,5 +36,5 @@
   <ItemGroup>
     <ProjectReference Include="..\JumpPoint.Platform.Items\JumpPoint.Platform.Items.csproj" />
   </ItemGroup>
-
+ 
 </Project>

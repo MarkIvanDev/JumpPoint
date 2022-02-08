@@ -46,12 +46,12 @@
     <Compile Include="**\*.shared.*.cs" />
     <PackageReference Include="Glif.Core.Text" Version="0.4.0-beta" />
     <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
-    <PackageReference Include="Nito.AsyncEx.Coordination" Version="5.1.0" />
-    <PackageReference Include="NittyGritty" Version="1.9.7" />
-    <PackageReference Include="NittyGritty.Platform" Version="1.9.7" />
-    <PackageReference Include="NittyGritty.Services" Version="1.9.7" />
+    <PackageReference Include="Nito.AsyncEx.Coordination" Version="5.1.2" />
+    <PackageReference Include="NittyGritty" Version="1.9.8" />
+    <PackageReference Include="NittyGritty.Platform" Version="1.9.8" />
+    <PackageReference Include="NittyGritty.Services" Version="1.9.8" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.1" />
   </ItemGroup>
 
   <ItemGroup Condition=" $(TargetFramework.StartsWith('netstandard')) ">
