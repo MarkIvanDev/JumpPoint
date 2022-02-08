@@ -191,7 +191,7 @@
             </controls:PanedTabView2.TabHeaderTemplate>
             <controls:PanedTabView2.TabItemTemplate>
                 <DataTemplate x:DataType="viewmodels:TabViewModel">
-                    <Frame>
+                    <Frame nguwp:SuspensionManager.FrameSessionStateKey="{x:Bind Key, Mode=OneWay}">
                         <i:Interaction.Behaviors>
                             <behaviors:FrameNavigatedContextBehavior SelectedTab="{Binding ElementName=panedTabView, Path=SelectedItem}" />
                         </i:Interaction.Behaviors>
