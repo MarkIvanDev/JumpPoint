@@ -30,11 +30,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Graph" Version="3.35.0" />
+    <PackageReference Include="Microsoft.Graph" Version="4.17.0" />
   </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\JumpPoint.Platform.Items\JumpPoint.Platform.Items.csproj" />
   </ItemGroup>
-
+ 
 </Project>

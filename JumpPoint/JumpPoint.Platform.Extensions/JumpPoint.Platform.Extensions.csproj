@@ -59,9 +59,9 @@
 
   <ItemGroup>
     <PackageReference Include="JumpPoint.Extensions" Version="0.3.1-beta" />
-    <PackageReference Include="Nito.AsyncEx.Coordination" Version="5.1.0" />
-    <PackageReference Include="NittyGritty" Version="1.9.7" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
+    <PackageReference Include="Nito.AsyncEx.Coordination" Version="5.1.2" />
+    <PackageReference Include="NittyGritty" Version="1.9.8" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.1" />
   </ItemGroup>
 
   <ItemGroup>
