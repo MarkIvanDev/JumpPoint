@@ -187,7 +187,7 @@ namespace JumpPoint.Platform.Extensions
                     gProp["#text"].ToString() : null;
                 var fileTypes = properties.TryGetValue(nameof(Tool.FileTypes), out var ft) && ft is PropertySet ftProp ?
                     ftProp["#text"].ToString().Split(';', StringSplitOptions.RemoveEmptyEntries) : null;
-                tool.FileTypes = new HashSet<string>(fileTypes, StringComparer.OrdinalIgnoreCase);
+                tool.FileTypes = fileTypes != null ? new HashSet<string>(fileTypes, StringComparer.OrdinalIgnoreCase) : null;
                 tool.IncludeFileTokens = properties.TryGetValue(nameof(Tool.IncludeFileTokens), out var ift) && ift is PropertySet iftProp && bool.TryParse(iftProp["#text"].ToString(), out var includeFileTokens) ?
                     includeFileTokens : false;
                 tool.SupportsDirectories = properties.TryGetValue(nameof(Tool.SupportsDirectories), out var sd) && sd is PropertySet sdProp && bool.TryParse(sdProp["#text"].ToString(), out var supportsDirectories) ?

@@ -793,7 +793,8 @@
                                               IsPaneOpen="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsPaneOpen, Mode=TwoWay}"
                                               MenuItemsSource="{TemplateBinding MenuItemsSource}"
                                               MenuItemTemplateSelector="{TemplateBinding MenuItemTemplateSelector}"
-                                              FooterMenuItemsSource="{TemplateBinding FooterMenuItemsSource}">
+                                              FooterMenuItemsSource="{TemplateBinding FooterMenuItemsSource}"
+                                              PaneDisplayMode="Left">
                             
                             <ItemsControl ItemsSource="{TemplateBinding TabItemsSource}"
                                           ItemTemplate="{TemplateBinding TabItemTemplate}"
