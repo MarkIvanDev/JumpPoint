@@ -179,9 +179,9 @@ namespace JumpPoint.Platform.Extensions
 
             if (await extension.GetExtensionPropertiesAsync() is PropertySet properties)
             {
-                provider.Link = properties.TryGetValue(nameof(AppLinkProvider.Link), out var l) && l is PropertySet lProp ?
+                provider.Link = properties.TryGetValue(nameof(AppLinkProvider.Link), out var l) && l is PropertySet lProp && lProp.ContainsKey("#text") ?
                     lProp["#text"].ToString() : null;
-                provider.Service = properties.TryGetValue(nameof(AppLinkProvider.Service), out var srv) && srv is PropertySet srvProp ?
+                provider.Service = properties.TryGetValue(nameof(AppLinkProvider.Service), out var srv) && srv is PropertySet srvProp && srvProp.ContainsKey("#text") ?
                     srvProp["#text"].ToString() : null;
             }
 
