@@ -217,6 +217,12 @@
                                                    VerticalAlignment="Center" />
                                     </StackPanel>
                                 </Button>
+                                <winui:InfoBar IsClosable="False"
+                                               IsOpen="{x:Bind converters:VisibilityConverter.TrueWhenZero(Items.Count), Mode=OneWay}"
+                                               Severity="Warning"
+                                               Message="There are no accounts to show"
+                                               Grid.Row="1"
+                                               Grid.ColumnSpan="2" />
                                 <winui:ItemsRepeater ItemsSource="{x:Bind Items, Mode=OneWay}"
                                                      Grid.Row="1"
                                                      Grid.ColumnSpan="2">
