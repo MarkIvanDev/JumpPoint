@@ -12,6 +12,11 @@
     DefaultButton="Primary"
     IsPrimaryButtonEnabled="{x:Bind ViewModel.IsValid, Mode=OneWay}">
 
+    <ContentDialog.Resources>
+        <Style TargetType="local:RenameCloudAccountDialog"
+               BasedOn="{StaticResource DefaultContentDialogStyle}" />
+    </ContentDialog.Resources>
+
     <Grid>
         <TextBox Header="Name:"
                  Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>

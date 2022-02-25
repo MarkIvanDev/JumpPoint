@@ -16,6 +16,8 @@
     DefaultButton="Primary">
 
     <ContentDialog.Resources>
+        <Style TargetType="local:AddToWorkspaceDialog"
+               BasedOn="{StaticResource DefaultContentDialogStyle}" />
         <converters:NothingToShowConverter x:Name="NothingToShowConverter">
             <ngconv:Binding Value="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
             <ngconv:Binding Value="{x:Bind ViewModel.Workspaces.Count, Mode=OneWay}" />

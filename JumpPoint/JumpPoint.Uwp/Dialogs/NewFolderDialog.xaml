@@ -12,6 +12,11 @@
     DefaultButton="Primary"
     IsPrimaryButtonEnabled="{x:Bind ViewModel.IsValid, Mode=OneWay}">
 
+    <ContentDialog.Resources>
+        <Style TargetType="local:NewFolderDialog"
+               BasedOn="{StaticResource DefaultContentDialogStyle}" />
+    </ContentDialog.Resources>
+
     <StackPanel>
         <TextBox PlaceholderText="Folder name"
                  Header="Name:"

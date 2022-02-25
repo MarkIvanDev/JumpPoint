@@ -11,6 +11,11 @@
     CloseButtonText="Cancel"
     DefaultButton="Primary">
 
+    <ContentDialog.Resources>
+        <Style TargetType="local:DeleteConfirmationDialog"
+               BasedOn="{StaticResource DefaultContentDialogStyle}" />
+    </ContentDialog.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

@@ -17,6 +17,8 @@
     IsPrimaryButtonEnabled="{x:Bind ViewModel.IsValid, Mode=OneWay}">
 
     <ContentDialog.Resources>
+        <Style TargetType="local:ToolPicker"
+               BasedOn="{StaticResource DefaultContentDialogStyle}" />
         <CollectionViewSource x:Key="ToolsViewSource"
                               x:Name="ToolsViewSource"
                               IsSourceGrouped="True"
@@ -30,7 +32,8 @@
 
     <GridView ItemsSource="{x:Bind ToolsViewSource.View, Mode=OneWay}"
               SelectedItem="{x:Bind ViewModel.Tool, Mode=TwoWay}"
-              SelectionMode="Single">
+              SelectionMode="Single"
+              IsSynchronizedWithCurrentItem="False">
         <GridView.Header>
             <Grid>
                 <Grid.RowDefinitions>

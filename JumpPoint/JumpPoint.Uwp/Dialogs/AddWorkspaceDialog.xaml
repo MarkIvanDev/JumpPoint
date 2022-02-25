@@ -18,6 +18,11 @@
     DefaultButton="Primary"
     IsPrimaryButtonEnabled="{x:Bind ViewModel.IsValid, Mode=OneWay}">
 
+    <ContentDialog.Resources>
+        <Style TargetType="local:AddWorkspaceDialog"
+               BasedOn="{StaticResource DefaultContentDialogStyle}" />
+    </ContentDialog.Resources>
+
     <StackPanel>
         <Grid>
             <Grid.ColumnDefinitions>

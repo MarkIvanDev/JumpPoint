@@ -11,6 +11,11 @@
     PrimaryButtonCommand="{x:Bind ViewModel.AllowCommand}"
     DefaultButton="Primary">
 
+    <ContentDialog.Resources>
+        <Style TargetType="local:RequestPermissionDialog"
+               BasedOn="{StaticResource DefaultContentDialogStyle}" />
+    </ContentDialog.Resources>
+
     <Grid>
         <TextBlock Text="To get started, you'll need to grant the app permission to access your file system. This will open the Settings Privacy page. You'll need to restart the app once completed."
                    TextWrapping="WrapWholeWords"/>
