@@ -14,7 +14,7 @@
   <Identity
     Name="25654MarkIvanBasto.JumpPointbeta"
     Publisher="CN=18D56243-BECE-4C8B-8C6B-085DBDD122F0"
-    Version="2.1.4.0" />
+    Version="2.1.9.0" />
 
   <Properties>
     <DisplayName>Jump Point (beta)</DisplayName>
