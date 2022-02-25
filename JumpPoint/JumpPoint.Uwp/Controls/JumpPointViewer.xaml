@@ -125,7 +125,7 @@
             <Setter Property="VerticalContentAlignment" Value="Stretch" />
             <Setter Property="Margin" Value="0,2,4,2" />
             <Setter Property="Padding" Value="0" />
-            <Setter Property="ContextFlyout" Value="{StaticResource ItemContextFlyout}" />
+            <!--<Setter Property="ContextFlyout" Value="{StaticResource ItemContextFlyout}" />-->
         </Style>
         
         <!--#region Details View -->
@@ -226,7 +226,8 @@
         </Style>
 
         <DataTemplate x:Key="FolderDetailsTemplate" x:DataType="items:FolderBase">
-            <Grid Background="Transparent">
+            <Grid Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="28" />
                     <ColumnDefinition Width="*" MinWidth="200" />
@@ -288,7 +289,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="FileDetailsTemplate" x:DataType="items:FileBase">
-            <Grid Background="Transparent">
+            <Grid Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="28" />
                     <ColumnDefinition Width="*" MinWidth="200" />
@@ -355,7 +357,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="DriveDetailsTemplate" x:DataType="items:DriveBase">
-            <Grid Background="Transparent">
+            <Grid Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="28" />
                     <ColumnDefinition Width="*" MinWidth="200" />
@@ -418,7 +421,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="WorkspaceDetailsTemplate" x:DataType="items:Workspace">
-            <Grid Background="Transparent">
+            <Grid Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="28" />
                     <ColumnDefinition Width="*" MinWidth="200" />
@@ -473,7 +477,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="LibraryDetailsTemplate" x:DataType="items:Library">
-            <Grid Background="Transparent">
+            <Grid Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="28" />
                     <ColumnDefinition Width="*" MinWidth="200" />
@@ -512,7 +517,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="AppLinkDetailsTemplate" x:DataType="items:AppLink">
-            <Grid Background="Transparent">
+            <Grid Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="28" />
                     <ColumnDefinition Width="*" MinWidth="200" />
@@ -669,7 +675,8 @@
         </Style>
 
         <DataTemplate x:Key="FolderGridTemplate" x:DataType="items:FolderBase">
-            <Grid Width="120" Background="Transparent">
+            <Grid Width="120" Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="80" />
                     <RowDefinition Height="*" />
@@ -719,7 +726,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="FileGridTemplate" x:DataType="items:FileBase">
-            <Grid Width="120" Background="Transparent">
+            <Grid Width="120" Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="80" />
                     <RowDefinition Height="*" />
@@ -773,7 +781,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="DriveGridTemplate" x:DataType="items:DriveBase">
-            <Grid Width="120" Background="Transparent">
+            <Grid Width="120" Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="80" />
                     <RowDefinition Height="*" />
@@ -826,7 +835,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="WorkspaceGridTemplate" x:DataType="items:Workspace">
-            <Grid Width="120" Background="Transparent">
+            <Grid Width="120" Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="80" />
                     <RowDefinition Height="*" />
@@ -864,7 +874,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="LibraryGridTemplate" x:DataType="items:Library">
-            <Grid Width="120" Background="Transparent">
+            <Grid Width="120" Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="80" />
                     <RowDefinition Height="*" />
@@ -889,8 +900,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="AppLinkGridTemplate" x:DataType="items:AppLink">
-            <Grid Width="120"
-                  Background="Transparent">
+            <Grid Width="120" Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="80" />
                     <RowDefinition Height="*" />
@@ -1051,7 +1062,8 @@
         </Style>
 
         <DataTemplate x:Key="FolderTilesTemplate" x:DataType="items:FolderBase">
-            <Grid Width="320" MinHeight="80" Background="Transparent">
+            <Grid Width="320" MinHeight="80" Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="80" />
                     <ColumnDefinition Width="*" />
@@ -1103,7 +1115,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="FileTilesTemplate" x:DataType="items:FileBase">
-            <Grid Width="320" MinHeight="80" Background="Transparent">
+            <Grid Width="320" MinHeight="80" Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="80" />
                     <ColumnDefinition Width="*" />
@@ -1156,7 +1169,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="DriveTilesTemplate" x:DataType="items:DriveBase">
-            <Grid Width="320" MinHeight="80" Background="Transparent">
+            <Grid Width="320" MinHeight="80" Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="80" />
                     <ColumnDefinition Width="*" />
@@ -1225,7 +1239,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="WorkspaceTilesTemplate" x:DataType="items:Workspace">
-            <Grid Width="320" Height="80" Background="Transparent">
+            <Grid Width="320" Height="80" Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="80" />
                     <ColumnDefinition Width="*" />
@@ -1267,7 +1282,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="LibraryTilesTemplate" x:DataType="items:Library">
-            <Grid Width="320" Height="80" Background="Transparent">
+            <Grid Width="320" Height="80" Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="80" />
                     <ColumnDefinition Width="*" />
@@ -1302,9 +1318,8 @@
 
         <DataTemplate x:Key="AppLinkTilesTemplate"
                       x:DataType="items:AppLink">
-            <Grid Width="320"
-                  MinHeight="80"
-                  Background="Transparent">
+            <Grid Width="320" MinHeight="80" Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="80" />
                     <ColumnDefinition Width="*" />
@@ -1475,7 +1490,8 @@
 
         <DataTemplate x:Key="FolderListTemplate"
                       x:DataType="items:FolderBase">
-            <Grid Background="Transparent">
+            <Grid Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="28" />
                     <ColumnDefinition Width="*"
@@ -1517,7 +1533,8 @@
 
         <DataTemplate x:Key="FileListTemplate"
                       x:DataType="items:FileBase">
-            <Grid Background="Transparent">
+            <Grid Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="28" />
                     <ColumnDefinition Width="*"
@@ -1565,7 +1582,8 @@
 
         <DataTemplate x:Key="DriveListTemplate"
                       x:DataType="items:DriveBase">
-            <Grid Background="Transparent">
+            <Grid Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="28" />
                     <ColumnDefinition Width="*"
@@ -1607,7 +1625,8 @@
 
         <DataTemplate x:Key="WorkspaceListTemplate"
                       x:DataType="items:Workspace">
-            <Grid Background="Transparent">
+            <Grid Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="28" />
                     <ColumnDefinition Width="*"
@@ -1646,7 +1665,8 @@
 
         <DataTemplate x:Key="LibraryListTemplate"
                       x:DataType="items:Library">
-            <Grid Background="Transparent">
+            <Grid Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="28" />
                     <ColumnDefinition Width="*"
@@ -1683,7 +1703,8 @@
 
         <DataTemplate x:Key="AppLinkListTemplate"
                       x:DataType="items:AppLink">
-            <Grid Background="Transparent">
+            <Grid Background="Transparent"
+                  ContextFlyout="{StaticResource ItemContextFlyout}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="28" />
                     <ColumnDefinition Width="*"

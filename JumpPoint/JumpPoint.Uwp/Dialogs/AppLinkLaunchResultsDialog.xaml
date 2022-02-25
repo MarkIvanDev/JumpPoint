@@ -12,6 +12,11 @@
     PrimaryButtonText="Close"
     DefaultButton="Primary">
 
+    <ContentDialog.Resources>
+        <Style TargetType="local:AppLinkLaunchResultsDialog"
+               BasedOn="{StaticResource DefaultContentDialogStyle}" />
+    </ContentDialog.Resources>
+
     <ScrollViewer>
         <StackPanel Spacing="8">
             <TextBlock Margin="0,0,0,8"

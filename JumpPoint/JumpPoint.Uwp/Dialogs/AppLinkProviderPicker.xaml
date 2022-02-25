@@ -17,6 +17,8 @@
     IsPrimaryButtonEnabled="{x:Bind ViewModel.IsValid, Mode=OneWay}">
 
     <ContentDialog.Resources>
+        <Style TargetType="local:AppLinkProviderPicker"
+               BasedOn="{StaticResource DefaultContentDialogStyle}" />
         <converters:NothingToShowConverter x:Name="NothingToShowConverter">
             <ngconv:Binding Value="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
             <ngconv:Binding Value="{x:Bind ViewModel.Providers.Count, Mode=OneWay}" />

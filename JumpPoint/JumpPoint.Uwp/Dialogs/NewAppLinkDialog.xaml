@@ -17,6 +17,8 @@
     IsPrimaryButtonEnabled="{x:Bind ViewModel.IsValid, Mode=OneWay}">
 
     <ContentDialog.Resources>
+        <Style TargetType="local:NewAppLinkDialog"
+               BasedOn="{StaticResource DefaultContentDialogStyle}" />
         <XamlUICommand x:Key="RemoveQueryKeyCommand"
                        Command="{x:Bind ViewModel.RemoveQueryKeyCommand}" />
         <XamlUICommand x:Key="RemoveInputKeyCommand"

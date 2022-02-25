@@ -32,5 +32,10 @@ namespace JumpPoint.Uwp.Converters
                     return Visibility.Collapsed;
             }
         }
+
+        public static bool TrueWhenZero(int number)
+        {
+            return number == 0;
+        }
     }
 }

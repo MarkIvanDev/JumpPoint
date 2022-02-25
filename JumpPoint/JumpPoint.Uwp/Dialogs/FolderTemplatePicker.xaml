@@ -14,6 +14,11 @@
     DefaultButton="Primary"
     IsPrimaryButtonEnabled="{x:Bind ViewModel.IsValid, Mode=OneWay}">
 
+    <ContentDialog.Resources>
+        <Style TargetType="local:FolderTemplatePicker"
+               BasedOn="{StaticResource DefaultContentDialogStyle}" />
+    </ContentDialog.Resources>
+
     <Grid>
         <GridView SelectionMode="Single"
                   ItemsSource="{x:Bind ViewModel.FolderTemplates, Mode=OneWay}"
