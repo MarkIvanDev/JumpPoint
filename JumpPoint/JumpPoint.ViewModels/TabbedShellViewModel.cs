@@ -30,7 +30,6 @@ namespace JumpPoint.ViewModels
         private readonly IDialogService dialogService;
         private readonly IAddOnService addOnService;
         private readonly IShareService shareService;
-        private readonly CommandHelper commandHelper;
 
         public TabbedShellViewModel(IDialogService dialogService,
                                     IAddOnService addOnService,
@@ -42,9 +41,11 @@ namespace JumpPoint.ViewModels
             this.addOnService = addOnService;
             this.shareService = shareService;
             ShellItems = shellItems;
-            this.commandHelper = commandHelper;
+            CommandHelper = commandHelper;
             Tabs = new ObservableCollection<TabViewModel>();
         }
+
+        public CommandHelper CommandHelper { get; }
 
         public ObservableCollection<TabViewModel> Tabs { get; }
 
@@ -55,10 +56,10 @@ namespace JumpPoint.ViewModels
             get { return _CurrentTab; }
             set
             {
-                if (_CurrentTab != null) _CurrentTab.PropertyChanged -= CurrentTab_PropertyChanged;
-                if (value != null) value.PropertyChanged += CurrentTab_PropertyChanged;
+                //if (_CurrentTab != null) _CurrentTab.PropertyChanged -= CurrentTab_PropertyChanged;
+                //if (value != null) value.PropertyChanged += CurrentTab_PropertyChanged;
                 Set(ref _CurrentTab, value);
-                Messenger.Default.Send(new NotificationMessage(nameof(CurrentTab)), MessengerTokens.CommandManagement);
+                //Messenger.Default.Send(new NotificationMessage(nameof(CurrentTab)), MessengerTokens.CommandManagement);
             }
         }
 
@@ -88,7 +89,7 @@ namespace JumpPoint.ViewModels
                 if (tab?.Context is null) return;
 
                 CloseTabCommand.TryExecute(tab);
-                await commandHelper.OpenPathInNewWindowCommand.TryExecute(tab);
+                await CommandHelper.OpenPathInNewWindowCommand.TryExecute(tab.Context);
             }));
 
         private RelayCommand<TabViewModel> _CloseOtherTabs;
@@ -143,8 +144,7 @@ namespace JumpPoint.ViewModels
                     }
                 }
                 await Task.CompletedTask;
-            },
-            (context) => Toolbar.IsOpenInNewTabEnabled(context)));
+            }));
 
         private void NewTab(int index, AppPath appPath, object parameter = null)
         {
@@ -379,9 +379,10 @@ namespace JumpPoint.ViewModels
             Messenger.Default.Send(new NotificationMessage(nameof(CurrentTab)), MessengerTokens.CommandManagement);
 
             // Hook Up Listeners
-            PropertyChanged += TabbedShellViewModel_PropertyChanged;
+            //PropertyChanged += TabbedShellViewModel_PropertyChanged;
             ShellItems.Start();
             shareService.Start();
+            
 
             await LoadAddOnsCommand.TryExecute();
         }
@@ -409,7 +410,7 @@ namespace JumpPoint.ViewModels
             }
 
             // Unhook Listeners
-            PropertyChanged -= TabbedShellViewModel_PropertyChanged;
+            //PropertyChanged -= TabbedShellViewModel_PropertyChanged;
             ShellItems.Stop();
             shareService.Stop();
         }
@@ -424,77 +425,48 @@ namespace JumpPoint.ViewModels
 
         private void ManageCommands(NotificationMessage message)
         {
-            switch (message.Notification)
-            {
-                case nameof(CurrentTab):
-                case nameof(CurrentTab.Context):
-                    commandHelper.NotifyNaviagtionBarCommands();
-                    commandHelper.NotifyToolbarCommands();
-                    break;
+            CurrentTab?.RaisePropertyChanged(nameof(CurrentTab.Context));
+            //switch (message.Notification)
+            //{
+            //    case nameof(CurrentTab):
+            //    case nameof(CurrentTab.Context):
+            //        commandHelper.NotifyNaviagtionBarCommands();
+            //        commandHelper.NotifyToolbarCommands();
+            //        break;
 
-                case nameof(CurrentTab.Context.Item):
-                    commandHelper.NotifyNaviagtionBarCommands();
-                    //commandHelper.OpenPathInFileExplorerCommand.RaiseCanExecuteChanged();
-                    //commandHelper.OpenPathInCommandPromptCommand.RaiseCanExecuteChanged();
-                    //commandHelper.OpenPathInPowershellCommand.RaiseCanExecuteChanged();
+            //    case nameof(CurrentTab.Context.Item):
+            //        commandHelper.NotifyNaviagtionBarCommands();
+            //        break;
 
-                    //commandHelper.AddPathToWorkspaceCommand.RaiseCanExecuteChanged();
-                    //commandHelper.AddPathToFavoritesCommand.RaiseCanExecuteChanged();
-                    //commandHelper.RemovePathFromFavoritesCommand.RaiseCanExecuteChanged();
+            //    case nameof(CurrentTab.Context.PathInfo):
+            //        // Navigation Bar
+            //        commandHelper.UpCommand.RaiseCanExecuteChanged();
+            //        commandHelper.PathPropertiesCommand.RaiseCanExecuteChanged();
 
-                    //commandHelper.SetPathWorkspaceTemplateCommand.RaiseCanExecuteChanged();
-                    //commandHelper.SetPathFolderTemplateCommand.RaiseCanExecuteChanged();
-                    break;
+            //        // Toolbar
+            //        commandHelper.CopyCommand.RaiseCanExecuteChanged();
+            //        commandHelper.CutCommand.RaiseCanExecuteChanged();
+            //        commandHelper.RenameCommand.RaiseCanExecuteChanged();
+            //        commandHelper.DeleteCommand.RaiseCanExecuteChanged();
+            //        commandHelper.DeletePermanentlyCommand.RaiseCanExecuteChanged();
+            //        break;
 
-                case nameof(CurrentTab.Context.PathInfo):
-                    // Navigation Bar
-                    commandHelper.UpCommand.RaiseCanExecuteChanged();
-                    commandHelper.PathPropertiesCommand.RaiseCanExecuteChanged();
+            //    case nameof(CurrentTab.Context.SelectedItems):
+            //        // Toolbar
+            //        OpenItemsInNewTabCommand.RaiseCanExecuteChanged();
+            //        //commandHelper.NotifyToolbarCommands();
+            //        CurrentTab?.RaisePropertyChanged(nameof(CurrentTab.Context));
+            //        break;
 
-                    // Toolbar
-                    commandHelper.CopyCommand.RaiseCanExecuteChanged();
-                    commandHelper.CutCommand.RaiseCanExecuteChanged();
-                    commandHelper.RenameCommand.RaiseCanExecuteChanged();
-                    commandHelper.DeleteCommand.RaiseCanExecuteChanged();
-                    commandHelper.DeletePermanentlyCommand.RaiseCanExecuteChanged();
-                    break;
+            //    case nameof(CommandHelper.ClipboardHasFiles):
+            //        commandHelper.PasteCommand.RaiseCanExecuteChanged();
+            //        break;
 
-                case nameof(CurrentTab.Context.SelectedItems):
-                    // Toolbar
-                    OpenItemsInNewTabCommand.RaiseCanExecuteChanged();
-                    commandHelper.NotifyToolbarCommands();
-                    //commandHelper.CopyCommand.RaiseCanExecuteChanged();
-                    //commandHelper.CutCommand.RaiseCanExecuteChanged();
-                    //commandHelper.RenameCommand.RaiseCanExecuteChanged();
-                    //commandHelper.DeleteCommand.RaiseCanExecuteChanged();
-                    //commandHelper.DeletePermanentlyCommand.RaiseCanExecuteChanged();
-
-                    //commandHelper.OpenCommand.RaiseCanExecuteChanged();
-                    //commandHelper.OpenWithCommand.RaiseCanExecuteChanged();
-                    //OpenItemsInNewTabCommand.RaiseCanExecuteChanged();
-                    //commandHelper.OpenItemsInNewWindowCommand.RaiseCanExecuteChanged();
-                    //commandHelper.OpenItemsInFileExplorerCommand.RaiseCanExecuteChanged();
-                    //commandHelper.OpenItemsInCommandPromptCommand.RaiseCanExecuteChanged();
-                    //commandHelper.OpenItemsInPowershellCommand.RaiseCanExecuteChanged();
-                    //commandHelper.ShareItemsCommand.RaiseCanExecuteChanged();
-                    //commandHelper.ItemsPropertiesCommand.RaiseCanExecuteChanged();
-
-                    //commandHelper.AddItemsToWorkspaceCommand.RaiseCanExecuteChanged();
-                    //commandHelper.AddItemsToFavoritesCommand.RaiseCanExecuteChanged();
-                    //commandHelper.RemoveItemsFromFavoritesCommand.RaiseCanExecuteChanged();
-                    //commandHelper.SetItemsWorkspaceTemplateCommand.RaiseCanExecuteChanged();
-                    //commandHelper.SetItemsFolderTemplateCommand.RaiseCanExecuteChanged();
-                    break;
-
-                case nameof(CommandHelper.ClipboardHasFiles):
-                    commandHelper.PasteCommand.RaiseCanExecuteChanged();
-                    break;
-
-                case nameof(JumpPointItem.IsFavorite):
-                    commandHelper.AddItemsToFavoritesCommand.RaiseCanExecuteChanged();
-                    commandHelper.RemoveItemsFromFavoritesCommand.RaiseCanExecuteChanged();
-                    break;
-            }
+            //    case nameof(JumpPointItem.IsFavorite):
+            //        commandHelper.AddItemsToFavoritesCommand.RaiseCanExecuteChanged();
+            //        commandHelper.RemoveItemsFromFavoritesCommand.RaiseCanExecuteChanged();
+            //        break;
+            //}
         }
     }
 

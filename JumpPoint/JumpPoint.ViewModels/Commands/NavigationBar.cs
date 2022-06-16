@@ -136,5 +136,11 @@ namespace JumpPoint.ViewModels.Commands
                 return context.Item is FolderBase folder && folder.FolderType == FolderType.Regular; 
             }
         }
+
+        public static bool IsNewFolderEnabled(ShellContextViewModelBase context)
+        {
+            return context != null &&
+                    (context.PathInfo.Type == AppPath.Drive || context.PathInfo.Type == AppPath.Folder);
+        }
     }
 }

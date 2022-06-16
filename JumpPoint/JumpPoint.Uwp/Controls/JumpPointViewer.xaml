@@ -20,7 +20,8 @@
     xmlns:actions="using:JumpPoint.Uwp.Interactivity.Actions"
     xmlns:behaviors="using:JumpPoint.Uwp.Interactivity.Behaviors"
     xmlns:gtext="using:Glif.Core.Text"
-    mc:Ignorable="d"
+             xmlns:commands="using:JumpPoint.ViewModels.Commands"
+             mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
 
@@ -31,91 +32,112 @@
             <ngconv:Binding Value="{x:Bind ItemsSource.Count, Mode=OneWay}" />
         </conv:NothingToShowConverter>
 
-        <conv:AppBarSeparatorVisibilityConverter x:Name="OpenGroupSeparatorConverter">
-            <ngconv:Binding Value="{x:Bind appOpenWith.IsEnabled, Mode=OneWay}" />
-            <ngconv:Binding Value="{x:Bind appOpenInNewTab.IsEnabled, Mode=OneWay}" />
-            <ngconv:Binding Value="{x:Bind appOpenInNewWindow.IsEnabled, Mode=OneWay}" />
-            <ngconv:Binding Value="{x:Bind appOpenInFileExplorer.IsEnabled, Mode=OneWay}" />
-            <ngconv:Binding Value="{x:Bind appOpenInCommandPrompt.IsEnabled, Mode=OneWay}" />
-            <ngconv:Binding Value="{x:Bind appOpenInPowershell.IsEnabled, Mode=OneWay}" />
+        <conv:AppBarSeparatorVisibilityConverter x:Key="OpenGroupSeparatorConverter">
+            <ngconv:Binding Value="{x:Bind commands:Toolbar.IsOpenWithEnabled(Context), Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind commands:Toolbar.IsOpenInNewTabEnabled(Context), Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind commands:Toolbar.IsOpenInNewWindowEnabled(Context), Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind commands:Toolbar.IsOpenInFileExplorerEnabled(Context), Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind commands:Toolbar.IsOpenInCommandPromptEnabled(Context), Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind commands:Toolbar.IsOpenInPowershellEnabled(Context), Mode=OneWay}" />
         </conv:AppBarSeparatorVisibilityConverter>
-        <conv:AppBarSeparatorVisibilityConverter x:Name="ToolsGroupSeparatorConverter">
-            <ngconv:Binding Value="{x:Bind appAddToWorkspace.IsEnabled, Mode=OneWay}" />
-            <ngconv:Binding Value="{x:Bind appAddToFavorites.IsEnabled, Mode=OneWay}" />
-            <ngconv:Binding Value="{x:Bind appRemoveFromFavorites.IsEnabled, Mode=OneWay}" />
+        <conv:AppBarSeparatorVisibilityConverter x:Key="ToolsGroupSeparatorConverter">
+            <ngconv:Binding Value="{x:Bind commands:Toolbar.IsAddToWorkspaceEnabled(Context), Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind commands:Toolbar.IsAddToFavoritesEnabled(Context), Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind commands:Toolbar.IsRemoveFromFavoritesEnabled(Context), Mode=OneWay}" />
         </conv:AppBarSeparatorVisibilityConverter>
-        <conv:AppBarSeparatorVisibilityConverter x:Name="TemplateGroupSeparatorConverter">
-            <ngconv:Binding Value="{x:Bind appSetWorkspaceTemplate.IsEnabled, Mode=OneWay}" />
-            <ngconv:Binding Value="{x:Bind appSetFolderTemplate.IsEnabled, Mode=OneWay}" />
+        <conv:AppBarSeparatorVisibilityConverter x:Key="TemplateGroupSeparatorConverter">
+            <ngconv:Binding Value="{x:Bind commands:Toolbar.IsSetWorkspaceTemplateEnabled(Context), Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind commands:Toolbar.IsSetFolderTemplateEnabled(Context), Mode=OneWay}" />
         </conv:AppBarSeparatorVisibilityConverter>
         
         <winui:CommandBarFlyout x:Key="ItemContextFlyout" Placement="BottomEdgeAlignedLeft">
             <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                          Command="{StaticResource OpenCommand}" x:Name="appOpen"
-                          Visibility="{x:Bind appOpen.IsEnabled, Mode=OneWay}"/>
+                          Command="{StaticResource OpenCommand}"
+                          IsEnabled="{x:Bind commands:Toolbar.IsOpenEnabled(Context), Mode=OneWay}"
+                          Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
             <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                          Command="{StaticResource CopyCommand}" x:Name="appCopy"
-                          Visibility="{x:Bind appCopy.IsEnabled, Mode=OneWay}"/>
+                          Command="{StaticResource CopyCommand}"
+                          IsEnabled="{x:Bind commands:Toolbar.IsCopyEnabled(Context), Mode=OneWay}"
+                          Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
             <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                          Command="{StaticResource CutCommand}" x:Name="appCut"
-                          Visibility="{x:Bind appCut.IsEnabled, Mode=OneWay}"/>
+                          Command="{StaticResource CutCommand}"
+                          IsEnabled="{x:Bind commands:Toolbar.IsCutEnabled(Context), Mode=OneWay}"
+                          Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
             <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                          Command="{StaticResource DeleteCommand}" x:Name="appDelete"
-                          Visibility="{x:Bind appDelete.IsEnabled, Mode=OneWay}"/>
+                          Command="{StaticResource DeleteCommand}"
+                          IsEnabled="{x:Bind commands:Toolbar.IsDeleteEnabled(Context), Mode=OneWay}"
+                          Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
             <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                          Command="{StaticResource RenameCommand}" x:Name="appRename"
-                          Visibility="{x:Bind appRename.IsEnabled, Mode=OneWay}"/>
+                          Command="{StaticResource RenameCommand}"
+                          IsEnabled="{x:Bind commands:Toolbar.IsRenameEnabled(Context), Mode=OneWay}"
+                          Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
             <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                          Command="{StaticResource ItemsPropertiesCommand}" x:Name="appProperties"
-                          Visibility="{x:Bind appProperties.IsEnabled, Mode=OneWay}"/>
+                          Command="{StaticResource ItemsPropertiesCommand}"
+                          IsEnabled="{x:Bind commands:Toolbar.IsPropertiesEnabled(Context), Mode=OneWay}"
+                          Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
             <winui:CommandBarFlyout.SecondaryCommands>
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                              Command="{StaticResource OpenWithCommand}" x:Name="appOpenWith"
-                              Visibility="{x:Bind appOpenWith.IsEnabled, Mode=OneWay}"/>
+                              Command="{StaticResource OpenWithCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsOpenWithEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                              Command="{StaticResource OpenItemsInNewTabCommand}" x:Name="appOpenInNewTab"
-                              Visibility="{x:Bind appOpenInNewTab.IsEnabled, Mode=OneWay}" />
+                              Command="{StaticResource OpenItemsInNewTabCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsOpenInNewTabEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                              Command="{StaticResource OpenItemsInNewWindowCommand}" x:Name="appOpenInNewWindow"
-                              Visibility="{x:Bind appOpenInNewWindow.IsEnabled, Mode=OneWay}"/>
+                              Command="{StaticResource OpenItemsInNewWindowCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsOpenInNewWindowEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                              Command="{StaticResource OpenItemsInFileExplorerCommand}" x:Name="appOpenInFileExplorer"
-                              Visibility="{x:Bind appOpenInFileExplorer.IsEnabled, Mode=OneWay}"/>
+                              Command="{StaticResource OpenItemsInFileExplorerCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsOpenInFileExplorerEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                              Command="{StaticResource OpenItemsInCommandPromptCommand}" x:Name="appOpenInCommandPrompt"
-                              Visibility="{x:Bind appOpenInCommandPrompt.IsEnabled, Mode=OneWay}"/>
+                              Command="{StaticResource OpenItemsInCommandPromptCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsOpenInCommandPromptEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                              Command="{StaticResource OpenItemsInPowershellCommand}" x:Name="appOpenInPowershell"
-                              Visibility="{x:Bind appOpenInPowershell.IsEnabled, Mode=OneWay}"/>
-                <AppBarSeparator Visibility="{x:Bind OpenGroupSeparatorConverter.Output, Mode=OneWay}" />
+                              Command="{StaticResource OpenItemsInPowershellCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsOpenInPowershellEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
+                <AppBarSeparator Visibility="{Binding Source={StaticResource OpenGroupSeparatorConverter}, Path=Output, Mode=OneWay}" /> 
 
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                              Command="{StaticResource AddItemsToWorkspaceCommand}" x:Name="appAddToWorkspace"
-                              Visibility="{x:Bind appAddToWorkspace.IsEnabled, Mode=OneWay}"/>
+                              Command="{StaticResource AddItemsToWorkspaceCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsAddToWorkspaceEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                              Command="{StaticResource AddItemsToFavoritesCommand}" x:Name="appAddToFavorites"
-                              Visibility="{x:Bind appAddToFavorites.IsEnabled, Mode=OneWay}"/>
+                              Command="{StaticResource AddItemsToFavoritesCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsAddToFavoritesEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                              Command="{StaticResource RemoveItemsFromFavoritesCommand}" x:Name="appRemoveFromFavorites"
-                              Visibility="{x:Bind appRemoveFromFavorites.IsEnabled, Mode=OneWay}"/>
-                <AppBarSeparator Visibility="{x:Bind ToolsGroupSeparatorConverter.Output, Mode=OneWay}" />
+                              Command="{StaticResource RemoveItemsFromFavoritesCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsRemoveFromFavoritesEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
+                <AppBarSeparator Visibility="{Binding Source={StaticResource ToolsGroupSeparatorConverter}, Path=Output, Mode=OneWay}" />
 
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                              Command="{StaticResource SetItemsWorkspaceTemplateCommand}" x:Name="appSetWorkspaceTemplate"
-                              Visibility="{x:Bind appSetWorkspaceTemplate.IsEnabled, Mode=OneWay}" />
+                              Command="{StaticResource SetItemsWorkspaceTemplateCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsSetWorkspaceTemplateEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                              Command="{StaticResource SetItemsWorkspaceTemplateCommand}" x:Name="appSetFolderTemplate"
-                              Visibility="{x:Bind appSetFolderTemplate.IsEnabled, Mode=OneWay}" />
-                <AppBarSeparator Visibility="{x:Bind TemplateGroupSeparatorConverter.Output, Mode=OneWay}" />
+                              Command="{StaticResource SetItemsFolderTemplateCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsSetFolderTemplateEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                <AppBarSeparator Visibility="{Binding Source={StaticResource TemplateGroupSeparatorConverter}, Path=Output, Mode=OneWay}" />
 
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                              Command="{StaticResource CopyItemsPathCommand}" x:Name="appCopyPath"
-                              Visibility="{x:Bind appCopyPath.IsEnabled, Mode=OneWay}"/>
+                              Command="{StaticResource CopyItemsPathCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsCopyItemsPathEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                              Command="{StaticResource ShareItemsCommand}" x:Name="appShare"
-                              Visibility="{x:Bind appShare.IsEnabled, Mode=OneWay}"/>
+                              Command="{StaticResource ShareItemsCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsShareEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
-                              Command="{StaticResource MoreToolsCommand}" />
+                              Command="{StaticResource MoreToolsCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsMoreToolsEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
             </winui:CommandBarFlyout.SecondaryCommands>
         </winui:CommandBarFlyout>
 

@@ -52,5 +52,18 @@ namespace JumpPoint.Uwp.Controls
         public static readonly DependencyProperty IsCompactProperty =
             DependencyProperty.Register("IsCompact", typeof(bool), typeof(IconSplitButton), new PropertyMetadata(false));
 
+
+
+        public bool IsPrimaryButtonEnabled
+        {
+            get { return (bool)GetValue(IsPrimaryButtonEnabledProperty); }
+            set { SetValue(IsPrimaryButtonEnabledProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for IsPrimaryButtonEnabled.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsPrimaryButtonEnabledProperty =
+            DependencyProperty.Register("IsPrimaryButtonEnabled", typeof(bool), typeof(IconSplitButton), new PropertyMetadata(true));
+
+
     }
 }

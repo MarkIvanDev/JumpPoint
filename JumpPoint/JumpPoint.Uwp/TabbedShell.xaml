@@ -27,6 +27,7 @@
     xmlns:behaviors="using:JumpPoint.Uwp.Interactivity.Behaviors"
     xmlns:humanizer="using:Humanizer"
     xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
+    xmlns:commands="using:JumpPoint.ViewModels.Commands"
     mc:Ignorable="d"
     extensions:ApplicationViewExtensions.Title="{x:Bind ViewModel.CurrentTab.Context.PathInfo.DisplayName, Mode=OneWay}"
     extensions:TitleBarExtensions.ButtonBackgroundColor="Transparent"
@@ -295,6 +296,7 @@
                                                  IsCompact="True" />
                             <controls:IconButton CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
                                                  Command="{StaticResource UpCommand}"
+                                                 IsEnabled="{x:Bind commands:NavigationBar.IsUpEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                  x:Name="navUp"
                                                  x:Load="{x:Bind services:AppSettings.Instance.ShowUp, Mode=OneWay}"
                                                  IsCompact="True" />
@@ -343,61 +345,65 @@
                                 </Viewbox>
                                 <Button.Resources>
                                     <converters:AppBarSeparatorVisibilityConverter x:Name="pathToolSeparator">
-                                        <ngconv:Binding Value="{x:Bind mnuAddPathToWorkspace.IsEnabled, Mode=OneWay}" />
-                                        <ngconv:Binding Value="{x:Bind mnuAddPathToFavorites.IsEnabled, Mode=OneWay}" />
-                                        <ngconv:Binding Value="{x:Bind mnuRemovePathFromFavorites.IsEnabled, Mode=OneWay}" />
+                                        <ngconv:Binding Value="{x:Bind commands:NavigationBar.IsAddToWorkspaceEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}" />
+                                        <ngconv:Binding Value="{x:Bind commands:NavigationBar.IsAddToFavoritesEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}" />
+                                        <ngconv:Binding Value="{x:Bind commands:NavigationBar.IsRemoveFromFavoritesEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}" />
                                     </converters:AppBarSeparatorVisibilityConverter>
                                     <converters:AppBarSeparatorVisibilityConverter x:Name="pathTemplateSeparator">
-                                        <ngconv:Binding Value="{x:Bind mnuSetPathWorkspaceTemplate.IsEnabled, Mode=OneWay}" />
-                                        <ngconv:Binding Value="{x:Bind mnuSetPathFolderTemplate.IsEnabled, Mode=OneWay}" />
+                                        <ngconv:Binding Value="{x:Bind commands:NavigationBar.IsSetWorkspaceTemplateEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}" />
+                                        <ngconv:Binding Value="{x:Bind commands:NavigationBar.IsSetFolderTemplateEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}" />
                                     </converters:AppBarSeparatorVisibilityConverter>
                                 </Button.Resources>
                                 <Button.Flyout>
                                     <MenuFlyout Placement="BottomEdgeAlignedLeft">
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                         Command="{StaticResource CopyPathCommand}" />
                                         <MenuFlyoutSeparator />
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                         Command="{StaticResource OpenPathInNewWindowCommand}" />
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                         Command="{StaticResource OpenPathInFileExplorerCommand}"
+                                                        IsEnabled="{x:Bind commands:NavigationBar.IsOpenInFileExplorerEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                         Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                         Command="{StaticResource OpenPathInCommandPromptCommand}"
+                                                        IsEnabled="{x:Bind commands:NavigationBar.IsOpenInCommandPromptEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                         Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                         Command="{StaticResource OpenPathInPowershellCommand}"
+                                                        IsEnabled="{x:Bind commands:NavigationBar.IsOpenInPowershellEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                         Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
 
                                         <MenuFlyoutSeparator Visibility="{x:Bind pathToolSeparator.Output, Mode=OneWay}" />
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                         Command="{StaticResource AddPathToWorkspaceCommand}"
-                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"
-                                                        x:Name="mnuAddPathToWorkspace" />
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                        IsEnabled="{x:Bind commands:NavigationBar.IsAddToWorkspaceEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                         Command="{StaticResource AddPathToFavoritesCommand}"
-                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"
-                                                        x:Name="mnuAddPathToFavorites" />
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                        IsEnabled="{x:Bind commands:NavigationBar.IsAddToFavoritesEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                         Command="{StaticResource RemovePathFromFavoritesCommand}"
-                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"
-                                                        x:Name="mnuRemovePathFromFavorites" />
+                                                        IsEnabled="{x:Bind commands:NavigationBar.IsRemoveFromFavoritesEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
 
                                         <MenuFlyoutSeparator Visibility="{x:Bind pathTemplateSeparator.Output, Mode=OneWay}" />
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                         Command="{StaticResource SetPathWorkspaceTemplateCommand}"
-                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"
-                                                        x:Name="mnuSetPathWorkspaceTemplate" />
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                        IsEnabled="{x:Bind commands:NavigationBar.IsSetWorkspaceTemplateEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                         Command="{StaticResource SetPathFolderTemplateCommand}"
-                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"
-                                                        x:Name="mnuSetPathFolderTemplate" />
+                                                        IsEnabled="{x:Bind commands:NavigationBar.IsSetFolderTemplateEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
 
                                         <MenuFlyoutSeparator />
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                         Command="{StaticResource SharePathCommand}" />
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                         Command="{StaticResource PathPropertiesCommand}"
+                                                        IsEnabled="{x:Bind commands:NavigationBar.IsPropertiesEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                         Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
                                     </MenuFlyout>
                                 </Button.Flyout>
@@ -436,11 +442,11 @@
                             <StackPanel Grid.Column="2"
                                         Margin="2"
                                         Orientation="Horizontal">
-                                <controls:IconButton CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                <controls:IconButton CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                      Command="{StaticResource PinPathCommand}"
                                                      IsCompact="True"
                                                      Visibility="{x:Bind ViewModel.CurrentTab.Context.IsPinned, Mode=OneWay, Converter={StaticResource VisibleWhenFalseConverter}}" />
-                                <controls:IconButton CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                <controls:IconButton CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                      Command="{StaticResource UnpinPathCommand}"
                                                      IsCompact="True"
                                                      Visibility="{x:Bind ViewModel.CurrentTab.Context.IsPinned, Mode=OneWay}" />
@@ -483,7 +489,8 @@
                                 <controls:IconButton.Flyout>
                                     <MenuFlyout Placement="Bottom">
                                         <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
-                                                        Command="{StaticResource NewFolderCommand}" />
+                                                        Command="{StaticResource NewFolderCommand}"
+                                                        IsEnabled="{x:Bind commands:NavigationBar.IsNewFolderEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"/>
                                         <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
                                                         Command="{StaticResource NewWorkspaceCommand}" />
                                         <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
@@ -652,14 +659,15 @@
                                     <MenuFlyout Placement="BottomEdgeAlignedRight">
                                         <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
                                                         Command="{StaticResource NewTabCommand}" />
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                         Command="{StaticResource NewWindowCommand}" />
                                         <MenuFlyoutSubItem Text="New Item">
                                             <MenuFlyoutSubItem.Icon>
                                                 <IconSourceElement IconSource="{StaticResource NewItemIcon}" />
                                             </MenuFlyoutSubItem.Icon>
                                             <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
-                                                            Command="{StaticResource NewFolderCommand}" />
+                                                            Command="{StaticResource NewFolderCommand}"
+                                                            IsEnabled="{x:Bind commands:NavigationBar.IsNewFolderEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"/>
                                             <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
                                                             Command="{StaticResource NewWorkspaceCommand}" />
                                             <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
@@ -773,92 +781,111 @@
                                     </StackPanel.Resources>
                                     <controls:IconSplitButton CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                               Command="{StaticResource CopyCommand}"
+                                                              IsPrimaryButtonEnabled="{x:Bind commands:Toolbar.IsCopyEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                               IsCompact="True">
                                         <controls:IconSplitButton.Flyout>
                                             <MenuFlyout Placement="BottomEdgeAlignedRight">
                                                 <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
-                                                                Command="{StaticResource CutCommand}" />
+                                                                Command="{StaticResource CutCommand}"
+                                                                IsEnabled="{x:Bind commands:Toolbar.IsCutEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"/>
                                                 <MenuFlyoutItem Command="{StaticResource ClipboardManagerCommand}" />
                                                 <MenuFlyoutSeparator />
                                                 <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
-                                                                Command="{StaticResource CopyItemsPathCommand}" />
+                                                                Command="{StaticResource CopyItemsPathCommand}"
+                                                                IsEnabled="{x:Bind commands:Toolbar.IsCopyItemsPathEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"/>
                                             </MenuFlyout>
                                         </controls:IconSplitButton.Flyout>
                                     </controls:IconSplitButton>
                                     <controls:IconButton CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
-                                                         Command="{StaticResource PasteCommand}" />
+                                                         Command="{StaticResource PasteCommand}"
+                                                         IsEnabled="{x:Bind commands:Toolbar.IsPasteEnabled(ViewModel.CurrentTab.Context, ViewModel.CommandHelper.ClipboardHasFiles), Mode=OneWay}"/>
                                     <AppBarSeparator />
                                     <controls:IconButton CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
-                                                         Command="{StaticResource RenameCommand}" />
+                                                         Command="{StaticResource RenameCommand}"
+                                                         IsEnabled="{x:Bind commands:Toolbar.IsRenameEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"/>
                                     <controls:IconSplitButton CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                               Command="{StaticResource DeleteCommand}"
+                                                              IsPrimaryButtonEnabled="{x:Bind commands:Toolbar.IsDeleteEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                               IsCompact="True">
                                         <controls:IconSplitButton.Flyout>
                                             <MenuFlyout Placement="BottomEdgeAlignedRight">
                                                 <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
-                                                                Command="{StaticResource DeletePermanentlyCommand}" />
+                                                                Command="{StaticResource DeletePermanentlyCommand}"
+                                                                IsEnabled="{x:Bind commands:Toolbar.IsDeletePermanentlyEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"/>
                                             </MenuFlyout>
                                         </controls:IconSplitButton.Flyout>
                                     </controls:IconSplitButton>
                                     <AppBarSeparator />
                                     <controls:IconSplitButton CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
-                                                              Command="{StaticResource OpenCommand}">
+                                                              Command="{StaticResource OpenCommand}"
+                                                              IsPrimaryButtonEnabled="{x:Bind commands:Toolbar.IsOpenEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}">
                                         <controls:IconSplitButton.Flyout>
                                             <MenuFlyout Placement="BottomEdgeAlignedRight">
                                                 <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
-                                                                Command="{StaticResource OpenWithCommand}" />
+                                                                Command="{StaticResource OpenWithCommand}"
+                                                                IsEnabled="{x:Bind commands:Toolbar.IsOpenWithEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"/>
                                                 <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                                 Command="{StaticResource OpenItemsInNewWindowCommand}"
+                                                                IsEnabled="{x:Bind commands:Toolbar.IsOpenInNewWindowEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                                 Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
                                                 <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                                 Command="{StaticResource OpenItemsInFileExplorerCommand}"
+                                                                IsEnabled="{x:Bind commands:Toolbar.IsOpenInFileExplorerEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                                 Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
                                                 <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                                 Command="{StaticResource OpenItemsInCommandPromptCommand}"
+                                                                IsEnabled="{x:Bind commands:Toolbar.IsOpenInCommandPromptEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                                 Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
                                                 <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                                 Command="{StaticResource OpenItemsInPowershellCommand}"
+                                                                IsEnabled="{x:Bind commands:Toolbar.IsOpenInPowershellEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                                 Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
                                             </MenuFlyout>
                                         </controls:IconSplitButton.Flyout>
                                     </controls:IconSplitButton>
                                     <controls:IconButton CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                          Command="{StaticResource ShareItemsCommand}"
+                                                         IsEnabled="{x:Bind commands:Toolbar.IsShareEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                          IsCompact="True" />
                                     <controls:IconButton CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                          Command="{StaticResource ItemsPropertiesCommand}"
+                                                         IsEnabled="{x:Bind commands:Toolbar.IsPropertiesEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                          IsCompact="True" />
                                     <AppBarSeparator />
                                     <controls:IconButton IconSource="{StaticResource ToolsIcon}"
                                                          Content="Tools">
                                         <controls:IconButton.Resources>
                                             <converters:AppBarSeparatorVisibilityConverter x:Name="itemsTemplateSeparator">
-                                                <ngconv:Binding Value="{x:Bind mnuSetItemsWorkspaceTemplate.IsEnabled, Mode=OneWay}" />
-                                                <ngconv:Binding Value="{x:Bind mnuSetItemsFolderTemplate.IsEnabled, Mode=OneWay}" />
+                                                <ngconv:Binding Value="{x:Bind commands:Toolbar.IsSetWorkspaceTemplateEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}" />
+                                                <ngconv:Binding Value="{x:Bind commands:Toolbar.IsSetFolderTemplateEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}" />
                                             </converters:AppBarSeparatorVisibilityConverter>
                                         </controls:IconButton.Resources>
                                         <controls:IconButton.Flyout>
                                             <MenuFlyout Placement="BottomEdgeAlignedLeft">
                                                 <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
-                                                                Command="{StaticResource AddItemsToWorkspaceCommand}" />
+                                                                Command="{StaticResource AddItemsToWorkspaceCommand}"
+                                                                IsEnabled="{x:Bind commands:Toolbar.IsAddToWorkspaceEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"/>
                                                 <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                                 Command="{StaticResource AddItemsToFavoritesCommand}"
+                                                                IsEnabled="{x:Bind commands:Toolbar.IsAddToFavoritesEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                                 Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
                                                 <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                                 Command="{StaticResource RemoveItemsFromFavoritesCommand}"
+                                                                IsEnabled="{x:Bind commands:Toolbar.IsRemoveFromFavoritesEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                                 Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
                                                 <MenuFlyoutSeparator Visibility="{x:Bind itemsTemplateSeparator.Output, Mode=OneWay}" />
                                                 <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                                 Command="{StaticResource SetItemsWorkspaceTemplateCommand}"
-                                                                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"
-                                                                x:Name="mnuSetItemsWorkspaceTemplate" />
+                                                                IsEnabled="{x:Bind commands:Toolbar.IsSetWorkspaceTemplateEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
+                                                                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
                                                 <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                                 Command="{StaticResource SetItemsFolderTemplateCommand}"
-                                                                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"
-                                                                x:Name="mnuSetItemsFolderTemplate" />
+                                                                IsEnabled="{x:Bind commands:Toolbar.IsSetFolderTemplateEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
+                                                                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
                                                 <MenuFlyoutSeparator />
                                                 <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
-                                                                Command="{StaticResource MoreToolsCommand}" />
+                                                                Command="{StaticResource MoreToolsCommand}"
+                                                                IsEnabled="{x:Bind commands:Toolbar.IsMoreToolsEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"/>
                                             </MenuFlyout>
                                         </controls:IconButton.Flyout>
                                     </controls:IconButton>

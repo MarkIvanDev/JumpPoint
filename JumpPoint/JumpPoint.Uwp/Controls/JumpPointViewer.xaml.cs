@@ -19,14 +19,17 @@ using JumpPoint.Platform.Items.Arrangers.Groupers;
 using System.Linq;
 using NittyGritty.UI.Helpers;
 using Windows.UI.Xaml.Controls.Primitives;
+using System.ComponentModel;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace JumpPoint.Uwp.Controls
 {
-    public sealed partial class JumpPointViewer : UserControl
+    public sealed partial class JumpPointViewer : UserControl, INotifyPropertyChanged
     {
         private readonly object syncObject;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public JumpPointViewer()
         {
@@ -92,6 +95,10 @@ namespace JumpPoint.Uwp.Controls
             }
         }
 
+        private void ManageCommands(NotificationMessage message)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Context)));
+        }
 
 
         public ShellContextViewModelBase Context
@@ -110,11 +117,13 @@ namespace JumpPoint.Uwp.Controls
             if (e.OldValue is ShellContextViewModelBase oldContext)
             {
                 Messenger.Default.Unregister<NotificationMessage>(viewer, $"{MessengerTokens.JumpPointViewerSelection}_{oldContext.TabKey}", viewer.SelectionHandler);
+                Messenger.Default.Unregister<NotificationMessage>(viewer, MessengerTokens.CommandManagement, viewer.ManageCommands);
             }
 
             if (e.NewValue is ShellContextViewModelBase newContext)
             {
                 Messenger.Default.Register<NotificationMessage>(viewer, $"{MessengerTokens.JumpPointViewerSelection}_{newContext.TabKey}", viewer.SelectionHandler);
+                Messenger.Default.Register<NotificationMessage>(viewer, MessengerTokens.CommandManagement, viewer.ManageCommands);
             }
         }
 
@@ -311,7 +320,6 @@ namespace JumpPoint.Uwp.Controls
         // Using a DependencyProperty as the backing store for SelectedItems.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectedItemsProperty =
             DependencyProperty.Register("SelectedItems", typeof(ObservableCollection<JumpPointItem>), typeof(JumpPointViewer), new PropertyMetadata(null));
-
 
         private Visibility GetDetailsHeaderVisibility(string layout)
         {
