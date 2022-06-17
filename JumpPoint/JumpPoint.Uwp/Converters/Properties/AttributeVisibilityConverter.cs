@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NittyGritty.UI.Converters;
+using NittyGritty.Uwp.Converters;
 using Windows.UI.Xaml;
 
 namespace JumpPoint.Uwp.Converters.Properties

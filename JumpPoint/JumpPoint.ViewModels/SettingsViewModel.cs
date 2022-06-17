@@ -12,7 +12,7 @@ using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Services;
 using JumpPoint.ViewModels.Dialogs;
 using NittyGritty.Commands;
-using NittyGritty.Services;
+using NittyGritty.Services.Core;
 using JumpPoint.Platform;
 using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.Platform.Items.CloudStorage;
@@ -25,10 +25,12 @@ namespace JumpPoint.ViewModels
     public class SettingsViewModel : ShellContextViewModelBase
     {
         private readonly IDialogService dialogService;
+        private readonly AppSettings appSettings;
 
-        public SettingsViewModel(IDialogService dialogService, IShortcutService shortcutService) : base(shortcutService)
+        public SettingsViewModel(IDialogService dialogService, IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService)
         {
             this.dialogService = dialogService;
+            this.appSettings = appSettings;
         }
 
         #region Font
@@ -45,10 +47,10 @@ namespace JumpPoint.ViewModels
                 });
                 if (font != null)
                 {
-                    AppSettings.Instance.Font = font.Font;
-                    AppSettings.Instance.FontStyle = font.FontStyle;
-                    AppSettings.Instance.FontWeight = font.FontWeight;
-                    AppSettings.Instance.FontStretch = font.FontStretch;
+                    appSettings.Font = font.Font;
+                    appSettings.FontStyle = font.FontStyle;
+                    appSettings.FontWeight = font.FontWeight;
+                    appSettings.FontStretch = font.FontStretch;
                 }
             }));
 

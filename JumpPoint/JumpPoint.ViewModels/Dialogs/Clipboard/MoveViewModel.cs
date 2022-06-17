@@ -2,7 +2,7 @@
 using JumpPoint.Platform.Services;
 using NittyGritty;
 using NittyGritty.Models;
-using NittyGritty.Services;
+using NittyGritty.Services.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;

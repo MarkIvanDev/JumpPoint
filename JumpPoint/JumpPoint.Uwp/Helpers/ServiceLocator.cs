@@ -1,9 +1,13 @@
 ﻿using System;
 using GalaSoft.MvvmLight.Ioc;
+using JumpPoint.Platform.Items.Storage;
+using JumpPoint.Platform.Services;
 using JumpPoint.ViewModels;
 using JumpPoint.ViewModels.Helpers;
+using NittyGritty.Data;
 using NittyGritty.Platform.Store;
-using NittyGritty.Services;
+using NittyGritty.Services.Core;
+using NittyGritty.Uwp.Services;
 
 namespace JumpPoint.Uwp.Helpers
 {
@@ -16,6 +20,9 @@ namespace JumpPoint.Uwp.Helpers
 
         public ServiceLocator()
         {
+            // Register KnownTypes for CacheManager
+            CacheManager.KnownTypes.Add(typeof(StorageType));
+
             // Register DialogService
             SimpleIoc.Default.TryRegister<IDialogService>(() =>
             {
@@ -72,17 +79,18 @@ namespace JumpPoint.Uwp.Helpers
             });
 
             // Register Icon Resource
-            var iconResources = new ResourceService<Uri>();
+            //var iconResources = new ResourceService<Uri>();
 
             // Register Helpers
             SimpleIoc.Default.TryRegister<ITileIconHelper, TileIconHelper>();
 
             // Register NittyGritty Services
-            SimpleIoc.Default.TryRegister<IClipboardService, ClipboardService>();
+            SimpleIoc.Default.TryRegister<IClipboardService, NittyGritty.Uwp.Services.ClipboardService>();
             SimpleIoc.Default.TryRegister<IShareService, ShareService>();
             SimpleIoc.Default.TryRegister<IThemeService, ThemeService>();
             SimpleIoc.Default.TryRegister<IShortcutService, ShortcutService>();
             SimpleIoc.Default.TryRegister<IContactService, ContactService>();
+            SimpleIoc.Default.TryRegister<IFileService, FileService>();
         }
 
         public override INavigationService GetNavigationService(string key)
@@ -108,7 +116,8 @@ namespace JumpPoint.Uwp.Helpers
             }
             return SimpleIoc.Default.GetInstance<INavigationService>(key);
         }
-    
+
+        public static AppSettings AppSettings => SimpleIoc.Default.GetInstance<AppSettings>();
     }
 
     public static class SimpleIocExtensions

@@ -10,7 +10,7 @@ using JumpPoint.Platform.Items.PortableStorage;
 using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.Platform.Services;
-using NittyGritty.Services;
+using NittyGritty.Services.Core;
 using MainThread = Xamarin.Essentials.MainThread;
 
 namespace JumpPoint.ViewModels

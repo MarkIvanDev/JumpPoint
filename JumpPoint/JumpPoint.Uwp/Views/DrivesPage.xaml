@@ -9,14 +9,15 @@
     xmlns:controls="using:JumpPoint.Uwp.Controls"
     xmlns:services="using:JumpPoint.Platform.Services"
     xmlns:grouper="using:JumpPoint.Platform.Items.Arrangers.Groupers"
+    xmlns:helpers="using:JumpPoint.Uwp.Helpers"
     mc:Ignorable="d">
 
     <Grid>
         <controls:JumpPointViewer Context="{x:Bind ViewModel, Mode=OneWay}"
-                                  SortBy="{x:Bind services:AppSettings.Instance.SortBy, Mode=OneWay}"
-                                  IsSortAscending="{x:Bind services:AppSettings.Instance.IsSortAscending, Mode=OneWay}"
+                                  SortBy="{x:Bind helpers:ServiceLocator.AppSettings.SortBy, Mode=OneWay}"
+                                  IsSortAscending="{x:Bind helpers:ServiceLocator.AppSettings.IsSortAscending, Mode=OneWay}"
                                   GroupBy="Custom"
-                                  IsGroupAscending="{x:Bind services:AppSettings.Instance.IsGroupAscending, Mode=OneWay}"
+                                  IsGroupAscending="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupAscending, Mode=OneWay}"
                                   CustomGrouper="{x:Bind grouper:Grouper.DriveStorageType}"
                                   IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                                   SelectedItems="{x:Bind ViewModel.SelectedItems, Mode=OneWay}"

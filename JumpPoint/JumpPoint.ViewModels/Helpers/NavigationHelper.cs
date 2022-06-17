@@ -9,7 +9,7 @@ using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Models.Extensions;
 using NittyGritty.Models;
-using NittyGritty.Services;
+using NittyGritty.Services.Core;
 
 namespace JumpPoint.ViewModels.Helpers
 {

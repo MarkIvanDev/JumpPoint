@@ -445,8 +445,9 @@ namespace JumpPoint.ViewModels.Helpers
             }
         }
         
-        private async Task RefreshLibraries()
+        private Task RefreshLibraries()
         {
+            return Task.CompletedTask;
             //var librariesShellItem = new ShellItem()
             //{
             //    Type = ShellItemType.Header,

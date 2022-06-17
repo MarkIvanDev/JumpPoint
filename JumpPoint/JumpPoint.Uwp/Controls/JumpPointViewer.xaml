@@ -13,9 +13,9 @@
     xmlns:items="using:JumpPoint.Platform.Items"
     xmlns:services="using:JumpPoint.Platform.Services"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
-    xmlns:ngconv="using:NittyGritty.UI.Converters"
+    xmlns:ngconv="using:NittyGritty.Uwp.Converters"
     xmlns:tkbehaviors="using:Microsoft.Toolkit.Uwp.UI.Behaviors"
-    xmlns:ngbehaviors="using:NittyGritty.UI.Interactivity.Behaviors"
+    xmlns:ngbehaviors="using:NittyGritty.Uwp.Interactivity.Behaviors"
     xmlns:platform="using:JumpPoint.Platform"
     xmlns:actions="using:JumpPoint.Uwp.Interactivity.Actions"
     xmlns:behaviors="using:JumpPoint.Uwp.Interactivity.Behaviors"
@@ -283,10 +283,10 @@
                     <TextBlock Text="{x:Bind Name, Mode=OneWay}"
                                TextTrimming="CharacterEllipsis"
                                TextWrapping="NoWrap"
-                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                 </HyperlinkButton>
 
                 <!-- Date -->
@@ -342,19 +342,19 @@
                         <TextBlock Text="{x:Bind Name, Mode=OneWay}"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap"
-                                   Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=OneWay}"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Mode=OneWay}"
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                         <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="Wrap"
-                                   Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                     </Grid>
                 </HyperlinkButton>
 
@@ -414,10 +414,10 @@
                     <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
                                TextTrimming="CharacterEllipsis"
                                TextWrapping="Wrap"
-                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                 </HyperlinkButton>
 
                 <!-- Type -->
@@ -475,10 +475,10 @@
                     <TextBlock Text="{x:Bind Name, Mode=OneWay}"
                                TextTrimming="CharacterEllipsis"
                                TextWrapping="NoWrap"
-                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                 </HyperlinkButton>
 
                 <!-- Date -->
@@ -524,10 +524,10 @@
                       Grid.Column="1">
                     <TextBlock Text="{x:Bind Name, Mode=OneWay}"
                                TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
-                               Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=OneWay}"/>
+                               Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Mode=OneWay}"/>
                     <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
                                TextTrimming="CharacterEllipsis" TextWrapping="Wrap"
-                               Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"/>
+                               Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"/>
                 </Grid>
 
                 <!-- Type -->
@@ -573,10 +573,10 @@
                     <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
                                TextTrimming="CharacterEllipsis"
                                TextWrapping="NoWrap"
-                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                 </HyperlinkButton>
 
                 <!-- DisplayType -->
@@ -733,10 +733,10 @@
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="Wrap"
                                    MaxLines="2"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                     </HyperlinkButton>
                     <TextBlock Grid.Row="1" FontSize="12" HorizontalTextAlignment="Center"
                                Text="{x:Bind DisplayType, Mode=OneWay}" TextTrimming="CharacterEllipsis"
@@ -779,22 +779,22 @@
                                        TextTrimming="CharacterEllipsis"
                                        TextWrapping="Wrap"
                                        MaxLines="2"
-                                       Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=OneWay}"
-                                       FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                       FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                       Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Mode=OneWay}"
+                                       FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                       FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                             <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
                                        FontSize="14"
                                        HorizontalTextAlignment="Center"
                                        TextTrimming="CharacterEllipsis"
                                        TextWrapping="Wrap"
                                        MaxLines="2"
-                                       Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"
-                                       FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                       FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                       Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"
+                                       FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                       FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                         </Grid>
                     </HyperlinkButton>
                     <TextBlock Text="" FontSize="14" Grid.Row="1" />
@@ -839,10 +839,10 @@
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="Wrap"
                                    MaxLines="2"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                     </HyperlinkButton>
                     <ProgressBar Grid.Row="1"
                                  VerticalAlignment="Stretch"
@@ -887,10 +887,10 @@
                                TextTrimming="CharacterEllipsis"
                                TextWrapping="Wrap"
                                MaxLines="2"
-                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                 </HyperlinkButton>
             </Grid>
         </DataTemplate>
@@ -913,10 +913,10 @@
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="8,0,8,8" Grid.Row="1">
                     <TextBlock Text="{x:Bind Name}" FontSize="14" HorizontalTextAlignment="Center"
                                TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxLines="2"
-                               Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=OneWay}"/>
+                               Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Mode=OneWay}"/>
                     <TextBlock Text="{x:Bind DisplayName}" FontSize="14" HorizontalTextAlignment="Center"
                                TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxLines="2"
-                               Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"/>
+                               Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"/>
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -960,10 +960,10 @@
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="Wrap"
                                    MaxLines="2"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                     </HyperlinkButton>
                     <TextBlock Grid.Row="1"
                                FontSize="12"
@@ -1115,10 +1115,10 @@
                                    TextWrapping="Wrap"
                                    MaxLines="2"
                                    FontSize="14"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                     </HyperlinkButton>
 
                     <!-- Date -->
@@ -1163,22 +1163,22 @@
                                        TextWrapping="Wrap"
                                        MaxLines="2"
                                        FontSize="14"
-                                       Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=OneWay}"
-                                       FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                       FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                       Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Mode=OneWay}"
+                                       FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                       FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                             <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
                                        HorizontalTextAlignment="Left"
                                        TextTrimming="CharacterEllipsis"
                                        TextWrapping="Wrap"
                                        MaxLines="2"
                                        FontSize="14"
-                                       Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"
-                                       FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                       FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                       Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"
+                                       FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                       FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                         </Grid>
                     </HyperlinkButton>
 
@@ -1229,10 +1229,10 @@
                                    TextWrapping="Wrap"
                                    MaxLines="2"
                                    FontSize="14"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                     </HyperlinkButton>
 
                     <!-- Space -->
@@ -1289,10 +1289,10 @@
                                    TextWrapping="Wrap"
                                    MaxLines="2"
                                    FontSize="14"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                     </HyperlinkButton>
 
                     <!-- Type -->
@@ -1324,10 +1324,10 @@
                     <Grid HorizontalAlignment="Stretch">
                         <TextBlock Text="{x:Bind Name}" HorizontalTextAlignment="Left"
                                    TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxLines="2" FontSize="14"
-                                   Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=OneWay}"/>
+                                   Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Mode=OneWay}"/>
                         <TextBlock Text="{x:Bind DisplayName}" HorizontalTextAlignment="Left"
                                    TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxLines="2" FontSize="14"
-                                   Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"/>
+                                   Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"/>
                     </Grid>
 
                     <!-- Type -->
@@ -1375,10 +1375,10 @@
                                    TextWrapping="Wrap"
                                    MaxLines="2"
                                    FontSize="14"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                     </HyperlinkButton>
 
                     <!-- DisplayType -->
@@ -1545,10 +1545,10 @@
                     <TextBlock Text="{x:Bind Name, Mode=OneWay}"
                                TextTrimming="CharacterEllipsis"
                                TextWrapping="NoWrap"
-                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                 </HyperlinkButton>
             </Grid>
         </DataTemplate>
@@ -1584,19 +1584,19 @@
                         <TextBlock Text="{x:Bind Name, Mode=OneWay}"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap"
-                                   Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=OneWay}"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Mode=OneWay}"
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                         <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="Wrap"
-                                   Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}"
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                     </Grid>
                 </HyperlinkButton>
             </Grid>
@@ -1637,10 +1637,10 @@
                     <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
                                TextTrimming="CharacterEllipsis"
                                TextWrapping="Wrap"
-                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                 </HyperlinkButton>
             </Grid>
         </DataTemplate>
@@ -1677,10 +1677,10 @@
                     <TextBlock Text="{x:Bind Name, Mode=OneWay}"
                                TextTrimming="CharacterEllipsis"
                                TextWrapping="NoWrap"
-                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                 </HyperlinkButton>
             </Grid>
         </DataTemplate>
@@ -1714,11 +1714,11 @@
                     <TextBlock Text="{x:Bind Name, Mode=OneWay}"
                                TextTrimming="CharacterEllipsis"
                                TextWrapping="NoWrap"
-                               Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=OneWay}" />
+                               Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Mode=OneWay}" />
                     <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
                                TextTrimming="CharacterEllipsis"
                                TextWrapping="Wrap"
-                               Visibility="{x:Bind services:AppSettings.Instance.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}" />
+                               Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Converter={StaticResource VisibleWhenFalseConverter}, Mode=OneWay}" />
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -1757,10 +1757,10 @@
                     <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
                                TextTrimming="CharacterEllipsis"
                                TextWrapping="NoWrap"
-                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                 </HyperlinkButton>
             </Grid>
         </DataTemplate>
@@ -1781,7 +1781,7 @@
             <VisualStateGroup>
                 <VisualState x:Name="GridState">
                     <VisualState.StateTriggers>
-                        <local:EqualityTrigger LeftValue="{x:Bind services:AppSettings.Instance.Layout, Mode=OneWay}"
+                        <local:EqualityTrigger LeftValue="{x:Bind helpers:ServiceLocator.AppSettings.Layout, Mode=OneWay}"
                                                RightValue="{x:Bind platform:LayoutModes.Grid}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
@@ -1813,7 +1813,7 @@
                 </VisualState>
                 <VisualState x:Name="DetailsState">
                     <VisualState.StateTriggers>
-                        <local:EqualityTrigger LeftValue="{x:Bind services:AppSettings.Instance.Layout, Mode=OneWay}"
+                        <local:EqualityTrigger LeftValue="{x:Bind helpers:ServiceLocator.AppSettings.Layout, Mode=OneWay}"
                                                RightValue="{x:Bind platform:LayoutModes.Details}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
@@ -1844,7 +1844,7 @@
                 </VisualState>
                 <VisualState x:Name="TilesState">
                     <VisualState.StateTriggers>
-                        <local:EqualityTrigger LeftValue="{x:Bind services:AppSettings.Instance.Layout, Mode=OneWay}"
+                        <local:EqualityTrigger LeftValue="{x:Bind helpers:ServiceLocator.AppSettings.Layout, Mode=OneWay}"
                                                RightValue="{x:Bind platform:LayoutModes.Tiles}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
@@ -1876,7 +1876,7 @@
                 </VisualState>
                 <VisualState x:Name="ListState">
                     <VisualState.StateTriggers>
-                        <local:EqualityTrigger LeftValue="{x:Bind services:AppSettings.Instance.Layout, Mode=OneWay}"
+                        <local:EqualityTrigger LeftValue="{x:Bind helpers:ServiceLocator.AppSettings.Layout, Mode=OneWay}"
                                                RightValue="{x:Bind platform:LayoutModes.List}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
@@ -1943,8 +1943,8 @@
                 <ListView x:Name="allView"
                           ScrollViewer.IsVerticalScrollChainingEnabled="False"
                           IsDoubleTapEnabled="True"
-                          IsMultiSelectCheckBoxEnabled="{x:Bind services:AppSettings.Instance.ShowCheckbox, Mode=OneWay}"
-                          SelectionMode="{x:Bind services:AppSettings.Instance.ShowCheckbox, Converter={StaticResource MultipleWhenTrueConverter}, Mode=OneWay}"
+                          IsMultiSelectCheckBoxEnabled="{x:Bind helpers:ServiceLocator.AppSettings.ShowCheckbox, Mode=OneWay}"
+                          SelectionMode="{x:Bind helpers:ServiceLocator.AppSettings.ShowCheckbox, Converter={StaticResource MultipleWhenTrueConverter}, Mode=OneWay}"
                           ItemsSource="{x:Bind ItemsViewSource.View, Mode=OneWay}"
                           AllowDrop="True"
                           CanDragItems="True">
@@ -1953,7 +1953,7 @@
                               Height="36"
                               Margin="-4,0"
                               Padding="16,0,24,0"
-                              Visibility="{x:Bind GetDetailsHeaderVisibility(services:AppSettings.Instance.Layout), Mode=OneWay}"
+                              Visibility="{x:Bind GetDetailsHeaderVisibility(helpers:ServiceLocator.AppSettings.Layout), Mode=OneWay}"
                               Background="{ThemeResource SystemChromeAltHighColor}">
                             <Grid.ChildrenTransitions>
                                 <TransitionCollection>
@@ -1972,7 +1972,7 @@
                                 <ColumnDefinition Width="0.25*"
                                                   MinWidth="100" />
                             </Grid.ColumnDefinitions>
-                            <CheckBox Visibility="{x:Bind services:AppSettings.Instance.ShowCheckbox, Mode=OneWay}"
+                            <CheckBox Visibility="{x:Bind helpers:ServiceLocator.AppSettings.ShowCheckbox, Mode=OneWay}"
                                       Unchecked="OnCheckboxUnchecked"
                                       Checked="OnCheckboxChecked"
                                       Margin="0,0,12,0"

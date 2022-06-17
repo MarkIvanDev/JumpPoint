@@ -13,7 +13,7 @@ using NittyGritty.Commands;
 using JumpPoint.ViewModels.Helpers;
 using JumpPoint.Platform.Models.Extensions;
 using Humanizer;
-using NittyGritty.Services;
+using NittyGritty.Services.Core;
 
 namespace JumpPoint.ViewModels
 {

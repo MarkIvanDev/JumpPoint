@@ -1,5 +1,5 @@
 ﻿using JumpPoint.ViewModels;
-using NittyGritty.Services;
+using NittyGritty.Uwp.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;

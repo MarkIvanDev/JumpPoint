@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xaml.Interactivity;
-using NittyGritty.UI.Helpers;
+using NittyGritty.Uwp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

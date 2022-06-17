@@ -4,7 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:JumpPoint.Uwp"
-    xmlns:ngconv="using:NittyGritty.UI.Converters"
+    xmlns:ngconv="using:NittyGritty.Uwp.Converters"
     xmlns:convevent="using:JumpPoint.Uwp.Converters.EventArgs"
     xmlns:helpers="using:JumpPoint.Uwp.Helpers"
     xmlns:conv="using:JumpPoint.Uwp.Converters">
@@ -654,10 +654,10 @@
                     <ngconv:StringVisibilityConverter x:Key="StringVisibilityConverter" />
                     <ngconv:ChangeTypeConverter x:Key="ChangeTypeConverter" />
                     <ngconv:IsNullConverter x:Key="IsNullConverter" />
-                    <ngconv:IsZeroConverter x:Key="IsZeroConverter" />
+                    <ngconv:IsEqualConverter x:Key="IsZeroConverter" />
                     <ngconv:ReverseVisibilityConverter x:Key="ReverseVisibilityConverter" />
                     <ngconv:ChainConverter x:Key="VisibleWhenZeroConverter">
-                        <ngconv:IsZeroConverter />
+                        <ngconv:IsEqualConverter />
                         <ngconv:BooleanValueConverter>
                             <ngconv:BooleanValueConverter.TrueValue>
                                 <Visibility>Visible</Visibility>
@@ -668,7 +668,7 @@
                         </ngconv:BooleanValueConverter>
                     </ngconv:ChainConverter>
                     <ngconv:ChainConverter x:Key="CollapsedWhenZeroConverter">
-                        <ngconv:IsZeroConverter />
+                        <ngconv:IsEqualConverter />
                         <ngconv:BooleanValueConverter>
                             <ngconv:BooleanValueConverter.TrueValue>
                                 <Visibility>Collapsed</Visibility>
@@ -679,7 +679,7 @@
                         </ngconv:BooleanValueConverter>
                     </ngconv:ChainConverter>
                     <ngconv:ChainConverter x:Key="VisibleWhenMoreThanZeroConverter">
-                        <ngconv:IsMoreThanZeroConverter />
+                        <ngconv:IsMoreThanConverter />
                         <ngconv:BooleanValueConverter>
                             <ngconv:BooleanValueConverter.TrueValue>
                                 <Visibility>Visible</Visibility>

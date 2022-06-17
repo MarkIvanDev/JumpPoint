@@ -44,11 +44,11 @@ namespace JumpPoint.Uwp
         {
             switch (args)
             {
-                case ProtocolActivatedEventArgs protocolArgs when EnumHelper<ProtocolPath>.ParseOrDefault(protocolArgs.Uri.Host) == ProtocolPath.Chat:
+                case ProtocolActivatedEventArgs protocolArgs when EnumHelper<ProtocolPath>.ParseOrDefault(protocolArgs.Uri.Host, ignoreCase: true) == ProtocolPath.Chat:
                 case CommandLineActivatedEventArgs commandLineArgs when ActivationHelper.GetAppPath(commandLineArgs) == AppPath.Chat:
                     return $"{Prefix.MAIN_SCHEME}_CHAT";
 
-                case ProtocolActivatedEventArgs protocolArgs when EnumHelper<ProtocolPath>.ParseOrDefault(protocolArgs.Uri.Host) == ProtocolPath.Clipboard:
+                case ProtocolActivatedEventArgs protocolArgs when EnumHelper<ProtocolPath>.ParseOrDefault(protocolArgs.Uri.Host, ignoreCase: true) == ProtocolPath.Clipboard:
                 case CommandLineActivatedEventArgs commandLineArgs when ActivationHelper.GetAppPath(commandLineArgs) == AppPath.ClipboardManager:
                     return $"{Prefix.MAIN_SCHEME}_CLIPBOARD";
 

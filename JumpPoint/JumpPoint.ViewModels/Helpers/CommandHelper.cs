@@ -5,7 +5,7 @@ using NittyGritty.Commands;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using NittyGritty.Services;
+using NittyGritty.Services.Core;
 using Xamarin.Essentials;
 using FileBase = JumpPoint.Platform.Items.FileBase;
 using JumpPoint.ViewModels.Dialogs;
@@ -37,30 +37,32 @@ namespace JumpPoint.ViewModels.Helpers
         private readonly IShortcutService shortcutService;
         private readonly IClipboardService clipboardService;
         private readonly ITileIconHelper iconHelper;
+        private readonly AppSettings appSettings;
 
         public CommandHelper(IDialogService dialogService,
                              IShareService shareService,
                              IShortcutService shortcutService,
                              IClipboardService clipboardService,
-                             ITileIconHelper iconHelper)
+                             ITileIconHelper iconHelper,
+                             AppSettings appSettings)
         {
             this.dialogService = dialogService;
             this.shareService = shareService;
             this.shortcutService = shortcutService;
             this.clipboardService = clipboardService;
             this.iconHelper = iconHelper;
+            this.appSettings = appSettings;
             clipboardService.Start();
             clipboardService.ContentChanged += OnClipboardContentChanged;
         }
 
         private async void OnClipboardContentChanged(object sender, EventArgs e)
         {
-            await MainThread.InvokeOnMainThreadAsync(async () =>
+            await MainThread.InvokeOnMainThreadAsync(() =>
             {
                 try
                 {
-                    var data = await clipboardService.GetData();
-                    ClipboardHasFiles = data.StorageItems != null && data.StorageItems.Count > 0;
+                    ClipboardHasFiles = clipboardService.ContainsStorageItems();
                 }
                 catch (Exception ex)
                 {
@@ -581,7 +583,7 @@ namespace JumpPoint.ViewModels.Helpers
             {
                 if (context is null) return;
 
-                await Clipboard.SetTextAsync(string.Join(AppSettings.Instance.CopyPathDelimiter.ToDelimiter(), context.SelectedItems.Select(i => i.Path)));
+                await Clipboard.SetTextAsync(string.Join(appSettings.CopyPathDelimiter.ToDelimiter(), context.SelectedItems.Select(i => i.Path)));
             }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _Paste;

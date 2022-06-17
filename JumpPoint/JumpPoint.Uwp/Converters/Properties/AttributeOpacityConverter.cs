@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Humanizer;
 using JumpPoint.Uwp.Helpers;
-using NittyGritty.UI.Converters;
+using NittyGritty.Uwp.Converters;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 

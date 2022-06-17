@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:actions="using:NittyGritty.UI.Interactivity.Actions"
+    xmlns:actions="using:NittyGritty.Uwp.Interactivity.Actions"
     xmlns:converters="using:JumpPoint.Uwp.Converters"
     xmlns:templates="using:JumpPoint.Platform.Items.Templates"
     xmlns:service="using:JumpPoint.Platform.Services"

@@ -5,7 +5,7 @@ using JumpPoint.ViewModels.Dialogs;
 using JumpPoint.ViewModels.Helpers;
 using JumpPoint.ViewModels.Hosted;
 using JumpPoint.ViewModels.Standalone;
-using NittyGritty.Services;
+using NittyGritty.Services.Core;
 using NittyGritty.ViewModels;
 using System;
 
@@ -18,6 +18,7 @@ namespace JumpPoint.ViewModels
         {
             // Register other data stores
             SimpleIoc.Default.Register<ShellItems>();
+            SimpleIoc.Default.Register<AppSettings>();
 
             // Register Helpers
             SimpleIoc.Default.Register<CommandHelper>();
@@ -62,8 +63,6 @@ namespace JumpPoint.ViewModels
 
         // Since Property Windows are opened in a separate instance (see Multi-Process), we can be assured that only 1 PropertiesViewModel exists in each Process
         public PropertiesViewModel Properties => SimpleIoc.Default.GetInstance<PropertiesViewModel>();
-
-        public AppSettings AppSettings => AppSettings.Instance;
 
         public CommandHelper CommandHelper => SimpleIoc.Default.GetInstance<CommandHelper>();
 

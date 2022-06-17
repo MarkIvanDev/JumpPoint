@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.CloudStorage;
@@ -16,18 +17,18 @@ using JumpPoint.Platform.Items.Templates;
 using JumpPoint.Platform.Models.Extensions;
 using NittyGritty.Extensions;
 using NittyGritty.Platform.Storage;
-using NittyGritty.Services;
+using NittyGritty.Services.Core;
 
 namespace JumpPoint.Platform.Services
 {
     public static partial class StorageService
     {
-        private static readonly FileService fileService;
+        private static readonly IFileService fileService;
         private static readonly HashSet<string> builtInIconFileTypes;
 
         static StorageService()
         {
-            fileService = new FileService();
+            fileService = SimpleIoc.Default.GetInstance<IFileService>();
             builtInIconFileTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 // Common

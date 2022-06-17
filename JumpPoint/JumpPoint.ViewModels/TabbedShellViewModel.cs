@@ -11,7 +11,7 @@ using NittyGritty;
 using NittyGritty.Commands;
 using NittyGritty.Models;
 using NittyGritty.Platform.Store;
-using NittyGritty.Services;
+using NittyGritty.Services.Core;
 using NittyGritty.Utilities;
 using NittyGritty.ViewModels;
 using System;
@@ -257,17 +257,17 @@ namespace JumpPoint.ViewModels
 
         #region Support Developer
 
-        private ReadOnlyCollection<DurableAddOn> _durables;
+        private IList<DurableAddOn> _durables;
 
-        public ReadOnlyCollection<DurableAddOn> Durables
+        public IList<DurableAddOn> Durables
         {
             get { return _durables; }
             set { Set(ref _durables, value); }
         }
 
-        private ReadOnlyCollection<SubscriptionAddOn> _subscriptions;
+        private IList<SubscriptionAddOn> _subscriptions;
 
-        public ReadOnlyCollection<SubscriptionAddOn> Subscriptions
+        public IList<SubscriptionAddOn> Subscriptions
         {
             get { return _subscriptions; }
             set { Set(ref _subscriptions, value); }
@@ -280,15 +280,15 @@ namespace JumpPoint.ViewModels
             {
                 await Run(async (token) =>
                 {
-                    Durables = await addOnService.GetDurableAddOns(
-                        AddOnKeys.Durable1, AddOnKeys.Durable2, AddOnKeys.Durable3, AddOnKeys.Durable4, AddOnKeys.Durable5);
+                    Durables = await addOnService.GetDurableAddOns(new List<string> {
+                        AddOnKeys.Durable1, AddOnKeys.Durable2, AddOnKeys.Durable3, AddOnKeys.Durable4, AddOnKeys.Durable5 });
                     foreach (var item in Durables)
                     {
                         item.IsActive = await addOnService.IsActive(item);
                     }
 
-                    Subscriptions = await addOnService.GetSubscriptionAddOns(
-                        AddOnKeys.Monthly1, AddOnKeys.Monthly2, AddOnKeys.Monthly3, AddOnKeys.Monthly4, AddOnKeys.Monthly5);
+                    Subscriptions = await addOnService.GetSubscriptionAddOns(new List<string> {
+                        AddOnKeys.Monthly1, AddOnKeys.Monthly2, AddOnKeys.Monthly3, AddOnKeys.Monthly4, AddOnKeys.Monthly5 });
                     foreach (var item in Subscriptions)
                     {
                         item.IsActive = await addOnService.IsActive(item);
@@ -344,7 +344,7 @@ namespace JumpPoint.ViewModels
         public void ProcessParameter(string parameter)
         {
             var query = QueryString.Parse(parameter);
-            var type = EnumHelper<AppPath>.ParseOrDefault(query[nameof(PathInfo.Type)]);
+            var type = EnumHelper<AppPath>.ParseOrDefault(query[nameof(PathInfo.Type)], ignoreCase: true);
             if (type != AppPath.Unknown)
             {
                 NewTab(-1, type, parameter);

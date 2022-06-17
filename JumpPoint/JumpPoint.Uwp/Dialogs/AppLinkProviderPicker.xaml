@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:extensions="using:JumpPoint.Platform.Extensions"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
-    xmlns:ngconv="using:NittyGritty.UI.Converters"
+    xmlns:ngconv="using:NittyGritty.Uwp.Converters"
     xmlns:converters="using:JumpPoint.Uwp.Converters"
     mc:Ignorable="d"
     Title="App Link Providers"

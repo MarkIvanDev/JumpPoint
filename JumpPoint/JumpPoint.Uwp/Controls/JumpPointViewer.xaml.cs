@@ -17,7 +17,7 @@ using JumpPoint.Platform.Items.Arrangers.Sorters;
 using System.Collections.Specialized;
 using JumpPoint.Platform.Items.Arrangers.Groupers;
 using System.Linq;
-using NittyGritty.UI.Helpers;
+using NittyGritty.Uwp.Helpers;
 using Windows.UI.Xaml.Controls.Primitives;
 using System.ComponentModel;
 
