@@ -623,6 +623,7 @@
                                              Grid.Column="0"
                                              IconSource="{TemplateBinding IconSource}"
                                              IsCompact="{TemplateBinding IsCompact}"
+                                             IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
                                              Foreground="{TemplateBinding Foreground}"
                                              Background="{TemplateBinding Background}"
                                              BorderThickness="{TemplateBinding BorderThickness}"

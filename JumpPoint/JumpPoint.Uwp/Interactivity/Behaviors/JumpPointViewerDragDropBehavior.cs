@@ -1,4 +1,5 @@
-﻿using JumpPoint.Platform;
+﻿using GalaSoft.MvvmLight.Ioc;
+using JumpPoint.Platform;
 using JumpPoint.Platform.Interop;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.Storage;
@@ -121,7 +122,7 @@ namespace JumpPoint.Uwp.Interactivity.Behaviors
                     try
                     {
                         var texts = items.Select(i => i.Path);
-                        request.SetData(string.Join(AppSettings.Instance.CopyPathDelimiter.ToDelimiter(), texts));
+                        request.SetData(string.Join(SimpleIoc.Default.GetInstance<AppSettings>().CopyPathDelimiter.ToDelimiter(), texts));
                     }
                     catch (Exception)
                     {

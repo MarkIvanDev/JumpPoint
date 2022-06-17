@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using JumpPoint.Platform.Items;
 using JumpPoint.ViewModels;
 using JumpPoint.ViewModels.Helpers;
-using NittyGritty.UI.Helpers;
+using NittyGritty.Uwp.Helpers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;

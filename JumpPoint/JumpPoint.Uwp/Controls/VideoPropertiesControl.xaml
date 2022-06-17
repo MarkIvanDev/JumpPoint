@@ -5,7 +5,7 @@
     xmlns:local="using:JumpPoint.Uwp.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:ngconv="using:NittyGritty.UI.Converters"
+             xmlns:ngconv="using:NittyGritty.Uwp.Converters"
              xmlns:helper="using:JumpPoint.ViewModels.Helpers"
              xmlns:sys="using:System"
              mc:Ignorable="d"

@@ -16,6 +16,7 @@
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:selectors="using:JumpPoint.Uwp.Converters.Selectors"
               xmlns:models="using:JumpPoint.Platform.Models"
+    xmlns:helpers="using:JumpPoint.Uwp.Helpers"
               extensions:ApplicationViewExtensions.Title="Clipboard Manager"
     extensions:TitleBarExtensions.ButtonBackgroundColor="Transparent"
     extensions:TitleBarExtensions.ButtonInactiveBackgroundColor="Transparent"
@@ -50,9 +51,9 @@
                                    Grid.Column="1"
                                    VerticalAlignment="Center"
                                    TextWrapping="WrapWholeWords"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                         <TextBlock Text="{x:Bind Folder.Path, Mode=OneWay}"
                                    Grid.Row="1"
                                    Grid.Column="1"
@@ -100,9 +101,9 @@
                                    Grid.Column="1"
                                    VerticalAlignment="Center"
                                    TextWrapping="WrapWholeWords"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                         <TextBlock Text="{x:Bind File.Path, Mode=OneWay}"
                                    Grid.Row="1"
                                    Grid.Column="1"
@@ -145,9 +146,9 @@
                                    TextWrapping="WrapWholeWords"
                                    MaxLines="3"
                                    TextTrimming="CharacterEllipsis"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                         <Button Grid.Column="2"
                                 VerticalAlignment="Top"
                                 Padding="4"
@@ -237,9 +238,9 @@
                            FontWeight="SemiBold"
                            Foreground="White"
                            Grid.Column="1"
-                           FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                           FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                           FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                           FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                           FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                           FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
             </Grid>
         </Grid>
         <Grid Grid.Row="1"

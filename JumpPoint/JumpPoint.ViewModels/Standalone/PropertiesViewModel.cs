@@ -19,7 +19,7 @@ using JumpPoint.ViewModels.Dialogs;
 using Newtonsoft.Json;
 using NittyGritty.Collections;
 using NittyGritty.Commands;
-using NittyGritty.Services;
+using NittyGritty.Services.Core;
 using NittyGritty.ViewModels;
 
 namespace JumpPoint.ViewModels.Standalone

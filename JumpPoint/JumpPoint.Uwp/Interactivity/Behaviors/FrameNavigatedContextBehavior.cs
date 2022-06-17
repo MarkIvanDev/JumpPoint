@@ -1,7 +1,7 @@
 ﻿using JumpPoint.ViewModels;
 using Microsoft.Xaml.Interactivity;
 using NittyGritty.Extensions;
-using NittyGritty.Services;
+using NittyGritty.Uwp.Services;
 using NittyGritty.Utilities;
 using System;
 using System.Linq;

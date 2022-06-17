@@ -104,7 +104,7 @@ namespace JumpPoint.Uwp.Helpers
                                     break;
 
                                 case PathKind.Cloud when lastCrumb?.AppPath == AppPath.Cloud:
-                                    if (EnumHelper<CloudStorageProvider>.ParseOrDefault(lastCrumb?.DisplayName) != CloudStorageProvider.Unknown)
+                                    if (EnumHelper<CloudStorageProvider>.ParseOrDefault(lastCrumb?.DisplayName, ignoreCase: true) != CloudStorageProvider.Unknown)
                                     {
                                         appPath = AppPath.Cloud;
                                     }
@@ -167,7 +167,7 @@ namespace JumpPoint.Uwp.Helpers
                         };
                         cloudCommand.Handler = CommandHandler.Create<string>((provider) =>
                         {
-                            if (EnumHelper<CloudStorageProvider>.ParseOrDefault(provider) != CloudStorageProvider.Unknown)
+                            if (EnumHelper<CloudStorageProvider>.ParseOrDefault(provider, ignoreCase: true) != CloudStorageProvider.Unknown)
                             {
                                 appPath = AppPath.Cloud;
                             }

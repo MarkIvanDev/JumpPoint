@@ -16,11 +16,9 @@ namespace JumpPoint.Platform.Services
 {
     public static partial class JumpPointService
     {
-        private static readonly LauncherService launcherService;
 
         static JumpPointService()
         {
-            launcherService = new LauncherService();
             DataFolder = Directory.CreateDirectory(Path.Combine(Xamarin.Essentials.FileSystem.AppDataDirectory, "Data")).FullName;
         }
 
@@ -214,7 +212,7 @@ namespace JumpPoint.Platform.Services
             var uri = GetAppUri(pathType, path);
             if (uri != null)
             {
-                await launcherService.LaunchUri(uri);
+                await Xamarin.Essentials.Launcher.OpenAsync(uri);
             }
         }
 

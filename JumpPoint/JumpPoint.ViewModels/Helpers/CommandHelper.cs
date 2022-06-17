@@ -5,7 +5,7 @@ using NittyGritty.Commands;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using NittyGritty.Services;
+using NittyGritty.Services.Core;
 using Xamarin.Essentials;
 using FileBase = JumpPoint.Platform.Items.FileBase;
 using JumpPoint.ViewModels.Dialogs;
@@ -26,6 +26,7 @@ using NittyGritty;
 using JumpPoint.ViewModels.Parameters;
 using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.ViewModels.Dialogs.Clipboard;
+using System.Diagnostics;
 
 namespace JumpPoint.ViewModels.Helpers
 {
@@ -36,18 +37,39 @@ namespace JumpPoint.ViewModels.Helpers
         private readonly IShortcutService shortcutService;
         private readonly IClipboardService clipboardService;
         private readonly ITileIconHelper iconHelper;
+        private readonly AppSettings appSettings;
 
         public CommandHelper(IDialogService dialogService,
                              IShareService shareService,
                              IShortcutService shortcutService,
                              IClipboardService clipboardService,
-                             ITileIconHelper iconHelper)
+                             ITileIconHelper iconHelper,
+                             AppSettings appSettings)
         {
             this.dialogService = dialogService;
             this.shareService = shareService;
             this.shortcutService = shortcutService;
             this.clipboardService = clipboardService;
             this.iconHelper = iconHelper;
+            this.appSettings = appSettings;
+            clipboardService.Start();
+            clipboardService.ContentChanged += OnClipboardContentChanged;
+        }
+
+        private async void OnClipboardContentChanged(object sender, EventArgs e)
+        {
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                try
+                {
+                    ClipboardHasFiles = clipboardService.ContainsStorageItems();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Clipboard Content changed: {ex.Message}");
+                }
+
+            });
         }
 
         private AsyncRelayCommand<Uri> _OpenUri;
@@ -165,11 +187,11 @@ namespace JumpPoint.ViewModels.Helpers
             }
         }
 
-        // We will use the TabViewModel as a parameter because most of the Navigation Bar commands need the NavigationHelper
+
         #region Navigation Bar
 
         #region Direction Commands
-
+        // We will use the TabViewModel as a parameter because the Direction commands need the NavigationHelper
         private RelayCommand<TabViewModel> _Back;
         public RelayCommand<TabViewModel> BackCommand => _Back ?? (_Back = new RelayCommand<TabViewModel>(
             (tab) =>
@@ -205,8 +227,7 @@ namespace JumpPoint.ViewModels.Helpers
                         break;
                 }
                 await Task.CompletedTask;
-            },
-            (tab) => NavigationBar.IsUpEnabled(tab?.Context)));
+            }));
 
         private RelayCommand<TabViewModel> _Dashboard;
         public RelayCommand<TabViewModel> DashboardCommand => _Dashboard ?? (_Dashboard = new RelayCommand<TabViewModel>(
@@ -225,7 +246,7 @@ namespace JumpPoint.ViewModels.Helpers
         #endregion
 
         #region New Item
-
+        // We will use the TabViewModel as a parameter because the New Item commands need the NavigationHelper
         private AsyncRelayCommand<TabViewModel> _NewFolder;
         public AsyncRelayCommand<TabViewModel> NewFolderCommand => _NewFolder ?? (_NewFolder = new AsyncRelayCommand<TabViewModel>(
             async (tab) =>
@@ -242,11 +263,6 @@ namespace JumpPoint.ViewModels.Helpers
                         tab.NavigationHelper.ToFolder(newFolder);
                     }
                 }
-            },
-            (tab) =>
-            {
-                return tab?.Context != null &&
-                    (tab.Context.PathInfo.Type == AppPath.Drive || tab.Context.PathInfo.Type == AppPath.Folder);
             }));
 
         private AsyncRelayCommand<TabViewModel> _NewWorkspace;
@@ -302,158 +318,150 @@ namespace JumpPoint.ViewModels.Helpers
 
         #region Context Commands
 
-        private AsyncRelayCommand<TabViewModel> _CopyPath;
-        public AsyncRelayCommand<TabViewModel> CopyPathCommand => _CopyPath ?? (_CopyPath = new AsyncRelayCommand<TabViewModel>(
-            async (tab) =>
+        private AsyncRelayCommand<ShellContextViewModelBase> _CopyPath;
+        public AsyncRelayCommand<ShellContextViewModelBase> CopyPathCommand => _CopyPath ?? (_CopyPath = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
             {
-                if (tab?.Context is null) return;
+                if (context is null) return;
 
-                await Clipboard.SetTextAsync(tab.Context.PathInfo.Path);
+                await Clipboard.SetTextAsync(context.PathInfo.Path);
             }));
 
         #region Open
-        private AsyncRelayCommand<TabViewModel> _NewWindow;
-        public AsyncRelayCommand<TabViewModel> NewWindowCommand => _NewWindow ?? (_NewWindow = new AsyncRelayCommand<TabViewModel>(
-            async (tab) =>
+        private AsyncRelayCommand<ShellContextViewModelBase> _NewWindow;
+        public AsyncRelayCommand<ShellContextViewModelBase> NewWindowCommand => _NewWindow ?? (_NewWindow = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
             {
-                if (tab?.Context is null) return;
+                if (context is null) return;
 
-                await JumpPointService.OpenNewWindow(tab.Context.PathInfo.Type, tab.Context.PathInfo.Path);
+                await JumpPointService.OpenNewWindow(context.PathInfo.Type, context.PathInfo.Path);
             }));
 
-        private AsyncRelayCommand<TabViewModel> _OpenPathInNewWindow;
-        public AsyncRelayCommand<TabViewModel> OpenPathInNewWindowCommand => _OpenPathInNewWindow ?? (_OpenPathInNewWindow = new AsyncRelayCommand<TabViewModel>(
-            async (tab) =>
+        private AsyncRelayCommand<ShellContextViewModelBase> _OpenPathInNewWindow;
+        public AsyncRelayCommand<ShellContextViewModelBase> OpenPathInNewWindowCommand => _OpenPathInNewWindow ?? (_OpenPathInNewWindow = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
             {
-                if (tab?.Context is null) return;
+                if (context is null) return;
 
-                await JumpPointService.OpenNewWindow(tab.Context.PathInfo.Type, tab.Context.PathInfo.Path);
+                await JumpPointService.OpenNewWindow(context.PathInfo.Type, context.PathInfo.Path);
             }));
 
-        private AsyncRelayCommand<TabViewModel> _OpenPathInFileExplorer;
-        public AsyncRelayCommand<TabViewModel> OpenPathInFileExplorerCommand => _OpenPathInFileExplorer ?? (_OpenPathInFileExplorer = new AsyncRelayCommand<TabViewModel>(
-            async (tab) =>
+        private AsyncRelayCommand<ShellContextViewModelBase> _OpenPathInFileExplorer;
+        public AsyncRelayCommand<ShellContextViewModelBase> OpenPathInFileExplorerCommand => _OpenPathInFileExplorer ?? (_OpenPathInFileExplorer = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
             {
-                if (tab?.Context is null) return;
+                if (context is null) return;
 
-                await JumpPointService.OpenInFileExplorer(tab.Context.PathInfo.Path);
-            },
-            (tab) => NavigationBar.IsOpenInFileExplorerEnabled(tab?.Context)));
+                await JumpPointService.OpenInFileExplorer(context.PathInfo.Path);
+            }));
 
-        private AsyncRelayCommand<TabViewModel> _OpenPathInCommandPrompt;
-        public AsyncRelayCommand<TabViewModel> OpenPathInCommandPromptCommand => _OpenPathInCommandPrompt ?? (_OpenPathInCommandPrompt = new AsyncRelayCommand<TabViewModel>(
-            async (tab) =>
+        private AsyncRelayCommand<ShellContextViewModelBase> _OpenPathInCommandPrompt;
+        public AsyncRelayCommand<ShellContextViewModelBase> OpenPathInCommandPromptCommand => _OpenPathInCommandPrompt ?? (_OpenPathInCommandPrompt = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
             {
-                if (tab?.Context is null) return;
+                if (context is null) return;
 
-                await DesktopService.OpenInCommandPrompt(new List<string> { tab.Context.PathInfo.Path });
-            },
-            (tab) => NavigationBar.IsOpenInCommandPromptEnabled(tab?.Context)));
+                await DesktopService.OpenInCommandPrompt(new List<string> { context.PathInfo.Path });
+            }));
 
-        private AsyncRelayCommand<TabViewModel> _OpenPathInPowershell;
-        public AsyncRelayCommand<TabViewModel> OpenPathInPowershellCommand => _OpenPathInPowershell ?? (_OpenPathInPowershell = new AsyncRelayCommand<TabViewModel>(
-            async (tab) =>
+        private AsyncRelayCommand<ShellContextViewModelBase> _OpenPathInPowershell;
+        public AsyncRelayCommand<ShellContextViewModelBase> OpenPathInPowershellCommand => _OpenPathInPowershell ?? (_OpenPathInPowershell = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
             {
-                if (tab?.Context is null) return;
+                if (context is null) return;
 
-                await DesktopService.OpenInPowershell(new List<string> { tab.Context.PathInfo.Path });
-            },
-            (tab) => NavigationBar.IsOpenInPowershellEnabled(tab?.Context)));
+                await DesktopService.OpenInPowershell(new List<string> { context.PathInfo.Path });
+            }));
         #endregion
 
-        private AsyncRelayCommand<TabViewModel> _AddPathToWorkspace;
-        public AsyncRelayCommand<TabViewModel> AddPathToWorkspaceCommand => _AddPathToWorkspace ?? (_AddPathToWorkspace = new AsyncRelayCommand<TabViewModel>(
-            async (tab) =>
+        private AsyncRelayCommand<ShellContextViewModelBase> _AddPathToWorkspace;
+        public AsyncRelayCommand<ShellContextViewModelBase> AddPathToWorkspaceCommand => _AddPathToWorkspace ?? (_AddPathToWorkspace = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
             {
-                if (tab?.Context?.Item is null) return;
+                if (context?.Item is null) return;
 
-                var fsi = Enumerable.Repeat(tab.Context.Item, 1).ToList();
+                var fsi = Enumerable.Repeat(context.Item, 1).ToList();
                 await AddToWorkspace(fsi);
-            },
-            (tab) => NavigationBar.IsAddToWorkspaceEnabled(tab?.Context)));
+            }));
 
-        private AsyncRelayCommand<TabViewModel> _AddPathToFavorites;
-        public AsyncRelayCommand<TabViewModel> AddPathToFavoritesCommand => _AddPathToFavorites ?? (_AddPathToFavorites = new AsyncRelayCommand<TabViewModel>(
-            async (tab) =>
+        private AsyncRelayCommand<ShellContextViewModelBase> _AddPathToFavorites;
+        public AsyncRelayCommand<ShellContextViewModelBase> AddPathToFavoritesCommand => _AddPathToFavorites ?? (_AddPathToFavorites = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
             {
-                if (tab?.Context?.Item is null) return;
+                if (context?.Item is null) return;
 
-                await DashboardService.SetStatus(tab.Context.Item, true);
-                tab.Context.Item.IsFavorite = true;
+                await DashboardService.SetStatus(context.Item, true);
+                context.Item.IsFavorite = true;
                 Messenger.Default.Send(new NotificationMessage<SidebarMessage>(
-                    new SidebarMessage(CollectionChangedAction.Add, new List<JumpPointItem> { tab.Context.Item }), nameof(AppPath.Favorites)),
+                    new SidebarMessage(CollectionChangedAction.Add, new List<JumpPointItem> { context.Item }), nameof(AppPath.Favorites)),
                     MessengerTokens.SidebarManagement);
-            },
-            (tab) => NavigationBar.IsAddToFavoritesEnabled(tab?.Context)));
+            }));
 
-        private AsyncRelayCommand<TabViewModel> _RemovePathFromFavorites;
-        public AsyncRelayCommand<TabViewModel> RemovePathFromFavoritesCommand => _RemovePathFromFavorites ?? (_RemovePathFromFavorites = new AsyncRelayCommand<TabViewModel>(
-            async (tab) =>
+        private AsyncRelayCommand<ShellContextViewModelBase> _RemovePathFromFavorites;
+        public AsyncRelayCommand<ShellContextViewModelBase> RemovePathFromFavoritesCommand => _RemovePathFromFavorites ?? (_RemovePathFromFavorites = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
             {
-                if (tab?.Context?.Item is null) return;
+                if (context?.Item is null) return;
 
-                await DashboardService.SetStatus(tab.Context.Item, false);
-                tab.Context.Item.IsFavorite = false;
+                await DashboardService.SetStatus(context.Item, false);
+                context.Item.IsFavorite = false;
                 Messenger.Default.Send(new NotificationMessage<SidebarMessage>(
-                    new SidebarMessage(CollectionChangedAction.Remove, new List<JumpPointItem> { tab.Context.Item }), nameof(AppPath.Favorites)),
+                    new SidebarMessage(CollectionChangedAction.Remove, new List<JumpPointItem> { context.Item }), nameof(AppPath.Favorites)),
                     MessengerTokens.SidebarManagement);
-            },
-            (tab) => NavigationBar.IsRemoveFromFavoritesEnabled(tab?.Context)));
+            }));
 
-        private AsyncRelayCommand<TabViewModel> _SetPathWorkspaceTemplate;
-        public AsyncRelayCommand<TabViewModel> SetPathWorkspaceTemplateCommand => _SetPathWorkspaceTemplate ?? (_SetPathWorkspaceTemplate = new AsyncRelayCommand<TabViewModel>(
-            async (tab) =>
+        private AsyncRelayCommand<ShellContextViewModelBase> _SetPathWorkspaceTemplate;
+        public AsyncRelayCommand<ShellContextViewModelBase> SetPathWorkspaceTemplateCommand => _SetPathWorkspaceTemplate ?? (_SetPathWorkspaceTemplate = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
             {
-                if (tab?.Context?.Item is null) return;
+                if (context?.Item is null) return;
 
                 var viewModel = new WorkspaceTemplatePickerViewModel();
                 var result = await dialogService.Show(DialogKeys.WorkspaceTemplatePicker, viewModel);
-                if (result && viewModel.Template.HasValue && tab.Context.Item is Workspace ws)
+                if (result && viewModel.Template.HasValue && context.Item is Workspace ws)
                 {
                     await WorkspaceService.SetTemplate(ws.Id, viewModel.Template.Value);
                     ws.Template = viewModel.Template.Value;
-                    tab.Context.PathInfo.Tag = ws.Template;
+                    context.PathInfo.Tag = ws.Template;
                     Messenger.Default.Send(new NotificationMessage<SidebarMessage>(
                         new SidebarMessage(CollectionChangedAction.Update, new List<JumpPointItem> { ws }), nameof(AppPath.Workspace)),
                         MessengerTokens.SidebarManagement);
                 }
-            },
-            (tab) => NavigationBar.IsSetWorkspaceTemplateEnabled(tab?.Context)));
+            }));
 
-        private AsyncRelayCommand<TabViewModel> _SetPathFolderTemplate;
-        public AsyncRelayCommand<TabViewModel> SetPathFolderTemplateCommand => _SetPathFolderTemplate ?? (_SetPathFolderTemplate = new AsyncRelayCommand<TabViewModel>(
-            async (tab) =>
+        private AsyncRelayCommand<ShellContextViewModelBase> _SetPathFolderTemplate;
+        public AsyncRelayCommand<ShellContextViewModelBase> SetPathFolderTemplateCommand => _SetPathFolderTemplate ?? (_SetPathFolderTemplate = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
             {
-                if (tab?.Context?.Item is null) return;
+                if (context?.Item is null) return;
 
                 var viewModel = new FolderTemplatePickerViewModel();
                 var result = await dialogService.Show(DialogKeys.FolderTemplatePicker, viewModel);
-                if (result && viewModel.Template.HasValue && tab.Context.Item is FolderBase f)
+                if (result && viewModel.Template.HasValue && context.Item is FolderBase f)
                 {
                     await FolderTemplateService.SetFolderTemplate(f, viewModel.Template.Value);
                     f.FolderTemplate = viewModel.Template.Value;
-                    tab.Context.PathInfo.Tag = f.FolderTemplate;
+                    context.PathInfo.Tag = f.FolderTemplate;
                     Messenger.Default.Send(new NotificationMessage<SidebarMessage>(
                         new SidebarMessage(CollectionChangedAction.Update, new List<JumpPointItem> { f }), nameof(AppPath.Folder)),
                         MessengerTokens.SidebarManagement);
                 }
-            },
-            (tab) => NavigationBar.IsSetFolderTemplateEnabled(tab?.Context)));
+            }));
 
-        private AsyncRelayCommand<TabViewModel> _SharePath;
-        public AsyncRelayCommand<TabViewModel> SharePathCommand => _SharePath ?? (_SharePath = new AsyncRelayCommand<TabViewModel>(
-            async (tab) =>
+        private AsyncRelayCommand<ShellContextViewModelBase> _SharePath;
+        public AsyncRelayCommand<ShellContextViewModelBase> SharePathCommand => _SharePath ?? (_SharePath = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
             {
-                if (tab?.Context is null) return;
+                if (context is null) return;
 
                 var shareData = new DataPayload()
                 {
-                    Title = tab.Context.PathInfo.Path,
+                    Title = context.PathInfo.Path,
                     Description = "Shared from Jump Point",
-                    AppLink = JumpPointService.GetAppUri(tab.Context.PathInfo.Type, tab.Context.PathInfo.Path)
+                    AppLink = JumpPointService.GetAppUri(context.PathInfo.Type, context.PathInfo.Path)
                 };
 
-                if (tab.Context.Item is StorageItemBase fsi)
+                if (context.Item is StorageItemBase fsi)
                 {
                     var storageItems = await JumpPointService.Convert(fsi);
                     shareData.StorageItems = new ReadOnlyCollection<NGStorage.IStorageItem>(Enumerable.Repeat(storageItems, 1).ToList());
@@ -462,23 +470,23 @@ namespace JumpPoint.ViewModels.Helpers
                 shareService.Share(shareData);
             }));
 
-        private AsyncRelayCommand<TabViewModel> _PathProperties;
-        public AsyncRelayCommand<TabViewModel> PathPropertiesCommand => _PathProperties ?? (_PathProperties = new AsyncRelayCommand<TabViewModel>(
-            async (tab) =>
+        private AsyncRelayCommand<ShellContextViewModelBase> _PathProperties;
+        public AsyncRelayCommand<ShellContextViewModelBase> PathPropertiesCommand => _PathProperties ?? (_PathProperties = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
             {
-                if (tab?.Context is null) return;
+                if (context is null) return;
 
                 var seeds = new Collection<Seed>();
-                switch (tab.Context.PathInfo.Type)
+                switch (context.PathInfo.Type)
                 {
                     case AppPath.Folder:
-                        seeds.Add(new Seed() { Type = JumpPointItemType.Folder, Path = tab.Context.PathInfo.Path });
+                        seeds.Add(new Seed() { Type = JumpPointItemType.Folder, Path = context.PathInfo.Path });
                         break;
                     case AppPath.Drive:
-                        seeds.Add(new Seed() { Type = JumpPointItemType.Drive, Path = tab.Context.PathInfo.Path });
+                        seeds.Add(new Seed() { Type = JumpPointItemType.Drive, Path = context.PathInfo.Path });
                         break;
                     case AppPath.Workspace:
-                        seeds.Add(new Seed() { Type = JumpPointItemType.Workspace, Path = tab.Context.PathInfo.Path });
+                        seeds.Add(new Seed() { Type = JumpPointItemType.Workspace, Path = context.PathInfo.Path });
                         break;
 
                     default:
@@ -486,42 +494,41 @@ namespace JumpPoint.ViewModels.Helpers
                 }
 
                 await JumpPointService.OpenProperties(seeds);
-            },
-            (tab) => NavigationBar.IsPropertiesEnabled(tab?.Context)));
+            }));
 
-        private AsyncRelayCommand<TabViewModel> _PinPath;
-        public AsyncRelayCommand<TabViewModel> PinPathCommand => _PinPath ?? (_PinPath = new AsyncRelayCommand<TabViewModel>(
-            async (tab) =>
+        private AsyncRelayCommand<ShellContextViewModelBase> _PinPath;
+        public AsyncRelayCommand<ShellContextViewModelBase> PinPathCommand => _PinPath ?? (_PinPath = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
             {
-                if (tab?.Context is null) return;
+                if (context?.Item is null) return;
 
-                if (!shortcutService.Exists(tab.Context.PathHash))
+                if (!shortcutService.Exists(context.PathHash))
                 {
                     await shortcutService.Create(new ShortcutItem()
                     {
-                        Id = tab.Context.PathHash,
-                        DisplayName = tab.Context.PathInfo.DisplayName,
-                        Arguments = TabbedNavigationHelper.GetParameter(tab.Context.PathInfo.Type, tab.Context.PathInfo.Path, tab.Context.Item),
-                        Icon = iconHelper.GetIconUri(tab.Context.PathInfo.Type, tab.Context.PathInfo.Tag, TileSize.Medium),
-                        SmallIcon = iconHelper.GetIconUri(tab.Context.PathInfo.Type, tab.Context.PathInfo.Tag, TileSize.Small),
-                        WideIcon = iconHelper.GetIconUri(tab.Context.PathInfo.Type, tab.Context.PathInfo.Tag, TileSize.Wide),
-                        LargeIcon = iconHelper.GetIconUri(tab.Context.PathInfo.Type, tab.Context.PathInfo.Tag, TileSize.Large)
+                        Id = context.PathHash,
+                        DisplayName = context.PathInfo.DisplayName,
+                        Arguments = TabbedNavigationHelper.GetParameter(context.PathInfo.Type, context.PathInfo.Path, context.Item),
+                        Icon = iconHelper.GetIconUri(context.PathInfo.Type, context.PathInfo.Tag, TileSize.Medium),
+                        SmallIcon = iconHelper.GetIconUri(context.PathInfo.Type, context.PathInfo.Tag, TileSize.Small),
+                        WideIcon = iconHelper.GetIconUri(context.PathInfo.Type, context.PathInfo.Tag, TileSize.Wide),
+                        LargeIcon = iconHelper.GetIconUri(context.PathInfo.Type, context.PathInfo.Tag, TileSize.Large)
                     });
                 }
-                tab.Context.IsPinned = shortcutService.Exists(tab.Context.PathHash);
+                context.IsPinned = shortcutService.Exists(context.PathHash);
             }));
 
-        private AsyncRelayCommand<TabViewModel> _UnpinPath;
-        public AsyncRelayCommand<TabViewModel> UnpinPathCommand => _UnpinPath ?? (_UnpinPath = new AsyncRelayCommand<TabViewModel>(
-            async (tab) =>
+        private AsyncRelayCommand<ShellContextViewModelBase> _UnpinPath;
+        public AsyncRelayCommand<ShellContextViewModelBase> UnpinPathCommand => _UnpinPath ?? (_UnpinPath = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
             {
-                if (tab?.Context is null) return;
+                if (context is null) return;
 
-                if (shortcutService.Exists(tab.Context.PathHash))
+                if (shortcutService.Exists(context.PathHash))
                 {
-                    await shortcutService.Delete(tab.Context.PathHash);
+                    await shortcutService.Delete(context.PathHash);
                 }
-                tab.Context.IsPinned = shortcutService.Exists(tab.Context.PathHash);
+                context.IsPinned = shortcutService.Exists(context.PathHash);
             }));
         #endregion
 
@@ -539,8 +546,8 @@ namespace JumpPoint.ViewModels.Helpers
             get { return _clipboardHasFiles; }
             set
             {
-                Set(ref _clipboardHasFiles, value);
-                Messenger.Default.Send(new NotificationMessage(nameof(ClipboardHasFiles)), MessengerTokens.CommandManagement);
+                _clipboardHasFiles = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -555,8 +562,7 @@ namespace JumpPoint.ViewModels.Helpers
                     StorageItems = new ReadOnlyCollection<NGStorage.IStorageItem>(await JumpPointService.Convert(context.SelectedItems))
                 };
                 clipboardService.Copy(payload);
-            },
-            (context) => Toolbar.IsCopyEnabled(context)));
+            }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _Cut;
         public AsyncRelayCommand<ShellContextViewModelBase> CutCommand => _Cut ?? (_Cut = new AsyncRelayCommand<ShellContextViewModelBase>(
@@ -569,8 +575,7 @@ namespace JumpPoint.ViewModels.Helpers
                     StorageItems = new ReadOnlyCollection<NGStorage.IStorageItem>(await JumpPointService.Convert(context.SelectedItems))
                 };
                 clipboardService.Cut(payload);
-            },
-            (context) => Toolbar.IsCutEnabled(context)));
+            }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _CopyItemsPath;
         public AsyncRelayCommand<ShellContextViewModelBase> CopyItemsPathCommand => _CopyItemsPath ?? (_CopyItemsPath = new AsyncRelayCommand<ShellContextViewModelBase>(
@@ -578,9 +583,8 @@ namespace JumpPoint.ViewModels.Helpers
             {
                 if (context is null) return;
 
-                await Clipboard.SetTextAsync(string.Join(AppSettings.Instance.CopyPathDelimiter.ToDelimiter(), context.SelectedItems.Select(i => i.Path)));
-            },
-            (context) => Toolbar.IsCopyItemsPathEnabled(context)));
+                await Clipboard.SetTextAsync(string.Join(appSettings.CopyPathDelimiter.ToDelimiter(), context.SelectedItems.Select(i => i.Path)));
+            }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _Paste;
         public AsyncRelayCommand<ShellContextViewModelBase> PasteCommand => _Paste ?? (_Paste = new AsyncRelayCommand<ShellContextViewModelBase>(
@@ -592,8 +596,7 @@ namespace JumpPoint.ViewModels.Helpers
                 {
                     await StorageService.Paste(destination);
                 }
-            },
-            (context) => Toolbar.IsPasteEnabled(context, ClipboardHasFiles)));
+            }));
         #endregion
 
         #region Clipboard Manager
@@ -705,8 +708,7 @@ namespace JumpPoint.ViewModels.Helpers
                         }
                     }
                 }
-            },
-            (context) => Toolbar.IsRenameEnabled(context)));
+            }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _Delete;
         public AsyncRelayCommand<ShellContextViewModelBase> DeleteCommand => _Delete ?? (_Delete = new AsyncRelayCommand<ShellContextViewModelBase>(
@@ -715,8 +717,7 @@ namespace JumpPoint.ViewModels.Helpers
                 if (context is null) return;
 
                 await JumpPointService.Delete(context.SelectedItems, false);
-            },
-            (context) => Toolbar.IsDeleteEnabled(context)));
+            }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _DeletePermanently;
         public AsyncRelayCommand<ShellContextViewModelBase> DeletePermanentlyCommand => _DeletePermanently ?? (_DeletePermanently = new AsyncRelayCommand<ShellContextViewModelBase>(
@@ -725,8 +726,7 @@ namespace JumpPoint.ViewModels.Helpers
                 if (context is null) return;
 
                 await JumpPointService.Delete(context.SelectedItems, true);
-            },
-            (context) => Toolbar.IsDeletePermanentlyEnabled(context)));
+            }));
 
         #endregion
 
@@ -747,8 +747,7 @@ namespace JumpPoint.ViewModels.Helpers
                         break;
                     }
                 }
-            },
-            (context) => Toolbar.IsOpenEnabled(context)));
+            }));
 
         private AsyncRelayCommand<OpenItemParameter> _OpenItem;
         public AsyncRelayCommand<OpenItemParameter> OpenItemCommand => _OpenItem ?? (_OpenItem = new AsyncRelayCommand<OpenItemParameter>(
@@ -826,8 +825,7 @@ namespace JumpPoint.ViewModels.Helpers
                         await JumpPointService.OpenFile(file, false);
                     }
                 }
-            },
-            (context) => Toolbar.IsOpenWithEnabled(context)));
+            }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _OpenItemsInNewWindowCommand;
         public AsyncRelayCommand<ShellContextViewModelBase> OpenItemsInNewWindowCommand => _OpenItemsInNewWindowCommand ?? (_OpenItemsInNewWindowCommand = new AsyncRelayCommand<ShellContextViewModelBase>(
@@ -857,8 +855,7 @@ namespace JumpPoint.ViewModels.Helpers
                     }
                 }
 
-            },
-            (context) => Toolbar.IsOpenInNewWindowEnabled(context)));
+            }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _OpenItemsInFileExplorer;
         public AsyncRelayCommand<ShellContextViewModelBase> OpenItemsInFileExplorerCommand => _OpenItemsInFileExplorer ?? (_OpenItemsInFileExplorer = new AsyncRelayCommand<ShellContextViewModelBase>(
@@ -878,8 +875,7 @@ namespace JumpPoint.ViewModels.Helpers
                 {
                     await JumpPointService.OpenInFileExplorer(group.Key, group);
                 }
-            },
-            (context) => Toolbar.IsOpenInFileExplorerEnabled(context)));
+            }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _OpenItemsInCommandPrompt;
         public AsyncRelayCommand<ShellContextViewModelBase> OpenItemsInCommandPromptCommand => _OpenItemsInCommandPrompt ?? (_OpenItemsInCommandPrompt = new AsyncRelayCommand<ShellContextViewModelBase>(
@@ -889,8 +885,7 @@ namespace JumpPoint.ViewModels.Helpers
 
                 var fbs = context.SelectedItems.OfType<DirectoryBase>();
                 await DesktopService.OpenInCommandPrompt(fbs.Select(i => i.Path).ToList());
-            },
-            (context) => Toolbar.IsOpenInCommandPromptEnabled(context)));
+            }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _OpenItemsInPowershell;
         public AsyncRelayCommand<ShellContextViewModelBase> OpenItemsInPowershellCommand => _OpenItemsInPowershell ?? (_OpenItemsInPowershell = new AsyncRelayCommand<ShellContextViewModelBase>(
@@ -900,8 +895,7 @@ namespace JumpPoint.ViewModels.Helpers
 
                 var fbs = context.SelectedItems.OfType<DirectoryBase>();
                 await DesktopService.OpenInPowershell(fbs.Select(i => i.Path).ToList());
-            },
-            (context) => Toolbar.IsOpenInPowershellEnabled(context)));
+            }));
 
         #endregion
 
@@ -915,8 +909,7 @@ namespace JumpPoint.ViewModels.Helpers
 
                 var fsi = context.SelectedItems.Where(i => i is StorageItemBase || i is AppLink).ToList();
                 await AddToWorkspace(fsi);
-            },
-            (context) => Toolbar.IsAddToWorkspaceEnabled(context)));
+            }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _AddItemsToFavorites;
         public AsyncRelayCommand<ShellContextViewModelBase> AddItemsToFavoritesCommand => _AddItemsToFavorites ?? (_AddItemsToFavorites = new AsyncRelayCommand<ShellContextViewModelBase>(
@@ -934,8 +927,7 @@ namespace JumpPoint.ViewModels.Helpers
                     new SidebarMessage(CollectionChangedAction.Add, list), nameof(AppPath.Favorites)),
                     MessengerTokens.SidebarManagement);
                 Messenger.Default.Send(new NotificationMessage(nameof(JumpPointItem.IsFavorite)), MessengerTokens.CommandManagement);
-            },
-            (context) => Toolbar.IsAddToFavoritesEnabled(context)));
+            }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _RemoveItemsFromFavorites;
         public AsyncRelayCommand<ShellContextViewModelBase> RemoveItemsFromFavoritesCommand => _RemoveItemsFromFavorites ?? (_RemoveItemsFromFavorites = new AsyncRelayCommand<ShellContextViewModelBase>(
@@ -953,8 +945,7 @@ namespace JumpPoint.ViewModels.Helpers
                     new SidebarMessage(CollectionChangedAction.Remove, list), nameof(AppPath.Favorites)),
                     MessengerTokens.SidebarManagement);
                 Messenger.Default.Send(new NotificationMessage(nameof(JumpPointItem.IsFavorite)), MessengerTokens.CommandManagement);
-            },
-            (context) => Toolbar.IsRemoveFromFavoritesEnabled(context)));
+            }));
 
 
         private AsyncRelayCommand<ShellContextViewModelBase> _MoreTools;
@@ -978,8 +969,7 @@ namespace JumpPoint.ViewModels.Helpers
                         await JumpPointService.Load(item);
                     }
                 }
-            },
-            (context) => Toolbar.IsMoreToolsEnabled(context)));
+            }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _SetItemsWorkspaceTemplate;
         public AsyncRelayCommand<ShellContextViewModelBase> SetItemsWorkspaceTemplateCommand => _SetItemsWorkspaceTemplate ?? (_SetItemsWorkspaceTemplate = new AsyncRelayCommand<ShellContextViewModelBase>(
@@ -1001,8 +991,7 @@ namespace JumpPoint.ViewModels.Helpers
                         new SidebarMessage(CollectionChangedAction.Update, wss), nameof(AppPath.Workspace)),
                         MessengerTokens.SidebarManagement);
                 }
-            },
-            (context) => Toolbar.IsSetWorkspaceTemplateEnabled(context)));
+            }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _SetItemsFolderTemplate;
         public AsyncRelayCommand<ShellContextViewModelBase> SetItemsFolderTemplateCommand => _SetItemsFolderTemplate ?? (_SetItemsFolderTemplate = new AsyncRelayCommand<ShellContextViewModelBase>(
@@ -1024,8 +1013,7 @@ namespace JumpPoint.ViewModels.Helpers
                         new SidebarMessage(CollectionChangedAction.Update, fs), nameof(AppPath.Folder)),
                         MessengerTokens.SidebarManagement);
                 }
-            },
-            (context) => Toolbar.IsSetFolderTemplateEnabled(context)));
+            }));
 
 
         #endregion
@@ -1046,8 +1034,7 @@ namespace JumpPoint.ViewModels.Helpers
                     StorageItems = new ReadOnlyCollection<NGStorage.IStorageItem>(toShare)
                 };
                 shareService.Share(shareData);
-            },
-            (context) => Toolbar.IsShareEnabled(context)));
+            }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _ItemsProperties;
         public AsyncRelayCommand<ShellContextViewModelBase> ItemsPropertiesCommand => _ItemsProperties ?? (_ItemsProperties = new AsyncRelayCommand<ShellContextViewModelBase>(
@@ -1066,8 +1053,7 @@ namespace JumpPoint.ViewModels.Helpers
                 }
 
                 await JumpPointService.OpenProperties(seeds);
-            },
-            (context) => Toolbar.IsPropertiesEnabled(context)));
+            }));
 
 
         #region View Ribbon

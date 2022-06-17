@@ -8,7 +8,7 @@
     xmlns:items="using:JumpPoint.Platform.Items"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:converters="using:JumpPoint.Uwp.Converters"
-    xmlns:ngconv="using:NittyGritty.UI.Converters"
+    xmlns:ngconv="using:NittyGritty.Uwp.Converters"
     mc:Ignorable="d"
     Title="Add to Workspace"
     PrimaryButtonText="Save"
