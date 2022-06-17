@@ -9,9 +9,9 @@
               xmlns:winui="using:Microsoft.UI.Xaml.Controls"
               xmlns:i="using:Microsoft.Xaml.Interactivity"
               xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-              xmlns:ngconv="using:NittyGritty.UI.Converters"
-              xmlns:selectors="using:NittyGritty.UI.Selectors"
-              xmlns:actions="using:NittyGritty.UI.Interactivity.Actions"
+              xmlns:ngconv="using:NittyGritty.Uwp.Converters"
+              xmlns:selectors="using:NittyGritty.Uwp.Selectors"
+              xmlns:actions="using:NittyGritty.Uwp.Interactivity.Actions"
               xmlns:extensions="using:NittyGritty.Uwp.Extensions"
               xmlns:humanizer="using:Humanizer"
               xmlns:converters="using:JumpPoint.Uwp.Converters"
@@ -19,7 +19,7 @@
               xmlns:services="using:JumpPoint.Platform.Services"
               xmlns:store="using:NittyGritty.Platform.Store"
               xmlns:items="using:JumpPoint.Platform.Items"
-              xmlns:helpers="using:JumpPoint.ViewModels.Helpers"
+              xmlns:helpers="using:JumpPoint.Uwp.Helpers"
               xmlns:controls="using:JumpPoint.Uwp.Controls"
               xmlns:jpactions="using:JumpPoint.Uwp.Interactivity.Actions"
               xmlns:gtext="using:Glif.Core.Text"
@@ -36,19 +36,19 @@
             <converters:ShellItemContentTemplateSelector.Text>
                 <DataTemplate x:DataType="x:String">
                     <TextBlock Text="{x:Bind}"
-                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                 </DataTemplate>
             </converters:ShellItemContentTemplateSelector.Text>
             <converters:ShellItemContentTemplateSelector.JumpPointItem>
                 <DataTemplate x:DataType="items:JumpPointItem">
                     <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
-                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                 </DataTemplate>
             </converters:ShellItemContentTemplateSelector.JumpPointItem>
         </converters:ShellItemContentTemplateSelector>
@@ -181,9 +181,9 @@
                                FontWeight="SemiBold"
                                Foreground="White"
                                Grid.Column="1"
-                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                 </Grid>
             </Grid>
         </Grid>
@@ -243,27 +243,27 @@
                                                  Command="{StaticResource BackCommand}"
                                                  x:Name="navBack"
                                                  IsEnabled="{x:Bind mainFrame.CanGoBack, Mode=OneWay}"
-                                                 x:Load="{x:Bind services:AppSettings.Instance.ShowBack, Mode=OneWay}"
+                                                 x:Load="{x:Bind helpers:ServiceLocator.AppSettings.ShowBack, Mode=OneWay}"
                                                  IsCompact="True"/>
                             <controls:IconButton CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
                                                  Command="{StaticResource ForwardCommand}"
                                                  x:Name="navForward"
                                                  IsEnabled="{x:Bind mainFrame.CanGoForward, Mode=OneWay}"
-                                                 x:Load="{x:Bind services:AppSettings.Instance.ShowForward, Mode=OneWay}"
+                                                 x:Load="{x:Bind helpers:ServiceLocator.AppSettings.ShowForward, Mode=OneWay}"
                                                  IsCompact="True" />
                             <controls:IconButton CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
                                                  Command="{StaticResource UpCommand}"
                                                  x:Name="navUp"
-                                                 x:Load="{x:Bind services:AppSettings.Instance.ShowUp, Mode=OneWay}"
+                                                 x:Load="{x:Bind helpers:ServiceLocator.AppSettings.ShowUp, Mode=OneWay}"
                                                  IsCompact="True" />
                             <controls:IconButton Command="{StaticResource RefreshCommand}"
                                                  x:Name="navRefresh"
-                                                 x:Load="{x:Bind services:AppSettings.Instance.ShowRefresh, Mode=OneWay}"
+                                                 x:Load="{x:Bind helpers:ServiceLocator.AppSettings.ShowRefresh, Mode=OneWay}"
                                                  IsCompact="True" />
                             <controls:IconButton CommandParameter="{x:Bind ViewModel.Context, Mode=OneWay}"
                                                  Command="{StaticResource DashboardCommand}"
                                                  x:Name="navDashboard"
-                                                 x:Load="{x:Bind services:AppSettings.Instance.ShowDashboard, Mode=OneWay}"
+                                                 x:Load="{x:Bind helpers:ServiceLocator.AppSettings.ShowDashboard, Mode=OneWay}"
                                                  IsCompact="True" />
                         </StackPanel>
 
@@ -434,7 +434,7 @@
                                     Spacing="4"
                                     Orientation="Horizontal">
                             <controls:IconButton x:Name="navNewItem"
-                                                 x:Load="{x:Bind services:AppSettings.Instance.ShowNewItem, Mode=OneWay}"
+                                                 x:Load="{x:Bind helpers:ServiceLocator.AppSettings.ShowNewItem, Mode=OneWay}"
                                                  Command="{StaticResource NewItemCommand}"
                                                  IsCompact="True">
                                 <controls:IconButton.Flyout>
@@ -449,22 +449,22 @@
                                 </controls:IconButton.Flyout>
                             </controls:IconButton>
                             <controls:IconButton x:Name="navLayout"
-                                                 x:Load="{x:Bind services:AppSettings.Instance.ShowLayout, Mode=OneWay}"
+                                                 x:Load="{x:Bind helpers:ServiceLocator.AppSettings.ShowLayout, Mode=OneWay}"
                                                  Command="{StaticResource LayoutCommand}"
                                                  IsCompact="True">
                                 <controls:IconButton.Flyout>
                                     <MenuFlyout Placement="Bottom">
                                         <winui:RadioMenuFlyoutItem Command="{StaticResource GridLayoutCommand}"
-                                                                   IsChecked="{x:Bind services:AppSettings.Instance.IsGridLayout, Mode=TwoWay}"
+                                                                   IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGridLayout, Mode=TwoWay}"
                                                                    GroupName="Layout"/>
                                         <winui:RadioMenuFlyoutItem Command="{StaticResource DetailsLayoutCommand}"
-                                                                   IsChecked="{x:Bind services:AppSettings.Instance.IsDetailsLayout, Mode=TwoWay}"
+                                                                   IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsDetailsLayout, Mode=TwoWay}"
                                                                    GroupName="Layout"/>
                                         <winui:RadioMenuFlyoutItem Command="{StaticResource TilesLayoutCommand}"
-                                                                   IsChecked="{x:Bind services:AppSettings.Instance.IsTilesLayout, Mode=TwoWay}"
+                                                                   IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsTilesLayout, Mode=TwoWay}"
                                                                    GroupName="Layout"/>
                                         <winui:RadioMenuFlyoutItem Command="{StaticResource ListLayoutCommand}"
-                                                                   IsChecked="{x:Bind services:AppSettings.Instance.IsListLayout, Mode=TwoWay}"
+                                                                   IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsListLayout, Mode=TwoWay}"
                                                                    GroupName="Layout" />
                                     </MenuFlyout>
                                 </controls:IconButton.Flyout>
@@ -590,13 +590,13 @@
                                                           Glyph="&#xED35;" />
                                             </MenuFlyoutSubItem.Icon>
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GridLayoutCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGridLayout, Mode=TwoWay}" />
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGridLayout, Mode=TwoWay}" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource DetailsLayoutCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsDetailsLayout, Mode=TwoWay}" />
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsDetailsLayout, Mode=TwoWay}" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource TilesLayoutCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsTilesLayout, Mode=TwoWay}" />
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsTilesLayout, Mode=TwoWay}" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource ListLayoutCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsListLayout, Mode=TwoWay}" />
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsListLayout, Mode=TwoWay}" />
                                         </MenuFlyoutSubItem>
                                         <MenuFlyoutSubItem Text="Show/Hide">
                                             <MenuFlyoutSubItem.Icon>
@@ -604,14 +604,14 @@
                                                           Glyph="&#xE890;" />
                                             </MenuFlyoutSubItem.Icon>
                                             <ToggleMenuFlyoutItem Text="Item Checkbox"
-                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowCheckbox, Mode=TwoWay}">
+                                                                  IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowCheckbox, Mode=TwoWay}">
                                                 <ToggleMenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xE73A;"
                                                               FontFamily="Segoe MDL2 Assets" />
                                                 </ToggleMenuFlyoutItem.Icon>
                                             </ToggleMenuFlyoutItem>
                                             <ToggleMenuFlyoutItem Text="File Extension"
-                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=TwoWay}">
+                                                                  IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Mode=TwoWay}">
                                                 <ToggleMenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xE97C;"
                                                               FontFamily="Segoe MDL2 Assets" />
@@ -619,49 +619,49 @@
                                             </ToggleMenuFlyoutItem>
                                             <MenuFlyoutSeparator />
                                             <ToggleMenuFlyoutItem Text="Back button"
-                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowBack, Mode=TwoWay}">
+                                                                  IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowBack, Mode=TwoWay}">
                                                 <ToggleMenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xE112;"
                                                               FontFamily="Segoe MDL2 Assets" />
                                                 </ToggleMenuFlyoutItem.Icon>
                                             </ToggleMenuFlyoutItem>
                                             <ToggleMenuFlyoutItem Text="Forward button"
-                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowForward, Mode=TwoWay}">
+                                                                  IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowForward, Mode=TwoWay}">
                                                 <ToggleMenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xE111;"
                                                               FontFamily="Segoe MDL2 Assets" />
                                                 </ToggleMenuFlyoutItem.Icon>
                                             </ToggleMenuFlyoutItem>
                                             <ToggleMenuFlyoutItem Text="Up button"
-                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowUp, Mode=TwoWay}">
+                                                                  IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowUp, Mode=TwoWay}">
                                                 <ToggleMenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xE110;"
                                                               FontFamily="Segoe MDL2 Assets" />
                                                 </ToggleMenuFlyoutItem.Icon>
                                             </ToggleMenuFlyoutItem>
                                             <ToggleMenuFlyoutItem Text="Refresh button"
-                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowRefresh, Mode=TwoWay}">
+                                                                  IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowRefresh, Mode=TwoWay}">
                                                 <ToggleMenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xE149;"
                                                               FontFamily="Segoe MDL2 Assets" />
                                                 </ToggleMenuFlyoutItem.Icon>
                                             </ToggleMenuFlyoutItem>
                                             <ToggleMenuFlyoutItem Text="Dashboard button"
-                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowDashboard, Mode=TwoWay}">
+                                                                  IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowDashboard, Mode=TwoWay}">
                                                 <ToggleMenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xE10F;"
                                                               FontFamily="Segoe MDL2 Assets" />
                                                 </ToggleMenuFlyoutItem.Icon>
                                             </ToggleMenuFlyoutItem>
                                             <ToggleMenuFlyoutItem Text="New Item button"
-                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowNewItem, Mode=TwoWay}">
+                                                                  IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowNewItem, Mode=TwoWay}">
                                                 <ToggleMenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xE109;"
                                                               FontFamily="Segoe MDL2 Assets" />
                                                 </ToggleMenuFlyoutItem.Icon>
                                             </ToggleMenuFlyoutItem>
                                             <ToggleMenuFlyoutItem Text="Layout button"
-                                                                  IsChecked="{x:Bind services:AppSettings.Instance.ShowLayout, Mode=TwoWay}">
+                                                                  IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowLayout, Mode=TwoWay}">
                                                 <ToggleMenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xED35;"
                                                               FontFamily="Segoe MDL2 Assets" />
@@ -799,23 +799,23 @@
                                     <controls:IconButton.Flyout>
                                         <MenuFlyout Placement="BottomEdgeAlignedRight">
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource SortByNameCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsSortByName, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsSortByName, Mode=TwoWay}"
                                                                        GroupName="SortBy"/>
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource SortByDateModifiedCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsSortByDateModified, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsSortByDateModified, Mode=TwoWay}"
                                                                        GroupName="SortBy" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource SortByDisplayTypeCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsSortByDisplayType, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsSortByDisplayType, Mode=TwoWay}"
                                                                        GroupName="SortBy" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource SortBySizeCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsSortBySize, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsSortBySize, Mode=TwoWay}"
                                                                        GroupName="SortBy" />
                                             <MenuFlyoutSeparator />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource SortByAscendingCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsSortAscending, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsSortAscending, Mode=TwoWay}"
                                                                        GroupName="SortDirection" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource SortByDescendingCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsSortDescending, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsSortDescending, Mode=TwoWay}"
                                                                        GroupName="SortDirection" />
                                         </MenuFlyout>
                                     </controls:IconButton.Flyout>
@@ -825,35 +825,35 @@
                                     <controls:IconButton.Flyout>
                                         <MenuFlyout Placement="BottomEdgeAlignedRight">
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByNoneCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGroupByNone, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupByNone, Mode=TwoWay}"
                                                                        IsEnabled="{x:Bind ViewModel.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
                                                                        GroupName="GroupBy" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByNameCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGroupByName, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupByName, Mode=TwoWay}"
                                                                        IsEnabled="{x:Bind ViewModel.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
                                                                        GroupName="GroupBy" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByDateModifiedCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGroupByDateModified, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupByDateModified, Mode=TwoWay}"
                                                                        IsEnabled="{x:Bind ViewModel.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
                                                                        GroupName="GroupBy" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByDisplayTypeCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGroupByDisplayType, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupByDisplayType, Mode=TwoWay}"
                                                                        IsEnabled="{x:Bind ViewModel.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
                                                                        GroupName="GroupBy" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GroupBySizeCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGroupBySize, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupBySize, Mode=TwoWay}"
                                                                        IsEnabled="{x:Bind ViewModel.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
                                                                        GroupName="GroupBy" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByItemTypeCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGroupByItemType, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupByItemType, Mode=TwoWay}"
                                                                        IsEnabled="{x:Bind ViewModel.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
                                                                        GroupName="GroupBy" />
                                             <MenuFlyoutSeparator />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByAscendingCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGroupAscending, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupAscending, Mode=TwoWay}"
                                                                        GroupName="GroupDirection" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByDescendingCommand}"
-                                                                       IsChecked="{x:Bind services:AppSettings.Instance.IsGroupDescending, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupDescending, Mode=TwoWay}"
                                                                        GroupName="GroupDirection" />
                                         </MenuFlyout>
                                     </controls:IconButton.Flyout>

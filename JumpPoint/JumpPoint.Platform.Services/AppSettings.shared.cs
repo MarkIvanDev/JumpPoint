@@ -5,7 +5,7 @@ using System.Text;
 using Glif.Core.Text;
 using NittyGritty;
 using NittyGritty.Platform.Theme;
-using NittyGritty.Services;
+using NittyGritty.Services.Core;
 using Xamarin.Essentials;
 using AppTheme = NittyGritty.Platform.Theme.AppTheme;
 
@@ -13,12 +13,11 @@ namespace JumpPoint.Platform.Services
 {
     public class AppSettings : ObservableObject
     {
-        private static readonly Lazy<AppSettings> lazyInstance = new Lazy<AppSettings>(() => new AppSettings());
-        private readonly ThemeService themeService;
+        private readonly IThemeService themeService;
 
-        private AppSettings()
+        public AppSettings(IThemeService themeService)
         {
-            themeService = new ThemeService();
+            this.themeService = themeService;
             Themes = new ReadOnlyCollection<AppTheme>(new List<AppTheme>
             {
                 AppTheme.Default,
@@ -46,8 +45,6 @@ namespace JumpPoint.Platform.Services
                 CopyPathDelimiter.Hyphen
             });
         }
-
-        public static AppSettings Instance => lazyInstance.Value;
 
         #region Personalization
         

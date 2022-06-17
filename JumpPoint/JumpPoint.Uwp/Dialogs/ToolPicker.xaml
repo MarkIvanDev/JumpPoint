@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="using:JumpPoint.Uwp.Converters"
-    xmlns:ngconv="using:NittyGritty.UI.Converters"
+    xmlns:ngconv="using:NittyGritty.Uwp.Converters"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:extensions="using:JumpPoint.Platform.Extensions"
     mc:Ignorable="d"
@@ -17,6 +17,8 @@
     IsPrimaryButtonEnabled="{x:Bind ViewModel.IsValid, Mode=OneWay}">
 
     <ContentDialog.Resources>
+        <Style TargetType="local:ToolPicker"
+               BasedOn="{StaticResource DefaultContentDialogStyle}" />
         <CollectionViewSource x:Key="ToolsViewSource"
                               x:Name="ToolsViewSource"
                               IsSourceGrouped="True"
@@ -30,7 +32,8 @@
 
     <GridView ItemsSource="{x:Bind ToolsViewSource.View, Mode=OneWay}"
               SelectedItem="{x:Bind ViewModel.Tool, Mode=TwoWay}"
-              SelectionMode="Single">
+              SelectionMode="Single"
+              IsSynchronizedWithCurrentItem="False">
         <GridView.Header>
             <Grid>
                 <Grid.RowDefinitions>

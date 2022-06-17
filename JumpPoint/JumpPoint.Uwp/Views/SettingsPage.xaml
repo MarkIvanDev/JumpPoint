@@ -17,6 +17,7 @@
             xmlns:gtext="using:Glif.Core.Text"
             xmlns:controls="using:JumpPoint.Uwp.Controls"
             xmlns:platform="using:JumpPoint.Platform"
+            xmlns:helpers="using:JumpPoint.Uwp.Helpers"
             xmlns:i="using:Microsoft.Xaml.Interactivity"
             xmlns:behaviors="using:JumpPoint.Uwp.Interactivity.Behaviors"
             mc:Ignorable="d">
@@ -62,38 +63,38 @@
                         
                         <ComboBox Header="Theme"
                                   Width="150"
-                                  ItemsSource="{x:Bind services:AppSettings.Instance.Themes}"
+                                  ItemsSource="{x:Bind helpers:ServiceLocator.AppSettings.Themes}"
                                   SelectedItem="{Binding Source={StaticResource Locator}, Path=AppSettings.Theme, Mode=TwoWay}" />
                         
                         <TextBlock Text="Navigation Bar"/>
                         <StackPanel Orientation="Horizontal"
                                     Spacing="4">
                             <ToggleButton Padding="12"
-                                          IsChecked="{x:Bind services:AppSettings.Instance.ShowBack, Mode=TwoWay}">
+                                          IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowBack, Mode=TwoWay}">
                                 <IconSourceElement IconSource="{StaticResource BackIcon}" />
                             </ToggleButton>
                             <ToggleButton Padding="12"
-                                          IsChecked="{x:Bind services:AppSettings.Instance.ShowForward, Mode=TwoWay}">
+                                          IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowForward, Mode=TwoWay}">
                                 <IconSourceElement IconSource="{StaticResource ForwardIcon}" />
                             </ToggleButton>
                             <ToggleButton Padding="12"
-                                          IsChecked="{x:Bind services:AppSettings.Instance.ShowUp, Mode=TwoWay}">
+                                          IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowUp, Mode=TwoWay}">
                                 <IconSourceElement IconSource="{StaticResource UpIcon}" />
                             </ToggleButton>
                             <ToggleButton Padding="12"
-                                          IsChecked="{x:Bind services:AppSettings.Instance.ShowRefresh, Mode=TwoWay}">
+                                          IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowRefresh, Mode=TwoWay}">
                                 <IconSourceElement IconSource="{StaticResource RefreshIcon}" />
                             </ToggleButton>
                             <ToggleButton Padding="12"
-                                          IsChecked="{x:Bind services:AppSettings.Instance.ShowDashboard, Mode=TwoWay}">
+                                          IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowDashboard, Mode=TwoWay}">
                                 <IconSourceElement IconSource="{StaticResource DashboardIcon}" />
                             </ToggleButton>
                             <ToggleButton Padding="12"
-                                          IsChecked="{x:Bind services:AppSettings.Instance.ShowNewItem, Mode=TwoWay}">
+                                          IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowNewItem, Mode=TwoWay}">
                                 <IconSourceElement IconSource="{StaticResource NewItemIcon}" />
                             </ToggleButton>
                             <ToggleButton Padding="12"
-                                          IsChecked="{x:Bind services:AppSettings.Instance.ShowLayout, Mode=TwoWay}">
+                                          IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowLayout, Mode=TwoWay}">
                                 <IconSourceElement IconSource="{StaticResource LayoutIcon}" />
                             </ToggleButton>
                         </StackPanel>
@@ -121,26 +122,26 @@
                                         <StackPanel Spacing="8">
                                             <TextBlock>
                                                 <Run Text="Font:" />
-                                                <Run Text="{x:Bind io:Path.GetFileName(services:AppSettings.Instance.Font), Mode=OneWay}" />
+                                                <Run Text="{x:Bind io:Path.GetFileName(helpers:ServiceLocator.AppSettings.Font), Mode=OneWay}" />
                                             </TextBlock>
                                             <TextBlock>
                                                 <Run Text="Font Style:" />
-                                                <Run Text="{x:Bind services:AppSettings.Instance.FontStyle, Mode=OneWay, Converter={StaticResource HumanizerConverter}}" />
+                                                <Run Text="{x:Bind helpers:ServiceLocator.AppSettings.FontStyle, Mode=OneWay, Converter={StaticResource HumanizerConverter}}" />
                                             </TextBlock>
                                             <TextBlock>
                                                 <Run Text="Font Weight:" />
-                                                <Run Text="{x:Bind services:AppSettings.Instance.FontWeight, Mode=OneWay, Converter={StaticResource HumanizerConverter}}" />
+                                                <Run Text="{x:Bind helpers:ServiceLocator.AppSettings.FontWeight, Mode=OneWay, Converter={StaticResource HumanizerConverter}}" />
                                             </TextBlock>
                                             <TextBlock>
                                                 <Run Text="Font Stretch:" />
-                                                <Run Text="{x:Bind services:AppSettings.Instance.FontStretch, Mode=OneWay, Converter={StaticResource HumanizerConverter}}" />
+                                                <Run Text="{x:Bind helpers:ServiceLocator.AppSettings.FontStretch, Mode=OneWay, Converter={StaticResource HumanizerConverter}}" />
                                             </TextBlock>
                                         </StackPanel>
                                     </Flyout>
                                 </controls:IconButton.Flyout>
                             </controls:IconButton>
-                            <TextBlock Text="{x:Bind io:Path.GetFileName(services:AppSettings.Instance.Font), Mode=OneWay}"
-                                       ToolTipService.ToolTip="{x:Bind io:Path.GetFileName(services:AppSettings.Instance.Font), Mode=OneWay}"
+                            <TextBlock Text="{x:Bind io:Path.GetFileName(helpers:ServiceLocator.AppSettings.Font), Mode=OneWay}"
+                                       ToolTipService.ToolTip="{x:Bind io:Path.GetFileName(helpers:ServiceLocator.AppSettings.Font), Mode=OneWay}"
                                        VerticalAlignment="Center"
                                        Grid.Column="1"/>
                             <Button Grid.Column="2"
@@ -155,10 +156,10 @@
                                 <TextBlock Text="Preview Text"
                                            HorizontalTextAlignment="Center"
                                            FontSize="14"
-                                           FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                           FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                           FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                           FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}"/>
+                                           FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                           FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                           FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                           FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}"/>
                             </Border>
                         </Grid>
 
@@ -167,12 +168,12 @@
                                    Margin="0,8"
                                    FontSize="18" />
                         <ToggleSwitch Header="Show Item Checkbox"
-                                      IsOn="{x:Bind services:AppSettings.Instance.ShowCheckbox, Mode=TwoWay}" />
+                                      IsOn="{x:Bind helpers:ServiceLocator.AppSettings.ShowCheckbox, Mode=TwoWay}" />
                         <ToggleSwitch Header="Show File Extension"
-                                      IsOn="{x:Bind services:AppSettings.Instance.ShowFileExtension, Mode=TwoWay}" />
+                                      IsOn="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Mode=TwoWay}" />
 
                         <ComboBox Header="Copy Path Delimiter"
-                                  ItemsSource="{x:Bind services:AppSettings.Instance.CopyPathDelimiters}"
+                                  ItemsSource="{x:Bind helpers:ServiceLocator.AppSettings.CopyPathDelimiters}"
                                   SelectedItem="{Binding Source={StaticResource Locator}, Path=AppSettings.CopyPathDelimiter, Mode=TwoWay}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate x:DataType="platform:CopyPathDelimiter">
@@ -217,6 +218,12 @@
                                                    VerticalAlignment="Center" />
                                     </StackPanel>
                                 </Button>
+                                <winui:InfoBar IsClosable="False"
+                                               IsOpen="{x:Bind converters:VisibilityConverter.TrueWhenZero(Items.Count), Mode=OneWay}"
+                                               Severity="Warning"
+                                               Message="There are no accounts to show"
+                                               Grid.Row="1"
+                                               Grid.ColumnSpan="2" />
                                 <winui:ItemsRepeater ItemsSource="{x:Bind Items, Mode=OneWay}"
                                                      Grid.Row="1"
                                                      Grid.ColumnSpan="2">

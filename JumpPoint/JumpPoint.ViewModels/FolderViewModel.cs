@@ -11,7 +11,7 @@ using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.Platform.Services;
 using JumpPoint.ViewModels.Helpers;
 using NittyGritty.Models;
-using NittyGritty.Services;
+using NittyGritty.Services.Core;
 
 namespace JumpPoint.ViewModels
 {

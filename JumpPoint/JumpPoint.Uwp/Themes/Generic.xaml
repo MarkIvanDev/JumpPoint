@@ -623,6 +623,7 @@
                                              Grid.Column="0"
                                              IconSource="{TemplateBinding IconSource}"
                                              IsCompact="{TemplateBinding IsCompact}"
+                                             IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
                                              Foreground="{TemplateBinding Foreground}"
                                              Background="{TemplateBinding Background}"
                                              BorderThickness="{TemplateBinding BorderThickness}"
@@ -691,7 +692,7 @@
                             <Style x:Key="TabListView"
                                    TargetType="ListView">
                                 <Setter Property="VerticalAlignment"
-                                        Value="Top" />
+                                        Value="Stretch" />
                                 <Setter Property="IsTabStop"
                                         Value="False" />
                                 <Setter Property="TabNavigation"
@@ -701,11 +702,11 @@
                                 <Setter Property="SingleSelectionFollowsFocus"
                                         Value="False" />
                                 <Setter Property="CanReorderItems"
-                                        Value="True" />
+                                        Value="False" />
                                 <Setter Property="CanDragItems"
-                                        Value="True" />
+                                        Value="False" />
                                 <Setter Property="AllowDrop"
-                                        Value="True" />
+                                        Value="False" />
                                 <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
                                         Value="Auto" />
                                 <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
@@ -793,7 +794,8 @@
                                               IsPaneOpen="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsPaneOpen, Mode=TwoWay}"
                                               MenuItemsSource="{TemplateBinding MenuItemsSource}"
                                               MenuItemTemplateSelector="{TemplateBinding MenuItemTemplateSelector}"
-                                              FooterMenuItemsSource="{TemplateBinding FooterMenuItemsSource}">
+                                              FooterMenuItemsSource="{TemplateBinding FooterMenuItemsSource}"
+                                              PaneDisplayMode="Left">
                             
                             <ItemsControl ItemsSource="{TemplateBinding TabItemsSource}"
                                           ItemTemplate="{TemplateBinding TabItemTemplate}"
@@ -849,8 +851,6 @@
                                     <Style TargetType="ListViewItem">
                                         <Setter Property="Padding"
                                                 Value="0" />
-                                        <Setter Property="MinHeight"
-                                                Value="0" />
                                         <Setter Property="HorizontalContentAlignment"
                                                 Value="Stretch" />
                                         <Setter Property="VerticalContentAlignment"
@@ -882,6 +882,7 @@
                                                                            x:Name="Root"
                                                                            Control.IsTemplateFocusTarget="True"
                                                                            FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                                                                           CornerRadius="6,6,0,0"
                                                                            SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
                                                                            CheckBrush="{ThemeResource ListViewItemCheckBrush}"
                                                                            CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"

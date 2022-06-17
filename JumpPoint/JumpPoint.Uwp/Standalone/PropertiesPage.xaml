@@ -10,7 +10,7 @@
             xmlns:properties="using:JumpPoint.Uwp.Converters.Properties"
             xmlns:items="using:JumpPoint.Platform.Items"
             xmlns:models="using:JumpPoint.Platform.Models"
-            xmlns:ngconv="using:NittyGritty.UI.Converters"
+            xmlns:ngconv="using:NittyGritty.Uwp.Converters"
             xmlns:humanizer="using:Humanizer"
             xmlns:io="using:System.IO"
             xmlns:controls="using:JumpPoint.Uwp.Controls"
@@ -49,9 +49,9 @@
         </Style>
         <properties:PropertyValueConverter x:Key="PropertyValueConverter" />
         <properties:AttributeIconConverter x:Key="AttributeIconConverter" />
-        <ngconv:IsMoreThanZeroConverter x:Key="IsMoreThanZeroConverter" />
+        <ngconv:IsMoreThanConverter x:Key="IsMoreThanZeroConverter" />
         <ngconv:ChainConverter x:Key="VisibleWhenMoreThanZeroConverter">
-            <ngconv:IsMoreThanZeroConverter />
+            <ngconv:IsMoreThanConverter />
             <ngconv:BooleanValueConverter>
                 <ngconv:BooleanValueConverter.TrueValue>
                     <Visibility>Visible</Visibility>
@@ -70,7 +70,7 @@
             </ngconv:BooleanValueConverter.FalseValue>
         </ngconv:BooleanValueConverter>
         <ngconv:ChainConverter x:Key="CollapsedWhenZeroConverter">
-            <ngconv:IsZeroConverter />
+            <ngconv:IsEqualConverter />
             <ngconv:BooleanValueConverter>
                 <ngconv:BooleanValueConverter.TrueValue>
                     <Visibility>Collapsed</Visibility>
@@ -116,9 +116,9 @@
                            FontWeight="SemiBold"
                            Foreground="White"
                            Grid.Column="1"
-                           FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                           FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                           FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                           FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                           FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                           FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
             </Grid>
         </Grid>
         <Pivot Grid.Row="1">
@@ -216,9 +216,9 @@
                                                                VerticalAlignment="Center"
                                                                FontSize="16"
                                                                FontWeight="SemiBold"
-                                                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}"
-                                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}"
+                                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                                                 </Grid>
 
                                                 <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Name', Items.Count, humanizer:ShowQuantityAs.None)}"
@@ -315,9 +315,9 @@
                                                                VerticalAlignment="Center"
                                                                FontSize="16"
                                                                FontWeight="SemiBold"
-                                                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}"
-                                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}"
+                                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                                                 </Grid>
 
                                                 <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Name', Items.Count, humanizer:ShowQuantityAs.None)}"
@@ -451,9 +451,9 @@
                                                                VerticalAlignment="Center"
                                                                FontSize="16"
                                                                FontWeight="SemiBold"
-                                                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}"
-                                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}"
+                                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                                                 </Grid>
 
                                                 <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Name', Items.Count, humanizer:ShowQuantityAs.None)}"
@@ -573,9 +573,9 @@
                                                                VerticalAlignment="Center"
                                                                FontSize="16"
                                                                FontWeight="SemiBold"
-                                                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}"
-                                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}"
+                                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                                                 </Grid>
 
                                                 <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Name', Items.Count, humanizer:ShowQuantityAs.None)}"
@@ -672,9 +672,9 @@
                                                                VerticalAlignment="Center"
                                                                FontSize="16"
                                                                FontWeight="SemiBold"
-                                                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}"
-                                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}"
+                                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                                                 </Grid>
 
                                                 <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Name', Items.Count, humanizer:ShowQuantityAs.None)}"
@@ -780,10 +780,10 @@
                                                VerticalAlignment="Center"
                                                FontSize="16"
                                                FontWeight="SemiBold"
-                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}">
+                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}">
                                         <i:Interaction.Behaviors>
-                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
+                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
                                         </i:Interaction.Behaviors>
                                     </TextBlock>
                                 </Grid>
@@ -906,10 +906,10 @@
                                                VerticalAlignment="Center"
                                                FontSize="16"
                                                FontWeight="SemiBold"
-                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}">
+                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}">
                                         <i:Interaction.Behaviors>
-                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
+                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
                                         </i:Interaction.Behaviors>
                                     </TextBlock>
                                 </Grid>
@@ -993,10 +993,10 @@
                             <ComboBox.ItemTemplate>
                                 <DataTemplate x:DataType="items:FileBase">
                                     <TextBlock Text="{x:Bind Name, Mode=OneWay}"
-                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}">
+                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}">
                                         <i:Interaction.Behaviors>
-                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
+                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
                                         </i:Interaction.Behaviors>
                                     </TextBlock>
                                 </DataTemplate>
@@ -1113,10 +1113,10 @@
                                                VerticalAlignment="Center"
                                                FontSize="16"
                                                FontWeight="SemiBold"
-                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}">
+                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}">
                                         <i:Interaction.Behaviors>
-                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
+                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
                                         </i:Interaction.Behaviors>
                                     </TextBlock>
                                 </Grid>
@@ -1198,10 +1198,10 @@
                                                VerticalAlignment="Center"
                                                FontSize="16"
                                                FontWeight="SemiBold"
-                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}">
+                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}">
                                         <i:Interaction.Behaviors>
-                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
+                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
                                         </i:Interaction.Behaviors>
                                     </TextBlock>
                                 </Grid>

@@ -9,14 +9,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:JumpPoint.Uwp.Controls"
     xmlns:services="using:JumpPoint.Platform.Services"
+    xmlns:helpers="using:JumpPoint.Uwp.Helpers"
     mc:Ignorable="d">
 
     <Grid>
         <controls:JumpPointViewer Context="{x:Bind ViewModel, Mode=OneWay}"
-                                  SortBy="{x:Bind services:AppSettings.Instance.SortBy, Mode=OneWay}"
-                                  IsSortAscending="{x:Bind services:AppSettings.Instance.IsSortAscending, Mode=OneWay}"
-                                  GroupBy="{x:Bind services:AppSettings.Instance.GroupBy, Mode=OneWay}"
-                                  IsGroupAscending="{x:Bind services:AppSettings.Instance.IsGroupAscending, Mode=OneWay}"
+                                  SortBy="{x:Bind helpers:ServiceLocator.AppSettings.SortBy, Mode=OneWay}"
+                                  IsSortAscending="{x:Bind helpers:ServiceLocator.AppSettings.IsSortAscending, Mode=OneWay}"
+                                  GroupBy="{x:Bind helpers:ServiceLocator.AppSettings.GroupBy, Mode=OneWay}"
+                                  IsGroupAscending="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupAscending, Mode=OneWay}"
                                   IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                                   SelectedItems="{x:Bind ViewModel.SelectedItems, Mode=OneWay}"
                                   ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"/>

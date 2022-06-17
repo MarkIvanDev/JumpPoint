@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Xaml.Interactivity;
-using NittyGritty.UI.Helpers;
+using NittyGritty.Uwp.Helpers;
 
 namespace JumpPoint.Uwp.Interactivity.Actions
 {

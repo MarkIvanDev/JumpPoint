@@ -179,18 +179,18 @@ namespace JumpPoint.Platform.Extensions
             
             if (await extension.GetExtensionPropertiesAsync() is PropertySet properties)
             {
-                tool.Link = properties.TryGetValue(nameof(Tool.Link), out var l) && l is PropertySet lProp ?
+                tool.Link = properties.TryGetValue(nameof(Tool.Link), out var l) && l is PropertySet lProp && lProp.ContainsKey("#text") ?
                     lProp["#text"].ToString() : null;
-                tool.Service = properties.TryGetValue(nameof(Tool.Service), out var srv) && srv is PropertySet srvProp ?
+                tool.Service = properties.TryGetValue(nameof(Tool.Service), out var srv) && srv is PropertySet srvProp && srvProp.ContainsKey("#text") ?
                     srvProp["#text"].ToString() : null;
-                tool.Group = properties.TryGetValue(nameof(Tool.Group), out var g) && g is PropertySet gProp ?
+                tool.Group = properties.TryGetValue(nameof(Tool.Group), out var g) && g is PropertySet gProp && gProp.ContainsKey("#text") ?
                     gProp["#text"].ToString() : null;
-                var fileTypes = properties.TryGetValue(nameof(Tool.FileTypes), out var ft) && ft is PropertySet ftProp ?
+                var fileTypes = properties.TryGetValue(nameof(Tool.FileTypes), out var ft) && ft is PropertySet ftProp && ftProp.ContainsKey("#text") ?
                     ftProp["#text"].ToString().Split(';', StringSplitOptions.RemoveEmptyEntries) : null;
-                tool.FileTypes = new HashSet<string>(fileTypes, StringComparer.OrdinalIgnoreCase);
-                tool.IncludeFileTokens = properties.TryGetValue(nameof(Tool.IncludeFileTokens), out var ift) && ift is PropertySet iftProp && bool.TryParse(iftProp["#text"].ToString(), out var includeFileTokens) ?
+                tool.FileTypes = fileTypes != null ? new HashSet<string>(fileTypes, StringComparer.OrdinalIgnoreCase) : null;
+                tool.IncludeFileTokens = properties.TryGetValue(nameof(Tool.IncludeFileTokens), out var ift) && ift is PropertySet iftProp && iftProp.ContainsKey("#text") && bool.TryParse(iftProp["#text"].ToString(), out var includeFileTokens) ?
                     includeFileTokens : false;
-                tool.SupportsDirectories = properties.TryGetValue(nameof(Tool.SupportsDirectories), out var sd) && sd is PropertySet sdProp && bool.TryParse(sdProp["#text"].ToString(), out var supportsDirectories) ?
+                tool.SupportsDirectories = properties.TryGetValue(nameof(Tool.SupportsDirectories), out var sd) && sd is PropertySet sdProp && sdProp.ContainsKey("#text") && bool.TryParse(sdProp["#text"].ToString(), out var supportsDirectories) ?
                     supportsDirectories : false;
             }
 

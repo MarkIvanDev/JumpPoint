@@ -1,9 +1,10 @@
 ﻿using JumpPoint.ViewModels;
 using Microsoft.Xaml.Interactivity;
 using NittyGritty.Extensions;
-using NittyGritty.Services;
+using NittyGritty.Uwp.Services;
 using NittyGritty.Utilities;
 using System;
+using System.Linq;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -56,8 +57,8 @@ namespace JumpPoint.Uwp.Interactivity.Behaviors
                     var previousFrame = ((NavigationService)tabViewModel.NavigationHelper.NavigationService).Context;
 
                     // Retain navigation history and content
-                    AssociatedObject.BackStack.AddRange(previousFrame.BackStack);
-                    AssociatedObject.ForwardStack.AddRange(previousFrame.ForwardStack);
+                    AssociatedObject.BackStack.AddRange(previousFrame.BackStack.Select(b => new PageStackEntry(b.SourcePageType, b.Parameter, b.NavigationTransitionInfo)));
+                    AssociatedObject.ForwardStack.AddRange(previousFrame.ForwardStack.Select(f => new PageStackEntry(f.SourcePageType, f.Parameter, f.NavigationTransitionInfo)));
                     var content = previousFrame.Content;
                     previousFrame.Content = null;
                     AssociatedObject.Content = content;

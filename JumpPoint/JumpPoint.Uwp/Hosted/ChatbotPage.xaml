@@ -15,12 +15,12 @@
     xmlns:extensions="using:JumpPoint.Platform.Extensions"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
-    xmlns:actions="using:NittyGritty.UI.Interactivity.Actions"
+    xmlns:actions="using:NittyGritty.Uwp.Interactivity.Actions"
     xmlns:platform="using:JumpPoint.Platform"
     mc:Ignorable="d"
     xmlns:ngext="using:NittyGritty.Uwp.Extensions"
               xmlns:gtext="using:Glif.Core.Text"
-              xmlns:ngconv="using:NittyGritty.UI.Converters"
+              xmlns:ngconv="using:NittyGritty.Uwp.Converters"
               ngext:ApplicationViewExtensions.Title="Chat"
     ngext:TitleBarExtensions.ButtonBackgroundColor="Transparent"
     ngext:TitleBarExtensions.ButtonInactiveBackgroundColor="Transparent"
@@ -53,10 +53,10 @@
                           HorizontalAlignment="{x:Bind converters:ChatMessageConverter.GetHorizontalAlignment(Source)}"
                           Margin="{x:Bind converters:ChatMessageConverter.GetMargin(Source)}">
                         <TextBlock Text="{x:Bind Message, Mode=OneWay}"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                     </Grid>
                 </DataTemplate>
             </converters:MessageTypeTemplateSelector.Simple>
@@ -78,9 +78,9 @@
                         <TextBlock Text="{x:Bind Title, Mode=OneWay}"
                                    FontSize="16"
                                    FontWeight="SemiBold"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                         <TextBlock Text="{x:Bind Uri.AbsoluteUri}" 
                                    TextWrapping="Wrap"
                                    Grid.Row="1"/>
@@ -111,9 +111,9 @@
                         <TextBlock Text="{x:Bind Title, Mode=OneWay}"
                                    FontSize="18"
                                    FontWeight="SemiBold"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                         <winui:ItemsRepeater ItemsSource="{x:Bind Items}"
                                              Grid.Row="1">
                             <winui:ItemsRepeater.Layout>
@@ -135,9 +135,9 @@
                                                    Grid.Column="1"
                                                    VerticalAlignment="Center"
                                                    TextWrapping="WrapWholeWords"
-                                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                                     </Grid>
                                     <Grid ColumnSpacing="12">
                                         <Grid.ColumnDefinitions>
@@ -190,9 +190,9 @@
                         <TextBlock Text="{x:Bind Title, Mode=OneWay}"
                                    FontSize="18"
                                    FontWeight="SemiBold"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                         <winui:ItemsRepeater ItemsSource="{x:Bind Items}"
                                              Grid.Row="1">
                             <winui:ItemsRepeater.Layout>
@@ -217,18 +217,18 @@
                                                    FontSize="16"
                                                    Grid.Column="1"
                                                    VerticalAlignment="Center"
-                                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                                         <TextBlock Text="{x:Bind Description, Mode=OneWay}"
                                                    FontSize="16"
                                                    Grid.ColumnSpan="2"
                                                    Grid.Row="1"
                                                    Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
-                                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                                     </Grid>
                                     <Grid ColumnSpacing="12"
                                           RowSpacing="4">
@@ -355,9 +355,9 @@
                         <TextBlock Text="{x:Bind Title, Mode=OneWay}"
                                    FontSize="18"
                                    FontWeight="SemiBold"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                         <winui:ItemsRepeater ItemsSource="{x:Bind Items}"
                                              Grid.Row="1">
                             <winui:ItemsRepeater.Layout>
@@ -382,19 +382,19 @@
                                                    FontSize="16"
                                                    Grid.Column="1"
                                                    VerticalAlignment="Center"
-                                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                                         <TextBlock Text="{x:Bind Description, Mode=OneWay}"
                                                    Grid.Row="1"
                                                    Grid.ColumnSpan="2"
                                                    FontSize="16"
                                                    TextWrapping="WrapWholeWords"
                                                    Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
-                                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(services:AppSettings.Instance.FontWeight), Mode=OneWay}"
-                                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                                     </Grid>
                                     <Grid ColumnSpacing="4">
                                         <Grid.ColumnDefinitions>
@@ -501,9 +501,9 @@
                                    TextWrapping="WrapWholeWords"
                                    FontSize="18"
                                    FontWeight="SemiBold"
-                                   FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                         <winui:ItemsRepeater ItemsSource="{x:Bind Items}">
                             <DataTemplate x:DataType="services:CommandInfo">
                                 <Grid RowSpacing="4">
@@ -516,9 +516,9 @@
                                     <TextBlock Text="{x:Bind CommandFormat}"
                                                FontSize="16"
                                                FontWeight="SemiBold"
-                                               FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                                     <TextBlock Text="{x:Bind Description}"
                                                Grid.Row="1"
                                                TextWrapping="WrapWholeWords"/>
@@ -554,9 +554,9 @@
                                                     <ListView.ItemTemplate>
                                                         <DataTemplate x:DataType="x:String">
                                                             <TextBlock Text="{x:Bind }"
-                                                                       FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                                                                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                                                                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                                                                       FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                                                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                                                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                                                         </DataTemplate>
                                                     </ListView.ItemTemplate>
                                                     <i:Interaction.Behaviors>
@@ -618,9 +618,9 @@
                            FontWeight="SemiBold"
                            Foreground="White"
                            Grid.Column="1"
-                           FontFamily="{x:Bind services:AppSettings.Instance.Font, Mode=OneWay}"
-                           FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(services:AppSettings.Instance.FontStyle), Mode=OneWay}"
-                           FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(services:AppSettings.Instance.FontStretch), Mode=OneWay}" />
+                           FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                           FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                           FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
             </Grid>
         </Grid>
         <TextBlock Text="Chat"

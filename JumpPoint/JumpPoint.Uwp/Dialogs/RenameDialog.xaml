@@ -13,6 +13,11 @@
     DefaultButton="Primary"
     IsPrimaryButtonEnabled="{x:Bind ViewModel.IsValid, Mode=OneWay}">
 
+    <ContentDialog.Resources>
+        <Style TargetType="local:RenameDialog"
+               BasedOn="{StaticResource DefaultContentDialogStyle}" />
+    </ContentDialog.Resources>
+
     <StackPanel>
         <TextBlock Text="{x:Bind ViewModel.OldName, Converter={StaticResource StringFormatConverter}, ConverterParameter='Old name: {0}'}"
                    TextWrapping="WrapWholeWords"/>

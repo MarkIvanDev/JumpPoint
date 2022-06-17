@@ -22,7 +22,7 @@ using NittyGritty;
 using NittyGritty.Models;
 using NittyGritty.Platform.Contacts;
 using NittyGritty.Platform.Payloads;
-using NittyGritty.Services;
+using NittyGritty.Uwp.Services;
 using NittyGritty.Utilities;
 using NittyGritty.Uwp;
 using NittyGritty.Uwp.Extensions.Activation;
@@ -38,6 +38,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using JumpListService = JumpPoint.Platform.Services.JumpListService;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace JumpPoint.Uwp
 {
@@ -122,7 +123,7 @@ namespace JumpPoint.Uwp
         {
             var rootFrame = GetNavigationContext();
 
-            var host = EnumHelper<ProtocolPath>.ParseOrDefault(args.Uri.Host);
+            var host = EnumHelper<ProtocolPath>.ParseOrDefault(args.Uri.Host, ignoreCase: true);
             var appPath = host.ToAppPath();
             var query = QueryString.Parse(args.Uri.Query.TrimStart('?'));
             switch (host)
@@ -518,7 +519,7 @@ namespace JumpPoint.Uwp
                                     break;
 
                                 case PathKind.Cloud when lastCrumb?.AppPath == AppPath.Cloud:
-                                    if (EnumHelper<CloudStorageProvider>.ParseOrDefault(lastCrumb?.DisplayName) != CloudStorageProvider.Unknown)
+                                    if (EnumHelper<CloudStorageProvider>.ParseOrDefault(lastCrumb?.DisplayName, ignoreCase: true) != CloudStorageProvider.Unknown)
                                     {
                                         NavigateShell(new QueryString()
                                         {
@@ -844,7 +845,7 @@ namespace JumpPoint.Uwp
 
         public override async Task Startup(IActivatedEventArgs args)
         {
-            Singleton<ThemeService>.Instance.SetTheme(AppSettings.Instance.Theme);
+            Singleton<ThemeService>.Instance.SetTheme(SimpleIoc.Default.GetInstance<AppSettings>().Theme);
             await JumpListService.Initialize();
             FontPicker.ClearFontCache();
         }

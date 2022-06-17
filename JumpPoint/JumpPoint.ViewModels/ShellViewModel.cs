@@ -15,7 +15,7 @@ using JumpPoint.ViewModels.Dialogs;
 using JumpPoint.ViewModels.Helpers;
 using NittyGritty.Commands;
 using NittyGritty.Models;
-using NittyGritty.Services;
+using NittyGritty.Services.Core;
 using NittyGritty.ViewModels;
 using JumpPoint.Platform;
 using JumpPoint.Platform.Models.Extensions;
@@ -222,9 +222,9 @@ namespace JumpPoint.ViewModels
             set { Set(ref _isSubscriber, value); }
         }
 
-        private ReadOnlyCollection<SubscriptionAddOn> _subscriptions;
+        private IList<SubscriptionAddOn> _subscriptions;
 
-        public ReadOnlyCollection<SubscriptionAddOn> Subscriptions
+        public IList<SubscriptionAddOn> Subscriptions
         {
             get { return _subscriptions; }
             set { Set(ref _subscriptions, value); }
@@ -242,8 +242,8 @@ namespace JumpPoint.ViewModels
                     {
                         await Run(async (token) =>
                         {
-                            Subscriptions = await addOnService.GetSubscriptionAddOns(
-                                AddOnKeys.Monthly1, AddOnKeys.Monthly2, AddOnKeys.Monthly3, AddOnKeys.Monthly4, AddOnKeys.Monthly5);
+                            Subscriptions = await addOnService.GetSubscriptionAddOns(new List<string> {
+                                AddOnKeys.Monthly1, AddOnKeys.Monthly2, AddOnKeys.Monthly3, AddOnKeys.Monthly4, AddOnKeys.Monthly5 });
                             foreach (var item in Subscriptions)
                             {
                                 var isActive = await addOnService.IsActive(item);
