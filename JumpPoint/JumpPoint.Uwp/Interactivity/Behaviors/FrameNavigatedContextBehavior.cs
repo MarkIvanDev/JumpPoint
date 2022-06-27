@@ -9,6 +9,8 @@ using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using JumpPoint.Platform;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace JumpPoint.Uwp.Interactivity.Behaviors
 {
@@ -45,6 +47,7 @@ namespace JumpPoint.Uwp.Interactivity.Behaviors
                             h => page.DataContextChanged -= h,
                             h => (o, e) => h(o, e),
                             (subscriber, s, e) => tabViewModel.Context = page.DataContext as ShellContextViewModelBase);
+                        Messenger.Default.Send(new NotificationMessage(nameof(TabViewModel.Context)), MessengerTokens.CommandManagement);
                     }
                     else
                     {
