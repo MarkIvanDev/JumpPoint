@@ -1,5 +1,11 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Management;
+using System.Runtime.InteropServices;
 using JumpPoint.FullTrust.Core;
 using JumpPoint.FullTrust.Core.Payloads;
 using JumpPoint.FullTrust.IO;
@@ -9,6 +15,12 @@ namespace JumpPoint.FullTrust
 {
     class Program
     {
+        [DllImport("User32.dll", SetLastError = true)]
+        static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
+
+        [DllImport("User32.dll")]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
+
         static void Main(string[] args)
         {
             if (args.Length > 2)
@@ -133,7 +145,13 @@ namespace JumpPoint.FullTrust
             {
                 foreach (var path in payload.PathCollection)
                 {
-                    Process.Start(SystemApp.CommandPrompt, $"/k \"pushd {path}\"");
+                    var process = Process.Start(new ProcessStartInfo
+                    {
+                        FileName = SystemApp.CommandPrompt,
+                        Arguments = $"/k \"pushd {path}\"",
+                        UseShellExecute = false,
+                    });
+                    ShowWindow(process);
                 }
             }
         }
@@ -145,7 +163,13 @@ namespace JumpPoint.FullTrust
             {
                 foreach (var path in payload.PathCollection)
                 {
-                    Process.Start(SystemApp.Powershell, $"-noexit -command \"cd \'{path}\'\"");
+                    var process = Process.Start(new ProcessStartInfo
+                    {
+                        FileName = SystemApp.Powershell,
+                        Arguments = $"-noexit -command \"cd \'{path}\'\"",
+                        UseShellExecute = false,
+                    });
+                    ShowWindow(process);
                 }
             }
         }
@@ -183,6 +207,36 @@ namespace JumpPoint.FullTrust
                     Process.Start(payload.App, payload.Arguments);
                 }
             }
+        }
+
+        static void ShowWindow(Process process)
+        {
+            try
+            {
+                var children = GetChildProcesses(process.Id);
+                foreach (var item in children)
+                {
+                    try
+                    {
+                        item.WaitForInputIdle();
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        static IList<Process> GetChildProcesses(int id)
+        {
+            var query = $"Select * From Win32_Process Where ParentProcessId = {id}";
+            var searcher = new ManagementObjectSearcher(query);
+            var processList = searcher.Get();
+
+            return processList.Cast<ManagementObject>().Select(p => Process.GetProcessById(Convert.ToInt32(p.GetPropertyValue("ProcessId")))).ToList();
         }
     }
 }
