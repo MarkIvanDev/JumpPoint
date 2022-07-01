@@ -12,6 +12,7 @@ using JumpPoint.Platform;
 using JumpPoint.Platform.Extensions;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Models;
+using JumpPoint.Platform.Services;
 using JumpPoint.ViewModels.Helpers;
 using NittyGritty.Commands;
 using NittyGritty.Models;
@@ -24,12 +25,13 @@ namespace JumpPoint.ViewModels
     {
         private readonly SemaphoreSlim refreshSemaphore;
         private readonly IShortcutService shortcutService;
+        private readonly AppSettings appSettings;
 
-        public ShellContextViewModelBase(IShortcutService shortcutService)
+        public ShellContextViewModelBase(IShortcutService shortcutService, AppSettings appSettings)
         {
             refreshSemaphore = new SemaphoreSlim(1, 1);
             this.shortcutService = shortcutService;
-
+            this.appSettings = appSettings;
             HasCustomGrouping = false;
             ProgressInfo = new ProgressInfo();
             IsPinned = false;
@@ -107,6 +109,8 @@ namespace JumpPoint.ViewModels
                         PathHash = HashTool.Sha256Hash(PathInfo.Path.ToUpperInvariant());
                         IsPinned = shortcutService.Exists(PathHash);
 
+                        Filter();
+
                         await Refresh(token);
                     }
                     catch (OperationCanceledException)
@@ -135,6 +139,7 @@ namespace JumpPoint.ViewModels
             PathInfo.PropertyChanged += PathInfo_PropertyChanged;
             Items.CollectionChanged += Items_CollectionChanged;
             SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
+            appSettings.PropertyChanged += AppSettings_PropertyChanged;
         }
 
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -170,6 +175,19 @@ namespace JumpPoint.ViewModels
             Messenger.Default.Send(new NotificationMessage(nameof(SelectedItems)), MessengerTokens.CommandManagement);
         }
 
+        private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(AppSettings.ShowHiddenItems))
+            {
+                Filter();
+            }
+        }
+
+        private void Filter()
+        {
+            
+        }
+
         public override void SaveState(Dictionary<string, object> state)
         {
             CancelAll();
@@ -179,6 +197,7 @@ namespace JumpPoint.ViewModels
             PathInfo.PropertyChanged -= PathInfo_PropertyChanged;
             Items.CollectionChanged -= Items_CollectionChanged;
             SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+            appSettings.PropertyChanged -= AppSettings_PropertyChanged;
         }
     }
 }
