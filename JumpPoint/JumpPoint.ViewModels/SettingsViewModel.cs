@@ -27,7 +27,7 @@ namespace JumpPoint.ViewModels
         private readonly IDialogService dialogService;
         private readonly AppSettings appSettings;
 
-        public SettingsViewModel(IDialogService dialogService, IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService)
+        public SettingsViewModel(IDialogService dialogService, IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
         {
             this.dialogService = dialogService;
             this.appSettings = appSettings;

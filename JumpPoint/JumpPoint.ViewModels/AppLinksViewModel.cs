@@ -17,7 +17,7 @@ namespace JumpPoint.ViewModels
     public class AppLinksViewModel : ShellContextViewModelBase
     {
 
-        public AppLinksViewModel(IShortcutService shortcutService) : base(shortcutService)
+        public AppLinksViewModel(IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
         {
 
         }
@@ -48,7 +48,8 @@ namespace JumpPoint.ViewModels
             Providers = new Collection<AppLinkProvider>(providers);
 
             var appLinks = await AppLinkService.GetAppLinks();
-            Items.ReplaceRange(appLinks);
+            Items.Clear();
+            Items.AddRange(appLinks);
 
             for (int i = 0; i < appLinks.Count; i++)
             {

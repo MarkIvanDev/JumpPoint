@@ -17,7 +17,7 @@ namespace JumpPoint.ViewModels
     public class WorkspaceViewModel : ShellContextViewModelBase
     {
 
-        public WorkspaceViewModel(IShortcutService shortcutService) : base(shortcutService)
+        public WorkspaceViewModel(IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
         {
 
         }
@@ -35,7 +35,8 @@ namespace JumpPoint.ViewModels
 
             // Grouped by Jump Point Item Type
             var items = await WorkspaceService.GetItems(workspace.Id);
-            Items.ReplaceRange(items);
+            Items.Clear();
+            Items.AddRange(items);
 
             for (int i = 0; i < items.Count; i++)
             {
