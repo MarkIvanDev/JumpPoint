@@ -7,6 +7,7 @@ using NittyGritty.Uwp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -77,9 +78,9 @@ namespace JumpPoint.Uwp
 
         private void ExceptionManagement(NotificationMessage<Exception> message)
         {
-            if (message.Content is UnauthorizedAccessException)
+            if (message.Content is UnauthorizedAccessException uae)
             {
-                notifyGrantAccess.IsOpen = true;
+                //notifyGrantAccess.IsOpen = true;
             }
             else
             {

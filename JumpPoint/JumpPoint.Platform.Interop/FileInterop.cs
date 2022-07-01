@@ -72,11 +72,11 @@ namespace JumpPoint.Platform.Interop
                         break;
                     //throw new FileNotFoundException($"File/Folder does not exist: {path}", path, win32Exception);
                     case 5:
-                        Messenger.Default.Send(
-                            new NotificationMessage<Exception>(
-                                new UnauthorizedAccessException(win32Exception.Message),
-                                win32Exception.Message),
-                            MessengerTokens.ExceptionManagement);
+                        //Messenger.Default.Send(
+                        //    new NotificationMessage<Exception>(
+                        //        new UnauthorizedAccessException(win32Exception.Message),
+                        //        win32Exception.Message),
+                        //    MessengerTokens.ExceptionManagement);
                         break;
                     //throw new UnauthorizedAccessException(win32Exception.Message, win32Exception);
                     case 123:
@@ -108,8 +108,8 @@ namespace JumpPoint.Platform.Interop
             {
                 do
                 {
-                    if (((FileAttributes)findData.dwFileAttributes & FileAttributes.Hidden) != FileAttributes.Hidden &&
-                        ((FileAttributes)findData.dwFileAttributes & FileAttributes.System) != FileAttributes.System)
+                    // ((FileAttributes)findData.dwFileAttributes & FileAttributes.Hidden) != FileAttributes.Hidden &&
+                    if (((FileAttributes)findData.dwFileAttributes & FileAttributes.System) != FileAttributes.System)
                     {
                         var path = Path.Combine(directory, findData.cFileName);
                         if (((FileAttributes)findData.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
@@ -141,8 +141,8 @@ namespace JumpPoint.Platform.Interop
             {
                 do
                 {
-                    if (((FileAttributes)findData.dwFileAttributes & FileAttributes.Hidden) != FileAttributes.Hidden &&
-                        ((FileAttributes)findData.dwFileAttributes & FileAttributes.System) != FileAttributes.System)
+                    // ((FileAttributes)findData.dwFileAttributes & FileAttributes.Hidden) != FileAttributes.Hidden &&
+                    if (((FileAttributes)findData.dwFileAttributes & FileAttributes.System) != FileAttributes.System)
                     {
                         if (((FileAttributes)findData.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
                         {
@@ -213,8 +213,8 @@ namespace JumpPoint.Platform.Interop
             {
                 do
                 {
-                    if (((FileAttributes)findData.dwFileAttributes & FileAttributes.Hidden) != FileAttributes.Hidden &&
-                        ((FileAttributes)findData.dwFileAttributes & FileAttributes.System) != FileAttributes.System)
+                    // ((FileAttributes)findData.dwFileAttributes & FileAttributes.Hidden) != FileAttributes.Hidden &&
+                    if (((FileAttributes)findData.dwFileAttributes & FileAttributes.System) != FileAttributes.System)
                     {
                         if (((FileAttributes)findData.dwFileAttributes & FileAttributes.Directory) != FileAttributes.Directory)
                         {
@@ -414,7 +414,7 @@ namespace JumpPoint.Platform.Interop
             }
             catch (Exception ex)
             {
-                Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
+                //Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
                 return null;
             }
         }
@@ -441,7 +441,7 @@ namespace JumpPoint.Platform.Interop
             }
             catch (Exception ex)
             {
-                Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
+                //Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
                 return null;
             }
         }

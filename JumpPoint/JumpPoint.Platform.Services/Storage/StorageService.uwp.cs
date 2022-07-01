@@ -418,7 +418,7 @@ namespace JumpPoint.Platform.Services
             }
             catch (Exception ex)
             {
-                Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
+                //Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
             }
         }
 

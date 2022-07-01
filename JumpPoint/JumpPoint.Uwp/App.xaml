@@ -768,6 +768,7 @@
                     <conv:NullableDateTimeOffsetToLocalConverter x:Key="NullableDateTimeOffsetToLocalConverter" />
                     <conv:NullableUlongToDoubleConverter x:Key="NullableUlongToDoubleConverter" />
                     <conv:FontFamilyConverter x:Key="FontFamilyConverter" />
+                    <conv:HiddenOpacityConverter x:Key="HiddenOpacityConverter" />
                 </ResourceDictionary>
 
             </ResourceDictionary.MergedDictionaries>
