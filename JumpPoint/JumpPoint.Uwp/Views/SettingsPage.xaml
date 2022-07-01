@@ -19,6 +19,7 @@
             xmlns:platform="using:JumpPoint.Platform"
             xmlns:helpers="using:JumpPoint.Uwp.Helpers"
             xmlns:i="using:Microsoft.Xaml.Interactivity"
+            xmlns:icore="using:Microsoft.Xaml.Interactions.Core"
             xmlns:behaviors="using:JumpPoint.Uwp.Interactivity.Behaviors"
             mc:Ignorable="d">
 
@@ -184,6 +185,20 @@
                             </ComboBox.ItemTemplate>
                         </ComboBox>
 
+                        <TextBlock Text="System"
+                                   FontWeight="SemiBold"
+                                   Margin="0,8"
+                                   FontSize="18" />
+                        <StackPanel>
+                            <ToggleSwitch Header="Run at Startup"
+                                          IsOn="{x:Bind helpers:ServiceLocator.AppSettings.RunAtStartup, Mode=TwoWay}"
+                                          IsEnabled="{x:Bind helpers:ServiceLocator.AppSettings.CanChangeStartup(helpers:ServiceLocator.AppSettings.StartupStatus), Mode=OneWay}"
+                                          Toggled="OnRunAtStartupToggled" />
+                            <TextBlock Foreground="Red"
+                                       Text="{x:Bind helpers:ServiceLocator.AppSettings.StartupDescription(helpers:ServiceLocator.AppSettings.StartupStatus), Mode=OneWay}"
+                                       Visibility="{x:Bind GetStatusDescriptionVisibility(helpers:ServiceLocator.AppSettings.StartupStatus), Mode=OneWay}"
+                                       TextWrapping="WrapWholeWords"/>
+                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>

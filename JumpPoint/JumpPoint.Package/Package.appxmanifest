@@ -76,8 +76,15 @@
           </uap5:AppExecutionAlias>
         </uap5:Extension>
 
-		<Extension Category="windows.updateTask" EntryPoint="JumpPoint.Uwp.Tasks.Update" />
-		
+        <Extension Category="windows.updateTask" EntryPoint="JumpPoint.Uwp.Tasks.Update" />
+        <desktop:Extension Category="windows.startupTask"
+                           Executable="JumpPoint.FullTrust.Startup\JumpPoint.FullTrust.Startup.exe"
+                           EntryPoint="Windows.FullTrustApplication">
+          <desktop:StartupTask DisplayName="Jump Point"
+                               TaskId="JumpPoint_StartupTask"
+                               Enabled="false"/>
+        </desktop:Extension>
+
         <uap:Extension Category="windows.protocol">
           <uap:Protocol Name="jumppoint" ReturnResults="none" />
         </uap:Extension>
@@ -95,21 +102,21 @@
             <uap:DataFormat>ApplicationLink</uap:DataFormat>
           </uap:ShareTarget>
         </uap:Extension>
-        
+
         <uap3:Extension Category="windows.appExtensionHost">
           <uap3:AppExtensionHost>
             <uap3:Name>com.jumppoint.ext.applinkprovider</uap3:Name>
             <uap3:Name>com.jumppoint.ext.tool</uap3:Name>
           </uap3:AppExtensionHost>
         </uap3:Extension>
-        
+
         <!-- App Link Providers -->
         <uap:Extension Category="windows.appService" EntryPoint="JumpPoint.Uwp.Tasks.AppLinkProviders.LocalProvider">
           <uap3:AppService Name="com.jumppoint.svc.localalp" uap4:SupportsMultipleInstances="true" />
         </uap:Extension>
-		<uap:Extension Category="windows.appService" EntryPoint="JumpPoint.Uwp.Tasks.AppLinkProviders.SettingsProvider">
-		  <uap3:AppService Name="com.jumppoint.svc.settingsalp" uap4:SupportsMultipleInstances="true" />
-		</uap:Extension>
+        <uap:Extension Category="windows.appService" EntryPoint="JumpPoint.Uwp.Tasks.AppLinkProviders.SettingsProvider">
+          <uap3:AppService Name="com.jumppoint.svc.settingsalp" uap4:SupportsMultipleInstances="true" />
+        </uap:Extension>
         <uap3:Extension Category="windows.appExtension">
           <uap3:AppExtension Id="applinkprovider.manual"
                              Name="com.jumppoint.ext.applinkprovider"
@@ -132,18 +139,18 @@
             </uap3:Properties>
           </uap3:AppExtension>
         </uap3:Extension>
-		<uap3:Extension Category="windows.appExtension">
-		  <uap3:AppExtension Id="applinkprovider.settings"
-							 Name="com.jumppoint.ext.applinkprovider"
-							 DisplayName="Windows Settings"
-							 Description="App Links to Windows Settings"
-							 PublicFolder="Extensions\AppLinkProvider\Settings">
-			  <uap3:Properties>
-				  <Service>com.jumppoint.svc.settingsalp</Service>
-			  </uap3:Properties>
-		  </uap3:AppExtension>
-		</uap3:Extension>
-        
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Id="applinkprovider.settings"
+                   Name="com.jumppoint.ext.applinkprovider"
+                   DisplayName="Windows Settings"
+                   Description="App Links to Windows Settings"
+                   PublicFolder="Extensions\AppLinkProvider\Settings">
+            <uap3:Properties>
+              <Service>com.jumppoint.svc.settingsalp</Service>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+
         <!-- Hash Tools -->
         <uap3:Extension Category="windows.appExtension">
           <uap3:AppExtension Id="tool.hash.md5"
@@ -210,7 +217,7 @@
             </uap3:Properties>
           </uap3:AppExtension>
         </uap3:Extension>
-      
+
         <!-- Photo Tools -->
         <uap:Extension Category="windows.appService" EntryPoint="JumpPoint.Uwp.Tasks.PhotoTools.SetWallpaper">
           <uap3:AppService Name="com.jumppoint.svc.setwallpaper" uap4:SupportsMultipleInstances="true" />
@@ -292,7 +299,7 @@
             </uap3:Properties>
           </uap3:AppExtension>
         </uap3:Extension>
-        
+
       </Extensions>
     </Application>
   </Applications>

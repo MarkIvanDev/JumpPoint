@@ -56,6 +56,24 @@ namespace JumpPoint.ViewModels
 
         #endregion
 
+        #region System
+
+        private AsyncRelayCommand _RunAtStartupToggled;
+        public AsyncRelayCommand RunAtStartupToggledCommand => _RunAtStartupToggled ?? (_RunAtStartupToggled = new AsyncRelayCommand(
+            async () =>
+            {
+                if (appSettings.RunAtStartup)
+                {
+                    await appSettings.EnableRunAtStartup();
+                }
+                else
+                {
+                    await appSettings.DisableRunAtStartup();
+                }
+            }));
+
+        #endregion
+
         #region Accounts
 
         private ObservableCollection<CloudAccountGroup> _accounts;
@@ -162,6 +180,9 @@ namespace JumpPoint.ViewModels
 
         protected override async Task Refresh(CancellationToken token)
         {
+            await appSettings.RefreshRunAtStartup();
+            token.ThrowIfCancellationRequested();
+
             Accounts = new ObservableCollection<CloudAccountGroup>
             {
                 new CloudAccountGroup(CloudStorageProvider.OneDrive, await CloudStorageService.GetAccounts(CloudStorageProvider.OneDrive))

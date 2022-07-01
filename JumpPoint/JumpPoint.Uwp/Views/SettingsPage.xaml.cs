@@ -1,4 +1,5 @@
 ﻿using JumpPoint.Platform;
+using JumpPoint.Uwp.Helpers;
 using JumpPoint.ViewModels;
 using JumpPoint.ViewModels.Helpers;
 using NittyGritty.Uwp;
@@ -54,5 +55,33 @@ namespace JumpPoint.Uwp.Views
             base.OnNavigatedTo(e);
         }
 
+        private async void OnRunAtStartupToggled(object sender, RoutedEventArgs e)
+        {
+            var toggle = (ToggleSwitch)sender;
+            if (toggle.IsOn)
+            {
+                await ServiceLocator.AppSettings.EnableRunAtStartup();
+            }
+            else
+            {
+                await ServiceLocator.AppSettings.DisableRunAtStartup();
+            }
+        }
+
+        public Visibility GetStatusDescriptionVisibility(StartupStatus status)
+        {
+            switch (status)
+            {
+                case StartupStatus.Disabled:
+                case StartupStatus.Enabled:
+                    return Visibility.Collapsed;
+
+                case StartupStatus.DisabledByUser:
+                case StartupStatus.DisabledByPolicy:
+                case StartupStatus.EnabledByPolicy:
+                default:
+                    return Visibility.Visible;
+            }
+        }
     }
 }

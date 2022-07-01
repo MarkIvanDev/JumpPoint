@@ -76,6 +76,13 @@
         </uap5:Extension>
         
         <Extension Category="windows.updateTask" EntryPoint="JumpPoint.Uwp.Tasks.Update" />
+        <desktop:Extension Category="windows.startupTask"
+                           Executable="JumpPoint.FullTrust.Startup\JumpPoint.FullTrust.Startup.exe"
+                           EntryPoint="Windows.FullTrustApplication">
+          <desktop:StartupTask DisplayName="Jump Point - Beta"
+                               TaskId="JumpPointBeta_StartupTask"
+                               Enabled="false"/>
+        </desktop:Extension>
         
         <uap:Extension Category="windows.protocol">
           <uap:Protocol Name="jumppoint-beta" ReturnResults="none" />
