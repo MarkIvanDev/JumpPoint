@@ -177,6 +177,7 @@
     <Compile Include="Converters\FileThumbnailConverter.cs" />
     <Compile Include="Converters\FontFamilyConverter.cs" />
     <Compile Include="Converters\HexColorConverter.cs" />
+    <Compile Include="Converters\HiddenOpacityConverter.cs" />
     <Compile Include="Converters\HumanizerConverter.cs" />
     <Compile Include="Converters\IconConverter.cs" />
     <Compile Include="Converters\IsEqualConverter.cs" />

@@ -705,6 +705,12 @@
                                                     <IconSourceElement IconSource="{StaticResource FileExtensionIcon}" />
                                                 </ToggleMenuFlyoutItem.Icon>
                                             </ToggleMenuFlyoutItem>
+                                            <ToggleMenuFlyoutItem Text="Hidden Items"
+                                                                  IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowHiddenItems, Mode=TwoWay}">
+                                                <ToggleMenuFlyoutItem.Icon>
+                                                    <IconSourceElement IconSource="{StaticResource HiddenItemsIcon}" />
+                                                </ToggleMenuFlyoutItem.Icon>
+                                            </ToggleMenuFlyoutItem>
                                             <MenuFlyoutSeparator />
                                             <ToggleMenuFlyoutItem Text="Back button"
                                                                   IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowBack, Mode=TwoWay}">

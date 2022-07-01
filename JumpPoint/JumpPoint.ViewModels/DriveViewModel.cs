@@ -18,7 +18,7 @@ namespace JumpPoint.ViewModels
     public class DriveViewModel : ShellContextViewModelBase
     {
 
-        public DriveViewModel(IShortcutService shortcutService) : base(shortcutService)
+        public DriveViewModel(IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
         {
         }
 
@@ -47,7 +47,8 @@ namespace JumpPoint.ViewModels
 
             token.ThrowIfCancellationRequested();
             var items = await StorageService.GetItems(drive);
-            Items.ReplaceRange(items);
+            Items.Clear();
+            Items.AddRange(items);
 
             for (int i = 0; i < items.Count; i++)
             {

@@ -263,7 +263,8 @@
                        HorizontalAlignment="Center"
                        Width="20"
                        Height="20"
-                       Loaded="OnIconLoaded">
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}">
                     <Image.Source>
                         <BitmapImage DecodePixelHeight="24"
                                      DecodePixelWidth="24"
@@ -328,7 +329,8 @@
                        HorizontalAlignment="Center"
                        Width="20"
                        Height="20"
-                       Loaded="OnIconLoaded" />
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}"/>
 
                 <!-- Name -->
                 <HyperlinkButton VerticalAlignment="Center"
@@ -394,7 +396,8 @@
                        HorizontalAlignment="Center"
                        Width="20"
                        Height="20"
-                       Loaded="OnIconLoaded">
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}">
                     <Image.Source>
                         <BitmapImage DecodePixelHeight="24"
                                      DecodePixelWidth="24"
@@ -707,7 +710,8 @@
                        VerticalAlignment="Center"
                        Width="48"
                        Height="48"
-                       Loaded="OnIconLoaded">
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}">
                     <Image.Source>
                         <BitmapImage DecodePixelHeight="58"
                                      DecodePixelWidth="58"
@@ -760,7 +764,8 @@
                        VerticalAlignment="Center"
                        Width="48"
                        Height="48"
-                       Loaded="OnIconLoaded" />
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}" />
 
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="8,0,8,8" Grid.Row="1">
                     <Grid.RowDefinitions>
@@ -813,7 +818,8 @@
                        VerticalAlignment="Center"
                        Width="48"
                        Height="48"
-                       Loaded="OnIconLoaded">
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}">
                     <Image.Source>
                         <BitmapImage DecodePixelHeight="58"
                                      DecodePixelWidth="58"
@@ -1094,7 +1100,8 @@
                        VerticalAlignment="Center"
                        Width="48"
                        Height="48"
-                       Loaded="OnIconLoaded">
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}">
                     <Image.Source>
                         <BitmapImage DecodePixelHeight="58"
                                      DecodePixelWidth="58"
@@ -1149,7 +1156,8 @@
                        VerticalAlignment="Center"
                        Width="48"
                        Height="48"
-                       Loaded="OnIconLoaded"/>
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}" />
 
                 <StackPanel Grid.Column="1" Margin="2,12,8,0">
                     <HyperlinkButton HorizontalContentAlignment="Stretch"
@@ -1201,7 +1209,8 @@
                        VerticalAlignment="Center"
                        Width="48"
                        Height="48"
-                       Loaded="OnIconLoaded">
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}">
                     <Image.Source>
                         <BitmapImage DecodePixelHeight="58"
                                      DecodePixelWidth="58"
@@ -1525,7 +1534,8 @@
                        HorizontalAlignment="Center"
                        Width="20"
                        Height="20"
-                       Loaded="OnIconLoaded">
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}">
                     <Image.Source>
                         <BitmapImage DecodePixelHeight="24"
                                      DecodePixelWidth="24"
@@ -1570,7 +1580,8 @@
                        HorizontalAlignment="Center"
                        Width="20"
                        Height="20"
-                       Loaded="OnIconLoaded" />
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}" />
 
                 <!-- Name -->
                 <HyperlinkButton VerticalAlignment="Center"
@@ -1617,7 +1628,8 @@
                        HorizontalAlignment="Center"
                        Width="20"
                        Height="20"
-                       Loaded="OnIconLoaded">
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}">
                     <Image.Source>
                         <BitmapImage DecodePixelHeight="24"
                                      DecodePixelWidth="24"

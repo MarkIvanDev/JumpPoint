@@ -20,7 +20,7 @@ namespace JumpPoint.ViewModels
     public class DashboardViewModel : ShellContextViewModelBase
     {
 
-        public DashboardViewModel(IShortcutService shortcutService) : base(shortcutService)
+        public DashboardViewModel(IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
         {
             
         }
@@ -55,7 +55,8 @@ namespace JumpPoint.ViewModels
             items.AddRange(systemFolders);
             token.ThrowIfCancellationRequested();
 
-            Items.ReplaceRange(items);
+            Items.Clear();
+            Items.AddRange(items);
 
             for (int i = 0; i < items.Count; i++)
             {

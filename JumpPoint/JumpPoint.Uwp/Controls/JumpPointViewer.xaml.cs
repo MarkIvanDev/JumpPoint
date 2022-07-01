@@ -20,6 +20,7 @@ using System.Linq;
 using NittyGritty.Uwp.Helpers;
 using Windows.UI.Xaml.Controls.Primitives;
 using System.ComponentModel;
+using NittyGritty.Collections;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -151,25 +152,25 @@ namespace JumpPoint.Uwp.Controls
 
 
 
-        public ObservableRangeCollection<JumpPointItem> ItemsSource
+        public DynamicCollection<JumpPointItem> ItemsSource
         {
-            get { return (ObservableRangeCollection<JumpPointItem>)GetValue(ItemsSourceProperty); }
+            get { return (DynamicCollection<JumpPointItem>)GetValue(ItemsSourceProperty); }
             set { SetValue(ItemsSourceProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for ItemsSource.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ItemsSourceProperty =
-            DependencyProperty.Register("ItemsSource", typeof(ObservableRangeCollection<JumpPointItem>), typeof(JumpPointViewer), new PropertyMetadata(null, OnItemsSourceChanged));
+            DependencyProperty.Register("ItemsSource", typeof(DynamicCollection<JumpPointItem>), typeof(JumpPointViewer), new PropertyMetadata(null, OnItemsSourceChanged));
 
         private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is JumpPointViewer viewer)
             {
-                viewer.UpdateItemsSource(e.OldValue as ObservableRangeCollection<JumpPointItem>, e.NewValue as ObservableRangeCollection<JumpPointItem>);
+                viewer.UpdateItemsSource(e.OldValue as DynamicCollection<JumpPointItem>, e.NewValue as DynamicCollection<JumpPointItem>);
             }
         }
 
-        private void UpdateItemsSource(ObservableRangeCollection<JumpPointItem> oldCollection, ObservableRangeCollection<JumpPointItem> newCollection)
+        private void UpdateItemsSource(DynamicCollection<JumpPointItem> oldCollection, DynamicCollection<JumpPointItem> newCollection)
         {
             if (oldCollection != null)
             {

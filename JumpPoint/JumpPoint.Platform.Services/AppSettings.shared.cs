@@ -343,6 +343,19 @@ namespace JumpPoint.Platform.Services
             }
         }
         
+        public bool ShowHiddenItems
+        {
+            get { return Preferences.Get(nameof(ShowHiddenItems), false); }
+            set
+            {
+                if (ShowHiddenItems != value)
+                {
+                    Preferences.Set(nameof(ShowHiddenItems), value);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         #region SortBy
 
         public SortBy SortBy

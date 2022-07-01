@@ -18,7 +18,7 @@ namespace JumpPoint.ViewModels
     public class FolderViewModel : ShellContextViewModelBase
     {
 
-        public FolderViewModel(IShortcutService shortcutService) : base(shortcutService)
+        public FolderViewModel(IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
         {
         }
 
@@ -46,7 +46,8 @@ namespace JumpPoint.ViewModels
 
             token.ThrowIfCancellationRequested();
             var items = await StorageService.GetItems(folder);
-            Items.ReplaceRange(items);
+            Items.Clear();
+            Items.AddRange(items);
 
             for (int i = 0; i < items.Count; i++)
             {
