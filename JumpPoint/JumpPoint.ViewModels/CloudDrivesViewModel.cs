@@ -23,8 +23,8 @@ namespace JumpPoint.ViewModels
         protected override async Task Refresh(CancellationToken token)
         {
             var drives = await CloudStorageService.GetDrives();
-            Items.Clear();
             Items.AddRange(drives);
+            token.ThrowIfCancellationRequested();
 
             for (int i = 0; i < drives.Count; i++)
             {
@@ -34,9 +34,8 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        public override async void LoadState(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
         {
-            base.LoadState(parameter, state);
             PathInfo.Place(nameof(AppPath.CloudDrives), parameter);
             await RefreshCommand.TryExecute();
         }

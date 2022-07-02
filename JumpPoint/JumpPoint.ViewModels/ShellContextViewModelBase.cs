@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -25,6 +26,7 @@ namespace JumpPoint.ViewModels
 {
     public abstract class ShellContextViewModelBase : ViewModelBase
     {
+        private readonly SemaphoreSlim initializeSemaphore;
         private readonly SemaphoreSlim refreshSemaphore;
         private readonly object filterLock;
         private readonly IShortcutService shortcutService;
@@ -32,6 +34,7 @@ namespace JumpPoint.ViewModels
 
         public ShellContextViewModelBase(IShortcutService shortcutService, AppSettings appSettings)
         {
+            initializeSemaphore = new SemaphoreSlim(1, 1);
             refreshSemaphore = new SemaphoreSlim(1, 1);
             filterLock = new object();
             this.shortcutService = shortcutService;
@@ -107,6 +110,7 @@ namespace JumpPoint.ViewModels
                     await refreshSemaphore.WaitAsync();
                     try
                     {
+                        Items.Clear();
                         ProgressInfo.Start();
                         ItemStats.Reset();
 
@@ -119,6 +123,7 @@ namespace JumpPoint.ViewModels
                     }
                     catch (OperationCanceledException)
                     {
+                        Items.Clear();
                     }
                     catch (Exception ex)
                     {
@@ -134,17 +139,33 @@ namespace JumpPoint.ViewModels
 
         protected abstract Task Refresh(CancellationToken token);
 
-        public override void LoadState(object parameter, Dictionary<string, object> state)
+        public sealed override async void LoadState(object parameter, Dictionary<string, object> state)
         {
-            if (parameter is TabParameter tabParameter)
+            await initializeSemaphore.WaitAsync();
+            try
             {
-                TabKey = tabParameter.TabKey;
+                if (parameter is TabParameter tabParameter)
+                {
+                    TabKey = tabParameter.TabKey;
+                }
+                PathInfo.PropertyChanged += PathInfo_PropertyChanged;
+                Items.CollectionChanged += Items_CollectionChanged;
+                SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
+                appSettings.PropertyChanged += AppSettings_PropertyChanged;
+
+                await Initialize(parameter, state);
             }
-            PathInfo.PropertyChanged += PathInfo_PropertyChanged;
-            Items.CollectionChanged += Items_CollectionChanged;
-            SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
-            appSettings.PropertyChanged += AppSettings_PropertyChanged;
+            catch (Exception ex)
+            {
+                Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
+            }
+            finally
+            {
+                initializeSemaphore.Release();
+            }
         }
+
+        protected abstract Task Initialize(object parameter, Dictionary<string, object> state);
 
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -209,7 +230,6 @@ namespace JumpPoint.ViewModels
         {
             CancelAll();
             Item = null;
-            Items.Clear();
             SelectedItems.Clear();
             PathInfo.PropertyChanged -= PathInfo_PropertyChanged;
             Items.CollectionChanged -= Items_CollectionChanged;
