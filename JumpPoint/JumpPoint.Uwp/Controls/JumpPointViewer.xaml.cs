@@ -330,18 +330,15 @@ namespace JumpPoint.Uwp.Controls
 
         private void OnCheckboxUnchecked(object sender, RoutedEventArgs e)
         {
-            if (App.Current.Resources.TryGetValue("SelectNoneCommand", out var resource) && resource is XamlUICommand command)
+            if (SelectedItems != null)
             {
-                command.Command.Execute(null);
+                SelectedItems.Clear();
             }
         }
 
         private void OnCheckboxChecked(object sender, RoutedEventArgs e)
         {
-            if (App.Current.Resources.TryGetValue("SelectAllCommand", out var resource) && resource is XamlUICommand command)
-            {
-                command.Command.Execute(null);
-            }
+            Messenger.Default.Send(new NotificationMessage(nameof(CommandHelper.SelectAllCommand)), $"{MessengerTokens.JumpPointViewerSelection}_{Context.TabKey}");
         }
 
         private void OnItemOpened(object sender, RoutedEventArgs e)
@@ -353,6 +350,11 @@ namespace JumpPoint.Uwp.Controls
             {
                 command.Command.Execute(new OpenItemParameter(ViewModelLocator.Instance.GetNavigationHelper(Context.TabKey), item));
             }
+        }
+
+        private void OnDetailsHeaderTapped(object sender, TappedRoutedEventArgs e)
+        {
+            e.Handled = true;
         }
     }
 
