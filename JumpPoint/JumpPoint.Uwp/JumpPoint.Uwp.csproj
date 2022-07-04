@@ -171,6 +171,7 @@
     <Compile Include="Converters\BitmapImageConverter.cs" />
     <Compile Include="Converters\ByteSizeConverter.cs" />
     <Compile Include="Converters\CharacterUnicodeConverter.cs" />
+    <Compile Include="Converters\ChatMessageBackgroundConverter.cs" />
     <Compile Include="Converters\ChatMessageConverter.cs" />
     <Compile Include="Converters\EventArgs\ItemClickEventArgsConverter.cs" />
     <Compile Include="Converters\EventArgs\ItemDoubleClickEventArgsConverter.cs" />
