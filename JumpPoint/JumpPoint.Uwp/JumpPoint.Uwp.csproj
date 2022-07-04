@@ -171,6 +171,7 @@
     <Compile Include="Converters\BitmapImageConverter.cs" />
     <Compile Include="Converters\ByteSizeConverter.cs" />
     <Compile Include="Converters\CharacterUnicodeConverter.cs" />
+    <Compile Include="Converters\ChatMessageBackgroundConverter.cs" />
     <Compile Include="Converters\ChatMessageConverter.cs" />
     <Compile Include="Converters\EventArgs\ItemClickEventArgsConverter.cs" />
     <Compile Include="Converters\EventArgs\ItemDoubleClickEventArgsConverter.cs" />
@@ -4980,11 +4981,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\Commands.xaml">
+    <Page Include="Resources\Commands.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\CustomStyles.xaml">
+    <Page Include="Resources\CustomStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4992,7 +4993,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\IconSources.xaml">
+    <Page Include="Resources\IconSources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

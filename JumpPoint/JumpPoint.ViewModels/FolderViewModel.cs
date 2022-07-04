@@ -30,8 +30,6 @@ namespace JumpPoint.ViewModels
             set { Set(ref _storageType, value); }
         }
 
-        #region Shell Integration
-
         protected override async Task Refresh(CancellationToken token)
         {
             Item = PathInfo.Parameter is TabParameter tab && tab.Parameter is FolderBase fb ?
@@ -43,11 +41,11 @@ namespace JumpPoint.ViewModels
             }
             await JumpPointService.Load(folder);
             PathInfo.Tag = folder.FolderTemplate;
-
             token.ThrowIfCancellationRequested();
+
             var items = await StorageService.GetItems(folder);
-            Items.Clear();
             Items.AddRange(items);
+            token.ThrowIfCancellationRequested();
 
             for (int i = 0; i < items.Count; i++)
             {
@@ -57,12 +55,8 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        #endregion
-
-
-        public override async void LoadState(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
         {
-            base.LoadState(parameter, state);
             string path = null;
             if (parameter is TabParameter tab)
             {

@@ -146,7 +146,8 @@
                     <Grid CornerRadius="12,12,0,0"
                           Margin="1,0"
                           Padding="12,2,8,2"
-                          Background="Transparent">
+                          Background="Transparent"
+                          ToolTipService.ToolTip="{x:Bind Context.PathInfo.Path, Mode=OneWay}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />

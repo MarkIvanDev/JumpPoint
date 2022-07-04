@@ -16,8 +16,9 @@
             
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
-                <ResourceDictionary Source="ms-appx:///Themes/Commands.xaml" />
-                <ResourceDictionary Source="ms-appx:///Themes/CustomStyles.xaml" />
+                <ResourceDictionary Source="ms-appx:///Resources/IconSources.xaml" />
+                <ResourceDictionary Source="ms-appx:///Resources/Commands.xaml" />
+                <ResourceDictionary Source="ms-appx:///Resources/CustomStyles.xaml" />
                 <ResourceDictionary>
                     <!--<Color x:Key="SystemAccentColor">#1B5EBF</Color>-->
                     <SolidColorBrush x:Key="SystemAccentBrush"

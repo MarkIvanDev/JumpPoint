@@ -283,19 +283,11 @@ namespace JumpPoint.ViewModels
 
         #endregion
 
-        public override async void LoadState(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
         {
             PathInfo.Place(nameof(AppPath.Settings), parameter);
-            ItemStats.Reset();
             await RefreshCommand.TryExecute();
         }
-
-        public override void SaveState(Dictionary<string, object> state)
-        {
-            CancelAll();
-            ItemStats.Reset();
-        }
-
 
     }
 

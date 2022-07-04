@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="ms-appx:///Themes/IconSources.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Resources/IconSources.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
     <XamlUICommand x:Key="MoreCommand"

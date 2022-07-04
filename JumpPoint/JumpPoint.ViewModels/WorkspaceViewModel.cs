@@ -22,8 +22,6 @@ namespace JumpPoint.ViewModels
 
         }
 
-        #region Shell Integration
-
         protected override async Task Refresh(CancellationToken token)
         {
             Item = await WorkspaceService.GetWorkspaceByName(PathInfo.DisplayName);
@@ -35,8 +33,8 @@ namespace JumpPoint.ViewModels
 
             // Grouped by Jump Point Item Type
             var items = await WorkspaceService.GetItems(workspace.Id);
-            Items.Clear();
             Items.AddRange(items);
+            token.ThrowIfCancellationRequested();
 
             for (int i = 0; i < items.Count; i++)
             {
@@ -46,11 +44,8 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        #endregion  
-
-        public override async void LoadState(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
         {
-            base.LoadState(parameter, state);
             string path = null;
             if (parameter is TabParameter tab && tab.Parameter is string queryString)
             {
