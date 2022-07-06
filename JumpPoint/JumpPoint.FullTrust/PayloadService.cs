@@ -9,7 +9,7 @@ namespace JumpPoint.FullTrust
     {
         private static readonly ApplicationDataContainer LocalSettings = ApplicationData.Current.LocalSettings;
 
-        public static OpenPayload GetOpenPayload()
+        public static OpenPayload? GetOpenPayload()
         {
             if (LocalSettings.Values[nameof(OpenPayload)] is ApplicationDataCompositeValue payload)
             {
@@ -22,7 +22,7 @@ namespace JumpPoint.FullTrust
             return null;
         }
 
-        public static PastePayload GetPastePayload()
+        public static PastePayload? GetPastePayload()
         {
             if (LocalSettings.Values[nameof(PastePayload)] is ApplicationDataCompositeValue payload)
             {
@@ -38,7 +38,7 @@ namespace JumpPoint.FullTrust
             return null;
         }
 
-        public static DeletePayload GetDeletePayload()
+        public static DeletePayload? GetDeletePayload()
         {
             if (LocalSettings.Values[nameof(DeletePayload)] is ApplicationDataCompositeValue payload)
             {
@@ -52,7 +52,7 @@ namespace JumpPoint.FullTrust
             return null;
         }
 
-        public static CmdPayload GetCmdPayload()
+        public static CmdPayload? GetCmdPayload()
         {
             if (LocalSettings.Values[nameof(CmdPayload)] is ApplicationDataCompositeValue payload)
             {
@@ -65,7 +65,7 @@ namespace JumpPoint.FullTrust
             return null;
         }
 
-        public static PowershellPayload GetPowershellPayload()
+        public static PowershellPayload? GetPowershellPayload()
         {
             if (LocalSettings.Values[nameof(PowershellPayload)] is ApplicationDataCompositeValue payload)
             {
@@ -78,7 +78,7 @@ namespace JumpPoint.FullTrust
             return null;
         }
 
-        public static CleanMgrPayload GetCleanMgrPayload()
+        public static CleanMgrPayload? GetCleanMgrPayload()
         {
             if (LocalSettings.Values[nameof(CleanMgrPayload)] is ApplicationDataCompositeValue payload)
             {
@@ -91,7 +91,7 @@ namespace JumpPoint.FullTrust
             return null;
         }
 
-        public static SysAppPayload GetSysAppPayload()
+        public static SysAppPayload? GetSysAppPayload()
         {
             if (LocalSettings.Values[nameof(SysAppPayload)] is ApplicationDataCompositeValue payload)
             {

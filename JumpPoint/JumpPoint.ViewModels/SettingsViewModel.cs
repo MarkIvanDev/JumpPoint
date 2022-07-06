@@ -27,7 +27,7 @@ namespace JumpPoint.ViewModels
         private readonly IDialogService dialogService;
         private readonly AppSettings appSettings;
 
-        public SettingsViewModel(IDialogService dialogService, IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService)
+        public SettingsViewModel(IDialogService dialogService, IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
         {
             this.dialogService = dialogService;
             this.appSettings = appSettings;
@@ -51,6 +51,24 @@ namespace JumpPoint.ViewModels
                     appSettings.FontStyle = font.FontStyle;
                     appSettings.FontWeight = font.FontWeight;
                     appSettings.FontStretch = font.FontStretch;
+                }
+            }));
+
+        #endregion
+
+        #region System
+
+        private AsyncRelayCommand _RunAtStartupToggled;
+        public AsyncRelayCommand RunAtStartupToggledCommand => _RunAtStartupToggled ?? (_RunAtStartupToggled = new AsyncRelayCommand(
+            async () =>
+            {
+                if (appSettings.RunAtStartup)
+                {
+                    await appSettings.EnableRunAtStartup();
+                }
+                else
+                {
+                    await appSettings.DisableRunAtStartup();
                 }
             }));
 
@@ -162,6 +180,9 @@ namespace JumpPoint.ViewModels
 
         protected override async Task Refresh(CancellationToken token)
         {
+            await appSettings.RefreshRunAtStartup();
+            token.ThrowIfCancellationRequested();
+
             Accounts = new ObservableCollection<CloudAccountGroup>
             {
                 new CloudAccountGroup(CloudStorageProvider.OneDrive, await CloudStorageService.GetAccounts(CloudStorageProvider.OneDrive))
@@ -262,19 +283,11 @@ namespace JumpPoint.ViewModels
 
         #endregion
 
-        public override async void LoadState(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
         {
             PathInfo.Place(nameof(AppPath.Settings), parameter);
-            ItemStats.Reset();
             await RefreshCommand.TryExecute();
         }
-
-        public override void SaveState(Dictionary<string, object> state)
-        {
-            CancelAll();
-            ItemStats.Reset();
-        }
-
 
     }
 

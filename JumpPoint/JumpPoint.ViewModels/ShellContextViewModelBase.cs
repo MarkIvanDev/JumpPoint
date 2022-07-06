@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -11,8 +12,11 @@ using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform;
 using JumpPoint.Platform.Extensions;
 using JumpPoint.Platform.Items;
+using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Models;
+using JumpPoint.Platform.Services;
 using JumpPoint.ViewModels.Helpers;
+using NittyGritty.Collections;
 using NittyGritty.Commands;
 using NittyGritty.Models;
 using NittyGritty.Services.Core;
@@ -22,21 +26,26 @@ namespace JumpPoint.ViewModels
 {
     public abstract class ShellContextViewModelBase : ViewModelBase
     {
+        private readonly SemaphoreSlim initializeSemaphore;
         private readonly SemaphoreSlim refreshSemaphore;
+        private readonly object filterLock;
         private readonly IShortcutService shortcutService;
+        private readonly AppSettings appSettings;
 
-        public ShellContextViewModelBase(IShortcutService shortcutService)
+        public ShellContextViewModelBase(IShortcutService shortcutService, AppSettings appSettings)
         {
+            initializeSemaphore = new SemaphoreSlim(1, 1);
             refreshSemaphore = new SemaphoreSlim(1, 1);
+            filterLock = new object();
             this.shortcutService = shortcutService;
-
+            this.appSettings = appSettings;
             HasCustomGrouping = false;
             ProgressInfo = new ProgressInfo();
             IsPinned = false;
             PathInfo = new PathInfo();
             ItemStats = new ItemStats();
             SelectedItemStats = new ItemStats();
-            Items = new ObservableRangeCollection<JumpPointItem>();
+            Items = new DynamicCollection<JumpPointItem>();
             SelectedItems = new ObservableCollection<JumpPointItem>();
         }
 
@@ -74,7 +83,7 @@ namespace JumpPoint.ViewModels
 
         public ItemStats SelectedItemStats { get; }
 
-        public ObservableRangeCollection<JumpPointItem> Items { get; }
+        public DynamicCollection<JumpPointItem> Items { get; }
 
         public ObservableCollection<JumpPointItem> SelectedItems { get; }
 
@@ -101,16 +110,20 @@ namespace JumpPoint.ViewModels
                     await refreshSemaphore.WaitAsync();
                     try
                     {
+                        Items.Clear();
                         ProgressInfo.Start();
                         ItemStats.Reset();
 
                         PathHash = HashTool.Sha256Hash(PathInfo.Path.ToUpperInvariant());
                         IsPinned = shortcutService.Exists(PathHash);
 
+                        Filter();
+
                         await Refresh(token);
                     }
                     catch (OperationCanceledException)
                     {
+                        Items.Clear();
                     }
                     catch (Exception ex)
                     {
@@ -126,16 +139,33 @@ namespace JumpPoint.ViewModels
 
         protected abstract Task Refresh(CancellationToken token);
 
-        public override void LoadState(object parameter, Dictionary<string, object> state)
+        public sealed override async void LoadState(object parameter, Dictionary<string, object> state)
         {
-            if (parameter is TabParameter tabParameter)
+            await initializeSemaphore.WaitAsync();
+            try
             {
-                TabKey = tabParameter.TabKey;
+                if (parameter is TabParameter tabParameter)
+                {
+                    TabKey = tabParameter.TabKey;
+                }
+                PathInfo.PropertyChanged += PathInfo_PropertyChanged;
+                Items.CollectionChanged += Items_CollectionChanged;
+                SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
+                appSettings.PropertyChanged += AppSettings_PropertyChanged;
+
+                await Initialize(parameter, state);
             }
-            PathInfo.PropertyChanged += PathInfo_PropertyChanged;
-            Items.CollectionChanged += Items_CollectionChanged;
-            SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
+            catch (Exception ex)
+            {
+                Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
+            }
+            finally
+            {
+                initializeSemaphore.Release();
+            }
         }
+
+        protected abstract Task Initialize(object parameter, Dictionary<string, object> state);
 
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -170,15 +200,41 @@ namespace JumpPoint.ViewModels
             Messenger.Default.Send(new NotificationMessage(nameof(SelectedItems)), MessengerTokens.CommandManagement);
         }
 
+        private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(AppSettings.ShowHiddenItems))
+            {
+                Filter();
+            }
+        }
+
+        private void Filter()
+        {
+            lock (filterLock)
+            {
+                Items.Filter = i =>
+                {
+                    if (!appSettings.ShowHiddenItems && i is StorageItemBase item && item.Attributes.HasValue)
+                    {
+                        return (item.Attributes.Value & System.IO.FileAttributes.Hidden) != System.IO.FileAttributes.Hidden;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                };
+            }
+        }
+
         public override void SaveState(Dictionary<string, object> state)
         {
             CancelAll();
             Item = null;
-            Items.Clear();
             SelectedItems.Clear();
             PathInfo.PropertyChanged -= PathInfo_PropertyChanged;
             Items.CollectionChanged -= Items_CollectionChanged;
             SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+            appSettings.PropertyChanged -= AppSettings_PropertyChanged;
         }
     }
 }

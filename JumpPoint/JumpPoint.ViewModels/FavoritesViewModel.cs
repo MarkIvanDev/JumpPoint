@@ -14,7 +14,7 @@ namespace JumpPoint.ViewModels
     public class FavoritesViewModel : ShellContextViewModelBase
     {
 
-        public FavoritesViewModel(IShortcutService shortcutService) : base(shortcutService)
+        public FavoritesViewModel(IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
         {
 
         }
@@ -23,7 +23,8 @@ namespace JumpPoint.ViewModels
         {
             // Grouped by Jump Point Item Type
             var favorites = await DashboardService.GetFavorites();
-            Items.ReplaceRange(favorites);
+            Items.AddRange(favorites);
+            token.ThrowIfCancellationRequested();
 
             for (int i = 0; i < favorites.Count; i++)
             {
@@ -33,9 +34,8 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        public override async void LoadState(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
         {
-            base.LoadState(parameter, state);
             PathInfo.Place(nameof(AppPath.Favorites), parameter);
             await RefreshCommand.TryExecute();
         }

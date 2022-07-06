@@ -31,6 +31,7 @@
     <nguwp:NGPage.Resources>
         <XamlUICommand x:Key="ExecuteCommand"
                        Command="{x:Bind ViewModel.ExecuteCommand}"/>
+        
         <ngconv:ValueWhenConverter x:Key="VisibleWhenOneConverter">
             <ngconv:ValueWhenConverter.When>
                 <x:Int32>1</x:Int32>
@@ -46,12 +47,18 @@
             <converters:MessageTypeTemplateSelector.Simple>
                 <DataTemplate x:DataType="services:SimpleChatMessage">
                     <Grid CornerRadius="4"
-                          Background="{ThemeResource SystemChromeMediumLowColor}"
+                          Background="{Binding ElementName=ChatMessageBackgroundConverter, Path=Background, Mode=OneWay}"
                           Padding="16"
                           MaxWidth="480"
                           MinWidth="120"
                           HorizontalAlignment="{x:Bind converters:ChatMessageConverter.GetHorizontalAlignment(Source)}"
                           Margin="{x:Bind converters:ChatMessageConverter.GetMargin(Source)}">
+                        <Grid.Resources>
+                            <converters:ChatMessageBackgroundConverter x:Name="ChatMessageBackgroundConverter"
+                                                                       BotBackground="{ThemeResource SystemChromeMediumLowColor}"
+                                                                       UserBackground="{ThemeResource SystemAccentBrush}"
+                                                                       Source="{x:Bind Source, Mode=OneWay}"/>
+                        </Grid.Resources>
                         <TextBlock Text="{x:Bind Message, Mode=OneWay}"
                                    FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
                                    FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"

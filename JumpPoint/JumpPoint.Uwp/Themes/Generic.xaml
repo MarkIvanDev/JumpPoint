@@ -5,7 +5,7 @@
                     xmlns:winui="using:Microsoft.UI.Xaml.Controls">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="ms-appx:///Themes/CustomStyles.xaml" />
+        <ResourceDictionary Source="ms-appx:///Resources/CustomStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="controls:Expander">

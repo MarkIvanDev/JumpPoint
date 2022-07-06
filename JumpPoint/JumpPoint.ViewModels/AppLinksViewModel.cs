@@ -17,7 +17,7 @@ namespace JumpPoint.ViewModels
     public class AppLinksViewModel : ShellContextViewModelBase
     {
 
-        public AppLinksViewModel(IShortcutService shortcutService) : base(shortcutService)
+        public AppLinksViewModel(IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
         {
 
         }
@@ -46,9 +46,11 @@ namespace JumpPoint.ViewModels
         {
             var providers = await AppLinkProviderManager.GetProviders();
             Providers = new Collection<AppLinkProvider>(providers);
+            token.ThrowIfCancellationRequested();
 
             var appLinks = await AppLinkService.GetAppLinks();
-            Items.ReplaceRange(appLinks);
+            Items.AddRange(appLinks);
+            token.ThrowIfCancellationRequested();
 
             for (int i = 0; i < appLinks.Count; i++)
             {
@@ -58,9 +60,8 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        public override async void LoadState(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
         {
-            base.LoadState(parameter, state);
             PathInfo.Place(nameof(AppPath.AppLinks), parameter);
             await RefreshCommand.TryExecute();
         }

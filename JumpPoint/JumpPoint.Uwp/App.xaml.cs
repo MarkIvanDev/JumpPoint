@@ -805,6 +805,19 @@ namespace JumpPoint.Uwp
             }
         }
 
+        protected override Task HandleDesktopActivation(IActivatedEventArgs args)
+        {
+            if (args.Kind == ActivationKind.StartupTask)
+            {
+                NavigateShell(new QueryString()
+                {
+                    { nameof(PathInfo.Type), AppPath.Dashboard.ToString() },
+                    { nameof(PathInfo.Path), nameof(AppPath.Dashboard) }
+                }.ToString());
+            }
+            return Task.CompletedTask;
+        }
+
         #endregion
 
         public override Frame GetNavigationContext()

@@ -145,9 +145,15 @@
            TargetType="ListViewItem">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="VerticalContentAlignment" Value="Stretch" />
-            <Setter Property="Margin" Value="0,2,4,2" />
+            <Setter Property="Margin" Value="0" />
             <Setter Property="Padding" Value="0" />
-            <!--<Setter Property="ContextFlyout" Value="{StaticResource ItemContextFlyout}" />-->
+            <Setter Property="UseSystemFocusVisuals" Value="True" />
+            <Setter Property="FocusVisualMargin" Value="0" />
+            <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource ListViewItemFocusVisualPrimaryBrush}" />
+            <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+            <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource ListViewItemFocusVisualSecondaryBrush}" />
+            <Setter Property="FocusVisualSecondaryThickness" Value="1" />
+            <Setter Property="TabNavigation" Value="Local" />
         </Style>
         
         <!--#region Details View -->
@@ -156,7 +162,7 @@
             <Setter Property="Padding" Value="12,0" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
+                    <!--<ControlTemplate TargetType="ListViewItem">
                         <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
                         x:Name="Root"
                         Control.IsTemplateFocusTarget="True"
@@ -242,6 +248,37 @@
                             </VisualStateManager.VisualStateGroups>
                         </ListViewItemPresenter>
 
+                    </ControlTemplate>-->
+                    <ControlTemplate TargetType="ListViewItem">
+                        <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
+                                               Control.IsTemplateFocusTarget="True"
+                                               FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                                               FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
+                                               FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
+                                               FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
+                                               FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
+                                               SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
+                                               CheckBrush="{ThemeResource SystemAccentBrush}"
+                                               CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
+                                               DragBackground="{ThemeResource ListViewItemDragBackground}"
+                                               DragForeground="{ThemeResource ListViewItemDragForeground}"
+                                               FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
+                                               FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
+                                               PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
+                                               PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                                               PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
+                                               SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
+                                               SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
+                                               SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
+                                               PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                                               SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
+                                               DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                               DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                               ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                               ContentMargin="{TemplateBinding Padding}"
+                                               CheckMode="Inline" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -263,7 +300,8 @@
                        HorizontalAlignment="Center"
                        Width="20"
                        Height="20"
-                       Loaded="OnIconLoaded">
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}">
                     <Image.Source>
                         <BitmapImage DecodePixelHeight="24"
                                      DecodePixelWidth="24"
@@ -328,7 +366,8 @@
                        HorizontalAlignment="Center"
                        Width="20"
                        Height="20"
-                       Loaded="OnIconLoaded" />
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}"/>
 
                 <!-- Name -->
                 <HyperlinkButton VerticalAlignment="Center"
@@ -394,7 +433,8 @@
                        HorizontalAlignment="Center"
                        Width="20"
                        Height="20"
-                       Loaded="OnIconLoaded">
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}">
                     <Image.Source>
                         <BitmapImage DecodePixelHeight="24"
                                      DecodePixelWidth="24"
@@ -605,7 +645,7 @@
             <!--<Setter Property="VerticalContentAlignment" Value="Top" />-->
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
+                    <!--<ControlTemplate TargetType="ListViewItem">
                         <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
                         x:Name="Root"
                         Control.IsTemplateFocusTarget="True"
@@ -691,6 +731,37 @@
                             </VisualStateManager.VisualStateGroups>
                         </ListViewItemPresenter>
 
+                    </ControlTemplate>-->
+                    <ControlTemplate TargetType="ListViewItem">
+                        <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
+                                               Control.IsTemplateFocusTarget="True"
+                                               FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                                               FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
+                                               FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
+                                               FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
+                                               FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
+                                               SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
+                                               CheckBrush="{ThemeResource SystemAccentBrush}"
+                                               CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
+                                               DragBackground="{ThemeResource ListViewItemDragBackground}"
+                                               DragForeground="{ThemeResource ListViewItemDragForeground}"
+                                               FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
+                                               FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
+                                               PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
+                                               PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                                               PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
+                                               SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
+                                               SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
+                                               SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
+                                               PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                                               SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
+                                               DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                               DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                               ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                               ContentMargin="{TemplateBinding Padding}"
+                                               CheckMode="Overlay" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -707,7 +778,8 @@
                        VerticalAlignment="Center"
                        Width="48"
                        Height="48"
-                       Loaded="OnIconLoaded">
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}">
                     <Image.Source>
                         <BitmapImage DecodePixelHeight="58"
                                      DecodePixelWidth="58"
@@ -760,7 +832,8 @@
                        VerticalAlignment="Center"
                        Width="48"
                        Height="48"
-                       Loaded="OnIconLoaded" />
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}" />
 
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="8,0,8,8" Grid.Row="1">
                     <Grid.RowDefinitions>
@@ -813,7 +886,8 @@
                        VerticalAlignment="Center"
                        Width="48"
                        Height="48"
-                       Loaded="OnIconLoaded">
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}">
                     <Image.Source>
                         <BitmapImage DecodePixelHeight="58"
                                      DecodePixelWidth="58"
@@ -992,7 +1066,7 @@
                TargetType="ListViewItem" BasedOn="{StaticResource AllLayoutItemStyle}">
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
+                    <!--<ControlTemplate TargetType="ListViewItem">
                         <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
                         x:Name="Root"
                         Control.IsTemplateFocusTarget="True"
@@ -1078,6 +1152,37 @@
                             </VisualStateManager.VisualStateGroups>
                         </ListViewItemPresenter>
 
+                    </ControlTemplate>-->
+                    <ControlTemplate TargetType="ListViewItem">
+                        <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
+                                               Control.IsTemplateFocusTarget="True"
+                                               FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                                               FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
+                                               FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
+                                               FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
+                                               FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
+                                               SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
+                                               CheckBrush="{ThemeResource SystemAccentBrush}"
+                                               CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
+                                               DragBackground="{ThemeResource ListViewItemDragBackground}"
+                                               DragForeground="{ThemeResource ListViewItemDragForeground}"
+                                               FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
+                                               FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
+                                               PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
+                                               PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                                               PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
+                                               SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
+                                               SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
+                                               SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
+                                               PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                                               SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
+                                               DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                               DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                               ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                               ContentMargin="{TemplateBinding Padding}"
+                                               CheckMode="Inline" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -1094,7 +1199,8 @@
                        VerticalAlignment="Center"
                        Width="48"
                        Height="48"
-                       Loaded="OnIconLoaded">
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}">
                     <Image.Source>
                         <BitmapImage DecodePixelHeight="58"
                                      DecodePixelWidth="58"
@@ -1149,7 +1255,8 @@
                        VerticalAlignment="Center"
                        Width="48"
                        Height="48"
-                       Loaded="OnIconLoaded"/>
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}" />
 
                 <StackPanel Grid.Column="1" Margin="2,12,8,0">
                     <HyperlinkButton HorizontalContentAlignment="Stretch"
@@ -1201,7 +1308,8 @@
                        VerticalAlignment="Center"
                        Width="48"
                        Height="48"
-                       Loaded="OnIconLoaded">
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}">
                     <Image.Source>
                         <BitmapImage DecodePixelHeight="58"
                                      DecodePixelWidth="58"
@@ -1408,7 +1516,7 @@
                     Value="12,0" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
+                    <!--<ControlTemplate TargetType="ListViewItem">
                         <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
                                                x:Name="Root"
                                                Control.IsTemplateFocusTarget="True"
@@ -1505,6 +1613,37 @@
                             </VisualStateManager.VisualStateGroups>
                         </ListViewItemPresenter>
 
+                    </ControlTemplate>-->
+                    <ControlTemplate TargetType="ListViewItem">
+                        <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
+                                               Control.IsTemplateFocusTarget="True"
+                                               FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                                               FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
+                                               FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
+                                               FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
+                                               FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
+                                               SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
+                                               CheckBrush="{ThemeResource SystemAccentBrush}"
+                                               CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
+                                               DragBackground="{ThemeResource ListViewItemDragBackground}"
+                                               DragForeground="{ThemeResource ListViewItemDragForeground}"
+                                               FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
+                                               FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
+                                               PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
+                                               PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                                               PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
+                                               SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
+                                               SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
+                                               SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
+                                               PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                                               SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
+                                               DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                               DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                               ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                               ContentMargin="{TemplateBinding Padding}"
+                                               CheckMode="Inline" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -1525,7 +1664,8 @@
                        HorizontalAlignment="Center"
                        Width="20"
                        Height="20"
-                       Loaded="OnIconLoaded">
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}">
                     <Image.Source>
                         <BitmapImage DecodePixelHeight="24"
                                      DecodePixelWidth="24"
@@ -1570,7 +1710,8 @@
                        HorizontalAlignment="Center"
                        Width="20"
                        Height="20"
-                       Loaded="OnIconLoaded" />
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}" />
 
                 <!-- Name -->
                 <HyperlinkButton VerticalAlignment="Center"
@@ -1617,7 +1758,8 @@
                        HorizontalAlignment="Center"
                        Width="20"
                        Height="20"
-                       Loaded="OnIconLoaded">
+                       Loaded="OnIconLoaded"
+                       Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}">
                     <Image.Source>
                         <BitmapImage DecodePixelHeight="24"
                                      DecodePixelWidth="24"
@@ -1954,7 +2096,8 @@
                               Margin="-4,0"
                               Padding="16,0,24,0"
                               Visibility="{x:Bind GetDetailsHeaderVisibility(helpers:ServiceLocator.AppSettings.Layout), Mode=OneWay}"
-                              Background="{ThemeResource SystemChromeAltHighColor}">
+                              Background="{ThemeResource SystemChromeAltHighColor}"
+                              Tapped="OnDetailsHeaderTapped">
                             <Grid.ChildrenTransitions>
                                 <TransitionCollection>
                                     <RepositionThemeTransition />

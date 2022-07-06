@@ -18,7 +18,7 @@ namespace JumpPoint.ViewModels
     public class DriveViewModel : ShellContextViewModelBase
     {
 
-        public DriveViewModel(IShortcutService shortcutService) : base(shortcutService)
+        public DriveViewModel(IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
         {
         }
 
@@ -29,8 +29,6 @@ namespace JumpPoint.ViewModels
             get { return _storageType; }
             set { Set(ref _storageType, value); }
         }
-
-        #region Shell Integration
 
         protected override async Task Refresh(CancellationToken token)
         {
@@ -44,10 +42,11 @@ namespace JumpPoint.ViewModels
 
             await JumpPointService.Load(drive);
             PathInfo.Tag = drive.DriveTemplate;
-
             token.ThrowIfCancellationRequested();
+
             var items = await StorageService.GetItems(drive);
-            Items.ReplaceRange(items);
+            Items.AddRange(items);
+            token.ThrowIfCancellationRequested();
 
             for (int i = 0; i < items.Count; i++)
             {
@@ -57,11 +56,8 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        #endregion
-
-        public override async void LoadState(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
         {
-            base.LoadState(parameter, state);
             string path = null;
             if (parameter is TabParameter tab)
             {

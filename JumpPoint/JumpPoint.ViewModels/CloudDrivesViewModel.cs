@@ -13,7 +13,7 @@ namespace JumpPoint.ViewModels
     public class CloudDrivesViewModel : ShellContextViewModelBase
     {
 
-        public CloudDrivesViewModel(IShortcutService shortcutService) : base(shortcutService)
+        public CloudDrivesViewModel(IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
         {
 
         }
@@ -23,7 +23,8 @@ namespace JumpPoint.ViewModels
         protected override async Task Refresh(CancellationToken token)
         {
             var drives = await CloudStorageService.GetDrives();
-            Items.ReplaceRange(drives);
+            Items.AddRange(drives);
+            token.ThrowIfCancellationRequested();
 
             for (int i = 0; i < drives.Count; i++)
             {
@@ -33,9 +34,8 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        public override async void LoadState(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
         {
-            base.LoadState(parameter, state);
             PathInfo.Place(nameof(AppPath.CloudDrives), parameter);
             await RefreshCommand.TryExecute();
         }

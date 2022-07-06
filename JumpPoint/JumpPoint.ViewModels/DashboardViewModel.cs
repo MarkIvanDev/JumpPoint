@@ -20,7 +20,7 @@ namespace JumpPoint.ViewModels
     public class DashboardViewModel : ShellContextViewModelBase
     {
 
-        public DashboardViewModel(IShortcutService shortcutService) : base(shortcutService)
+        public DashboardViewModel(IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
         {
             
         }
@@ -36,11 +36,8 @@ namespace JumpPoint.ViewModels
             new ShellItem { Content = AppPath.AppLinks.Humanize(), Key = ViewModelKeys.AppLinks, Tag = AppPath.AppLinks }
         };
 
-        #region Shell Integration
-        
         protected override async Task Refresh(CancellationToken token)
         {
-            Items.Clear();
             var items = new List<JumpPointItem>();
 
             var favorites = await DashboardService.GetFavorites();
@@ -55,7 +52,7 @@ namespace JumpPoint.ViewModels
             items.AddRange(systemFolders);
             token.ThrowIfCancellationRequested();
 
-            Items.ReplaceRange(items);
+            Items.AddRange(items);
 
             for (int i = 0; i < items.Count; i++)
             {
@@ -65,11 +62,8 @@ namespace JumpPoint.ViewModels
             }
         }
         
-        #endregion
-
-        public override async void LoadState(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
         {
-            base.LoadState(parameter, state);
             PathInfo.Place(nameof(AppPath.Dashboard), parameter);
             await RefreshCommand.TryExecute();
         }

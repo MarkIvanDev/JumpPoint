@@ -14,7 +14,7 @@ namespace JumpPoint.ViewModels
     public class WorkspacesViewModel : ShellContextViewModelBase
     {
 
-        public WorkspacesViewModel(IShortcutService shortcutService) : base(shortcutService)
+        public WorkspacesViewModel(IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
         {
 
         }
@@ -22,7 +22,8 @@ namespace JumpPoint.ViewModels
         protected override async Task Refresh(CancellationToken token)
         {
             var workspaces = await WorkspaceService.GetWorkspaces();
-            Items.ReplaceRange(workspaces);
+            Items.AddRange(workspaces);
+            token.ThrowIfCancellationRequested();
 
             for (int i = 0; i < workspaces.Count; i++)
             {
@@ -32,9 +33,8 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        public override async void LoadState(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
         {
-            base.LoadState(parameter, state);
             PathInfo.Place(nameof(AppPath.Workspaces), parameter);
             await RefreshCommand.TryExecute();
         }
