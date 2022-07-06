@@ -75,7 +75,7 @@
           </uap5:AppExecutionAlias>
         </uap5:Extension>
         
-        <Extension Category="windows.updateTask" EntryPoint="JumpPoint.Uwp.Tasks.Update" />
+        <Extension Category="windows.updateTask" EntryPoint="JumpPoint.Uwp.Tasks.Update"  />
         <desktop:Extension Category="windows.startupTask"
                            Executable="JumpPoint.FullTrust.Startup\JumpPoint.FullTrust.Startup.exe"
                            EntryPoint="Windows.FullTrustApplication">
@@ -110,7 +110,7 @@
         </uap3:Extension>
         
         <!-- App Link Providers -->
-        <uap:Extension Category="windows.appService" EntryPoint="JumpPoint.Uwp.Tasks.AppLinkProviders.LocalProvider">
+        <uap:Extension Category="windows.appService" EntryPoint="JumpPoint.Uwp.Tasks.AppLinkProviders.LocalProvider" >
           <uap3:AppService Name="com.jumppointbeta.svc.localalp" uap4:SupportsMultipleInstances="true" />
         </uap:Extension>
         <uap:Extension Category="windows.appService" EntryPoint="JumpPoint.Uwp.Tasks.AppLinkProviders.SettingsProvider">

@@ -7,17 +7,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:JumpPoint.Uwp.Controls"
-    xmlns:services="using:JumpPoint.Platform.Services"
     xmlns:grouper="using:JumpPoint.Platform.Items.Arrangers.Groupers"
-    xmlns:helpers="using:JumpPoint.Uwp.Helpers"
     mc:Ignorable="d">
 
     <Grid>
         <controls:JumpPointViewer Context="{x:Bind ViewModel, Mode=OneWay}"
-                                  SortBy="{x:Bind helpers:ServiceLocator.AppSettings.SortBy, Mode=OneWay}"
-                                  IsSortAscending="{x:Bind helpers:ServiceLocator.AppSettings.IsSortAscending, Mode=OneWay}"
+                                  SortBy="{x:Bind ViewModel.Settings.SortBy, Mode=OneWay}"
+                                  IsSortAscending="{x:Bind ViewModel.Settings.IsSortAscending, Mode=OneWay}"
                                   GroupBy="Custom"
-                                  IsGroupAscending="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupAscending, Mode=OneWay}"
+                                  IsGroupAscending="{x:Bind ViewModel.Settings.IsGroupAscending, Mode=OneWay}"
                                   CustomGrouper="{x:Bind grouper:Grouper.DriveStorageType}"
                                   IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                                   SelectedItems="{x:Bind ViewModel.SelectedItems, Mode=OneWay}"

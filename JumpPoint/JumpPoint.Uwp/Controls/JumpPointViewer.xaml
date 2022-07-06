@@ -1923,7 +1923,7 @@
             <VisualStateGroup>
                 <VisualState x:Name="GridState">
                     <VisualState.StateTriggers>
-                        <local:EqualityTrigger LeftValue="{x:Bind helpers:ServiceLocator.AppSettings.Layout, Mode=OneWay}"
+                        <local:EqualityTrigger LeftValue="{x:Bind Context.Settings.Layout, Mode=OneWay}"
                                                RightValue="{x:Bind platform:LayoutModes.Grid}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
@@ -1955,7 +1955,7 @@
                 </VisualState>
                 <VisualState x:Name="DetailsState">
                     <VisualState.StateTriggers>
-                        <local:EqualityTrigger LeftValue="{x:Bind helpers:ServiceLocator.AppSettings.Layout, Mode=OneWay}"
+                        <local:EqualityTrigger LeftValue="{x:Bind Context.Settings.Layout, Mode=OneWay}"
                                                RightValue="{x:Bind platform:LayoutModes.Details}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
@@ -1986,7 +1986,7 @@
                 </VisualState>
                 <VisualState x:Name="TilesState">
                     <VisualState.StateTriggers>
-                        <local:EqualityTrigger LeftValue="{x:Bind helpers:ServiceLocator.AppSettings.Layout, Mode=OneWay}"
+                        <local:EqualityTrigger LeftValue="{x:Bind Context.Settings.Layout, Mode=OneWay}"
                                                RightValue="{x:Bind platform:LayoutModes.Tiles}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
@@ -2018,7 +2018,7 @@
                 </VisualState>
                 <VisualState x:Name="ListState">
                     <VisualState.StateTriggers>
-                        <local:EqualityTrigger LeftValue="{x:Bind helpers:ServiceLocator.AppSettings.Layout, Mode=OneWay}"
+                        <local:EqualityTrigger LeftValue="{x:Bind Context.Settings.Layout, Mode=OneWay}"
                                                RightValue="{x:Bind platform:LayoutModes.List}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
@@ -2095,7 +2095,7 @@
                               Height="36"
                               Margin="-4,0"
                               Padding="16,0,24,0"
-                              Visibility="{x:Bind GetDetailsHeaderVisibility(helpers:ServiceLocator.AppSettings.Layout), Mode=OneWay}"
+                              Visibility="{x:Bind GetDetailsHeaderVisibility(Context.Settings.Layout), Mode=OneWay}"
                               Background="{ThemeResource SystemChromeAltHighColor}"
                               Tapped="OnDetailsHeaderTapped">
                             <Grid.ChildrenTransitions>

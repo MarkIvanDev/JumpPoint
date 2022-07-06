@@ -94,10 +94,6 @@
                                           IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowNewItem, Mode=TwoWay}">
                                 <IconSourceElement IconSource="{StaticResource NewItemIcon}" />
                             </ToggleButton>
-                            <ToggleButton Padding="12"
-                                          IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowLayout, Mode=TwoWay}">
-                                <IconSourceElement IconSource="{StaticResource LayoutIcon}" />
-                            </ToggleButton>
                         </StackPanel>
 
                         <TextBlock Text="Font" />
