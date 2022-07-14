@@ -19,7 +19,7 @@ namespace JumpPoint.Platform.Services
     public class AppSettings : ObservableObject
     {
         public const string STARTUP_TASK_ID =
-#if BETA
+#if JPBETA
             "JumpPointBeta_StartupTask";
 #else
             "JumpPoint_StartupTask";

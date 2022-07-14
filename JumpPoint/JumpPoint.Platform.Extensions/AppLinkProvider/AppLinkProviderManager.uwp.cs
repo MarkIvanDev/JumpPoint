@@ -19,7 +19,7 @@ namespace JumpPoint.Platform.Extensions
     public static partial class AppLinkProviderManager
     {
         private const string EXTENSION_CONTRACT =
-#if BETA
+#if JPBETA
             "com.jumppointbeta.ext.applinkprovider";
 #else
             "com.jumppoint.ext.applinkprovider";

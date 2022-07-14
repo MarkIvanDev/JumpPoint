@@ -22,7 +22,7 @@ namespace JumpPoint.Platform.Extensions
     public static partial class NewItemManager
     {
         private const string EXTENSION_CONTRACT =
-#if BETA
+#if JPBETA
             "com.jumppointbeta.ext.newitem";
 #else
             "com.jumppoint.ext.newitem";

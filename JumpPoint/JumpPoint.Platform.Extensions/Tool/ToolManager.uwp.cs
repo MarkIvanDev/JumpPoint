@@ -19,7 +19,7 @@ namespace JumpPoint.Platform.Extensions
     public static partial class ToolManager
     {
         private const string EXTENSION_CONTRACT =
-#if BETA
+#if JPBETA
             "com.jumppointbeta.ext.tool";
 #else
             "com.jumppoint.ext.tool";

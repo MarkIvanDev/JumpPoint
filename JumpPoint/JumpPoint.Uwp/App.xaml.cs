@@ -66,7 +66,7 @@ namespace JumpPoint.Uwp
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appcenter.jps.json", optional: true)
                 .Build();
-#if BETA
+#if JPBETA
             AppCenter.Start(config["betaKey"], typeof(Analytics), typeof(Crashes));
 #else
             AppCenter.Start(config["mainKey"], typeof(Analytics), typeof(Crashes));

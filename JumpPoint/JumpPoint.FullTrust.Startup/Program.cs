@@ -4,7 +4,7 @@ File.AppendAllText(@"D:\jumppoint-error-showwindow.txt", $"{args.Length} Args: {
 Process.Start(new ProcessStartInfo
 {
     FileName =
-#if BETA
+#if JPBETA
         "jumppoint-beta://",
 #else
         "jumppoint://",

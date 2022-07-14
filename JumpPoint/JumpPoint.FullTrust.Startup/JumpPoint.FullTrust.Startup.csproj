@@ -10,11 +10,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug_BETA'">
-    <DefineConstants>$(DefineConstants);BETA</DefineConstants>
+    <DefineConstants>$(DefineConstants);JPBETA</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release_BETA'">
-    <DefineConstants>$(DefineConstants);BETA</DefineConstants>
+    <DefineConstants>$(DefineConstants);JPBETA</DefineConstants>
     <Optimize>True</Optimize>
   </PropertyGroup>
 
