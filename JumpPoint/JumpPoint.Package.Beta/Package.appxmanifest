@@ -93,6 +93,9 @@
         <uap:Extension Category="windows.protocol">
           <uap:Protocol Name="jumppoint-beta-tool" ReturnResults="always"/>
         </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="jumppoint-beta-newitem" ReturnResults="always"/>
+        </uap:Extension>
         <uap:Extension Category="windows.shareTarget">
           <uap:ShareTarget>
             <uap:SupportedFileTypes>
@@ -106,6 +109,7 @@
           <uap3:AppExtensionHost>
             <uap3:Name>com.jumppointbeta.ext.applinkprovider</uap3:Name>
             <uap3:Name>com.jumppointbeta.ext.tool</uap3:Name>
+            <uap3:Name>com.jumppointbeta.ext.newitem</uap3:Name>
           </uap3:AppExtensionHost>
         </uap3:Extension>
         
@@ -298,6 +302,20 @@
             </uap3:Properties>
           </uap3:AppExtension>
         </uap3:Extension>
+
+        <!-- New Items -->
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Id="newitem.textdoc"
+                             Name="com.jumppointbeta.ext.newitem"
+                             DisplayName="Text Document"
+                             Description="Create a new text document (.txt, .json, .xml)"
+                             PublicFolder="Extensions\NewItem\TextDocument">
+            <uap3:Properties>
+              <Link>jumppoint-beta-newitem://textdocument</Link>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+        
       </Extensions>
     </Application>
   </Applications>

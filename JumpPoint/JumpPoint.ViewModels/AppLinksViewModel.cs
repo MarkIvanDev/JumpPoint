@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace JumpPoint.ViewModels
         protected override async Task Refresh(CancellationToken token)
         {
             var providers = await AppLinkProviderManager.GetProviders();
-            Providers = new Collection<AppLinkProvider>(providers);
+            Providers = new Collection<AppLinkProvider>(providers.Where(p => p.IsAvailable && p.IsEnabled).ToList());
             token.ThrowIfCancellationRequested();
 
             var appLinks = await AppLinkService.GetAppLinks();

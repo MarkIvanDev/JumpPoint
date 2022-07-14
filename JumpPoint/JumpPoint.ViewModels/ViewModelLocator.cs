@@ -52,6 +52,7 @@ namespace JumpPoint.ViewModels
             SimpleIoc.Default.Register<AppLinkProviderViewModel>();
             SimpleIoc.Default.Register<HashToolViewModel>();
             SimpleIoc.Default.Register<ChatbotViewModel>();
+            SimpleIoc.Default.Register<NewTextDocumentViewModel>();
         }
 
         public static ViewModelLocator Instance => SimpleIoc.Default.GetInstance<ViewModelLocator>();
@@ -198,6 +199,7 @@ namespace JumpPoint.ViewModels
     {
         public static string RequestPermission => nameof(RequestPermission);
         public static string DeleteConfirmation => nameof(DeleteConfirmation);
+        public static string NewFile => nameof(NewFile);
         public static string NewFolder => nameof(NewFolder);
         public static string NewWorkspace => nameof(NewWorkspace);
         //public static string NewAppLink => nameof(NewAppLink);
@@ -210,6 +212,7 @@ namespace JumpPoint.ViewModels
         public static string RenameCloudAccount => nameof(RenameCloudAccount);
         public static string AppLinkProviderPicker => nameof(AppLinkProviderPicker);
         public static string ToolPicker => nameof(ToolPicker);
+        public static string NewItemPicker => nameof(NewItemPicker);
 
         public static string Copy => nameof(Copy);
         public static string Move => nameof(Move);

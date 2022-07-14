@@ -220,19 +220,6 @@ namespace JumpPoint.Platform.Services
             }
         }
 
-        public bool ShowNewItem
-        {
-            get { return Preferences.Get(nameof(ShowNewItem), false); }
-            set
-            {
-                if (ShowNewItem != value)
-                {
-                    Preferences.Set(nameof(ShowNewItem), value);
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
         #endregion
 
         #endregion

@@ -11,7 +11,7 @@
     xmlns:items="using:JumpPoint.Platform.Items"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    winui:BackdropMaterial.ApplyToRootOrPageBackground="True"
     d:DesignWidth="500"
     d:DesignHeight="900">
 

@@ -90,10 +90,6 @@
                                           IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowDashboard, Mode=TwoWay}">
                                 <IconSourceElement IconSource="{StaticResource DashboardIcon}" />
                             </ToggleButton>
-                            <ToggleButton Padding="12"
-                                          IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowNewItem, Mode=TwoWay}">
-                                <IconSourceElement IconSource="{StaticResource NewItemIcon}" />
-                            </ToggleButton>
                         </StackPanel>
 
                         <TextBlock Text="Font" />
@@ -322,18 +318,18 @@
             <PivotItem Header="EXTENSIONS">
                 <ScrollViewer Margin="0,0,-12,0">
                     <StackPanel Margin="0,8,20,120">
-                        <TextBlock Text="App Link Providers"
+                        <TextBlock Text="New Items"
                                    FontWeight="SemiBold"
                                    Margin="0,0,0,8"
                                    FontSize="18" />
-                        <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.AppLinkProviders, Mode=OneWay}">
+                        <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.NewItems, Mode=OneWay}">
                             <winui:ItemsRepeater.Layout>
                                 <winui:UniformGridLayout ItemsJustification="Start"
                                                          ItemsStretch="Fill"
                                                          MinColumnSpacing="8"
                                                          MinRowSpacing="8"
                                                          MinItemWidth="320"
-                                                         MinItemHeight="120"/>
+                                                         MinItemHeight="120" />
                             </winui:ItemsRepeater.Layout>
                             <DataTemplate x:DataType="extensions:ExtensionBase">
                                 <Grid ColumnSpacing="12"
@@ -355,25 +351,25 @@
                                            Width="36"
                                            Height="36"
                                            VerticalAlignment="Top"
-                                           Grid.RowSpan="2"/>
-                                    
+                                           Grid.RowSpan="2" />
+
                                     <TextBlock FontSize="16"
                                                FontWeight="SemiBold"
                                                Text="{x:Bind Name, Mode=OneWay}"
-                                               Grid.Column="1"/>
+                                               Grid.Column="1" />
                                     <TextBlock Text="{x:Bind Description, Mode=OneWay, Converter={StaticResource StringEmptyConverter}, ConverterParameter='No description set'}"
                                                TextWrapping="WrapWholeWords"
                                                TextTrimming="CharacterEllipsis"
                                                MaxLines="2"
                                                Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
                                                Grid.Column="1"
-                                               Grid.Row="1"/>
-                                    
+                                               Grid.Row="1" />
+
                                     <ToggleSwitch Grid.Row="2"
                                                   Grid.Column="1"
                                                   IsEnabled="{x:Bind IsAvailable, Mode=OneWay}"
                                                   IsOn="{x:Bind IsEnabled, Mode=TwoWay}"
-                                                  Margin="0,-5,-4,-5"/>
+                                                  Margin="0,-5,-4,-5" />
                                     <Button Grid.Column="2"
                                             Grid.RowSpan="2"
                                             VerticalAlignment="Top"
@@ -467,6 +463,81 @@
                                 </Grid>
                             </DataTemplate>
                         </winui:ItemsRepeater>
+                        
+                        <TextBlock Text="App Link Providers"
+                                   FontWeight="SemiBold"
+                                   Margin="0,16,0,8"
+                                   FontSize="18" />
+                        <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.AppLinkProviders, Mode=OneWay}">
+                            <winui:ItemsRepeater.Layout>
+                                <winui:UniformGridLayout ItemsJustification="Start"
+                                                         ItemsStretch="Fill"
+                                                         MinColumnSpacing="8"
+                                                         MinRowSpacing="8"
+                                                         MinItemWidth="320"
+                                                         MinItemHeight="120" />
+                            </winui:ItemsRepeater.Layout>
+                            <DataTemplate x:DataType="extensions:ExtensionBase">
+                                <Grid ColumnSpacing="12"
+                                      RowSpacing="2"
+                                      CornerRadius="8"
+                                      Background="{ThemeResource SystemChromeMediumColor}"
+                                      Padding="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Image Source="{x:Bind converters:IconConverter.GetImageSourceFromStream(Logo, 36, 36), Mode=OneWay}"
+                                           Width="36"
+                                           Height="36"
+                                           VerticalAlignment="Top"
+                                           Grid.RowSpan="2" />
+
+                                    <TextBlock FontSize="16"
+                                               FontWeight="SemiBold"
+                                               Text="{x:Bind Name, Mode=OneWay}"
+                                               Grid.Column="1" />
+                                    <TextBlock Text="{x:Bind Description, Mode=OneWay, Converter={StaticResource StringEmptyConverter}, ConverterParameter='No description set'}"
+                                               TextWrapping="WrapWholeWords"
+                                               TextTrimming="CharacterEllipsis"
+                                               MaxLines="2"
+                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                               Grid.Column="1"
+                                               Grid.Row="1" />
+
+                                    <ToggleSwitch Grid.Row="2"
+                                                  Grid.Column="1"
+                                                  IsEnabled="{x:Bind IsAvailable, Mode=OneWay}"
+                                                  IsOn="{x:Bind IsEnabled, Mode=TwoWay}"
+                                                  Margin="0,-5,-4,-5" />
+                                    <Button Grid.Column="2"
+                                            Grid.RowSpan="2"
+                                            VerticalAlignment="Top"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Padding="8">
+                                        <IconSourceElement IconSource="{StaticResource ItemsPropertiesIcon}" />
+                                        <Button.Flyout>
+                                            <Flyout>
+                                                <StackPanel Spacing="4">
+                                                    <TextBlock Text="{x:Bind Package, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Package: {0}'}" />
+                                                    <TextBlock Text="{x:Bind Version, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Version: {0}'}" />
+                                                    <TextBlock Text="{x:Bind Publisher, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Publisher: {0}'}" />
+                                                    <TextBlock Text="{x:Bind Signature, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Signature: {0}'}" />
+                                                </StackPanel>
+                                            </Flyout>
+                                        </Button.Flyout>
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </winui:ItemsRepeater>
+
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>

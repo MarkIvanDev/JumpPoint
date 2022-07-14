@@ -210,8 +210,14 @@
     <Compile Include="Dialogs\NewAppLinkDialog.xaml.cs">
       <DependentUpon>NewAppLinkDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\NewFileDialog.xaml.cs">
+      <DependentUpon>NewFileDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\NewFolderDialog.xaml.cs">
       <DependentUpon>NewFolderDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\NewItemPicker.xaml.cs">
+      <DependentUpon>NewItemPicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\RenameCloudAccountDialog.xaml.cs">
       <DependentUpon>RenameCloudAccountDialog.xaml</DependentUpon>
@@ -236,6 +242,9 @@
     </Compile>
     <Compile Include="Hosted\ChatbotPage.xaml.cs">
       <DependentUpon>ChatbotPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Hosted\NewTextDocumentPage.xaml.cs">
+      <DependentUpon>NewTextDocumentPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Interactivity\Actions\ConsolidateApplicationViewAction.cs" />
     <Compile Include="Interactivity\Actions\DoubleClickCommandAction.cs" />
@@ -776,6 +785,7 @@
     <Content Include="Assets\Images\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Images\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\Screens\grant access.png" />
+    <Content Include="Extensions\NewItem\TextDocument\Logo.png" />
     <Content Include="Fonts\FluentSystemIcons-Regular.ttf" />
     <None Include="appcenter.jps.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -4684,7 +4694,7 @@
       <Version>2.14.1</Version>
     </PackageReference>
     <PackageReference Include="JumpPoint.Extensions">
-      <Version>0.3.1-beta</Version>
+      <Version>0.4.1-beta</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
       <Version>4.5.0</Version>
@@ -4883,7 +4893,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dialogs\NewFileDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\NewFolderDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\NewItemPicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4920,6 +4938,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Hosted\ManualAppLinkPickerPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Hosted\NewTextDocumentPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

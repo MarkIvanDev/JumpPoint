@@ -27,6 +27,13 @@ namespace JumpPoint.Platform
             @"jumppoint-tool";
 #endif
 
+        public const string NEWITEM_SCHEME =
+#if BETA
+            @"jumppoint-beta-newitem";
+#else
+            @"jumppoint-newitem";
+#endif
+
         public const string UNMOUNTED = @"\\?\";
         public const string NETWORK = @"\\";
         public const string CLOUD = @"cloud:\";

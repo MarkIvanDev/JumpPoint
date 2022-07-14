@@ -12,7 +12,7 @@
     mc:Ignorable="d"
     d:DesignWidth="500"
     d:DesignHeight="500"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    winui:BackdropMaterial.ApplyToRootOrPageBackground="True">
 
     <Page.Resources>
         <XamlUICommand x:Key="RemoveQueryKeyCommand"
