@@ -29,8 +29,10 @@ namespace JumpPoint.Uwp.Helpers
                 var dialogService = new DialogService();
                 dialogService.Configure(DialogKeys.RequestPermission, typeof(Dialogs.RequestPermissionDialog));
                 dialogService.Configure(DialogKeys.DeleteConfirmation, typeof(Dialogs.DeleteConfirmationDialog));
+                dialogService.Configure(DialogKeys.NewFile, typeof(Dialogs.NewFileDialog));
                 dialogService.Configure(DialogKeys.NewFolder, typeof(Dialogs.NewFolderDialog));
                 dialogService.Configure(DialogKeys.NewWorkspace, typeof(Dialogs.AddWorkspaceDialog));
+                dialogService.Configure(DialogKeys.NewItemPicker, typeof(Dialogs.NewItemPicker));
                 //dialogService.Configure(DialogKeys.NewAppLink, typeof(Dialogs.NewAppLinkDialog));
                 dialogService.Configure(DialogKeys.Rename, typeof(Dialogs.RenameDialog));
                 dialogService.Configure(DialogKeys.AddToWorkspace, typeof(Dialogs.AddToWorkspaceDialog));

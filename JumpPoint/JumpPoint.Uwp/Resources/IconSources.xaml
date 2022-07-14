@@ -152,6 +152,9 @@
                     Glyph="&#xF8CA;"
                     FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
                     FontSize="18" />
+    <BitmapIconSource x:Key="NewFileIcon"
+                      ShowAsMonochrome="False"
+                      UriSource="/Assets/Icons/Items/File.png" />
     <BitmapIconSource x:Key="NewFolderIcon"
                       ShowAsMonochrome="False"
                       UriSource="/Assets/Icons/Items/Folder.png" />
@@ -161,6 +164,10 @@
     <BitmapIconSource x:Key="NewAppLinkIcon"
                       ShowAsMonochrome="False"
                       UriSource="/Assets/Icons/Items/AppLink.png" />
+    <FontIconSource x:Key="MoreNewItemsIcon"
+                    FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                    Glyph="&#xFC2E;"
+                    FontSize="18" />
 
     <FontIconSource x:Key="LayoutIcon"
                     Glyph="&#xF1E3;"

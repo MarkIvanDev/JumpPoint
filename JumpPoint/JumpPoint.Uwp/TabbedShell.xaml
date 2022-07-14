@@ -485,22 +485,6 @@
                                     Grid.Column="2"
                                     Spacing="4"
                                     Orientation="Horizontal">
-                            <controls:IconButton x:Name="navNewItem"
-                                                 x:Load="{x:Bind helpers:ServiceLocator.AppSettings.ShowNewItem, Mode=OneWay}"
-                                                 Command="{StaticResource NewItemCommand}"
-                                                 IsCompact="True">
-                                <controls:IconButton.Flyout>
-                                    <MenuFlyout Placement="Bottom">
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
-                                                        Command="{StaticResource NewFolderCommand}"
-                                                        IsEnabled="{x:Bind commands:NavigationBar.IsNewFolderEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"/>
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
-                                                        Command="{StaticResource NewWorkspaceCommand}" />
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
-                                                        Command="{StaticResource NewAppLinkCommand}" />
-                                    </MenuFlyout>
-                                </controls:IconButton.Flyout>
-                            </controls:IconButton>
                             <Button x:Name="btnSupportDeveloper"
                                     VerticalAlignment="Stretch"
                                     Background="Transparent"
@@ -648,12 +632,18 @@
                                                 <IconSourceElement IconSource="{StaticResource NewItemIcon}" />
                                             </MenuFlyoutSubItem.Icon>
                                             <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                            Command="{StaticResource NewFileCommand}"
+                                                            IsEnabled="{x:Bind commands:NavigationBar.IsNewFileEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}" />
+                                            <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
                                                             Command="{StaticResource NewFolderCommand}"
                                                             IsEnabled="{x:Bind commands:NavigationBar.IsNewFolderEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"/>
                                             <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
                                                             Command="{StaticResource NewWorkspaceCommand}" />
                                             <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
                                                             Command="{StaticResource NewAppLinkCommand}" />
+                                            <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                            Command="{StaticResource MoreNewItemsCommand}"
+                                                            IsEnabled="{x:Bind commands:NavigationBar.IsMoreNewItemsEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}" />
                                         </MenuFlyoutSubItem>
                                         <MenuFlyoutSeparator />
                                         <MenuFlyoutSubItem Text="Layout">
@@ -722,12 +712,6 @@
                                                     <IconSourceElement IconSource="{StaticResource DashboardIcon}" />
                                                 </ToggleMenuFlyoutItem.Icon>
                                             </ToggleMenuFlyoutItem>
-                                            <ToggleMenuFlyoutItem Text="New Item button"
-                                                                  IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowNewItem, Mode=TwoWay}">
-                                                <ToggleMenuFlyoutItem.Icon>
-                                                    <IconSourceElement IconSource="{StaticResource NewItemIcon}" />
-                                                </ToggleMenuFlyoutItem.Icon>
-                                            </ToggleMenuFlyoutItem>
                                         </MenuFlyoutSubItem>
                                         <MenuFlyoutSeparator />
                                         <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
@@ -761,6 +745,26 @@
                                         <SolidColorBrush x:Key="ButtonBackgroundDisabled"
                                                          Color="Transparent" />
                                     </StackPanel.Resources>
+                                    <controls:IconButton Command="{StaticResource NewItemCommand}"
+                                                         Content="New">
+                                        <controls:IconButton.Flyout>
+                                            <MenuFlyout Placement="Bottom">
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                                Command="{StaticResource NewFileCommand}"
+                                                                IsEnabled="{x:Bind commands:NavigationBar.IsNewFileEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                                Command="{StaticResource NewFolderCommand}"
+                                                                IsEnabled="{x:Bind commands:NavigationBar.IsNewFolderEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                                Command="{StaticResource NewWorkspaceCommand}" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                                Command="{StaticResource NewAppLinkCommand}" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                                Command="{StaticResource MoreNewItemsCommand}"
+                                                                IsEnabled="{x:Bind commands:NavigationBar.IsMoreNewItemsEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"/>
+                                            </MenuFlyout>
+                                        </controls:IconButton.Flyout>
+                                    </controls:IconButton>
                                     <controls:IconSplitButton CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                               Command="{StaticResource CopyCommand}"
                                                               IsPrimaryButtonEnabled="{x:Bind commands:Toolbar.IsCopyEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"

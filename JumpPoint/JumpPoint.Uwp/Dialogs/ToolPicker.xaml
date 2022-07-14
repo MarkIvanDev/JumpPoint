@@ -59,6 +59,10 @@
                     <TextBlock Text="Nothing to show"
                                Style="{StaticResource SubtitleTextBlockStyle}"
                                HorizontalAlignment="Center" />
+                    <TextBlock Text="You can enable them in Settings > Extensions"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               TextWrapping="WrapWholeWords"
+                               HorizontalAlignment="Center" />
                 </StackPanel>
             </Grid>
         </GridView.Header>

@@ -137,7 +137,19 @@ namespace JumpPoint.ViewModels.Commands
             }
         }
 
+        public static bool IsNewFileEnabled(ShellContextViewModelBase context)
+        {
+            return context != null &&
+                    (context.PathInfo.Type == AppPath.Drive || context.PathInfo.Type == AppPath.Folder);
+        }
+
         public static bool IsNewFolderEnabled(ShellContextViewModelBase context)
+        {
+            return context != null &&
+                    (context.PathInfo.Type == AppPath.Drive || context.PathInfo.Type == AppPath.Folder);
+        }
+
+        public static bool IsMoreNewItemsEnabled(ShellContextViewModelBase context)
         {
             return context != null &&
                     (context.PathInfo.Type == AppPath.Drive || context.PathInfo.Type == AppPath.Folder);

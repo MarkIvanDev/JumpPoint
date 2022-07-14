@@ -247,6 +247,21 @@ namespace JumpPoint.ViewModels.Helpers
 
         #region New Item
         // We will use the TabViewModel as a parameter because the New Item commands need the NavigationHelper
+
+        private AsyncRelayCommand<TabViewModel> _NewFile;
+        public AsyncRelayCommand<TabViewModel> NewFileCommand => _NewFile ?? (_NewFile = new AsyncRelayCommand<TabViewModel>(
+            async (tab) =>
+            {
+                if (tab?.Context is null) return;
+
+                var viewModel = new NewFileViewModel();
+                var result = await dialogService.Show(DialogKeys.NewFile, viewModel);
+                if (result && tab.Context.Item is DirectoryBase parent)
+                {
+                    var newFile = await StorageService.CreateFile(parent, viewModel.Name);
+                }
+            }));
+
         private AsyncRelayCommand<TabViewModel> _NewFolder;
         public AsyncRelayCommand<TabViewModel> NewFolderCommand => _NewFolder ?? (_NewFolder = new AsyncRelayCommand<TabViewModel>(
             async (tab) =>
@@ -311,6 +326,24 @@ namespace JumpPoint.ViewModels.Helpers
                             tab?.NavigationHelper.ToKey(ViewModelKeys.AppLinks);
                         }
                     }
+                }
+            }));
+
+        private AsyncRelayCommand<TabViewModel> _MoreNewItems;
+        public AsyncRelayCommand<TabViewModel> MoreNewItemsCommand => _MoreNewItems ?? (_MoreNewItems = new AsyncRelayCommand<TabViewModel>(
+            async (tab) =>
+            {
+                if (tab?.Context is null) return;
+
+                var viewModel = new NewItemPickerViewModel();
+                var result = await dialogService.Show(DialogKeys.NewItemPicker, viewModel, async (vm) =>
+                {
+                    await vm.Initialize();
+                });
+                if (result && viewModel.NewItem != null && tab.Context.Item is DirectoryBase destination)
+                {
+                    await NewItemManager.Run(viewModel.NewItem, destination);
+                    await tab.Context.RefreshCommand.TryExecute();
                 }
             }));
 

@@ -1,0 +1,106 @@
+﻿<nguwp:NGPage
+    x:Class="JumpPoint.Uwp.Hosted.NewTextDocumentPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JumpPoint.Uwp.Hosted"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:nguwp="using:NittyGritty.Uwp"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+    xmlns:hosted="using:JumpPoint.ViewModels.Hosted"
+              xmlns:text="using:System.Text"
+              xmlns:converters="using:NittyGritty.Uwp.Converters"
+              mc:Ignorable="d"
+    winui:BackdropMaterial.ApplyToRootOrPageBackground="True"
+    d:RequestedTheme="Dark"
+    d:DesignWidth="500"
+    d:DesignHeight="500">
+    <nguwp:NGPage.Resources>
+        <converters:BooleanValueConverter x:Key="BOMTextConverter"
+                                          TrueValue="BOM"
+                                          FalseValue=""/>
+    </nguwp:NGPage.Resources>
+
+    <Grid Margin="20,12"
+          RowSpacing="8"
+          ColumnSpacing="4">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="140" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock FontSize="16"
+                   Text="New Text Document"
+                   FontWeight="SemiBold"
+                   Grid.ColumnSpan="2"/>
+        <winui:InfoBar Grid.Row="1"
+                       Grid.ColumnSpan="2"
+                       IsClosable="False"
+                       Visibility="{x:Bind ViewModel.ErrorMessage, Mode=OneWay, Converter={StaticResource StringVisibilityConverter}}"
+                       Title="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+                       Severity="Warning"
+                       IsOpen="True"/>
+        <TextBox Header="File name:"
+                 Grid.Row="2"
+                 Text="{x:Bind ViewModel.FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <ComboBox Header="Ext:"
+                  Grid.Row="2"
+                  Grid.Column="1"
+                  HorizontalAlignment="Stretch"
+                  ItemsSource="{x:Bind ViewModel.FileExtensions}"
+                  SelectedItem="{Binding FileExtension, Mode=TwoWay}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="hosted:FileExtension">
+                    <TextBlock Text="{x:Bind DisplayName}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <TextBox Grid.Row="3"
+                 Grid.ColumnSpan="2"
+                 Header="Content:"
+                 AcceptsReturn="True"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 TextWrapping="Wrap"
+                 Text="{x:Bind ViewModel.Content, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <ComboBox Header="Encoding:"
+                  Grid.Row="4"
+                  Grid.ColumnSpan="2"
+                  HorizontalAlignment="Stretch"
+                  ItemsSource="{x:Bind ViewModel.Encodings}"
+                  SelectedItem="{Binding TextEncoding, Mode=TwoWay}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="hosted:TextEncoding">
+                    <TextBlock>
+                        <Run Text="{x:Bind Encoding.EncodingName, Mode=OneWay}" />
+                        <Run Text="{x:Bind HasPreamble, Mode=OneWay, Converter={StaticResource BOMTextConverter}}" />
+                    </TextBlock>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Grid Grid.Row="5"
+              Grid.ColumnSpan="2"
+              ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Style="{StaticResource AccentButtonStyle}"
+                    Content="Create"
+                    HorizontalAlignment="Stretch"
+                    IsEnabled="{x:Bind ViewModel.IsValid, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.CreateCommand}"/>
+            <Button Content="Cancel"
+                    Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.CancelCommand}"/>
+        </Grid>
+    </Grid>
+</nguwp:NGPage>

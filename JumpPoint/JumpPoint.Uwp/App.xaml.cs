@@ -772,6 +772,22 @@ namespace JumpPoint.Uwp
                     }
                     break;
 
+                case Prefix.NEWITEM_SCHEME:
+                    {
+                        var host = EnumHelper<NewItemPath>.ParseOrDefault(args.Uri.Host, ignoreCase: true);
+                        switch (host)
+                        {
+                            case NewItemPath.TextDocument:
+                                rootFrame.Navigate(typeof(Hosted.NewTextDocumentPage), payload);
+                                break;
+
+                            case NewItemPath.Unknown:
+                            default:
+                                break;
+                        }
+                    }
+                    break;
+
                 default:
                     break;
             }
