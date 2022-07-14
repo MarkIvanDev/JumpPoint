@@ -34,7 +34,7 @@
     extensions:ApplicationViewExtensions.Title="{x:Bind ViewModel.CurrentTab.Context.PathInfo.DisplayName, Mode=OneWay}"
     extensions:TitleBarExtensions.ButtonBackgroundColor="Transparent"
     extensions:TitleBarExtensions.ButtonInactiveBackgroundColor="Transparent"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    winui:BackdropMaterial.ApplyToRootOrPageBackground="True"
     DataContext="{Binding Source={StaticResource Locator}, Path=TabbedShell}">
     
     <nguwp:NGPage.Resources>

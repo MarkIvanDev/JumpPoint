@@ -19,12 +19,12 @@
     xmlns:platform="using:JumpPoint.Platform"
     mc:Ignorable="d"
     xmlns:ngext="using:NittyGritty.Uwp.Extensions"
-              xmlns:gtext="using:Glif.Core.Text"
-              xmlns:ngconv="using:NittyGritty.Uwp.Converters"
-              ngext:ApplicationViewExtensions.Title="Chat"
+    xmlns:gtext="using:Glif.Core.Text"
+    xmlns:ngconv="using:NittyGritty.Uwp.Converters"
+    ngext:ApplicationViewExtensions.Title="Chat"
     ngext:TitleBarExtensions.ButtonBackgroundColor="Transparent"
     ngext:TitleBarExtensions.ButtonInactiveBackgroundColor="Transparent"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    winui:BackdropMaterial.ApplyToRootOrPageBackground="True"
     d:DesignHeight="700"
     d:DesignWidth="500">
 

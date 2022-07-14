@@ -32,10 +32,16 @@
                                Margin="16,8"
                                FontSize="16"
                                FontWeight="SemiBold"/>
+                    <winui:InfoBar Title="Nothing to show. You can enable them in Settings > Extensions"
+                                   IsOpen="True"
+                                   IsClosable="False"
+                                   Margin="16,4"
+                                   Visibility="{x:Bind ViewModel.Providers.Count, Mode=OneWay, Converter={StaticResource VisibleWhenZeroConverter}}"/>
                     <ScrollViewer HorizontalScrollMode="Enabled"
                                   HorizontalScrollBarVisibility="Auto"
                                   VerticalScrollMode="Disabled"
-                                  VerticalScrollBarVisibility="Hidden">
+                                  VerticalScrollBarVisibility="Hidden"
+                                  Visibility="{x:Bind ViewModel.Providers.Count, Mode=OneWay, Converter={StaticResource VisibleWhenMoreThanZeroConverter}}">
                         <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Providers, Mode=OneWay}"
                                              Margin="4,4,4,16">
                             <winui:ItemsRepeater.Layout>

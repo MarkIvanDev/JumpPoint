@@ -29,7 +29,7 @@
             extensions:TitleBarExtensions.ButtonBackgroundColor="Transparent"
             extensions:TitleBarExtensions.ButtonInactiveBackgroundColor="Transparent"
             mc:Ignorable="d"
-            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            winui:BackdropMaterial.ApplyToRootOrPageBackground="True"
             x:Name="rootPage"
             DataContext="{Binding Source={StaticResource Locator}, Path=Properties}">
 
