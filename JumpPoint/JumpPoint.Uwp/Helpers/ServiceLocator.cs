@@ -52,7 +52,7 @@ namespace JumpPoint.Uwp.Helpers
             SimpleIoc.Default.TryRegister<IAddOnService>(() =>
             {
                 var addOnService = new AddOnService();
-#if BETA
+#if JPBETA
                 addOnService.Configure(AddOnKeys.Monthly1, new SubscriptionAddOn("9P2WC0V906ZL") { Price = "$0.99" });
                 addOnService.Configure(AddOnKeys.Monthly2, new SubscriptionAddOn("9PLBZKNFTCL0") { Price = "$2.99" });
                 addOnService.Configure(AddOnKeys.Monthly3, new SubscriptionAddOn("9PJ1PJ9SHQ2G") { Price = "$4.99" });

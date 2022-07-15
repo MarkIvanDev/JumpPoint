@@ -7,28 +7,28 @@ namespace JumpPoint.Platform
     public static class Prefix
     {
         public const string MAIN_SCHEME =
-#if BETA
+#if JPBETA
             @"jumppoint-beta";
 #else
             @"jumppoint";
 #endif
 
         public const string PICKER_SCHEME =
-#if BETA
+#if JPBETA
             @"jumppoint-beta-picker";
 #else
             @"jumppoint-picker";
 #endif
 
         public const string TOOL_SCHEME =
-#if BETA
+#if JPBETA
             @"jumppoint-beta-tool";
 #else
             @"jumppoint-tool";
 #endif
 
         public const string NEWITEM_SCHEME =
-#if BETA
+#if JPBETA
             @"jumppoint-beta-newitem";
 #else
             @"jumppoint-newitem";
