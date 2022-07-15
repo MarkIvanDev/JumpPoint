@@ -140,12 +140,12 @@ namespace JumpPoint.ViewModels
 
         #region Extensions
 
-        private ObservableCollection<AppLinkProvider> _appLinkProviders;
+        private ObservableCollection<NewItem> _newItems;
 
-        public ObservableCollection<AppLinkProvider> AppLinkProviders
+        public ObservableCollection<NewItem> NewItems
         {
-            get { return _appLinkProviders; }
-            set { Set(ref _appLinkProviders, value); }
+            get { return _newItems; }
+            set { Set(ref _newItems, value); }
         }
 
         private ObservableCollection<Tool> _tools;
@@ -154,6 +154,14 @@ namespace JumpPoint.ViewModels
         {
             get { return _tools; }
             set { Set(ref _tools, value); }
+        }
+
+        private ObservableCollection<AppLinkProvider> _appLinkProviders;
+
+        public ObservableCollection<AppLinkProvider> AppLinkProviders
+        {
+            get { return _appLinkProviders; }
+            set { Set(ref _appLinkProviders, value); }
         }
 
         #endregion
@@ -189,12 +197,16 @@ namespace JumpPoint.ViewModels
             };
             token.ThrowIfCancellationRequested();
 
-            var appLinkProviders = await AppLinkProviderManager.GetProviders();
-            AppLinkProviders = new ObservableCollection<AppLinkProvider>(appLinkProviders);
+            var newItems = await NewItemManager.GetNewItems();
+            NewItems = new ObservableCollection<NewItem>(newItems);
             token.ThrowIfCancellationRequested();
 
             var tools = await ToolManager.GetTools();
             Tools = new ObservableCollection<Tool>(tools);
+            token.ThrowIfCancellationRequested();
+
+            var appLinkProviders = await AppLinkProviderManager.GetProviders();
+            AppLinkProviders = new ObservableCollection<AppLinkProvider>(appLinkProviders);
             token.ThrowIfCancellationRequested();
 
             DashboardUserFolders = new ReadOnlyCollection<UserFolderSetting>(await DashboardService.GetUserFolderSettings());

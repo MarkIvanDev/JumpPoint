@@ -34,7 +34,7 @@
     extensions:ApplicationViewExtensions.Title="{x:Bind ViewModel.CurrentTab.Context.PathInfo.DisplayName, Mode=OneWay}"
     extensions:TitleBarExtensions.ButtonBackgroundColor="Transparent"
     extensions:TitleBarExtensions.ButtonInactiveBackgroundColor="Transparent"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    winui:BackdropMaterial.ApplyToRootOrPageBackground="True"
     DataContext="{Binding Source={StaticResource Locator}, Path=TabbedShell}">
     
     <nguwp:NGPage.Resources>
@@ -485,43 +485,6 @@
                                     Grid.Column="2"
                                     Spacing="4"
                                     Orientation="Horizontal">
-                            <controls:IconButton x:Name="navNewItem"
-                                                 x:Load="{x:Bind helpers:ServiceLocator.AppSettings.ShowNewItem, Mode=OneWay}"
-                                                 Command="{StaticResource NewItemCommand}"
-                                                 IsCompact="True">
-                                <controls:IconButton.Flyout>
-                                    <MenuFlyout Placement="Bottom">
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
-                                                        Command="{StaticResource NewFolderCommand}"
-                                                        IsEnabled="{x:Bind commands:NavigationBar.IsNewFolderEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"/>
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
-                                                        Command="{StaticResource NewWorkspaceCommand}" />
-                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
-                                                        Command="{StaticResource NewAppLinkCommand}" />
-                                    </MenuFlyout>
-                                </controls:IconButton.Flyout>
-                            </controls:IconButton>
-                            <controls:IconButton x:Name="navLayout"
-                                                 x:Load="{x:Bind helpers:ServiceLocator.AppSettings.ShowLayout, Mode=OneWay}"
-                                                 Command="{StaticResource LayoutCommand}"
-                                                 IsCompact="True">
-                                <controls:IconButton.Flyout>
-                                    <MenuFlyout Placement="Bottom">
-                                        <winui:RadioMenuFlyoutItem Command="{StaticResource GridLayoutCommand}"
-                                                                   IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGridLayout, Mode=TwoWay}"
-                                                                   GroupName="Layout" />
-                                        <winui:RadioMenuFlyoutItem Command="{StaticResource DetailsLayoutCommand}"
-                                                                   IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsDetailsLayout, Mode=TwoWay}"
-                                                                   GroupName="Layout" />
-                                        <winui:RadioMenuFlyoutItem Command="{StaticResource TilesLayoutCommand}"
-                                                                   IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsTilesLayout, Mode=TwoWay}"
-                                                                   GroupName="Layout" />
-                                        <winui:RadioMenuFlyoutItem Command="{StaticResource ListLayoutCommand}"
-                                                                   IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsListLayout, Mode=TwoWay}"
-                                                                   GroupName="Layout" />
-                                    </MenuFlyout>
-                                </controls:IconButton.Flyout>
-                            </controls:IconButton>
                             <Button x:Name="btnSupportDeveloper"
                                     VerticalAlignment="Stretch"
                                     Background="Transparent"
@@ -669,12 +632,18 @@
                                                 <IconSourceElement IconSource="{StaticResource NewItemIcon}" />
                                             </MenuFlyoutSubItem.Icon>
                                             <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                            Command="{StaticResource NewFileCommand}"
+                                                            IsEnabled="{x:Bind commands:NavigationBar.IsNewFileEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}" />
+                                            <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
                                                             Command="{StaticResource NewFolderCommand}"
                                                             IsEnabled="{x:Bind commands:NavigationBar.IsNewFolderEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"/>
                                             <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
                                                             Command="{StaticResource NewWorkspaceCommand}" />
                                             <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
                                                             Command="{StaticResource NewAppLinkCommand}" />
+                                            <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                            Command="{StaticResource MoreNewItemsCommand}"
+                                                            IsEnabled="{x:Bind commands:NavigationBar.IsMoreNewItemsEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}" />
                                         </MenuFlyoutSubItem>
                                         <MenuFlyoutSeparator />
                                         <MenuFlyoutSubItem Text="Layout">
@@ -682,13 +651,13 @@
                                                 <IconSourceElement IconSource="{StaticResource LayoutIcon}" />
                                             </MenuFlyoutSubItem.Icon>
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GridLayoutCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGridLayout, Mode=TwoWay}" />
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsGridLayout, Mode=TwoWay}" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource DetailsLayoutCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsDetailsLayout, Mode=TwoWay}" />
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsDetailsLayout, Mode=TwoWay}" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource TilesLayoutCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsTilesLayout, Mode=TwoWay}" />
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsTilesLayout, Mode=TwoWay}" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource ListLayoutCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsListLayout, Mode=TwoWay}" />
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsListLayout, Mode=TwoWay}" />
                                         </MenuFlyoutSubItem>
                                         <MenuFlyoutSubItem Text="Show/Hide">
                                             <MenuFlyoutSubItem.Icon>
@@ -743,18 +712,6 @@
                                                     <IconSourceElement IconSource="{StaticResource DashboardIcon}" />
                                                 </ToggleMenuFlyoutItem.Icon>
                                             </ToggleMenuFlyoutItem>
-                                            <ToggleMenuFlyoutItem Text="New Item button"
-                                                                  IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowNewItem, Mode=TwoWay}">
-                                                <ToggleMenuFlyoutItem.Icon>
-                                                    <IconSourceElement IconSource="{StaticResource NewItemIcon}" />
-                                                </ToggleMenuFlyoutItem.Icon>
-                                            </ToggleMenuFlyoutItem>
-                                            <ToggleMenuFlyoutItem Text="Layout button"
-                                                                  IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowLayout, Mode=TwoWay}">
-                                                <ToggleMenuFlyoutItem.Icon>
-                                                    <IconSourceElement IconSource="{StaticResource LayoutIcon}" />
-                                                </ToggleMenuFlyoutItem.Icon>
-                                            </ToggleMenuFlyoutItem>
                                         </MenuFlyoutSubItem>
                                         <MenuFlyoutSeparator />
                                         <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
@@ -788,6 +745,26 @@
                                         <SolidColorBrush x:Key="ButtonBackgroundDisabled"
                                                          Color="Transparent" />
                                     </StackPanel.Resources>
+                                    <controls:IconButton Command="{StaticResource NewItemCommand}"
+                                                         Content="New">
+                                        <controls:IconButton.Flyout>
+                                            <MenuFlyout Placement="Bottom">
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                                Command="{StaticResource NewFileCommand}"
+                                                                IsEnabled="{x:Bind commands:NavigationBar.IsNewFileEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                                Command="{StaticResource NewFolderCommand}"
+                                                                IsEnabled="{x:Bind commands:NavigationBar.IsNewFolderEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                                Command="{StaticResource NewWorkspaceCommand}" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                                Command="{StaticResource NewAppLinkCommand}" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
+                                                                Command="{StaticResource MoreNewItemsCommand}"
+                                                                IsEnabled="{x:Bind commands:NavigationBar.IsMoreNewItemsEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"/>
+                                            </MenuFlyout>
+                                        </controls:IconButton.Flyout>
+                                    </controls:IconButton>
                                     <controls:IconSplitButton CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                               Command="{StaticResource CopyCommand}"
                                                               IsPrimaryButtonEnabled="{x:Bind commands:Toolbar.IsCopyEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
@@ -904,28 +881,47 @@
                                         Margin="8,0,0,0"
                                         Orientation="Horizontal"
                                         Spacing="4">
+                                <controls:IconButton Command="{StaticResource LayoutCommand}"
+                                                     IsCompact="True">
+                                    <controls:IconButton.Flyout>
+                                        <MenuFlyout Placement="Bottom">
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource GridLayoutCommand}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsGridLayout, Mode=TwoWay}"
+                                                                       GroupName="Layout" />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource DetailsLayoutCommand}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsDetailsLayout, Mode=TwoWay}"
+                                                                       GroupName="Layout" />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource TilesLayoutCommand}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsTilesLayout, Mode=TwoWay}"
+                                                                       GroupName="Layout" />
+                                            <winui:RadioMenuFlyoutItem Command="{StaticResource ListLayoutCommand}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsListLayout, Mode=TwoWay}"
+                                                                       GroupName="Layout" />
+                                        </MenuFlyout>
+                                    </controls:IconButton.Flyout>
+                                </controls:IconButton>
                                 <controls:IconButton Command="{StaticResource SortByCommand}"
                                                      IsCompact="True">
                                     <controls:IconButton.Flyout>
                                         <MenuFlyout Placement="BottomEdgeAlignedRight">
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource SortByNameCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsSortByName, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsSortByName, Mode=TwoWay}"
                                                                        GroupName="SortBy" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource SortByDateModifiedCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsSortByDateModified, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsSortByDateModified, Mode=TwoWay}"
                                                                        GroupName="SortBy" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource SortByDisplayTypeCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsSortByDisplayType, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsSortByDisplayType, Mode=TwoWay}"
                                                                        GroupName="SortBy" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource SortBySizeCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsSortBySize, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsSortBySize, Mode=TwoWay}"
                                                                        GroupName="SortBy" />
                                             <MenuFlyoutSeparator />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource SortByAscendingCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsSortAscending, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsSortAscending, Mode=TwoWay}"
                                                                        GroupName="SortDirection" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource SortByDescendingCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsSortDescending, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsSortDescending, Mode=TwoWay}"
                                                                        GroupName="SortDirection" />
                                         </MenuFlyout>
                                     </controls:IconButton.Flyout>
@@ -935,35 +931,35 @@
                                     <controls:IconButton.Flyout>
                                         <MenuFlyout Placement="BottomEdgeAlignedRight">
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByNoneCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupByNone, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsGroupByNone, Mode=TwoWay}"
                                                                        IsEnabled="{x:Bind ViewModel.CurrentTab.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
                                                                        GroupName="GroupBy" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByNameCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupByName, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsGroupByName, Mode=TwoWay}"
                                                                        IsEnabled="{x:Bind ViewModel.CurrentTab.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
                                                                        GroupName="GroupBy" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByDateModifiedCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupByDateModified, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsGroupByDateModified, Mode=TwoWay}"
                                                                        IsEnabled="{x:Bind ViewModel.CurrentTab.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
                                                                        GroupName="GroupBy" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByDisplayTypeCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupByDisplayType, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsGroupByDisplayType, Mode=TwoWay}"
                                                                        IsEnabled="{x:Bind ViewModel.CurrentTab.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
                                                                        GroupName="GroupBy" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GroupBySizeCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupBySize, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsGroupBySize, Mode=TwoWay}"
                                                                        IsEnabled="{x:Bind ViewModel.CurrentTab.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
                                                                        GroupName="GroupBy" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByItemTypeCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupByItemType, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsGroupByItemType, Mode=TwoWay}"
                                                                        IsEnabled="{x:Bind ViewModel.CurrentTab.Context.HasCustomGrouping, Mode=OneWay, Converter={StaticResource NegateBooleanConverter}}"
                                                                        GroupName="GroupBy" />
                                             <MenuFlyoutSeparator />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByAscendingCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupAscending, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsGroupAscending, Mode=TwoWay}"
                                                                        GroupName="GroupDirection" />
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource GroupByDescendingCommand}"
-                                                                       IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.IsGroupDescending, Mode=TwoWay}"
+                                                                       IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsGroupDescending, Mode=TwoWay}"
                                                                        GroupName="GroupDirection" />
                                         </MenuFlyout>
                                     </controls:IconButton.Flyout>

@@ -66,7 +66,7 @@ namespace JumpPoint.Uwp
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appcenter.jps.json", optional: true)
                 .Build();
-#if BETA
+#if JPBETA
             AppCenter.Start(config["betaKey"], typeof(Analytics), typeof(Crashes));
 #else
             AppCenter.Start(config["mainKey"], typeof(Analytics), typeof(Crashes));
@@ -766,6 +766,22 @@ namespace JumpPoint.Uwp
                                 break;
 
                             case ToolPath.Unknown:
+                            default:
+                                break;
+                        }
+                    }
+                    break;
+
+                case Prefix.NEWITEM_SCHEME:
+                    {
+                        var host = EnumHelper<NewItemPath>.ParseOrDefault(args.Uri.Host, ignoreCase: true);
+                        switch (host)
+                        {
+                            case NewItemPath.TextDocument:
+                                rootFrame.Navigate(typeof(Hosted.NewTextDocumentPage), payload);
+                                break;
+
+                            case NewItemPath.Unknown:
                             default:
                                 break;
                         }

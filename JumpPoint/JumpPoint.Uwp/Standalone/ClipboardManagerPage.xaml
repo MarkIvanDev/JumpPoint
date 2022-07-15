@@ -9,18 +9,18 @@
     mc:Ignorable="d"
     xmlns:extensions="using:NittyGritty.Uwp.Extensions"
     xmlns:converters="using:JumpPoint.Uwp.Converters"
-    xmlns:services="using:JumpPoint.Platform.Services"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:gtext="using:Glif.Core.Text"
     xmlns:platform="using:JumpPoint.Platform"
     xmlns:behaviors="using:JumpPoint.Uwp.Interactivity.Behaviors"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:selectors="using:JumpPoint.Uwp.Converters.Selectors"
-              xmlns:models="using:JumpPoint.Platform.Models"
+    xmlns:models="using:JumpPoint.Platform.Models"
     xmlns:helpers="using:JumpPoint.Uwp.Helpers"
-              extensions:ApplicationViewExtensions.Title="Clipboard Manager"
+    extensions:ApplicationViewExtensions.Title="Clipboard Manager"
     extensions:TitleBarExtensions.ButtonBackgroundColor="Transparent"
     extensions:TitleBarExtensions.ButtonInactiveBackgroundColor="Transparent"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    winui:BackdropMaterial.ApplyToRootOrPageBackground="True">
 
     <nguwp:NGPage.Resources>
         <XamlUICommand x:Key="DeleteClipboardItemCommand"

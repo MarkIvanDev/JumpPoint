@@ -16,11 +16,13 @@ using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Services;
 using JumpPoint.ViewModels.Helpers;
+using NittyGritty;
 using NittyGritty.Collections;
 using NittyGritty.Commands;
 using NittyGritty.Models;
 using NittyGritty.Services.Core;
 using NittyGritty.ViewModels;
+using Xamarin.Essentials;
 
 namespace JumpPoint.ViewModels
 {
@@ -61,6 +63,14 @@ namespace JumpPoint.ViewModels
         {
             get { return _pathHash; }
             set { Set(ref _pathHash, value); }
+        }
+
+        private PathSettings _settings;
+
+        public PathSettings Settings
+        {
+            get { return _settings; }
+            set { Set(ref _settings, value); }
         }
 
         private bool _isPinned;
@@ -115,6 +125,7 @@ namespace JumpPoint.ViewModels
                         ItemStats.Reset();
 
                         PathHash = HashTool.Sha256Hash(PathInfo.Path.ToUpperInvariant());
+                        Settings = new PathSettings(PathHash);
                         IsPinned = shortcutService.Exists(PathHash);
 
                         Filter();
@@ -236,5 +247,334 @@ namespace JumpPoint.ViewModels
             SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
             appSettings.PropertyChanged -= AppSettings_PropertyChanged;
         }
+    }
+
+    public class PathSettings : ObservableObject
+    {
+        private const string DRIVES_HASH = "77e9d94720614a9d8dbc5450dda97fd344f15bec5c7a786986fc4984eb4a9473";
+        private const string CLOUDDRIVES_HASH = "3ed8ca857698335e4f5ff193a2afed9130b68478aceeb809748e124f227fcc48";
+
+        private readonly string pathHash;
+
+        public PathSettings(string pathHash)
+        {
+            this.pathHash = pathHash;
+        }
+
+        #region Layout
+
+        public string Layout
+        {
+            get { return Preferences.Get(nameof(Layout), GetDefaultLayout(pathHash), pathHash); }
+            set
+            {
+                if (Layout != value)
+                {
+                    Preferences.Set(nameof(Layout), value, pathHash);
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsGridLayout));
+                    RaisePropertyChanged(nameof(IsDetailsLayout));
+                    RaisePropertyChanged(nameof(IsTilesLayout));
+                    RaisePropertyChanged(nameof(IsListLayout));
+                }
+            }
+        }
+
+        private static string GetDefaultLayout(string pathHash)
+        {
+            if (pathHash == DRIVES_HASH || pathHash == CLOUDDRIVES_HASH)
+            {
+                return LayoutModes.Tiles;
+            }
+            else
+            {
+                return LayoutModes.Grid;
+            }
+        }
+
+        public bool IsGridLayout
+        {
+            get { return Layout == LayoutModes.Grid; }
+            set
+            {
+                if (Layout != LayoutModes.Grid && value)
+                {
+                    Layout = LayoutModes.Grid;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsDetailsLayout
+        {
+            get { return Layout == LayoutModes.Details; }
+            set
+            {
+                if (Layout != LayoutModes.Details && value)
+                {
+                    Layout = LayoutModes.Details;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsTilesLayout
+        {
+            get { return Layout == LayoutModes.Tiles; }
+            set
+            {
+                if (Layout != LayoutModes.Tiles && value)
+                {
+                    Layout = LayoutModes.Tiles;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsListLayout
+        {
+            get { return Layout == LayoutModes.List; }
+            set
+            {
+                if (Layout != LayoutModes.List && value)
+                {
+                    Layout = LayoutModes.List;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        #endregion
+
+        #region SortBy
+
+        public SortBy SortBy
+        {
+            get { return (SortBy)Preferences.Get(nameof(SortBy), (int)SortBy.Name, pathHash); }
+            set
+            {
+                if (SortBy != value)
+                {
+                    Preferences.Set(nameof(SortBy), (int)value, pathHash);
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsSortByName));
+                    RaisePropertyChanged(nameof(IsSortByDateModified));
+                    RaisePropertyChanged(nameof(IsSortByDisplayType));
+                    RaisePropertyChanged(nameof(IsSortBySize));
+                }
+            }
+        }
+
+        public bool IsSortByName
+        {
+            get { return SortBy == SortBy.Name; }
+            set
+            {
+                if (SortBy != SortBy.Name && value)
+                {
+                    SortBy = SortBy.Name;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsSortByDateModified
+        {
+            get { return SortBy == SortBy.DateModified; }
+            set
+            {
+                if (SortBy != SortBy.DateModified && value)
+                {
+                    SortBy = SortBy.DateModified;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsSortByDisplayType
+        {
+            get { return SortBy == SortBy.DisplayType; }
+            set
+            {
+                if (SortBy != SortBy.DisplayType && value)
+                {
+                    SortBy = SortBy.DisplayType;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsSortBySize
+        {
+            get { return SortBy == SortBy.Size; }
+            set
+            {
+                if (SortBy != SortBy.Size && value)
+                {
+                    SortBy = SortBy.Size;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsSortAscending
+        {
+            get { return Preferences.Get(nameof(IsSortAscending), true, pathHash); }
+            set
+            {
+                if (IsSortAscending != value)
+                {
+                    Preferences.Set(nameof(IsSortAscending), value, pathHash);
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsSortDescending));
+                }
+            }
+        }
+
+        public bool IsSortDescending
+        {
+            get { return !IsSortAscending; }
+            set
+            {
+                if (IsSortDescending != value)
+                {
+                    IsSortAscending = !value;
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsSortAscending));
+                }
+            }
+        }
+
+        #endregion
+
+        #region GroupBy
+
+        public GroupBy GroupBy
+        {
+            get { return (GroupBy)Preferences.Get(nameof(GroupBy), (int)GroupBy.None, pathHash); }
+            set
+            {
+                if (GroupBy != value)
+                {
+                    Preferences.Set(nameof(GroupBy), (int)value, pathHash);
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsGroupByNone));
+                    RaisePropertyChanged(nameof(IsGroupByName));
+                    RaisePropertyChanged(nameof(IsGroupByDateModified));
+                    RaisePropertyChanged(nameof(IsGroupByDisplayType));
+                    RaisePropertyChanged(nameof(IsGroupBySize));
+                    RaisePropertyChanged(nameof(IsGroupByItemType));
+                }
+            }
+        }
+
+        public bool IsGroupByNone
+        {
+            get { return GroupBy == GroupBy.None; }
+            set
+            {
+                if (GroupBy != GroupBy.None && value)
+                {
+                    GroupBy = GroupBy.None;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsGroupByName
+        {
+            get { return GroupBy == GroupBy.Name; }
+            set
+            {
+                if (GroupBy != GroupBy.Name && value)
+                {
+                    GroupBy = GroupBy.Name;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsGroupByDateModified
+        {
+            get { return GroupBy == GroupBy.DateModified; }
+            set
+            {
+                if (GroupBy != GroupBy.DateModified && value)
+                {
+                    GroupBy = GroupBy.DateModified;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsGroupByDisplayType
+        {
+            get { return GroupBy == GroupBy.DisplayType; }
+            set
+            {
+                if (GroupBy != GroupBy.DisplayType && value)
+                {
+                    GroupBy = GroupBy.DisplayType;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsGroupBySize
+        {
+            get { return GroupBy == GroupBy.Size; }
+            set
+            {
+                if (GroupBy != GroupBy.Size && value)
+                {
+                    GroupBy = GroupBy.Size;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsGroupByItemType
+        {
+            get { return GroupBy == GroupBy.ItemType; }
+            set
+            {
+                if (GroupBy != GroupBy.ItemType && value)
+                {
+                    GroupBy = GroupBy.ItemType;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsGroupAscending
+        {
+            get { return Preferences.Get(nameof(IsGroupAscending), true, pathHash); }
+            set
+            {
+                if (IsGroupAscending != value)
+                {
+                    Preferences.Set(nameof(IsGroupAscending), value, pathHash);
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsGroupDescending));
+                }
+            }
+        }
+
+        public bool IsGroupDescending
+        {
+            get { return !IsGroupAscending; }
+            set
+            {
+                if (IsGroupDescending != value)
+                {
+                    IsGroupAscending = !value;
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsGroupAscending));
+                }
+            }
+        }
+
+        #endregion
+
     }
 }

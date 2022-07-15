@@ -14,7 +14,7 @@
   <Identity
     Name="25654MarkIvanBasto.JumpPoint"
     Publisher="CN=18D56243-BECE-4C8B-8C6B-085DBDD122F0"
-    Version="2.2.1.0" />
+    Version="2.2.2.0" />
 
   <Properties>
     <DisplayName>Jump Point</DisplayName>
@@ -94,6 +94,9 @@
         <uap:Extension Category="windows.protocol">
           <uap:Protocol Name="jumppoint-tool" ReturnResults="always"/>
         </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="jumppoint-newitem" ReturnResults="always"/>
+        </uap:Extension>
         <uap:Extension Category="windows.shareTarget">
           <uap:ShareTarget>
             <uap:SupportedFileTypes>
@@ -107,6 +110,7 @@
           <uap3:AppExtensionHost>
             <uap3:Name>com.jumppoint.ext.applinkprovider</uap3:Name>
             <uap3:Name>com.jumppoint.ext.tool</uap3:Name>
+            <uap3:Name>com.jumppoint.ext.newitem</uap3:Name>
           </uap3:AppExtensionHost>
         </uap3:Extension>
 
@@ -296,6 +300,19 @@
               <Service>com.jumppoint.svc.flipvertical</Service>
               <Group>Photo Tools</Group>
               <FileTypes>.bmp;.dib;.rle;.gif;.jpeg;.jpe;.jpg;.jfif;.exif;.png;.tiff;.tif;.wdp;.jxr;.dds;.heic;.heif</FileTypes>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+        
+        <!-- New Items -->
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Id="newitem.textdoc"
+                             Name="com.jumppoint.ext.newitem"
+                             DisplayName="Text Document"
+                             Description="Create a new text document (.txt, .json, .xml)"
+                             PublicFolder="Extensions\NewItem\TextDocument">
+            <uap3:Properties>
+              <Link>jumppoint-newitem://textdocument</Link>
             </uap3:Properties>
           </uap3:AppExtension>
         </uap3:Extension>

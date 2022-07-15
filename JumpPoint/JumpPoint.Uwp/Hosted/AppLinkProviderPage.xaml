@@ -10,7 +10,7 @@
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:converters="using:JumpPoint.Uwp.Converters"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    winui:BackdropMaterial.ApplyToRootOrPageBackground="True"
     d:DesignWidth="500"
     d:DesignHeight="500">
 

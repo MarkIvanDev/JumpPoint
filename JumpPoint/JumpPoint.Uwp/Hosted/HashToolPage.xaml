@@ -9,7 +9,7 @@
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:hosted="using:JumpPoint.ViewModels.Hosted"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    winui:BackdropMaterial.ApplyToRootOrPageBackground="True"
     d:DesignWidth="500"
     d:DesignHeight="500">
 

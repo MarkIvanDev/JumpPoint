@@ -233,6 +233,16 @@
                    IconSource="{StaticResource NewItemIcon}"
                    Label="New Item"
                    Description="New Item" />
+    <XamlUICommand x:Key="NewFileCommand"
+                   IconSource="{StaticResource NewFileIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.NewFileCommand}"
+                   Label="New File"
+                   Description="New File">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control,Shift"
+                                 Key="F" />
+        </XamlUICommand.KeyboardAccelerators>
+    </XamlUICommand>
     <XamlUICommand x:Key="NewFolderCommand"
                    IconSource="{StaticResource NewFolderIcon}"
                    Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.NewFolderCommand}"
@@ -261,6 +271,16 @@
         <XamlUICommand.KeyboardAccelerators>
             <KeyboardAccelerator Modifiers="Control,Shift"
                                  Key="A" />
+        </XamlUICommand.KeyboardAccelerators>
+    </XamlUICommand>
+    <XamlUICommand x:Key="MoreNewItemsCommand"
+                   IconSource="{StaticResource MoreNewItemsIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.MoreNewItemsCommand}"
+                   Label="More Items"
+                   Description="More Items">
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control,Shift"
+                                 Key="I" />
         </XamlUICommand.KeyboardAccelerators>
     </XamlUICommand>
     <!--#endregion-->
