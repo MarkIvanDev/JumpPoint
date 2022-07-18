@@ -1,5 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform;
+using JumpPoint.Platform.Items;
+using JumpPoint.Platform.Models;
 using JumpPoint.Uwp.Helpers;
 using JumpPoint.ViewModels;
 using Microsoft.UI.Xaml.Controls;
@@ -179,6 +181,22 @@ namespace JumpPoint.Uwp
         private void toggleMenu_Click(object sender, RoutedEventArgs e)
         {
             panedTabView.IsPaneOpen = !panedTabView.IsPaneOpen;
+        }
+
+        private async void OnBreadcrumbChildrenLoaded(object sender, RoutedEventArgs e)
+        {
+            var crumb = ((ListView)sender).Tag as Breadcrumb;
+            await ViewModel.BreadcrumbChildren.LoadCommand.TryExecute(crumb);
+        }
+
+        private void OnBreadcrumbChildrenUnloaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.BreadcrumbChildren.CancelCommand.TryExecute();
+        }
+
+        private void OnBreadcrumbChildItemClick(object sender, ItemClickEventArgs e)
+        {
+            ViewModel.CurrentTab.NavigationHelper.ToItem(e.ClickedItem as JumpPointItem);
         }
 
         //private void ManageTabs(GenericMessage<NewTabParameter> message)

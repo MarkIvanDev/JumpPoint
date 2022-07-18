@@ -22,6 +22,7 @@ namespace JumpPoint.ViewModels
 
             // Register Helpers
             SimpleIoc.Default.Register<CommandHelper>();
+            SimpleIoc.Default.Register<BreadcrumbChildrenViewModel>();
 
             // Register Tabbed Shell
             SimpleIoc.Default.Register<TabbedShellViewModel>();

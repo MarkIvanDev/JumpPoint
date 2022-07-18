@@ -432,19 +432,107 @@
                                     </winui:ItemsRepeater.Layout>
                                     <winui:ItemsRepeater.ItemTemplate>
                                         <DataTemplate x:DataType="models:Breadcrumb">
-                                            <HyperlinkButton Padding="0"
-                                                             Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
-                                                             CommandParameter="{x:Bind Mode=OneWay}"
-                                                             Command="{Binding Source={StaticResource Locator}, Path=TabbedShell.BreadcrumbCommand}">
-                                                <StackPanel Orientation="Horizontal">
+                                            <Grid ColumnSpacing="4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <HyperlinkButton Padding="0"
+                                                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                                                 CommandParameter="{x:Bind Mode=OneWay}"
+                                                                 Command="{Binding Source={StaticResource Locator}, Path=TabbedShell.BreadcrumbCommand}">
                                                     <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
-                                                               FontSize="14"
-                                                               Margin="0,0,4,0" />
+                                                               FontSize="14" />
+                                                </HyperlinkButton>
+                                                <Button Grid.Column="1"
+                                                        Padding="2"
+                                                        VerticalAlignment="Stretch"
+                                                        Background="Transparent"
+                                                        BorderThickness="0"
+                                                        Foreground="{ThemeResource ApplicationForegroundThemeBrush}">
                                                     <FontIcon FontFamily="Segoe MDL2 Assets"
                                                               Glyph="&#xE00F;"
-                                                              FontSize="12" />
-                                                </StackPanel>
-                                            </HyperlinkButton>
+                                                              FontSize="10" />
+                                                    <Button.Flyout>
+                                                        <Flyout Placement="BottomEdgeAlignedLeft">
+                                                            <Flyout.FlyoutPresenterStyle>
+                                                                <Style TargetType="FlyoutPresenter">
+                                                                    <Setter Property="Padding"
+                                                                            Value="0,4" />
+                                                                </Style>
+                                                            </Flyout.FlyoutPresenterStyle>
+                                                            <ListView ItemsSource="{Binding Source={StaticResource Locator}, Path=TabbedShell.BreadcrumbChildren.Children}"
+                                                                      MaxHeight="320"
+                                                                      MinWidth="240"
+                                                                      IsItemClickEnabled="True"
+                                                                      Loaded="OnBreadcrumbChildrenLoaded"
+                                                                      Unloaded="OnBreadcrumbChildrenUnloaded"
+                                                                      ItemClick="OnBreadcrumbChildItemClick"
+                                                                      SelectionMode="None"
+                                                                      Tag="{x:Bind Mode=OneWay}">
+                                                                <ListView.Resources>
+                                                                    <converters:NothingToShowConverter x:Key="NothingToShowConverter">
+                                                                        <ngconv:Binding Value="{Binding Source={StaticResource Locator}, Path=TabbedShell.BreadcrumbChildren.IsLoading}" />
+                                                                        <ngconv:Binding Value="{Binding Source={StaticResource Locator}, Path=TabbedShell.BreadcrumbChildren.Children.Count}" />
+                                                                    </converters:NothingToShowConverter>
+                                                                </ListView.Resources>
+                                                                <ListView.Header>
+                                                                    <Grid>
+                                                                        <Grid.RowDefinitions>
+                                                                            <RowDefinition Height="Auto" />
+                                                                            <RowDefinition Height="*" />
+                                                                        </Grid.RowDefinitions>
+                                                                        <winui:ProgressBar IsIndeterminate="{Binding Source={StaticResource Locator}, Path=TabbedShell.BreadcrumbChildren.IsLoading}"
+                                                                                           Visibility="{Binding Source={StaticResource Locator}, Path=TabbedShell.BreadcrumbChildren.IsLoading}"/>
+                                                                        <StackPanel Margin="0,12"
+                                                                                    VerticalAlignment="Center"
+                                                                                    HorizontalAlignment="Center"
+                                                                                    Visibility="{Binding Source={StaticResource NothingToShowConverter}, Path=Output, Mode=OneWay}">
+                                                                            <Image HorizontalAlignment="Center"
+                                                                                   Width="64"
+                                                                                   Height="64">
+                                                                                <Image.Source>
+                                                                                    <BitmapImage DecodePixelHeight="64"
+                                                                                                 DecodePixelWidth="64"
+                                                                                                 DecodePixelType="Logical"
+                                                                                                 UriSource="/Assets/Icons/Empty.png" />
+                                                                                </Image.Source>
+                                                                            </Image>
+                                                                            <TextBlock Text="Nothing to show"
+                                                                                       Style="{StaticResource SubtitleTextBlockStyle}"
+                                                                                       FontWeight="Normal"
+                                                                                       FontSize="14"
+                                                                                       HorizontalAlignment="Center" />
+                                                                        </StackPanel>
+                                                                    </Grid>
+                                                                </ListView.Header>
+                                                                <ListView.ItemTemplate>
+                                                                    <DataTemplate x:DataType="items:JumpPointItem">
+                                                                        <Grid ColumnSpacing="8"
+                                                                              ToolTipService.ToolTip="{x:Bind DisplayName, Mode=OneWay}">
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="Auto" />
+                                                                                <ColumnDefinition Width="*" />
+                                                                            </Grid.ColumnDefinitions>
+                                                                            <Image Source="{x:Bind converters:IconConverter.GetImageSource((items:JumpPointItem)), Mode=OneWay}"
+                                                                                   Width="20"
+                                                                                   Height="20" />
+                                                                            <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
+                                                                                       FontSize="14"
+                                                                                       Grid.Column="1"/>
+                                                                        </Grid>
+                                                                    </DataTemplate>
+                                                                </ListView.ItemTemplate>
+                                                                <i:Interaction.Behaviors>
+                                                                    <core:EventTriggerBehavior EventName="ItemClick">
+                                                                        <actions:CloseFlyoutAction />
+                                                                    </core:EventTriggerBehavior>
+                                                                </i:Interaction.Behaviors>
+                                                            </ListView>
+                                                        </Flyout>
+                                                    </Button.Flyout>
+                                                </Button>
+                                            </Grid>
                                         </DataTemplate>
                                     </winui:ItemsRepeater.ItemTemplate>
                                 </winui:ItemsRepeater>

@@ -1,6 +1,8 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform;
 using JumpPoint.Platform.Items;
+using JumpPoint.Platform.Items.CloudStorage;
+using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.Platform.Services;
@@ -9,6 +11,7 @@ using JumpPoint.ViewModels.Dialogs;
 using JumpPoint.ViewModels.Helpers;
 using NittyGritty;
 using NittyGritty.Commands;
+using NittyGritty.Extensions;
 using NittyGritty.Models;
 using NittyGritty.Platform.Store;
 using NittyGritty.Services.Core;
@@ -20,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 
@@ -35,17 +39,21 @@ namespace JumpPoint.ViewModels
                                     IAddOnService addOnService,
                                     IShareService shareService,
                                     ShellItems shellItems,
-                                    CommandHelper commandHelper)
+                                    CommandHelper commandHelper,
+                                    BreadcrumbChildrenViewModel breadcrumbChildren)
         {
             this.dialogService = dialogService;
             this.addOnService = addOnService;
             this.shareService = shareService;
             ShellItems = shellItems;
             CommandHelper = commandHelper;
+            BreadcrumbChildren = breadcrumbChildren;
             Tabs = new ObservableCollection<TabViewModel>();
         }
 
         public CommandHelper CommandHelper { get; }
+
+        public BreadcrumbChildrenViewModel BreadcrumbChildren { get; }
 
         public ObservableCollection<TabViewModel> Tabs { get; }
 
@@ -511,6 +519,198 @@ namespace JumpPoint.ViewModels
         public AppPath AppPath { get; }
 
         public object Parameter { get; }
+    }
+
+    public class BreadcrumbChildrenViewModel : ObservableObject
+    {
+        private readonly SemaphoreSlim semaphore;
+        private readonly AppSettings appSettings;
+        private CancellationTokenSource tokenSource;
+
+        public BreadcrumbChildrenViewModel(AppSettings appSettings)
+        {
+            semaphore = new SemaphoreSlim(1, 1);
+            tokenSource = new CancellationTokenSource();
+            Children = new ObservableCollection<JumpPointItem>();
+            this.appSettings = appSettings;
+        }
+
+        public ObservableCollection<JumpPointItem> Children { get; }
+
+        private bool _isLoading;
+
+        public bool IsLoading
+        {
+            get { return _isLoading; }
+            set { Set(ref _isLoading, value); }
+        }
+
+        private AsyncRelayCommand<Breadcrumb> _Load;
+        public AsyncRelayCommand<Breadcrumb> LoadCommand => _Load ?? (_Load = new AsyncRelayCommand<Breadcrumb>(
+            async (crumb) =>
+            {
+                IsLoading = true;
+                await semaphore.WaitAsync();
+                try
+                {
+                    Children.Clear();
+                    CancelCommand.TryExecute();
+                    tokenSource = new CancellationTokenSource();
+                    var token = tokenSource.Token;
+                    switch (crumb.AppPath)
+                    {
+                        case AppPath.Drive:
+                        case AppPath.Folder:
+                            var directory = await StorageService.GetDirectory(crumb.Path);
+                            if (directory != null)
+                            {
+                                var items = (await StorageService.GetItems(directory)).Where(i =>
+                                {
+                                    if (i is DirectoryBase)
+                                    {
+                                        if (!appSettings.ShowHiddenItems && i is StorageItemBase item && item.Attributes.HasValue)
+                                        {
+                                            return (item.Attributes.Value & System.IO.FileAttributes.Hidden) != System.IO.FileAttributes.Hidden;
+                                        }
+                                        else
+                                        {
+                                            return true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        return false;
+                                    }
+                                }).ToList();
+                                Children.AddRange(items);
+                                foreach (var item in items)
+                                {
+                                    token.ThrowIfCancellationRequested();
+                                    await JumpPointService.Load(item);
+                                }
+                            }
+                            break;
+
+                        case AppPath.Dashboard:
+                            var userFolders = await DashboardService.GetUserFolders(false);
+                            Children.AddRange(userFolders);
+                            var systemFolders = await DashboardService.GetSystemFolders(false);
+                            Children.AddRange(systemFolders);
+                            foreach (var item in userFolders)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                await JumpPointService.Load(item);
+                            }
+                            foreach (var item in systemFolders)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                await JumpPointService.Load(item);
+                            }
+                            break;
+
+                        case AppPath.Favorites:
+                            var favorites = (await DashboardService.GetFavorites()).Where(i => i is DirectoryBase || i is Workspace);
+                            Children.AddRange(favorites);
+                            foreach (var item in favorites)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                await JumpPointService.Load(item);
+                            }
+                            break;
+
+                        case AppPath.Drives:
+                            var drives = await StorageService.GetDrives();
+                            Children.AddRange(drives);
+                            foreach (var item in drives)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                await JumpPointService.Load(item);
+                            }
+                            break;
+
+                        case AppPath.CloudDrives:
+                            var cloudDrives = await CloudStorageService.GetDrives();
+                            Children.AddRange(cloudDrives);
+                            foreach (var item in cloudDrives)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                await JumpPointService.Load(item);
+                            }
+                            break;
+
+                        case AppPath.Workspaces:
+                            var workspaces = await WorkspaceService.GetWorkspaces();
+                            Children.AddRange(workspaces);
+                            foreach (var item in workspaces)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                await JumpPointService.Load(item);
+                            }
+                            break;
+
+                        case AppPath.Workspace:
+                            var workspace = await WorkspaceService.GetWorkspace(crumb.Path);
+                            if (workspace != null)
+                            {
+                                var items = (await WorkspaceService.GetItems(workspace.Id)).Where(i => i is DirectoryBase);
+                                Children.AddRange(items);
+                                foreach (var item in items)
+                                {
+                                    token.ThrowIfCancellationRequested();
+                                    await JumpPointService.Load(item);
+                                }
+                            }
+                            break;
+
+                        case AppPath.Cloud:
+                            var provider = CloudStorageService.GetProvider(crumb.Path);
+                            if (provider != CloudStorageProvider.Unknown)
+                            {
+                                var clouds = await CloudStorageService.GetDrives(provider);
+                                Children.AddRange(clouds);
+                                foreach (var item in clouds)
+                                {
+                                    token.ThrowIfCancellationRequested();
+                                    await JumpPointService.Load(item);
+                                }
+                            }
+                            break;
+
+                        case AppPath.AppLinks:
+                        case AppPath.Settings:
+                        case AppPath.Properties:
+                        case AppPath.Chat:
+                        case AppPath.ClipboardManager:
+                        case AppPath.Unknown:
+                        default:
+                            break;
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
+                finally
+                {
+                    semaphore.Release();
+                    IsLoading = false;
+                }
+            }));
+
+        private RelayCommand _Cancel;
+        public RelayCommand CancelCommand => _Cancel ?? (_Cancel = new RelayCommand(
+            () =>
+            {
+                try
+                {
+                    tokenSource?.Cancel();
+                    tokenSource?.Dispose();
+                }
+                catch (Exception)
+                {
+                }
+            }));
+
     }
 
 }
