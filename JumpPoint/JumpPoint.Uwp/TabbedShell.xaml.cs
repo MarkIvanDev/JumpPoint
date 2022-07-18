@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform;
+using JumpPoint.Uwp.Helpers;
 using JumpPoint.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 using NittyGritty.Services;
@@ -18,6 +19,7 @@ using Windows.Foundation.Collections;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Core.Preview;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -36,6 +38,8 @@ namespace JumpPoint.Uwp
     /// </summary>
     public sealed partial class TabbedShell : NGPage
     {
+        private SystemNavigationManagerPreview systemNavPreview;
+
         public TabbedShell()
         {
             this.InitializeComponent();
@@ -137,15 +141,35 @@ namespace JumpPoint.Uwp
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             Messenger.Default.Register<NotificationMessage<Exception>>(this, MessengerTokens.ExceptionManagement, ExceptionManagement);
+            systemNavPreview = SystemNavigationManagerPreview.GetForCurrentView();
+            systemNavPreview.CloseRequested += OnCloseRequested;
             base.OnNavigatedTo(e);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             Messenger.Default.Unregister<NotificationMessage<Exception>>(this, MessengerTokens.ExceptionManagement, ExceptionManagement);
+            if (systemNavPreview != null)
+            {
+                systemNavPreview.CloseRequested -= OnCloseRequested;
+            }
             base.OnNavigatedFrom(e);
         }
 
+        private async void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
+        {
+            var deferral = e.GetDeferral();
+            if (ViewModel.Tabs.Count > 1)
+            {
+                var result = await ServiceLocator.DialogService.ShowMessage($"You are about to close {ViewModel.Tabs.Count} tabs. Are you sure you want to continue?",
+                "Confirm exit", "Close", "Cancel");
+                if (!result)
+                {
+                    e.Handled = true;
+                }
+            }
+            deferral.Complete();
+        }
 
         public void ProcessParameter(string parameter)
         {
