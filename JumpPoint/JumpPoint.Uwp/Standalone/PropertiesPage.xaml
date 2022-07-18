@@ -846,6 +846,9 @@
                                             <MenuFlyoutItem Text="Open in Powershell"
                                                             CommandParameter="{x:Bind}"
                                                             Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenPowershellCommand}" />
+                                            <MenuFlyoutItem Text="Open in Windows Terminal"
+                                                            CommandParameter="{x:Bind}"
+                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenWindowsTerminalCommand}" />
                                             <MenuFlyoutSeparator />
                                             <MenuFlyoutItem Text="Clean Manager"
                                                             CommandParameter="{x:Bind}"
@@ -963,6 +966,9 @@
                                             <MenuFlyoutItem Text="Open in Powershell"
                                                             CommandParameter="{x:Bind}"
                                                             Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenPowershellCommand}" />
+                                            <MenuFlyoutItem Text="Open in Windows Terminal"
+                                                            CommandParameter="{x:Bind}"
+                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenWindowsTerminalCommand}" />
                                         </MenuFlyout>
                                     </winui:SplitButton.Flyout>
                                 </winui:SplitButton>

@@ -31,6 +31,9 @@ namespace JumpPoint.Platform.Services
         public static Task OpenInPowershell(IList<string> paths)
             => PlatformOpenInPowershell(paths);
 
+        public static Task OpenInWindowsTerminal(IList<string> paths)
+            => PlatformOpenInWindowsTerminal(paths);
+
         public static Task OpenSystemApp(string app, string arguments = null)
             => PlatformOpenSystemApp(app, arguments);
 

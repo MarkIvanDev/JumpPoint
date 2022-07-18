@@ -27,7 +27,6 @@ namespace JumpPoint.ViewModels
             SimpleIoc.Default.Register<TabbedShellViewModel>();
 
             // Register ViewModels
-            SimpleIoc.Default.Register<ShellViewModel>();
             SimpleIoc.Default.Register<DashboardViewModel>();
             SimpleIoc.Default.Register<FavoritesViewModel>();
             SimpleIoc.Default.Register<WorkspacesViewModel>();
@@ -58,8 +57,6 @@ namespace JumpPoint.ViewModels
         public static ViewModelLocator Instance => SimpleIoc.Default.GetInstance<ViewModelLocator>();
 
         // Since Shell Windows are opened in a separate instance (see Multi-Process), we can be assured that only 1 ShellViewModel exists in each Process
-        public ShellViewModel Shell => SimpleIoc.Default.GetInstance<ShellViewModel>();
-
         public TabbedShellViewModel TabbedShell => SimpleIoc.Default.GetInstance<TabbedShellViewModel>();
 
         // Since Property Windows are opened in a separate instance (see Multi-Process), we can be assured that only 1 PropertiesViewModel exists in each Process

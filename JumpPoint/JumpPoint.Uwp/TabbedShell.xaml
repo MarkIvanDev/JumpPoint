@@ -379,6 +379,10 @@
                                                         Command="{StaticResource OpenPathInPowershellCommand}"
                                                         IsEnabled="{x:Bind commands:NavigationBar.IsOpenInPowershellEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                         Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
+                                                        Command="{StaticResource OpenPathInWindowsTerminalCommand}"
+                                                        IsEnabled="{x:Bind commands:NavigationBar.IsOpenInWindowsTerminalEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
 
                                         <MenuFlyoutSeparator Visibility="{x:Bind pathToolSeparator.Output, Mode=OneWay}" />
                                         <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
@@ -829,6 +833,10 @@
                                                 <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                                 Command="{StaticResource OpenItemsInPowershellCommand}"
                                                                 IsEnabled="{x:Bind commands:Toolbar.IsOpenInPowershellEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
+                                                                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                                                <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
+                                                                Command="{StaticResource OpenItemsInWindowsTerminalCommand}"
+                                                                IsEnabled="{x:Bind commands:Toolbar.IsOpenInWindowsTerminalEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                                 Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
                                             </MenuFlyout>
                                         </controls:IconSplitButton.Flyout>

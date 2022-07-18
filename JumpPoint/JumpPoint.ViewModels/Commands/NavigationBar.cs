@@ -54,6 +54,15 @@ namespace JumpPoint.ViewModels.Commands
             }
         }
 
+        public static bool IsOpenInWindowsTerminalEnabled(ShellContextViewModelBase context)
+        {
+            lock (_lock)
+            {
+                if (context is null || context.Item is null) return false;
+                return context.Item is DirectoryBase && !context.Item.Path.StartsWith(@"\\?\");
+            }
+        }
+
         public static bool IsAddToWorkspaceEnabled(ShellContextViewModelBase context)
         {
             lock (_lock)

@@ -158,6 +158,12 @@
                    Label="Open in Powershell"
                    Description="Open in Powershell">
     </XamlUICommand>
+    <XamlUICommand x:Key="OpenPathInWindowsTerminalCommand"
+                   IconSource="{StaticResource OpenPathInWindowsTerminalIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenPathInWindowsTerminalCommand}"
+                   Label="Open in Windows Terminal"
+                   Description="Open in Windows Terminal">
+    </XamlUICommand>
     <!--#endregion-->
 
     <XamlUICommand x:Key="AddPathToWorkspaceCommand"
@@ -433,6 +439,12 @@
                    Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemsInPowershellCommand}"
                    Label="Open in Powershell"
                    Description="Open in Powershell">
+    </XamlUICommand>
+    <XamlUICommand x:Key="OpenItemsInWindowsTerminalCommand"
+                   IconSource="{StaticResource OpenItemsInWindowsTerminalIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemsInWindowsTerminalCommand}"
+                   Label="Open in Windows Terminal"
+                   Description="Open in Windows Terminal">
     </XamlUICommand>
     <XamlUICommand x:Key="OpenItemCommand"
                    Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemCommand}" />
