@@ -142,6 +142,19 @@ namespace JumpPoint.Platform.Services
             }
         }
 
+        static async Task PlatformOpenInWindowsTerminal(IList<string> paths)
+        {
+            if (PlatformIsSupported())
+            {
+                var data = new ApplicationDataCompositeValue
+                {
+                    [nameof(WindowsTerminalPayload.Paths)] = JsonConvert.SerializeObject(new Collection<string>(paths))
+                };
+                LocalSettings.Values[nameof(WindowsTerminalPayload)] = data;
+                await PlatformLaunchFullTrust(DesktopParameter.WindowsTerminal);
+            }
+        }
+
         static async Task PlatformOpenSystemApp(string app, string arguments = null)
         {
             if (PlatformIsSupported())

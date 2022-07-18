@@ -274,6 +274,13 @@ namespace JumpPoint.ViewModels.Commands
                    context.SelectedItems.All(i => i is DirectoryBase && !i.Path.StartsWith(@"\\?\"));
         }
 
+        public static bool IsOpenInWindowsTerminalEnabled(ShellContextViewModelBase context)
+        {
+            if (context is null) return false;
+            return context.SelectedItems.Count > 0 &&
+                   context.SelectedItems.All(i => i is DirectoryBase && !i.Path.StartsWith(@"\\?\"));
+        }
+
         public static bool IsShareEnabled(ShellContextViewModelBase context)
         {
             if (context is null) return false;

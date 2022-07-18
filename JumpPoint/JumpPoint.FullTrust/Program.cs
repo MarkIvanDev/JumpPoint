@@ -48,6 +48,10 @@ namespace JumpPoint.FullTrust
                         LaunchPowershell();
                         break;
 
+                    case "/wt":
+                        LaunchWindowsTerminal();
+                        break;
+
                     case "/cleanmgr":
                         LaunchCleanManager();
                         break;
@@ -159,6 +163,24 @@ namespace JumpPoint.FullTrust
         static void LaunchPowershell()
         {
             var payload = PayloadService.GetPowershellPayload();
+            if (payload != null)
+            {
+                foreach (var path in payload.PathCollection)
+                {
+                    var process = Process.Start(new ProcessStartInfo
+                    {
+                        FileName = SystemApp.Powershell,
+                        Arguments = $"-noexit -command \"cd \'{path}\'\"",
+                        UseShellExecute = false,
+                    });
+                    ShowWindow(process);
+                }
+            }
+        }
+
+        static void LaunchWindowsTerminal()
+        {
+            var payload = PayloadService.GetWindowsTerminalPayload();
             if (payload != null)
             {
                 foreach (var path in payload.PathCollection)

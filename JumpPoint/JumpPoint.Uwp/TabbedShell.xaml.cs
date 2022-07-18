@@ -1,5 +1,8 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform;
+using JumpPoint.Platform.Items;
+using JumpPoint.Platform.Models;
+using JumpPoint.Uwp.Helpers;
 using JumpPoint.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 using NittyGritty.Services;
@@ -18,6 +21,7 @@ using Windows.Foundation.Collections;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Core.Preview;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -36,6 +40,8 @@ namespace JumpPoint.Uwp
     /// </summary>
     public sealed partial class TabbedShell : NGPage
     {
+        private SystemNavigationManagerPreview systemNavPreview;
+
         public TabbedShell()
         {
             this.InitializeComponent();
@@ -137,15 +143,35 @@ namespace JumpPoint.Uwp
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             Messenger.Default.Register<NotificationMessage<Exception>>(this, MessengerTokens.ExceptionManagement, ExceptionManagement);
+            systemNavPreview = SystemNavigationManagerPreview.GetForCurrentView();
+            systemNavPreview.CloseRequested += OnCloseRequested;
             base.OnNavigatedTo(e);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             Messenger.Default.Unregister<NotificationMessage<Exception>>(this, MessengerTokens.ExceptionManagement, ExceptionManagement);
+            if (systemNavPreview != null)
+            {
+                systemNavPreview.CloseRequested -= OnCloseRequested;
+            }
             base.OnNavigatedFrom(e);
         }
 
+        private async void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
+        {
+            var deferral = e.GetDeferral();
+            if (ViewModel.Tabs.Count > 1)
+            {
+                var result = await ServiceLocator.DialogService.ShowMessage($"You are about to close {ViewModel.Tabs.Count} tabs. Are you sure you want to continue?",
+                "Confirm exit", "Close", "Cancel");
+                if (!result)
+                {
+                    e.Handled = true;
+                }
+            }
+            deferral.Complete();
+        }
 
         public void ProcessParameter(string parameter)
         {
@@ -155,6 +181,22 @@ namespace JumpPoint.Uwp
         private void toggleMenu_Click(object sender, RoutedEventArgs e)
         {
             panedTabView.IsPaneOpen = !panedTabView.IsPaneOpen;
+        }
+
+        private async void OnBreadcrumbChildrenLoaded(object sender, RoutedEventArgs e)
+        {
+            var crumb = ((ListView)sender).Tag as Breadcrumb;
+            await ViewModel.BreadcrumbChildren.LoadCommand.TryExecute(crumb);
+        }
+
+        private void OnBreadcrumbChildrenUnloaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.BreadcrumbChildren.CancelCommand.TryExecute();
+        }
+
+        private void OnBreadcrumbChildItemClick(object sender, ItemClickEventArgs e)
+        {
+            ViewModel.CurrentTab.NavigationHelper.ToItem(e.ClickedItem as JumpPointItem);
         }
 
         //private void ManageTabs(GenericMessage<NewTabParameter> message)

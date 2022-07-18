@@ -11,6 +11,7 @@ namespace JumpPoint.Platform.Services
         public static string Delete => nameof(Delete);
         public static string CommandPrompt => nameof(CommandPrompt);
         public static string Powershell => nameof(Powershell);
+        public static string WindowsTerminal => nameof(WindowsTerminal);
         public static string CleanManager => nameof(CleanManager);
         public static string SystemApps => nameof(SystemApps);
     }

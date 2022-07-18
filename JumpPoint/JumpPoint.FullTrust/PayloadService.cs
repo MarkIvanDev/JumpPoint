@@ -78,6 +78,19 @@ namespace JumpPoint.FullTrust
             return null;
         }
 
+        public static WindowsTerminalPayload? GetWindowsTerminalPayload()
+        {
+            if (LocalSettings.Values[nameof(WindowsTerminalPayload)] is ApplicationDataCompositeValue payload)
+            {
+                LocalSettings.Values.Remove(nameof(WindowsTerminalPayload));
+                return new WindowsTerminalPayload()
+                {
+                    Paths = (string)payload[nameof(WindowsTerminalPayload.Paths)]
+                };
+            }
+            return null;
+        }
+
         public static CleanMgrPayload? GetCleanMgrPayload()
         {
             if (LocalSettings.Values[nameof(CleanMgrPayload)] is ApplicationDataCompositeValue payload)
