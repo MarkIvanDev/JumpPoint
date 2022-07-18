@@ -40,6 +40,9 @@
     <nguwp:NGPage.Resources>
         <Thickness x:Key="NavigationViewHeaderMargin">12,0</Thickness>
         <Thickness x:Key="NavigationViewContentPresenterMargin">0</Thickness>
+        <ngconv:BooleanValueConverter x:Key="HasNullFileSizeIndicatorConverter"
+                                      TrueValue="*"
+                                      FalseValue=""/>
         <converters:ShellItemContentTemplateSelector x:Key="ShellItemContentTemplateSelector">
             <converters:ShellItemContentTemplateSelector.Text>
                 <DataTemplate x:DataType="x:String">
@@ -784,11 +787,12 @@
                                     </controls:IconSplitButton>
                                     <controls:IconButton CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                          Command="{StaticResource PasteCommand}"
-                                                         IsEnabled="{x:Bind commands:Toolbar.IsPasteEnabled(ViewModel.CurrentTab.Context, ViewModel.CommandHelper.ClipboardHasFiles), Mode=OneWay}"/>
-                                    <AppBarSeparator />
+                                                         IsEnabled="{x:Bind commands:Toolbar.IsPasteEnabled(ViewModel.CurrentTab.Context, ViewModel.CommandHelper.ClipboardHasFiles), Mode=OneWay}"
+                                                         IsCompact="True"/>
                                     <controls:IconButton CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                          Command="{StaticResource RenameCommand}"
-                                                         IsEnabled="{x:Bind commands:Toolbar.IsRenameEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"/>
+                                                         IsEnabled="{x:Bind commands:Toolbar.IsRenameEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
+                                                         IsCompact="True"/>
                                     <controls:IconSplitButton CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                               Command="{StaticResource DeleteCommand}"
                                                               IsPrimaryButtonEnabled="{x:Bind commands:Toolbar.IsDeleteEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
@@ -1028,6 +1032,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -1078,6 +1083,13 @@
                                    Grid.Column="1"
                                    Grid.Row="2"
                                    VerticalAlignment="Center" />
+                        <TextBlock Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                   Grid.Column="2"
+                                   Grid.Row="2"
+                                   VerticalAlignment="Center">
+                            <Run Text="{x:Bind FileSize, Converter={StaticResource ByteSizeConverter}, Mode=OneWay}" />
+                            <Run Text="{x:Bind HasNullFileSize, Converter={StaticResource HasNullFileSizeIndicatorConverter}, Mode=OneWay}" />
+                        </TextBlock>
 
                         <Image Width="24"
                                Height="24"
@@ -1177,16 +1189,47 @@
                            Foreground="White" />
                 <Button.Flyout>
                     <Flyout Placement="TopEdgeAlignedLeft">
-                        <StackPanel Spacing="4"
-                                    Padding="0,0,96,0"
-                                    MinWidth="160">
+                        <Grid RowSpacing="4"
+                              MinWidth="240">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
                             <TextBlock Text="ALL ITEMS"
                                        FontWeight="SemiBold" />
-                            <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('item', ViewModel.CurrentTab.Context.ItemStats.Total, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}" />
+                            <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('item', ViewModel.CurrentTab.Context.ItemStats.Total, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                                       Grid.Row="1"/>
+
+                            <Button Grid.Column="1"
+                                    Grid.RowSpan="2"
+                                    MinWidth="0"
+                                    MinHeight="0"
+                                    VerticalAlignment="Top"
+                                    Padding="4"
+                                    Background="Transparent"
+                                    BorderThickness="0">
+                                <FontIcon FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                                          Glyph="&#xF4A4;"
+                                          FontSize="18" />
+                                <Button.Flyout>
+                                    <Flyout>
+                                        <TextBlock Text="* Some sizes might be unavailable" />
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
                             <ContentControl Content="{x:Bind ViewModel.CurrentTab.Context.ItemStats, Mode=OneWay}"
                                             ContentTemplate="{StaticResource ItemStatsTemplate}"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Stretch"
+                                            Grid.Row="2"
+                                            Grid.ColumnSpan="2"
                                             Margin="0,8,0,0" />
-                        </StackPanel>
+                        </Grid>
                     </Flyout>
                 </Button.Flyout>
             </Button>
@@ -1197,16 +1240,46 @@
                            Foreground="White" />
                 <Button.Flyout>
                     <Flyout Placement="TopEdgeAlignedLeft">
-                        <StackPanel Spacing="4"
-                                    Padding="0,0,96,0"
-                                    MinWidth="160">
+                        <Grid RowSpacing="4"
+                              MinWidth="240">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
                             <TextBlock Text="SELECTED ITEMS"
                                        FontWeight="SemiBold" />
-                            <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('item', ViewModel.CurrentTab.Context.SelectedItems.Count, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}" />
+                            <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('item', ViewModel.CurrentTab.Context.SelectedItems.Count, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                                       Grid.Row="1"/>
+                            <Button Grid.Column="1"
+                                    Grid.RowSpan="2"
+                                    MinWidth="0"
+                                    MinHeight="0"
+                                    VerticalAlignment="Top"
+                                    Padding="4"
+                                    Background="Transparent"
+                                    BorderThickness="0">
+                                <FontIcon FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                                          Glyph="&#xF4A4;"
+                                          FontSize="18" />
+                                <Button.Flyout>
+                                    <Flyout>
+                                        <TextBlock Text="* Some sizes might be unavailable" />
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
                             <ContentControl Content="{x:Bind ViewModel.CurrentTab.Context.SelectedItemStats, Mode=OneWay}"
                                             ContentTemplate="{StaticResource ItemStatsTemplate}"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Stretch"
+                                            Grid.Row="2"
+                                            Grid.ColumnSpan="2"
                                             Margin="0,8,0,0" />
-                        </StackPanel>
+                        </Grid>
                     </Flyout>
                 </Button.Flyout>
             </Button>

@@ -109,11 +109,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'">
     <AppxBundle>Always</AppxBundle>
   </PropertyGroup>
-  <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest">
-      <SubType>Designer</SubType>
-    </AppxManifest>
-  </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
   <ItemGroup>
     <Content Include="Assets\LargeTile.scale-100.png" />
@@ -174,5 +169,10 @@
     <ProjectReference Include="..\JumpPoint.FullTrust.Startup\JumpPoint.FullTrust.Startup.csproj" />
     <ProjectReference Include="..\JumpPoint.FullTrust\JumpPoint.FullTrust.csproj" />
     <ProjectReference Include="..\JumpPoint.Uwp\JumpPoint.Uwp.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
   </ItemGroup>
 </Project>
