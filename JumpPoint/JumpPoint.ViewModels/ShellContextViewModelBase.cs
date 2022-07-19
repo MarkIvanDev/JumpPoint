@@ -45,10 +45,10 @@ namespace JumpPoint.ViewModels
             ProgressInfo = new ProgressInfo();
             IsPinned = false;
             PathInfo = new PathInfo();
-            ItemStats = new ItemStats();
-            SelectedItemStats = new ItemStats();
             Items = new DynamicCollection<JumpPointItem>();
             SelectedItems = new ObservableCollection<JumpPointItem>();
+            ItemStats = new ItemStats(Items);
+            SelectedItemStats = new ItemStats(SelectedItems);
         }
 
         public virtual bool HasCustomGrouping { get; }
@@ -122,7 +122,6 @@ namespace JumpPoint.ViewModels
                     {
                         Items.Clear();
                         ProgressInfo.Start();
-                        ItemStats.Reset();
 
                         PathHash = HashTool.Sha256Hash(PathInfo.Path.ToUpperInvariant());
                         Settings = new PathSettings(PathHash);
@@ -190,24 +189,12 @@ namespace JumpPoint.ViewModels
 
         private void Items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            ItemStats.Update(
-                drives: Items.Count(i => i.Type == JumpPointItemType.Drive),
-                folders: Items.Count(i => i.Type == JumpPointItemType.Folder),
-                files: Items.Count(i => i.Type == JumpPointItemType.File),
-                workspaces: Items.Count(i => i.Type == JumpPointItemType.Workspace),
-                appLinks: Items.Count(i => i.Type == JumpPointItemType.AppLink)
-            );
+            ItemStats.Refresh();
         }
 
         private void SelectedItems_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            SelectedItemStats.Update(
-                drives: SelectedItems.Count(i => i.Type == JumpPointItemType.Drive),
-                folders: SelectedItems.Count(i => i.Type == JumpPointItemType.Folder),
-                files: SelectedItems.Count(i => i.Type == JumpPointItemType.File),
-                workspaces: SelectedItems.Count(i => i.Type == JumpPointItemType.Workspace),
-                appLinks: SelectedItems.Count(i => i.Type == JumpPointItemType.AppLink)
-            );
+            SelectedItemStats.Refresh();
             Messenger.Default.Send(new NotificationMessage(nameof(SelectedItems)), MessengerTokens.CommandManagement);
         }
 

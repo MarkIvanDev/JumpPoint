@@ -405,6 +405,16 @@ namespace JumpPoint.ViewModels.Helpers
 
                 await DesktopService.OpenInPowershell(new List<string> { context.PathInfo.Path });
             }));
+
+        private AsyncRelayCommand<ShellContextViewModelBase> _OpenPathInWindowsTerminal;
+        public AsyncRelayCommand<ShellContextViewModelBase> OpenPathInWindowsTerminalCommand => _OpenPathInWindowsTerminal ?? (_OpenPathInWindowsTerminal = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
+            {
+                if (context is null) return;
+
+                await DesktopService.OpenInWindowsTerminal(new List<string> { context.PathInfo.Path });
+            }));
+
         #endregion
 
         private AsyncRelayCommand<ShellContextViewModelBase> _AddPathToWorkspace;
@@ -930,6 +940,16 @@ namespace JumpPoint.ViewModels.Helpers
                 await DesktopService.OpenInPowershell(fbs.Select(i => i.Path).ToList());
             }));
 
+        private AsyncRelayCommand<ShellContextViewModelBase> _OpenItemsInWindowsTerminal;
+        public AsyncRelayCommand<ShellContextViewModelBase> OpenItemsInWindowsTerminalCommand => _OpenItemsInWindowsTerminal ?? (_OpenItemsInWindowsTerminal = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
+            {
+                if (context is null) return;
+
+                var fbs = context.SelectedItems.OfType<DirectoryBase>();
+                await DesktopService.OpenInWindowsTerminal(fbs.Select(i => i.Path).ToList());
+            }));
+
         #endregion
 
         #region Tools
@@ -1121,46 +1141,6 @@ namespace JumpPoint.ViewModels.Helpers
 
 
         #endregion
-    
-        public void NotifyNaviagtionBarCommands()
-        {
-            UpCommand.RaiseCanExecuteChanged();
-            NewFolderCommand.RaiseCanExecuteChanged();
-            OpenPathInFileExplorerCommand.RaiseCanExecuteChanged();
-            OpenPathInCommandPromptCommand.RaiseCanExecuteChanged();
-            OpenPathInPowershellCommand.RaiseCanExecuteChanged();
-            AddPathToWorkspaceCommand.RaiseCanExecuteChanged();
-            AddPathToFavoritesCommand.RaiseCanExecuteChanged();
-            RemovePathFromFavoritesCommand.RaiseCanExecuteChanged();
-            SetPathWorkspaceTemplateCommand.RaiseCanExecuteChanged();
-            SetPathFolderTemplateCommand.RaiseCanExecuteChanged();
-            PathPropertiesCommand.RaiseCanExecuteChanged();
-        }
-
-        public void NotifyToolbarCommands()
-        {
-            CopyCommand.RaiseCanExecuteChanged();
-            CutCommand.RaiseCanExecuteChanged();
-            CopyItemsPathCommand.RaiseCanExecuteChanged();
-            PasteCommand.RaiseCanExecuteChanged();
-            RenameCommand.RaiseCanExecuteChanged();
-            DeleteCommand.RaiseCanExecuteChanged();
-            DeletePermanentlyCommand.RaiseCanExecuteChanged();
-            OpenCommand.RaiseCanExecuteChanged();
-            OpenWithCommand.RaiseCanExecuteChanged();
-            OpenItemsInNewWindowCommand.RaiseCanExecuteChanged();
-            OpenItemsInFileExplorerCommand.RaiseCanExecuteChanged();
-            OpenItemsInCommandPromptCommand.RaiseCanExecuteChanged();
-            OpenItemsInPowershellCommand.RaiseCanExecuteChanged();
-            AddItemsToWorkspaceCommand.RaiseCanExecuteChanged();
-            AddItemsToFavoritesCommand.RaiseCanExecuteChanged();
-            RemoveItemsFromFavoritesCommand.RaiseCanExecuteChanged();
-            MoreToolsCommand.RaiseCanExecuteChanged();
-            SetItemsWorkspaceTemplateCommand.RaiseCanExecuteChanged();
-            SetItemsFolderTemplateCommand.RaiseCanExecuteChanged();
-            ShareItemsCommand.RaiseCanExecuteChanged();
-            ItemsPropertiesCommand.RaiseCanExecuteChanged();
-        }
     
     }
 }

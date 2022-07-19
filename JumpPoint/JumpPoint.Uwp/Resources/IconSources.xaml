@@ -101,6 +101,10 @@
                     FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
                     Glyph="&#x00FC;"
                     FontSize="18" />
+    <FontIconSource x:Key="OpenPathInWindowsTerminalIcon"
+                    FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                    Glyph="&#x00FC;"
+                    FontSize="18" />
 
     <FontIconSource x:Name="AddPathToWorkspaceIcon"
                     FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
@@ -273,6 +277,10 @@
                     Glyph="&#x00FC;"
                     FontSize="18" />
     <FontIconSource x:Key="OpenItemsInPowershellIcon"
+                    FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                    Glyph="&#x00FC;"
+                    FontSize="18" />
+    <FontIconSource x:Key="OpenItemsInWindowsTerminalIcon"
                     FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
                     Glyph="&#x00FC;"
                     FontSize="18" />

@@ -353,6 +353,28 @@ namespace JumpPoint.ViewModels.Standalone
                         break;
                 }
             }));
+
+
+        private AsyncRelayCommand<JumpPointItem> _OpenWindowsTerminal;
+        public AsyncRelayCommand<JumpPointItem> OpenWindowsTerminalCommand => _OpenWindowsTerminal ?? (_OpenWindowsTerminal = new AsyncRelayCommand<JumpPointItem>(
+            async (item) =>
+            {
+                switch (item.Type)
+                {
+                    case JumpPointItemType.Folder:
+                    case JumpPointItemType.Drive:
+                        await DesktopService.OpenInWindowsTerminal(new List<string> { item.Path });
+                        break;
+                    case JumpPointItemType.File:
+                    case JumpPointItemType.Workspace:
+                    case JumpPointItemType.Library:
+                    case JumpPointItemType.AppLink:
+                    case JumpPointItemType.Unknown:
+                    default:
+                        break;
+                }
+            }));
+
         #endregion
 
         #region Drives

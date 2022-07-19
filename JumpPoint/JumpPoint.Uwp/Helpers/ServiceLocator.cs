@@ -120,6 +120,8 @@ namespace JumpPoint.Uwp.Helpers
         }
 
         public static AppSettings AppSettings => SimpleIoc.Default.GetInstance<AppSettings>();
+
+        public static IDialogService DialogService => SimpleIoc.Default.GetInstance<IDialogService>();
     }
 
     public static class SimpleIocExtensions

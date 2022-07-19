@@ -31,6 +31,9 @@ namespace JumpPoint.Platform.Services
         static Task PlatformOpenInPowershell(IList<string> paths)
             => throw new NotImplementedException();
 
+        static Task PlatformOpenInWindowsTerminal(IList<string> paths)
+            => throw new NotImplementedException();
+
         static Task PlatformOpenSystemApp(string app, string arguments = null)
             => throw new NotImplementedException();
     }

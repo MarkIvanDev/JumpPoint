@@ -60,6 +60,27 @@ namespace JumpPoint.ViewModels.Helpers
             }
         }
 
+        public void ToItem(JumpPointItem item)
+        {
+            switch (item)
+            {
+                case DriveBase drive:
+                    ToDrive(drive);
+                    break;
+
+                case FolderBase folder:
+                    ToFolder(folder);
+                    break;
+
+                case Workspace workspace:
+                    ToWorkspace(workspace);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
         public void ToDrive(DriveBase drive)
         {
             NavigationService.NavigateTo(ViewModelKeys.Drive, GetTabParameter(GetParameter(drive)));

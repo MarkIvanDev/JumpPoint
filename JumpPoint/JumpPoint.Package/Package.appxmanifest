@@ -14,7 +14,7 @@
   <Identity
     Name="25654MarkIvanBasto.JumpPoint"
     Publisher="CN=18D56243-BECE-4C8B-8C6B-085DBDD122F0"
-    Version="2.2.2.0" />
+    Version="2.2.3.0" />
 
   <Properties>
     <DisplayName>Jump Point</DisplayName>
@@ -64,6 +64,7 @@
             <desktop:ParameterGroup GroupId="Delete" Parameters="/delete" />
             <desktop:ParameterGroup GroupId="CommandPrompt" Parameters="/cmd" />
             <desktop:ParameterGroup GroupId="Powershell" Parameters="/powershell" />
+            <desktop:ParameterGroup GroupId="WindowsTerminal" Parameters="/wt" />
             <desktop:ParameterGroup GroupId="CleanManager" Parameters="/cleanmgr" />
             <desktop:ParameterGroup GroupId="SystemApps" Parameters="/sysapp" />
           </desktop:FullTrustProcess>
@@ -328,5 +329,6 @@
     <uap:Capability Name="removableStorage" />
     <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="broadFileSystemAccess" />
+    <rescap:Capability Name="confirmAppClose" />
   </Capabilities>
 </Package>
