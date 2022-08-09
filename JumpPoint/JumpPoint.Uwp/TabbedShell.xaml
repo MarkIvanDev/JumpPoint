@@ -464,6 +464,7 @@
                                                             <ListView ItemsSource="{Binding Source={StaticResource Locator}, Path=TabbedShell.BreadcrumbChildren.Children}"
                                                                       MaxHeight="320"
                                                                       MinWidth="240"
+                                                                      MaxWidth="320"
                                                                       IsItemClickEnabled="True"
                                                                       Loaded="OnBreadcrumbChildrenLoaded"
                                                                       Unloaded="OnBreadcrumbChildrenUnloaded"
@@ -516,10 +517,12 @@
                                                                             </Grid.ColumnDefinitions>
                                                                             <Image Source="{x:Bind converters:IconConverter.GetImageSource((items:JumpPointItem)), Mode=OneWay}"
                                                                                    Width="20"
-                                                                                   Height="20" />
+                                                                                   Height="20"
+                                                                                   Opacity="{x:Bind (items:JumpPointItem), Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}"/>
                                                                             <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}"
                                                                                        FontSize="14"
-                                                                                       Grid.Column="1"/>
+                                                                                       Grid.Column="1"
+                                                                                       TextTrimming="CharacterEllipsis"/>
                                                                         </Grid>
                                                                     </DataTemplate>
                                                                 </ListView.ItemTemplate>
