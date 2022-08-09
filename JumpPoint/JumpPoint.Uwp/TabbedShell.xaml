@@ -846,7 +846,7 @@
                                     <controls:IconButton Command="{StaticResource NewItemCommand}"
                                                          Content="New">
                                         <controls:IconButton.Flyout>
-                                            <MenuFlyout Placement="Bottom">
+                                            <MenuFlyout Placement="BottomEdgeAlignedLeft">
                                                 <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
                                                                 Command="{StaticResource NewFileCommand}"
                                                                 IsEnabled="{x:Bind commands:NavigationBar.IsNewFileEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}" />

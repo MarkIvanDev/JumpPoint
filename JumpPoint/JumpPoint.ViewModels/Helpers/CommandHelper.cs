@@ -273,10 +273,6 @@ namespace JumpPoint.ViewModels.Helpers
                 if (result && tab.Context.Item is DirectoryBase parent)
                 {
                     var newFolder = await StorageService.CreateFolder(parent, viewModel.Name);
-                    if (newFolder != null)
-                    {
-                        tab.NavigationHelper.ToFolder(newFolder);
-                    }
                 }
             }));
 

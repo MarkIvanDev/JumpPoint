@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:JumpPoint.Uwp.Controls"
+    xmlns:vm="using:JumpPoint.ViewModels"
     mc:Ignorable="d">
 
     <Grid>
@@ -17,6 +18,23 @@
                                   IsGroupAscending="{x:Bind ViewModel.Settings.IsGroupAscending, Mode=OneWay}"
                                   IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                                   SelectedItems="{x:Bind ViewModel.SelectedItems, Mode=OneWay}"
-                                  ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"/>
+                                  ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
+            <controls:JumpPointViewer.QuickActions>
+                <StackPanel Orientation="Horizontal"
+                            Spacing="8"
+                            Height="48"
+                            Margin="0,8,0,0"
+                            Padding="8"
+                            CornerRadius="6"
+                            Background="{ThemeResource ExpanderHeaderBackground}">
+                    <controls:IconButton CommandParameter="{Binding Source={StaticResource Locator}, Path=TabbedShell.CurrentTab}"
+                                         Command="{StaticResource NewFileCommand}" />
+                    <controls:IconButton CommandParameter="{Binding Source={StaticResource Locator}, Path=TabbedShell.CurrentTab}"
+                                         Command="{StaticResource NewFolderCommand}" />
+                    <controls:IconButton CommandParameter="{Binding Source={StaticResource Locator}, Path=TabbedShell.CurrentTab}"
+                                         Command="{StaticResource MoreNewItemsCommand}" />
+                </StackPanel>
+            </controls:JumpPointViewer.QuickActions>
+        </controls:JumpPointViewer>
     </Grid>
 </nguwp:NGPage>

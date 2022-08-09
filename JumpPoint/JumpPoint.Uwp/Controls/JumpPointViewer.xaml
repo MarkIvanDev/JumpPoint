@@ -20,8 +20,8 @@
     xmlns:actions="using:JumpPoint.Uwp.Interactivity.Actions"
     xmlns:behaviors="using:JumpPoint.Uwp.Interactivity.Behaviors"
     xmlns:gtext="using:Glif.Core.Text"
-             xmlns:commands="using:JumpPoint.ViewModels.Commands"
-             mc:Ignorable="d"
+    xmlns:commands="using:JumpPoint.ViewModels.Commands"
+    mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
 
@@ -1747,26 +1747,6 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         
-        <StackPanel Grid.RowSpan="2"
-                    Margin="12"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    Visibility="{x:Bind NothingToShowConverter.Output, Mode=OneWay}">
-            <Image HorizontalAlignment="Center"
-                   Width="96"
-                   Height="96">
-                <Image.Source>
-                    <BitmapImage DecodePixelHeight="96"
-                                 DecodePixelWidth="96"
-                                 DecodePixelType="Logical"
-                                 UriSource="/Assets/Icons/Empty.png"/>
-                </Image.Source>
-            </Image>
-            <TextBlock Text="Nothing to show"
-                       Style="{StaticResource SubtitleTextBlockStyle}"
-                       HorizontalAlignment="Center" />
-        </StackPanel>
-
         <ContentControl Content="{x:Bind Header, Mode=OneWay}"
                         HorizontalContentAlignment="Stretch"
                         x:Name="viewHeader"/>
@@ -1963,6 +1943,31 @@
                 </ListView>
             </SemanticZoom.ZoomedOutView>
         </SemanticZoom>
+
+        <StackPanel Grid.RowSpan="2"
+                    Margin="12"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Visibility="{x:Bind NothingToShowConverter.Output, Mode=OneWay}">
+            <Image HorizontalAlignment="Center"
+                   Width="96"
+                   Height="96">
+                <Image.Source>
+                    <BitmapImage DecodePixelHeight="96"
+                                 DecodePixelWidth="96"
+                                 DecodePixelType="Logical"
+                                 UriSource="/Assets/Icons/Empty.png" />
+                </Image.Source>
+            </Image>
+            <TextBlock Text="Nothing to show"
+                       Style="{StaticResource SubtitleTextBlockStyle}"
+                       HorizontalAlignment="Center" />
+
+            <ContentControl Content="{x:Bind QuickActions, Mode=OneWay}"
+                            HorizontalContentAlignment="Stretch"
+                            HorizontalAlignment="Center"
+                            x:Name="quickActions" />
+        </StackPanel>
 
         <Canvas HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"

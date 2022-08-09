@@ -89,6 +89,18 @@
                     <MenuFlyoutSeparator Padding="16,4" />
                 </StackPanel>
             </controls:JumpPointViewer.Header>
+            <controls:JumpPointViewer.QuickActions>
+                <StackPanel Orientation="Horizontal"
+                            Spacing="8"
+                            Height="48"
+                            Margin="0,8,0,0"
+                            Padding="8"
+                            CornerRadius="6"
+                            Background="{ThemeResource ExpanderHeaderBackground}">
+                    <controls:IconButton CommandParameter="{Binding Source={StaticResource Locator}, Path=TabbedShell.CurrentTab}"
+                                         Command="{StaticResource NewAppLinkCommand}" />
+                </StackPanel>
+            </controls:JumpPointViewer.QuickActions>
         </controls:JumpPointViewer>
     </Grid>
 </nguwp:NGPage>
