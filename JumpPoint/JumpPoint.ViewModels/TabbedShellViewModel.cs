@@ -365,6 +365,7 @@ namespace JumpPoint.ViewModels
 
         public override async void LoadState(object parameter, Dictionary<string, object> state)
         {
+            ChangeNotifierService.Connect();
             Messenger.Default.Register<NotificationMessage>(this, MessengerTokens.CommandManagement, ManageCommands);
 
             if (parameter != null)
@@ -390,7 +391,7 @@ namespace JumpPoint.ViewModels
             //PropertyChanged += TabbedShellViewModel_PropertyChanged;
             ShellItems.Start();
             shareService.Start();
-            
+            await DesktopService.ChangeNotifier();
 
             await LoadAddOnsCommand.TryExecute();
         }
@@ -405,6 +406,7 @@ namespace JumpPoint.ViewModels
 
         public override void SaveState(Dictionary<string, object> state)
         {
+            ChangeNotifierService.Disconnect();
             Messenger.Default.Unregister<NotificationMessage>(this, MessengerTokens.CommandManagement, ManageCommands);
             CancelAll();
 

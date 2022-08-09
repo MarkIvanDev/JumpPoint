@@ -67,6 +67,7 @@
             <desktop:ParameterGroup GroupId="WindowsTerminal" Parameters="/wt" />
             <desktop:ParameterGroup GroupId="CleanManager" Parameters="/cleanmgr" />
             <desktop:ParameterGroup GroupId="SystemApps" Parameters="/sysapp" />
+            <desktop:ParameterGroup GroupId="ChangeNotifier" Parameters="/change" />
           </desktop:FullTrustProcess>
         </desktop:Extension>
         <uap5:Extension Category="windows.appExecutionAlias"

@@ -497,8 +497,8 @@ Global
 		{61575877-C35B-45B9-962C-085721A87BBD}.Release|arm64.Build.0 = Release|arm64
 		{61575877-C35B-45B9-962C-085721A87BBD}.Release|x64.ActiveCfg = Release|x64
 		{61575877-C35B-45B9-962C-085721A87BBD}.Release|x64.Build.0 = Release|x64
-		{61575877-C35B-45B9-962C-085721A87BBD}.Release|x86.ActiveCfg = Release|x86
-		{61575877-C35B-45B9-962C-085721A87BBD}.Release|x86.Build.0 = Release|x86
+		{61575877-C35B-45B9-962C-085721A87BBD}.Release|x86.ActiveCfg = Release|Any CPU
+		{61575877-C35B-45B9-962C-085721A87BBD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

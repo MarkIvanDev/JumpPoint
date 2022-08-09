@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Metadata;
+using Windows.Security.Authentication.Web;
 using Windows.Storage;
 
 namespace JumpPoint.Platform.Services
@@ -169,6 +170,15 @@ namespace JumpPoint.Platform.Services
             }
         }
 
+        static async Task PlatformChangeNotifier()
+        {
+            if (PlatformIsSupported())
+            {
+                ApplicationData.Current.LocalSettings.Values["PackageSid"] = WebAuthenticationBroker.GetCurrentApplicationCallbackUri().Host.ToUpper();
+                await PlatformLaunchFullTrust(DesktopParameter.ChangeNotifier);
+            }
+        }
+
         static bool PlatformIsSupported()
         {
             return ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0);
@@ -185,5 +195,6 @@ namespace JumpPoint.Platform.Services
                 await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
             }
         }
+
     }
 }

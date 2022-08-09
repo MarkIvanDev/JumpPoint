@@ -223,6 +223,27 @@ namespace JumpPoint.Platform.Services
         public static async Task<bool> Exists(StorageItemBase item)
             => await PlatformExists(item);
 
+        public static async Task Load(StorageItemBase item)
+        {
+            switch (item)
+            {
+                case DriveBase drive:
+                    await Load(drive);
+                    break;
+
+                case FolderBase folder:
+                    await Load(folder);
+                    break;
+
+                case FileBase file:
+                    await Load(file);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
         #region Directory
 
         public static async Task<DirectoryBase> GetDirectory(string path)

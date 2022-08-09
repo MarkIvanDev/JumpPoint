@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using JumpPoint.FullTrust.Core.ChangeNotifier;
 using JumpPoint.Platform;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.Storage;
@@ -82,11 +84,79 @@ namespace JumpPoint.ViewModels
 
             PathInfo.Place(path, parameter);
             await RefreshCommand.TryExecute();
+            if (StorageType == Platform.Items.Storage.StorageType.Local)
+            {
+                ChangeNotifierService.Start(PathInfo.Path, ItemsChanged);
+            }
+        }
+
+        private async void ItemsChanged(NotifyChange change)
+        {
+            await Xamarin.Essentials.MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                switch (change.ChangeType)
+                {
+                    case ChangeType.Created:
+                        StorageItemBase itemToCreate = change.IsDirectory ?
+                            (StorageItemBase)(await StorageService.GetFolder(change.FullPath, StorageType)) :
+                            await StorageService.GetFile(change.FullPath, StorageType);
+                        if (itemToCreate != null)
+                        {
+                            Items.Add(itemToCreate);
+                            await JumpPointService.Load(itemToCreate);
+                        }
+                        break;
+
+                    case ChangeType.Deleted:
+                        var itemToDelete = Items.FirstOrDefault(i => i.Name.Equals(change.Name, StringComparison.OrdinalIgnoreCase));
+                        if (itemToDelete != null)
+                        {
+                            Items.Remove(itemToDelete);
+                        }
+                        break;
+
+                    case ChangeType.Changed:
+                        var itemToLoad = (StorageItemBase)Items.FirstOrDefault(i => i.Name.Equals(change.Name, StringComparison.OrdinalIgnoreCase));
+                        StorageItemBase refreshedItem = null;
+                        if (itemToLoad is FolderBase folder)
+                        {
+                            refreshedItem = await StorageService.GetFolder(folder.Path, StorageType);
+                        }
+                        else if (itemToLoad is FileBase file)
+                        {
+                            refreshedItem = await StorageService.GetFile(file.Path, StorageType);
+                        }
+
+                        if (refreshedItem != null)
+                        {
+                            itemToLoad.Refresh(refreshedItem);
+                            await JumpPointService.Load(itemToLoad);
+                        }
+                        break;
+
+                    case ChangeType.Renamed:
+                        var itemToRename = (StorageItemBase)Items.FirstOrDefault(i => i.Name.Equals(change.OldName, StringComparison.OrdinalIgnoreCase));
+                        if (itemToRename != null)
+                        {
+                            itemToRename.Path = change.FullPath;
+                        }
+                        break;
+
+                    case ChangeType.Unknown:
+                    default:
+                        await RefreshCommand.TryExecute();
+                        break;
+                }
+            });
         }
 
         public override void SaveState(Dictionary<string, object> state)
         {
             base.SaveState(state);
+            if (StorageType == Platform.Items.Storage.StorageType.Local)
+            {
+                ChangeNotifierService.Stop(PathInfo.Path, ItemsChanged); 
+            }
             if (PathInfo.Type == AppPath.Folder)
             {
                 state[nameof(PathInfo.Path)] = PathInfo.Path;

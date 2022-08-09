@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;Debug_BETA;Release_BETA</Configurations>
+    <Platforms>x86;x64;arm64</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug_BETA'">
+    <DefineConstants>$(DefineConstants);JPBETA</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release_BETA'">
+    <DefineConstants>$(DefineConstants);JPBETA</DefineConstants>
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NittyGritty" Version="2.1.0-prerelease06162022" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JumpPoint.FullTrust.Core\JumpPoint.FullTrust.Core.csproj" />
+  </ItemGroup>
+
+</Project>

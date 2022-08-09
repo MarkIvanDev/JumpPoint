@@ -14,5 +14,6 @@ namespace JumpPoint.Platform.Services
         public static string WindowsTerminal => nameof(WindowsTerminal);
         public static string CleanManager => nameof(CleanManager);
         public static string SystemApps => nameof(SystemApps);
+        public static string ChangeNotifier => nameof(ChangeNotifier);
     }
 }

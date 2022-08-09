@@ -37,5 +37,8 @@ namespace JumpPoint.Platform.Services
         public static Task OpenSystemApp(string app, string arguments = null)
             => PlatformOpenSystemApp(app, arguments);
 
+        public static Task ChangeNotifier()
+            => PlatformChangeNotifier();
+
     }
 }
