@@ -89,6 +89,35 @@ namespace JumpPoint.ViewModels
             set { Set(ref _tabKey, value); }
         }
 
+        private bool _isSearching;
+
+        public bool IsSearching
+        {
+            get { return _isSearching; }
+            set
+            {
+                Set(ref _isSearching, value);
+                if (!IsSearching)
+                {
+                    Search = null;
+                }
+            }
+        }
+
+        private string _search;
+
+        public string Search
+        {
+            get { return _search ?? (_search = string.Empty); }
+            set
+            {
+                if (Set(ref _search, value))
+                {
+                    Filter();
+                }
+            }
+        }
+
         public ItemStats ItemStats { get; }
 
         public ItemStats SelectedItemStats { get; }
@@ -212,14 +241,19 @@ namespace JumpPoint.ViewModels
             {
                 Items.Filter = i =>
                 {
+                    var include = true;
+
                     if (!appSettings.ShowHiddenItems && i is StorageItemBase item && item.Attributes.HasValue)
                     {
-                        return (item.Attributes.Value & System.IO.FileAttributes.Hidden) != System.IO.FileAttributes.Hidden;
+                        include &= (item.Attributes.Value & System.IO.FileAttributes.Hidden) != System.IO.FileAttributes.Hidden;
                     }
-                    else
+
+                    if (!string.IsNullOrWhiteSpace(Search))
                     {
-                        return true;
+                        include &= i.Name.IndexOf(Search.Trim(), StringComparison.OrdinalIgnoreCase) >= 0;
                     }
+
+                    return include;
                 };
             }
         }
@@ -229,11 +263,14 @@ namespace JumpPoint.ViewModels
             CancelAll();
             Item = null;
             SelectedItems.Clear();
+            IsSearching = false;
             PathInfo.PropertyChanged -= PathInfo_PropertyChanged;
             Items.CollectionChanged -= Items_CollectionChanged;
             SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
             appSettings.PropertyChanged -= AppSettings_PropertyChanged;
         }
+
+        public void CloseSearch() => IsSearching = false;
     }
 
     public class PathSettings : ObservableObject

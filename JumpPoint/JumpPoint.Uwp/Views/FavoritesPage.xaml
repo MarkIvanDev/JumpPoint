@@ -7,10 +7,18 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:JumpPoint.Uwp.Controls"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:icore="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:actions="using:NittyGritty.Uwp.Interactivity.Actions"
     mc:Ignorable="d">
 
     <Grid>
-        <controls:JumpPointViewer Context="{x:Bind ViewModel, Mode=OneWay}"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <controls:JumpPointViewer Grid.Row="1"
+                                  Context="{x:Bind ViewModel, Mode=OneWay}"
                                   SortBy="{x:Bind ViewModel.Settings.SortBy, Mode=OneWay}"
                                   IsSortAscending="{x:Bind ViewModel.Settings.IsSortAscending, Mode=OneWay}"
                                   GroupBy="{x:Bind ViewModel.Settings.GroupBy, Mode=OneWay}"
@@ -18,5 +26,32 @@
                                   IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                                   SelectedItems="{x:Bind ViewModel.SelectedItems, Mode=OneWay}"
                                   ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"/>
+        <Grid Padding="12,8"
+              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              x:Load="{x:Bind ViewModel.IsSearching, Mode=OneWay}"
+              ColumnSpacing="8"
+              x:Name="paneSearch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox Text="{x:Bind ViewModel.Search, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     PlaceholderText="Search..."
+                     HorizontalAlignment="Stretch">
+                <i:Interaction.Behaviors>
+                    <icore:EventTriggerBehavior EventName="Loaded">
+                        <actions:FocusAction />
+                    </icore:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </TextBox>
+            <Button Grid.Column="1"
+                    Padding="4"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    VerticalAlignment="Center"
+                    Click="{x:Bind ViewModel.CloseSearch}">
+                <IconSourceElement IconSource="{StaticResource CloseTabIcon}" />
+            </Button>
+        </Grid>
     </Grid>
 </nguwp:NGPage>

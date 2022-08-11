@@ -984,6 +984,17 @@
                                         Margin="8,0,0,0"
                                         Orientation="Horizontal"
                                         Spacing="4">
+                                <ToggleButton IsChecked="{x:Bind ViewModel.CurrentTab.Context.IsSearching, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              Background="Transparent"
+                                              Padding="8,3,8,4"
+                                              BorderThickness="0"
+                                              VerticalAlignment="Stretch"
+                                              ToolTipService.ToolTip="Search (Control+F)">
+                                    <IconSourceElement IconSource="{StaticResource SearchIcon}" />
+                                    <ToggleButton.KeyboardAccelerators>
+                                        <KeyboardAccelerator Modifiers="Control" Key="F" />
+                                    </ToggleButton.KeyboardAccelerators>
+                                </ToggleButton>
                                 <controls:IconButton Command="{StaticResource LayoutCommand}"
                                                      IsCompact="True">
                                     <controls:IconButton.Flyout>
