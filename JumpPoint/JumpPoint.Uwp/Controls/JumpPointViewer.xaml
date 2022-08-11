@@ -49,6 +49,13 @@
             <ngconv:Binding Value="{x:Bind commands:Toolbar.IsSetWorkspaceTemplateEnabled(Context), Mode=OneWay}" />
             <ngconv:Binding Value="{x:Bind commands:Toolbar.IsSetFolderTemplateEnabled(Context), Mode=OneWay}" />
         </conv:AppBarSeparatorVisibilityConverter>
+        <conv:AppBarSeparatorVisibilityConverter x:Key="PathContextToolsGroupSeparatorConverter">
+            <ngconv:Binding Value="{x:Bind commands:NavigationBar.IsAddToWorkspaceEnabled(Context), Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind commands:NavigationBar.IsAddToFavoritesEnabled(Context), Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind commands:NavigationBar.IsRemoveFromFavoritesEnabled(Context), Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind commands:NavigationBar.IsSetWorkspaceTemplateEnabled(Context), Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind commands:NavigationBar.IsSetFolderTemplateEnabled(Context), Mode=OneWay}" />
+        </conv:AppBarSeparatorVisibilityConverter>
         
         <winui:CommandBarFlyout x:Key="ItemContextFlyout" Placement="BottomEdgeAlignedLeft">
             <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
@@ -138,6 +145,58 @@
                               Command="{StaticResource MoreToolsCommand}"
                               IsEnabled="{x:Bind commands:Toolbar.IsMoreToolsEnabled(Context), Mode=OneWay}"
                               Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
+            </winui:CommandBarFlyout.SecondaryCommands>
+        </winui:CommandBarFlyout>
+
+        <winui:CommandBarFlyout x:Key="PathContextFlyout" Placement="BottomEdgeAlignedLeft">
+            <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                          Command="{StaticResource CopyPathCommand}" />
+            <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                          Command="{StaticResource SharePathCommand}" />
+            <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                          Command="{StaticResource PathPropertiesCommand}"
+                          IsEnabled="{x:Bind commands:NavigationBar.IsPropertiesEnabled(Context), Mode=OneWay}"
+                          Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+            <winui:CommandBarFlyout.SecondaryCommands>
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource OpenPathInNewWindowCommand}" />
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource OpenPathInFileExplorerCommand}"
+                              IsEnabled="{x:Bind commands:NavigationBar.IsOpenInFileExplorerEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource OpenPathInCommandPromptCommand}"
+                              IsEnabled="{x:Bind commands:NavigationBar.IsOpenInCommandPromptEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource OpenPathInPowershellCommand}"
+                              IsEnabled="{x:Bind commands:NavigationBar.IsOpenInPowershellEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource OpenPathInWindowsTerminalCommand}"
+                              IsEnabled="{x:Bind commands:NavigationBar.IsOpenInWindowsTerminalEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                <AppBarSeparator Visibility="{Binding Source={StaticResource PathContextToolsGroupSeparatorConverter}, Path=Output, Mode=OneWay}" />
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource AddPathToWorkspaceCommand}"
+                              IsEnabled="{x:Bind commands:NavigationBar.IsAddToWorkspaceEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource AddPathToFavoritesCommand}"
+                              IsEnabled="{x:Bind commands:NavigationBar.IsAddToFavoritesEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource RemovePathFromFavoritesCommand}"
+                              IsEnabled="{x:Bind commands:NavigationBar.IsRemoveFromFavoritesEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource SetPathWorkspaceTemplateCommand}"
+                              IsEnabled="{x:Bind commands:NavigationBar.IsSetWorkspaceTemplateEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource SetPathFolderTemplateCommand}"
+                              IsEnabled="{x:Bind commands:NavigationBar.IsSetFolderTemplateEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
             </winui:CommandBarFlyout.SecondaryCommands>
         </winui:CommandBarFlyout>
 
@@ -1897,6 +1956,7 @@
                                                                    CopyCommand="{Binding Source={StaticResource Locator}, Path=CommandHelper.CopyToCommand}"
                                                                    MoveCommand="{Binding Source={StaticResource Locator}, Path=CommandHelper.MoveToCommand}"/>
                         <ngbehaviors:RightTappedSelectionBehavior />
+                        <behaviors:PathContextBehavior Flyout="{StaticResource PathContextFlyout}" />
                         <core:EventTriggerBehavior EventName="Tapped">
                             <actions:OpenCommandBarFlyoutAction CommandBarFlyout="{StaticResource ItemContextFlyout}"
                                                                 ShowMode="Transient" />
