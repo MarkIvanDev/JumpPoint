@@ -36,5 +36,8 @@ namespace JumpPoint.Platform.Services
 
         static Task PlatformOpenSystemApp(string app, string arguments = null)
             => throw new NotImplementedException();
+
+        static Task PlatformChangeNotifier()
+            => throw new NotImplementedException();
     }
 }

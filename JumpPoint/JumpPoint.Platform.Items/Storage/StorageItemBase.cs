@@ -82,5 +82,14 @@ namespace JumpPoint.Platform.Items.Storage
             set { Set(ref _sizeOnDisk, value); }
         }
 
+        public void Refresh(StorageItemBase item)
+        {
+            Size = item.Size;
+            Attributes = item.Attributes;
+            DateAccessed = item.DateAccessed;
+            DateCreated = item.DateCreated;
+            DateModified = item.DateModified;
+        }
+
     }
 }

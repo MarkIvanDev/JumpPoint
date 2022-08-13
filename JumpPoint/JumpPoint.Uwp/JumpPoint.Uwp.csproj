@@ -273,6 +273,7 @@
     <Compile Include="Interactivity\Actions\TappedSelectionAction.cs" />
     <Compile Include="Interactivity\Behaviors\JumpPointViewerDragDropBehavior.cs" />
     <Compile Include="Interactivity\Behaviors\NotifyCommandBehavior.cs" />
+    <Compile Include="Interactivity\Behaviors\PathContextBehavior.cs" />
     <Compile Include="Interactivity\Behaviors\RubberBandSelectionBehavior.cs" />
     <Compile Include="Interactivity\Behaviors\ScrollDecreaseButtonBehavior.cs" />
     <Compile Include="Interactivity\Behaviors\ScrollIncreaseButtonBehavior.cs" />

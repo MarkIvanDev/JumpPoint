@@ -273,10 +273,6 @@ namespace JumpPoint.ViewModels.Helpers
                 if (result && tab.Context.Item is DirectoryBase parent)
                 {
                     var newFolder = await StorageService.CreateFolder(parent, viewModel.Name);
-                    if (newFolder != null)
-                    {
-                        tab.NavigationHelper.ToFolder(newFolder);
-                    }
                 }
             }));
 
@@ -343,7 +339,6 @@ namespace JumpPoint.ViewModels.Helpers
                 if (result && viewModel.NewItem != null && tab.Context.Item is DirectoryBase destination)
                 {
                     await NewItemManager.Run(viewModel.NewItem, destination);
-                    await tab.Context.RefreshCommand.TryExecute();
                 }
             }));
 
@@ -1016,11 +1011,6 @@ namespace JumpPoint.ViewModels.Helpers
                 if (result && viewModel.Tool != null)
                 {
                     var toolResult = await ToolManager.Run(viewModel.Tool, list);
-                    await Task.Delay(500);
-                    foreach (var item in list)
-                    {
-                        await JumpPointService.Load(item);
-                    }
                 }
             }));
 

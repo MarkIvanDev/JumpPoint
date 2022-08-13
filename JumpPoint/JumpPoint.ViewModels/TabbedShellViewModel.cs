@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -365,6 +366,7 @@ namespace JumpPoint.ViewModels
 
         public override async void LoadState(object parameter, Dictionary<string, object> state)
         {
+            ChangeNotifierService.Connect();
             Messenger.Default.Register<NotificationMessage>(this, MessengerTokens.CommandManagement, ManageCommands);
 
             if (parameter != null)
@@ -390,7 +392,7 @@ namespace JumpPoint.ViewModels
             //PropertyChanged += TabbedShellViewModel_PropertyChanged;
             ShellItems.Start();
             shareService.Start();
-            
+            await DesktopService.ChangeNotifier();
 
             await LoadAddOnsCommand.TryExecute();
         }
@@ -405,6 +407,7 @@ namespace JumpPoint.ViewModels
 
         public override void SaveState(Dictionary<string, object> state)
         {
+            ChangeNotifierService.Disconnect();
             Messenger.Default.Unregister<NotificationMessage>(this, MessengerTokens.CommandManagement, ManageCommands);
             CancelAll();
 
@@ -686,9 +689,9 @@ namespace JumpPoint.ViewModels
                             break;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
+                    Debug.WriteLine($"Breadcrumb children loading error: {ex.Message}");
                 }
                 finally
                 {

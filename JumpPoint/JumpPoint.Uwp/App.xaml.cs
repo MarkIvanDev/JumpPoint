@@ -39,6 +39,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using JumpListService = JumpPoint.Platform.Services.JumpListService;
 using GalaSoft.MvvmLight.Ioc;
+using System.Diagnostics;
+using Windows.Security.Authentication.Web;
 
 namespace JumpPoint.Uwp
 {

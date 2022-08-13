@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Graph;
 using Microsoft.Identity.Client;
 using NittyGritty.Extensions;
+using Xamarin.Essentials;
 
 namespace JumpPoint.Platform.Services.OneDrive
 {
@@ -43,25 +45,26 @@ namespace JumpPoint.Platform.Services.OneDrive
         {
             return PublicClientApplicationBuilder
                 .Create(clientId)
-                .WithAuthority(authority)
-                .WithRedirectUri(redirectUri)
+                .WithBroker(true)
                 .Build();
         }
 
         public static async Task<IAccount> GetNewAccount(this IPublicClientApplication clientApp)
         {
-            try
+            return await MainThread.InvokeOnMainThreadAsync(async () =>
             {
-                var authResult = await clientApp
-                    .AcquireTokenInteractive(scopes)
-                    .ExecuteAsync()
-                    .ConfigureAwait(false);
-                return authResult.Account;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+                try
+                {
+                    var authResult = await clientApp
+                        .AcquireTokenInteractive(scopes)
+                        .ExecuteAsync();
+                    return authResult.Account;
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            });
         }
 
         public static GraphServiceClient GetGraphServiceClient(this IPublicClientApplication clientApp, IAccount account)
@@ -85,22 +88,23 @@ namespace JumpPoint.Platform.Services.OneDrive
             }
             catch (MsalUiRequiredException)
             {
-                // A MsalUiRequiredException happened on AcquireTokenSilentAsync. This indicates you need to call AcquireTokenAsync to acquire a token
-                if (account is null)
+                authResult = await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    authResult = await clientApp
-                        .AcquireTokenInteractive(scopes)
-                        .ExecuteAsync()
-                        .ConfigureAwait(false);
-                }
-                else
-                {
-                    authResult = await clientApp
-                        .AcquireTokenInteractive(scopes)
-                        .WithAccount(account)
-                        .ExecuteAsync()
-                        .ConfigureAwait(false);
-                }
+                    // A MsalUiRequiredException happened on AcquireTokenSilentAsync. This indicates you need to call AcquireTokenAsync to acquire a token
+                    if (account is null)
+                    {
+                        return await clientApp
+                            .AcquireTokenInteractive(scopes)
+                            .ExecuteAsync();
+                    }
+                    else
+                    {
+                        return await clientApp
+                            .AcquireTokenInteractive(scopes)
+                            .WithAccount(account)
+                            .ExecuteAsync();
+                    }
+                });
             }
             return authResult.AccessToken;
         }

@@ -59,6 +59,10 @@ namespace JumpPoint.FullTrust
                     case "/sysapp":
                         LaunchSystemApp();
                         break;
+
+                    case "/change":
+                        LaunchChangeNotifier();
+                        break;
                 }
             }
         }
@@ -229,6 +233,17 @@ namespace JumpPoint.FullTrust
                     Process.Start(payload.App, payload.Arguments);
                 }
             }
+        }
+
+        static void LaunchChangeNotifier()
+        {
+            var currentDirectory = Process.GetCurrentProcess().MainModule?.FileName;
+            var changeNotifier = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(currentDirectory)), "JumpPoint.FullTrust.ChangeNotifier", "JumpPoint.FullTrust.ChangeNotifier.exe");
+            Debug.WriteLine(changeNotifier);
+            Process.Start(new ProcessStartInfo(changeNotifier)
+            {
+                UseShellExecute = true
+            });
         }
 
         static void ShowWindow(Process process)

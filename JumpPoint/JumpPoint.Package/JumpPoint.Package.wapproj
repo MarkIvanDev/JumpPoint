@@ -169,6 +169,7 @@
     <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\JumpPoint.FullTrust.ChangeNotifier\JumpPoint.FullTrust.ChangeNotifier.csproj" />
     <ProjectReference Include="..\JumpPoint.FullTrust.Startup\JumpPoint.FullTrust.Startup.csproj" />
     <ProjectReference Include="..\JumpPoint.FullTrust\JumpPoint.FullTrust.csproj" />
     <ProjectReference Include="..\JumpPoint.Uwp\JumpPoint.Uwp.csproj" />

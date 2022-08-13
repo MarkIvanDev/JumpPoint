@@ -140,6 +140,30 @@ namespace JumpPoint.Uwp.Controls
 
 
 
+        public object QuickActions
+        {
+            get { return (object)GetValue(QuickActionsProperty); }
+            set { SetValue(QuickActionsProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for QuickActions.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty QuickActionsProperty =
+            DependencyProperty.Register("QuickActions", typeof(object), typeof(JumpPointViewer), new PropertyMetadata(null));
+
+
+
+        public DataTemplate QuickActionsTemplate
+        {
+            get { return (DataTemplate)GetValue(QuickActionsTemplateProperty); }
+            set { SetValue(QuickActionsTemplateProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for QuickActionsTemplate.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty QuickActionsTemplateProperty =
+            DependencyProperty.Register("QuickActionsTemplate", typeof(DataTemplate), typeof(JumpPointViewer), new PropertyMetadata(null));
+
+
+
         public bool IsLoading
         {
             get { return (bool)GetValue(IsLoadingProperty); }
