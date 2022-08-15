@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NittyGritty" Version="2.1.0-prerelease06162022" />
+    <PackageReference Include="NittyGritty" Version="2.1.0-prerelease07282022" />
   </ItemGroup>
 
   <ItemGroup>

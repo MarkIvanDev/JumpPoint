@@ -27,6 +27,7 @@ using JumpPoint.ViewModels.Parameters;
 using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.ViewModels.Dialogs.Clipboard;
 using System.Diagnostics;
+using JumpPoint.Platform.Items.CloudStorage;
 
 namespace JumpPoint.ViewModels.Helpers
 {
@@ -258,7 +259,11 @@ namespace JumpPoint.ViewModels.Helpers
                 var result = await dialogService.Show(DialogKeys.NewFile, viewModel);
                 if (result && tab.Context.Item is DirectoryBase parent)
                 {
-                    var newFile = await StorageService.CreateFile(parent, viewModel.Name);
+                    var newFile = await StorageService.CreateFile(parent, viewModel.Name, CreateOption.GenerateUniqueName);
+                    if (newFile != null && parent.StorageType == StorageType.Cloud)
+                    {
+                        await tab.Context.RefreshCommand.TryExecute();
+                    }
                 }
             }));
 
@@ -272,7 +277,11 @@ namespace JumpPoint.ViewModels.Helpers
                 var result = await dialogService.Show(DialogKeys.NewFolder, viewModel);
                 if (result && tab.Context.Item is DirectoryBase parent)
                 {
-                    var newFolder = await StorageService.CreateFolder(parent, viewModel.Name);
+                    var newFolder = await StorageService.CreateFolder(parent, viewModel.Name, CreateOption.GenerateUniqueName);
+                    if (newFolder != null && parent.StorageType == StorageType.Cloud)
+                    {
+                        await tab.Context.RefreshCommand.TryExecute();
+                    }
                 }
             }));
 
@@ -811,15 +820,22 @@ namespace JumpPoint.ViewModels.Helpers
                 }
                 else if (openParameter.Item is FileBase file)
                 {
-                    var result = await JumpPointService.OpenFile(file, true);
-                    if (!result)
+                    if (file.StorageType != StorageType.Cloud)
                     {
-                        var openInFE = await dialogService.ShowMessage("You could open the file from file explorer which we will open for you. Proceed?",
-                            "Open in File Explorer?", "Open", "Cancel");
-                        if (openInFE)
+                        var result = await JumpPointService.OpenFile(file, true);
+                        if (!result)
                         {
-                            await JumpPointService.OpenInFileExplorer(Path.GetDirectoryName(file.Path), new List<StorageItemBase> { file });
+                            var openInFE = await dialogService.ShowMessage("You could open the file from file explorer which we will open for you. Proceed?",
+                                "Open in File Explorer?", "Open", "Cancel");
+                            if (openInFE)
+                            {
+                                await JumpPointService.OpenInFileExplorer(Path.GetDirectoryName(file.Path), new List<StorageItemBase> { file });
+                            }
                         }
+                    }
+                    else
+                    {
+                        await CloudStorageService.OpenFile(file);
                     }
                 }
                 else if (openParameter.Item is AppLink appLink)
@@ -943,6 +959,25 @@ namespace JumpPoint.ViewModels.Helpers
 
                 var fbs = context.SelectedItems.OfType<DirectoryBase>();
                 await DesktopService.OpenInWindowsTerminal(fbs.Select(i => i.Path).ToList());
+            }));
+
+        private AsyncRelayCommand<ShellContextViewModelBase> _DownloadItems;
+        public AsyncRelayCommand<ShellContextViewModelBase> DownloadItemsCommand => _DownloadItems ?? (_DownloadItems = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
+            {
+                if (context is null) return;
+
+                var cloudFiles = context.SelectedItems.OfType<CloudFile>().ToList();
+                if (cloudFiles.Count > 0)
+                {
+                    var downloadsFolder = string.Empty;
+                    foreach (var item in cloudFiles)
+                    {
+                        var file = await CloudStorageService.DownloadFile(item);
+                        downloadsFolder = Path.GetDirectoryName(file.Path);
+                    }
+                    await JumpPointService.OpenNewWindow(AppPath.Folder, downloadsFolder);
+                }
             }));
 
         #endregion

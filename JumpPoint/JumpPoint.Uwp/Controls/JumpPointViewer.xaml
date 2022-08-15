@@ -138,6 +138,10 @@
                               IsEnabled="{x:Bind commands:Toolbar.IsCopyItemsPathEnabled(Context), Mode=OneWay}"
                               Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource DownloadItemsCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsDownloadEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
                               Command="{StaticResource ShareItemsCommand}"
                               IsEnabled="{x:Bind commands:Toolbar.IsShareEnabled(Context), Mode=OneWay}"
                               Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>

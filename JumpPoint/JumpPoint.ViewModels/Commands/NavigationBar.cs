@@ -4,6 +4,7 @@ using System.Text;
 using JumpPoint.Platform;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.Storage;
+using JumpPoint.Platform.Models.Extensions;
 
 namespace JumpPoint.ViewModels.Commands
 {
@@ -31,8 +32,9 @@ namespace JumpPoint.ViewModels.Commands
         {
             lock (_lock)
             {
-                if (context is null || context.Item is null) return false;
-                return context.Item is DirectoryBase && !context.Item.Path.StartsWith(@"\\?\"); 
+                if (!(context?.Item is DirectoryBase dir)) return false;
+                var pathKind = dir.Path.GetPathKind();
+                return pathKind == PathKind.Mounted || pathKind == PathKind.Network; 
             }
         }
 
@@ -40,8 +42,9 @@ namespace JumpPoint.ViewModels.Commands
         {
             lock (_lock)
             {
-                if (context is null || context.Item is null) return false;
-                return context.Item is DirectoryBase && !context.Item.Path.StartsWith(@"\\?\"); 
+                if (!(context?.Item is DirectoryBase dir)) return false;
+                var pathKind = dir.Path.GetPathKind();
+                return pathKind == PathKind.Mounted || pathKind == PathKind.Network;
             }
         }
 
@@ -49,8 +52,9 @@ namespace JumpPoint.ViewModels.Commands
         {
             lock (_lock)
             {
-                if (context is null || context.Item is null) return false;
-                return context.Item is DirectoryBase && !context.Item.Path.StartsWith(@"\\?\"); 
+                if (!(context?.Item is DirectoryBase dir)) return false;
+                var pathKind = dir.Path.GetPathKind();
+                return pathKind == PathKind.Mounted || pathKind == PathKind.Network;
             }
         }
 
@@ -58,8 +62,9 @@ namespace JumpPoint.ViewModels.Commands
         {
             lock (_lock)
             {
-                if (context is null || context.Item is null) return false;
-                return context.Item is DirectoryBase && !context.Item.Path.StartsWith(@"\\?\");
+                if (!(context?.Item is DirectoryBase dir)) return false;
+                var pathKind = dir.Path.GetPathKind();
+                return pathKind == PathKind.Mounted || pathKind == PathKind.Network;
             }
         }
 
@@ -148,20 +153,17 @@ namespace JumpPoint.ViewModels.Commands
 
         public static bool IsNewFileEnabled(ShellContextViewModelBase context)
         {
-            return context != null &&
-                    (context.PathInfo.Type == AppPath.Drive || context.PathInfo.Type == AppPath.Folder);
+            return context != null && context.Item is DirectoryBase;
         }
 
         public static bool IsNewFolderEnabled(ShellContextViewModelBase context)
         {
-            return context != null &&
-                    (context.PathInfo.Type == AppPath.Drive || context.PathInfo.Type == AppPath.Folder);
+            return context != null && context.Item is DirectoryBase;
         }
 
         public static bool IsMoreNewItemsEnabled(ShellContextViewModelBase context)
         {
-            return context != null &&
-                    (context.PathInfo.Type == AppPath.Drive || context.PathInfo.Type == AppPath.Folder);
+            return context != null && context.Item is DirectoryBase dir && dir.StorageType != StorageType.Cloud;
         }
     }
 }

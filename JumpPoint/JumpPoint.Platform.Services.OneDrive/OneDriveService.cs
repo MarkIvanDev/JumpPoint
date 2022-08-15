@@ -256,6 +256,141 @@ namespace JumpPoint.Platform.Services.OneDrive
             }
         }
 
+        public static async Task<Stream> GetContent(OneDriveFile file)
+        {
+            try
+            {
+                var crumbs = file.Path.GetBreadcrumbs();
+                var driveCrumb = crumbs.FirstOrDefault(c => c.AppPath == AppPath.Drive);
+                var lastCrumb = crumbs.LastOrDefault();
+                if (driveCrumb != null && lastCrumb != null)
+                {
+                    var account = await connection.FindWithQueryAsync<OneDriveAccount>(
+                            $"SELECT * FROM {nameof(OneDriveAccount)} WHERE {nameof(OneDriveAccount.Name)} = ?", driveCrumb.DisplayName);
+                    if (account != null && graphClients.TryGetValue(account.Identifier, out var graphClient))
+                    {
+                        var content = await graphClient.GetContent(file.GraphItem.Id);
+                        return content;
+                    }
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
+        public static async Task<OneDriveFolder> CreateFolder(OneDriveDrive drive, string name, CreateOption option)
+        {
+            return await InternalCreateFolder(drive.Account, drive.GraphItem.Id, name, option);
+        }
+
+        public static async Task<OneDriveFolder> CreateFolder(OneDriveFolder folder, string name, CreateOption option)
+        {
+            return await InternalCreateFolder(folder.Account, folder.GraphItem.Id, name, option);
+        }
+
+        private static async Task<OneDriveFolder> InternalCreateFolder(OneDriveAccount account, string id, string name, CreateOption option)
+        {
+            try
+            {
+                if (account != null && graphClients.TryGetValue(account.Identifier, out var graphClient))
+                {
+                    var newFolder = await graphClient.CreateFolder(id, name, option);
+                    if (newFolder != null)
+                    {
+                        return newFolder.Convert(account) as OneDriveFolder;
+                    }
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static async Task<OneDriveFile> CreateFile(OneDriveDrive drive, string name, CreateOption option)
+        {
+            return await InternalCreateFile(drive.Account, drive.GraphItem.Id, name, option);
+        }
+
+        public static async Task<OneDriveFile> CreateFile(OneDriveFolder folder, string name, CreateOption option)
+        {
+            return await InternalCreateFile(folder.Account, folder.GraphItem.Id, name, option);
+        }
+
+        private static async Task<OneDriveFile> InternalCreateFile(OneDriveAccount account, string id, string name, CreateOption option)
+        {
+            try
+            {
+                if (account != null && graphClients.TryGetValue(account.Identifier, out var graphClient))
+                {
+                    var newFile = await graphClient.CreateFile(id, name, option);
+                    if (newFile != null)
+                    {
+                        return newFile.Convert(account) as OneDriveFile;
+                    }
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static async Task<string> Rename(OneDriveFolder folder, string name, RenameOption option)
+        {
+            return await InternalRename(folder.Account, folder.GraphItem.Id, name, option);
+        }
+
+        public static async Task<string> Rename(OneDriveFile file, string name, RenameOption option)
+        {
+            return await InternalRename(file.Account, file.GraphItem.Id, name, option);
+        }
+
+        private static async Task<string> InternalRename(OneDriveAccount account, string id, string name, RenameOption option)
+        {
+            try
+            {
+                if (account != null && graphClients.TryGetValue(account.Identifier, out var graphClient))
+                {
+                    var newName = await graphClient.Rename(id, name, option);
+                    return newName;
+                }
+                return string.Empty;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
+        public static async Task Delete(OneDriveFolder folder)
+        {
+            await InternalDelete(folder.Account, folder.GraphItem.Id);
+        }
+
+        public static async Task Delete(OneDriveFile file)
+        {
+            await InternalDelete(file.Account, file.GraphItem.Id);
+        }
+
+        private static async Task InternalDelete(OneDriveAccount account, string id)
+        {
+            try
+            {
+                if (account != null && graphClients.TryGetValue(account.Identifier, out var graphClient))
+                {
+                    await graphClient.Delete(id);
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+        }
     }
 }

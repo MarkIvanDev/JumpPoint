@@ -81,7 +81,7 @@ namespace JumpPoint.Platform.Services
             }
         }
 
-        public static async Task<string> Rename(JumpPointItem item, string name, RenameCollisionOption option)
+        public static async Task<string> Rename(JumpPointItem item, string name, RenameOption option)
         {
             switch (item.Type)
             {
@@ -103,7 +103,7 @@ namespace JumpPoint.Platform.Services
             }
         }
 
-        public static async Task Rename(IList<JumpPointItem> items, string name, RenameCollisionOption option)
+        public static async Task Rename(IList<JumpPointItem> items, string name, RenameOption option)
         {
             foreach (var item in items)
             {

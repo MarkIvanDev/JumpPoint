@@ -27,9 +27,9 @@
     <PackageReference Include="Glif.Pickers" Version="0.4.0-beta" />
     <PackageReference Include="JumpPoint.Extensions" Version="0.4.1-beta" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="NittyGritty" Version="2.1.0-prerelease06162022" />
-    <PackageReference Include="NittyGritty.Platform" Version="2.1.0-prerelease06162022" />
-    <PackageReference Include="NittyGritty.Services.Core" Version="2.1.0-prerelease06162022" />
+    <PackageReference Include="NittyGritty" Version="2.1.0-prerelease07282022" />
+    <PackageReference Include="NittyGritty.Platform" Version="2.1.0-prerelease07282022" />
+    <PackageReference Include="NittyGritty.Services.Core" Version="2.1.0-prerelease07282022" />
     <PackageReference Include="Xamarin.Essentials" Version="1.7.1" />
   </ItemGroup>
 

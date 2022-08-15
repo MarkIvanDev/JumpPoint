@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Graph;
 using Microsoft.Identity.Client;
 using NittyGritty.Extensions;
+using NittyGritty.Utilities;
 using Xamarin.Essentials;
 
 namespace JumpPoint.Platform.Services.OneDrive
@@ -210,6 +212,173 @@ namespace JumpPoint.Platform.Services.OneDrive
             catch (Exception)
             {
                 return null;
+            }
+        }
+
+        public static async Task<Stream> GetContent(this GraphServiceClient graphClient, string id)
+        {
+            try
+            {
+                var content = await graphClient.Me.Drive.Items[id].Content.Request().GetAsync().ConfigureAwait(false);
+                return content;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static async Task<DriveItem> CreateFolder(this GraphServiceClient graphClient, string id, string name, CreateOption option)
+        {
+            try
+            {
+                var conflictBehavior = "";
+                switch (option)
+                {
+                    case CreateOption.OpenIfExists:
+                        var currentFolder = await CodeHelper.InvokeOrDefault(async () => await graphClient.Me.Drive.Items[id].ItemWithPath(name).Request().GetAsync().ConfigureAwait(false));
+                        if (currentFolder != null && currentFolder.Folder != null)
+                        {
+                            return currentFolder;
+                        }
+                        else
+                        {
+                            conflictBehavior = "fail";
+                        }
+                        break;
+
+                    case CreateOption.ReplaceExisting:
+                        conflictBehavior = "replace";
+                        break;
+
+                    case CreateOption.DoNothing:
+                        conflictBehavior = "fail";
+                        break;
+
+                    case CreateOption.GenerateUniqueName:
+                    default:
+                        conflictBehavior = "rename";
+                        break;
+                }
+
+                var driveItem = new DriveItem
+                {
+                    Name = name,
+                    Folder = new Folder
+                    {
+                    },
+                    AdditionalData = new Dictionary<string, object>()
+                    {
+                        { "@microsoft.graph.conflictBehavior", conflictBehavior }
+                    }
+                };
+
+                var newFolder = await graphClient.Me.Drive.Items[id].Children.Request().AddAsync(driveItem).ConfigureAwait(false);
+                return newFolder;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static async Task<DriveItem> CreateFile(this GraphServiceClient graphClient, string id, string name, CreateOption option)
+        {
+            try
+            {
+                var currentFile = await CodeHelper.InvokeOrDefault(async () => await graphClient.Me.Drive.Items[id].ItemWithPath(name).Request().GetAsync().ConfigureAwait(false));
+                if (currentFile != null)
+                {
+                    switch (option)
+                    {
+                        case CreateOption.ReplaceExisting:
+                            return await graphClient.Me.Drive.Items[id].ItemWithPath(name).Content.Request().PutAsync<DriveItem>(null).ConfigureAwait(false);
+
+                        case CreateOption.DoNothing:
+                            return null;
+
+                        case CreateOption.OpenIfExists:
+                            return currentFile;
+
+                        case CreateOption.GenerateUniqueName:
+                        default:
+                            var newName = await GetAvailableName(graphClient, id, name);
+                            return await graphClient.Me.Drive.Items[id].ItemWithPath(newName).Content.Request().PutAsync<DriveItem>(null).ConfigureAwait(false);
+                    }
+                }
+                else
+                {
+                    var newFile = await graphClient.Me.Drive.Items[id].ItemWithPath(name).Content.Request().PutAsync<DriveItem>(null).ConfigureAwait(false);
+                    return newFile;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return null;
+            }
+
+        }
+
+
+        static async Task<string> GetAvailableName(GraphServiceClient graphClient, string id, string desiredName)
+        {
+            var namePart = Path.GetFileNameWithoutExtension(desiredName.Trim());
+            var ext = Path.GetExtension(desiredName);
+            var name = desiredName;
+            var number = 2;
+            while (await CodeHelper.InvokeOrDefault(async () => await graphClient.Me.Drive.Items[id].ItemWithPath(name).Request().GetAsync().ConfigureAwait(false)) != null)
+            {
+                name = $"{namePart} ({number}){ext}";
+                number += 1;
+            }
+            return name;
+        }
+
+        public static async Task<string> Rename(this GraphServiceClient client, string id, string name, RenameOption option)
+        {
+            try
+            {
+                var conflictBehavior = "";
+                switch (option)
+                {
+                    case RenameOption.ReplaceExisting:
+                        conflictBehavior = "replace";
+                        break;
+                    case RenameOption.DoNothing:
+                        conflictBehavior = "fail";
+                        break;
+                    case RenameOption.GenerateUniqueName:
+                    default:
+                        conflictBehavior = "rename";
+                        break;
+                }
+                var driveItem = new DriveItem
+                {
+                    Name = name,
+                    AdditionalData = new Dictionary<string, object>()
+                    {
+                        { "@microsoft.graph.conflictBehavior", conflictBehavior }
+                    }
+                };
+                var newInfo = await client.Me.Drive.Items[id].Request().UpdateAsync(driveItem).ConfigureAwait(false);
+                Debug.Assert(id == newInfo.Id);
+                return newInfo.Name;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
+        public static async Task Delete(this GraphServiceClient client, string id)
+        {
+            try
+            {
+                await client.Me.Drive.Items[id].Request().DeleteAsync().ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
             }
         }
 

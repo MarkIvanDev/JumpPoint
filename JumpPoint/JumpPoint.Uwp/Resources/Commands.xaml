@@ -449,7 +449,12 @@
     <XamlUICommand x:Key="OpenItemCommand"
                    Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemCommand}" />
     <!--#endregion-->
-
+    <XamlUICommand x:Key="DownloadItemsCommand"
+                   IconSource="{StaticResource DownloadItemsIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.DownloadItemsCommand}"
+                   Label="Download"
+                   Description="Download">
+    </XamlUICommand>
     <XamlUICommand x:Key="ShareItemsCommand"
                    IconSource="{StaticResource ShareItemsIcon}"
                    Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.ShareItemsCommand}"

@@ -158,7 +158,7 @@ namespace JumpPoint.Platform.Services
             return item;
         }
 
-        public static async Task<string> Rename(Workspace workspace, string name, RenameCollisionOption option)
+        public static async Task<string> Rename(Workspace workspace, string name, RenameOption option)
         {
             var newName = string.Empty;
             if (!(workspace is null))

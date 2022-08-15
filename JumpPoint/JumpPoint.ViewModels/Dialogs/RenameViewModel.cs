@@ -15,11 +15,11 @@ namespace JumpPoint.ViewModels.Dialogs
         {
             OldName = string.Join("; ", names);
             IsMultiple = names.Count > 1;
-            Actions = new Collection<RenameCollisionOption>()
+            Actions = new Collection<RenameOption>()
             {
-                RenameCollisionOption.GenerateUniqueName,
-                RenameCollisionOption.ReplaceExisting,
-                RenameCollisionOption.DoNothing
+                RenameOption.GenerateUniqueName,
+                RenameOption.ReplaceExisting,
+                RenameOption.DoNothing
             };
             if(IsMultiple)
             {
@@ -44,14 +44,14 @@ namespace JumpPoint.ViewModels.Dialogs
             }
         }
 
-        public Collection<RenameCollisionOption> Actions { get; }
+        public Collection<RenameOption> Actions { get; }
 
-        public RenameCollisionOption Action
+        public RenameOption Action
         {
-            get { return (RenameCollisionOption)Preferences.Get(nameof(RenameCollisionOption), (int)RenameCollisionOption.GenerateUniqueName); }
+            get { return (RenameOption)Preferences.Get(nameof(RenameOption), (int)RenameOption.GenerateUniqueName); }
             set
             {
-                Preferences.Set(nameof(RenameCollisionOption), (int)value);
+                Preferences.Set(nameof(RenameOption), (int)value);
                 RaisePropertyChanged(nameof(IsValid));
             }
         }

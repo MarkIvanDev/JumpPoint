@@ -165,7 +165,7 @@ namespace JumpPoint.Platform.Services
             return link;
         }
 
-        public static async Task<string> Rename(AppLink appLink, string name, RenameCollisionOption option)
+        public static async Task<string> Rename(AppLink appLink, string name, RenameOption option)
         {
             var newName = string.Empty;
             if (!(appLink is null))
