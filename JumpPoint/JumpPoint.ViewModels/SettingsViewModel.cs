@@ -197,15 +197,15 @@ namespace JumpPoint.ViewModels
             };
             token.ThrowIfCancellationRequested();
 
-            var newItems = await NewItemManager.GetNewItems();
+            var newItems = await NewItemService.GetNewItems();
             NewItems = new ObservableCollection<NewItem>(newItems);
             token.ThrowIfCancellationRequested();
 
-            var tools = await ToolManager.GetTools();
+            var tools = await ToolService.GetTools();
             Tools = new ObservableCollection<Tool>(tools);
             token.ThrowIfCancellationRequested();
 
-            var appLinkProviders = await AppLinkProviderManager.GetProviders();
+            var appLinkProviders = await AppLinkProviderService.GetProviders();
             AppLinkProviders = new ObservableCollection<AppLinkProvider>(appLinkProviders);
             token.ThrowIfCancellationRequested();
 

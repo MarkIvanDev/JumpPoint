@@ -322,7 +322,7 @@ namespace JumpPoint.ViewModels.Helpers
                 });
                 if (result && viewModel.Provider != null)
                 {
-                    var appLinkInfo = await AppLinkProviderManager.Pick(viewModel.Provider);
+                    var appLinkInfo = await AppLinkProviderService.Pick(viewModel.Provider);
                     if (appLinkInfo != null)
                     {
                         var appLink = await AppLinkService.Create(appLinkInfo);
@@ -347,7 +347,7 @@ namespace JumpPoint.ViewModels.Helpers
                 });
                 if (result && viewModel.NewItem != null && tab.Context.Item is DirectoryBase destination)
                 {
-                    await NewItemManager.Run(viewModel.NewItem, destination);
+                    await NewItemService.Run(viewModel.NewItem, destination);
                 }
             }));
 
@@ -1045,7 +1045,7 @@ namespace JumpPoint.ViewModels.Helpers
                 });
                 if (result && viewModel.Tool != null)
                 {
-                    var toolResult = await ToolManager.Run(viewModel.Tool, list);
+                    var toolResult = await ToolService.Run(viewModel.Tool, list);
                 }
             }));
 

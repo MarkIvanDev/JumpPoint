@@ -258,7 +258,7 @@ namespace JumpPoint.Platform.Services
                         {
                             Handler = CommandHandler.Create<bool>(async (all) =>
                             {
-                                var tools = await ToolManager.GetTools();
+                                var tools = await ToolService.GetTools();
                                 if (!all)
                                 {
                                     tools = tools.Where(t => t.IsAvailable && t.IsEnabled).ToList();
@@ -278,7 +278,7 @@ namespace JumpPoint.Platform.Services
                         {
                             Handler = CommandHandler.Create<bool>(async (all) =>
                             {
-                                var providers = await AppLinkProviderManager.GetProviders();
+                                var providers = await AppLinkProviderService.GetProviders();
                                 if (!all)
                                 {
                                     providers = providers.Where(t => t.IsAvailable && t.IsEnabled).ToList();

@@ -6,8 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using JumpPoint.Extensions;
 using JumpPoint.Extensions.NewItems;
+using JumpPoint.Platform.Extensions;
 using JumpPoint.Platform.Interop;
-using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.Storage;
 using Nito.AsyncEx;
 using NittyGritty.Extensions;
@@ -17,9 +17,9 @@ using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
 using Windows.System;
 
-namespace JumpPoint.Platform.Extensions
+namespace JumpPoint.Platform.Services
 {
-    public static partial class NewItemManager
+    public static partial class NewItemService
     {
         private const string EXTENSION_CONTRACT =
 #if JPBETA
@@ -33,7 +33,7 @@ namespace JumpPoint.Platform.Extensions
         private static readonly List<NewItem> newItems;
         private static readonly AppExtensionCatalog catalog;
 
-        static NewItemManager()
+        static NewItemService()
         {
             mutex = new AsyncLock();
             lazyInitialize = new AsyncLazy<Task>(Initialize);
@@ -277,7 +277,7 @@ namespace JumpPoint.Platform.Extensions
                             folder = await CodeHelper.InvokeOrDefault(async () => await folder.CreateFolderAsync(segment, Windows.Storage.CreationCollisionOption.OpenIfExists));
                         }
                     }
-                    
+
                 }
             }
         }

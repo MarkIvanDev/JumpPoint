@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using JumpPoint.Platform.Extensions;
 using JumpPoint.Platform.Items;
+using JumpPoint.Platform.Services;
 using NittyGritty;
 using NittyGritty.Collections;
 
@@ -57,7 +58,7 @@ namespace JumpPoint.ViewModels.Dialogs
         public async Task Initialize()
         {
             IsLoading = true;
-            var tools = await ToolManager.GetTools();
+            var tools = await ToolService.GetTools();
             var supportedTools = new List<Tool>();
             foreach (var tool in tools)
             {

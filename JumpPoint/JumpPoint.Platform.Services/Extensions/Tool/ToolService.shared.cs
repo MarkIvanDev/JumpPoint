@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using JumpPoint.Extensions.Tools;
+using JumpPoint.Platform.Extensions;
 using JumpPoint.Platform.Items;
 
-namespace JumpPoint.Platform.Extensions
+namespace JumpPoint.Platform.Services
 {
-    public static partial class ToolManager
+    public static partial class ToolService
     {
         public static event EventHandler ExtensionCollectionChanged;
 
@@ -44,7 +45,5 @@ namespace JumpPoint.Platform.Extensions
                     return ToolPayloadType.Unknown;
             }
         }
-
     }
-
 }
