@@ -315,6 +315,8 @@ namespace JumpPoint.Platform.Services
             {
                 refreshStartupSemaphore.Release();
             }
+#else
+            await Task.CompletedTask;
 #endif
         }
 
@@ -353,6 +355,8 @@ namespace JumpPoint.Platform.Services
             {
                 changeStartupSemaphore.Release();
             }
+#else
+            await Task.CompletedTask;
 #endif
         }
 
@@ -376,6 +380,8 @@ namespace JumpPoint.Platform.Services
             {
                 changeStartupSemaphore.Release();
             }
+#else
+            await Task.CompletedTask;
 #endif
         }
 

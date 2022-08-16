@@ -326,7 +326,7 @@ namespace JumpPoint.Platform.Services
             }
         }
 
-        public static async Task<FileBase> CreateFile(DirectoryBase directory, string name, CreateOption option)
+        public static async Task<FileBase> CreateFile(DirectoryBase directory, string name, CreateOption option, byte[] content)
         {
             try
             {
@@ -335,10 +335,10 @@ namespace JumpPoint.Platform.Services
                     case StorageType.Local:
                     case StorageType.Portable:
                     case StorageType.Network:
-                        return await PlatformCreateFile(directory, name, option);
+                        return await PlatformCreateFile(directory, name, option, content);
 
                     case StorageType.Cloud:
-                        return await CloudStorageService.CreateFile(directory, name, option);
+                        return await CloudStorageService.CreateFile(directory, name, option, content);
 
                     default:
                         return null;

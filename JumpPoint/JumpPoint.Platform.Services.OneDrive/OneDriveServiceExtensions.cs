@@ -62,7 +62,7 @@ namespace JumpPoint.Platform.Services.OneDrive
                         .ExecuteAsync();
                     return authResult.Account;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return null;
                 }
@@ -92,7 +92,7 @@ namespace JumpPoint.Platform.Services.OneDrive
             {
                 authResult = await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    // A MsalUiRequiredException happened on AcquireTokenSilentAsync. This indicates you need to call AcquireTokenAsync to acquire a token
+                    // A MsalUiRequiredException happened on AcquireTokenSilentAsync. This indicates you need to call AcquireTokenInteractive to acquire a token
                     if (account is null)
                     {
                         return await clientApp
@@ -108,7 +108,7 @@ namespace JumpPoint.Platform.Services.OneDrive
                     }
                 });
             }
-            return authResult.AccessToken;
+            return authResult?.AccessToken;
         }
 
         public static async Task<string> GetDisplayName(this GraphServiceClient graphClient)
@@ -129,10 +129,12 @@ namespace JumpPoint.Platform.Services.OneDrive
             try
             {
                 var drive = await graphClient.Me.Drive.Request().GetAsync().ConfigureAwait(false);
+                drive.Root = await graphClient.Me.Drive.Root.Request().GetAsync().ConfigureAwait(false);
                 return drive;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
                 return null;
             }
         }
@@ -282,17 +284,18 @@ namespace JumpPoint.Platform.Services.OneDrive
             }
         }
 
-        public static async Task<DriveItem> CreateFile(this GraphServiceClient graphClient, string id, string name, CreateOption option)
+        public static async Task<DriveItem> CreateFile(this GraphServiceClient graphClient, string id, string name, CreateOption option, byte[] content)
         {
             try
             {
+                var stream = content != null ? new MemoryStream(content) : null;
                 var currentFile = await CodeHelper.InvokeOrDefault(async () => await graphClient.Me.Drive.Items[id].ItemWithPath(name).Request().GetAsync().ConfigureAwait(false));
                 if (currentFile != null)
                 {
                     switch (option)
                     {
                         case CreateOption.ReplaceExisting:
-                            return await graphClient.Me.Drive.Items[id].ItemWithPath(name).Content.Request().PutAsync<DriveItem>(null).ConfigureAwait(false);
+                            return await graphClient.Me.Drive.Items[id].ItemWithPath(name).Content.Request().PutAsync<DriveItem>(stream).ConfigureAwait(false);
 
                         case CreateOption.DoNothing:
                             return null;
@@ -303,12 +306,12 @@ namespace JumpPoint.Platform.Services.OneDrive
                         case CreateOption.GenerateUniqueName:
                         default:
                             var newName = await GetAvailableName(graphClient, id, name);
-                            return await graphClient.Me.Drive.Items[id].ItemWithPath(newName).Content.Request().PutAsync<DriveItem>(null).ConfigureAwait(false);
+                            return await graphClient.Me.Drive.Items[id].ItemWithPath(newName).Content.Request().PutAsync<DriveItem>(stream).ConfigureAwait(false);
                     }
                 }
                 else
                 {
-                    var newFile = await graphClient.Me.Drive.Items[id].ItemWithPath(name).Content.Request().PutAsync<DriveItem>(null).ConfigureAwait(false);
+                    var newFile = await graphClient.Me.Drive.Items[id].ItemWithPath(name).Content.Request().PutAsync<DriveItem>(stream).ConfigureAwait(false);
                     return newFile;
                 }
             }

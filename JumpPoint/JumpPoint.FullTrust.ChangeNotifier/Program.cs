@@ -134,20 +134,23 @@ namespace JumpPoint.FullTrust.ChangeNotifier
             {
                 ChangeType = ChangeType.Changed,
                 FullPath = e.FullPath,
-                Name = e.Name,
-                IsDirectory = (File.GetAttributes(e.FullPath) & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory
+                Name = e.Name
             });
         }
 
         private static void OnCreated(object sender, FileSystemEventArgs e)
         {
-            SendChange(new NotifyChange
+            var attributes = CodeHelper.InvokeOrDefault(() => File.GetAttributes(e.FullPath), (System.IO.FileAttributes?)null);
+            if (attributes.HasValue)
             {
-                ChangeType = ChangeType.Created,
-                FullPath = e.FullPath,
-                Name = e.Name,
-                IsDirectory = (File.GetAttributes(e.FullPath) & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory
-            });
+                SendChange(new NotifyChange
+                {
+                    ChangeType = ChangeType.Created,
+                    FullPath = e.FullPath,
+                    Name = e.Name,
+                    IsDirectory = (attributes.Value & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory
+                });
+            }
         }
 
         private static void OnDeleted(object sender, FileSystemEventArgs e)
@@ -168,8 +171,7 @@ namespace JumpPoint.FullTrust.ChangeNotifier
                 FullPath = e.FullPath,
                 Name = e.Name,
                 OldFullPath = e.OldFullPath,
-                OldName = e.OldName,
-                IsDirectory = (File.GetAttributes(e.FullPath) & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory
+                OldName = e.OldName
             });
         }
 

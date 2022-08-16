@@ -64,11 +64,11 @@ namespace JumpPoint.Platform.Interop
                 {
                     case 2:
                     case 3:
-                        Messenger.Default.Send(
-                            new NotificationMessage<Exception>(
-                                new FileNotFoundException(win32Exception.Message, path),
-                                $"File/Folder does not exist: {path}"),
-                            MessengerTokens.ExceptionManagement);
+                        //Messenger.Default.Send(
+                        //    new NotificationMessage<Exception>(
+                        //        new FileNotFoundException(win32Exception.Message, path),
+                        //        $"File/Folder does not exist: {path}"),
+                        //    MessengerTokens.ExceptionManagement);
                         break;
                     //throw new FileNotFoundException($"File/Folder does not exist: {path}", path, win32Exception);
                     case 5:

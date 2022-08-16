@@ -240,44 +240,33 @@ namespace JumpPoint.Platform.Services
 
             foreach (var item in results)
             {
-                var folder = await FileInterop.GetStorageFolder(destination);
-                if (folder != null)
+                var folder = destination;
+                var fileName = item.FileName
+                    .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
+                    .WithEnding(Path.DirectorySeparatorChar.ToString());
+                var segments = fileName.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
+                for (var i = 0; i < segments.Length; i++)
                 {
-                    var fileName = item.FileName
-                        .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
-                        .WithEnding(Path.DirectorySeparatorChar.ToString());
-                    var segments = fileName.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
-                    for (var i = 0; i < segments.Length; i++)
+                    var segment = segments[i];
+                    if (string.IsNullOrWhiteSpace(segment))
                     {
-                        var segment = segments[i];
-                        if (string.IsNullOrWhiteSpace(segment))
-                        {
-                            continue;
-                        }
-
-                        if (folder is null)
-                        {
-                            continue;
-                        }
-
-                        if (i == segments.Length - 1)
-                        {
-                            var newFile = await CodeHelper.InvokeOrDefault(async () => await folder.CreateFileAsync(segment, Windows.Storage.CreationCollisionOption.GenerateUniqueName));
-                            if (newFile != null)
-                            {
-                                var bytes = string.IsNullOrEmpty(item.ContentToken) ? null : await IOHelper.ReadBytes(item.ContentToken);
-                                if (bytes != null)
-                                {
-                                    await IOHelper.WriteBytes(newFile, bytes);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            folder = await CodeHelper.InvokeOrDefault(async () => await folder.CreateFolderAsync(segment, Windows.Storage.CreationCollisionOption.OpenIfExists));
-                        }
+                        continue;
                     }
 
+                    if (folder is null)
+                    {
+                        continue;
+                    }
+
+                    if (i == segments.Length - 1)
+                    {
+                        var content = string.IsNullOrEmpty(item.ContentToken) ? null : await IOHelper.ReadBytes(item.ContentToken);
+                        await StorageService.CreateFile(folder, segment, CreateOption.GenerateUniqueName, content);
+                    }
+                    else
+                    {
+                        folder = await StorageService.CreateFolder(folder, segment, CreateOption.OpenIfExists);
+                    }
                 }
             }
         }
