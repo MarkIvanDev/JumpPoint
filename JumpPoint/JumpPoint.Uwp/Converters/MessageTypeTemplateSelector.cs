@@ -22,6 +22,8 @@ namespace JumpPoint.Uwp.Converters
 
         public DataTemplate AppLinkProviderList { get; set; }
 
+        public DataTemplate NewItemList { get; set; }
+
         public DataTemplate CommandList { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
@@ -52,6 +54,9 @@ namespace JumpPoint.Uwp.Converters
 
                     case ChatMessageType.CommandList:
                         return CommandList;
+
+                    case ChatMessageType.NewItemList:
+                        return NewItemList;
 
                     default:
                         return null;

@@ -145,6 +145,7 @@ namespace JumpPoint.Platform.Services
                             GetListCommand(ListSubCommand.SystemFolders),
                             GetListCommand(ListSubCommand.Tools),
                             GetListCommand(ListSubCommand.AppLinkProviders),
+                            GetListCommand(ListSubCommand.NewItems),
                         };
                         return command;
                     }
@@ -293,6 +294,25 @@ namespace JumpPoint.Platform.Services
                         alpCmd.AddOption(new Option<bool>(new string[] { "--all", "-a" }));
                         return alpCmd;
 
+                    case ListSubCommand.NewItems:
+                        var niCmd = new Command(listCmd.ToString().ToLower())
+                        {
+                            Handler = CommandHandler.Create<bool>(async (all) =>
+                            {
+                                var newItems = await NewItemService.GetNewItems();
+                                if (!all)
+                                {
+                                    newItems = newItems.Where(t => t.IsAvailable && t.IsEnabled).ToList();
+                                }
+                                response = new NewItemListChatMessage(ChatMessageSource.Bot)
+                                {
+                                    Title = $"New Items ({newItems.Count})",
+                                    Items = { newItems }
+                                };
+                            })
+                        };
+                        return niCmd;
+
                     case ListSubCommand.Unknown:
                     default:
                         return null;
@@ -360,7 +380,8 @@ namespace JumpPoint.Platform.Services
         UserFolders = 5,
         SystemFolders = 6,
         Tools = 7,
-        AppLinkProviders = 8
+        AppLinkProviders = 8,
+        NewItems = 9,
     }
 
     public static class ListExtensions
