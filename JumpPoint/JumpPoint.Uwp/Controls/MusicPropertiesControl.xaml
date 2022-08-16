@@ -19,8 +19,7 @@
     </UserControl.Resources>
 
     <Grid ColumnSpacing="8"
-          RowSpacing="4"
-          Padding="0,8">
+          RowSpacing="4">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />

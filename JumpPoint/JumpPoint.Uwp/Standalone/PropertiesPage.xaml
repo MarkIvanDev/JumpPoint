@@ -998,87 +998,130 @@
                                   HorizontalAlignment="Stretch">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate x:DataType="items:FileBase">
-                                    <TextBlock Text="{x:Bind Name, Mode=OneWay}"
-                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
-                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}">
-                                        <i:Interaction.Behaviors>
-                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
-                                        </i:Interaction.Behaviors>
-                                    </TextBlock>
+                                    <Grid ColumnSpacing="8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Image Source="{x:Bind converters:FileThumbnailConverter.Convert(FileType, Thumbnail, 58, 0), Mode=OneWay}"
+                                               x:Phase="1"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Width="48"
+                                               Height="48"
+                                               Opacity="{x:Bind Attributes, Mode=OneWay, Converter={StaticResource HiddenOpacityConverter}}" />
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                                                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}"
+                                                       TextWrapping="Wrap"
+                                                       FontSize="14">
+                                                <i:Interaction.Behaviors>
+                                                    <behaviors:FontFamilyBehavior FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
+                                                </i:Interaction.Behaviors>
+                                            </TextBlock>
+                                            <TextBlock Text="{x:Bind DisplayType, Mode=OneWay}"
+                                                       ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}"
+                                                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                       TextWrapping="NoWrap"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       FontSize="13"/>
+                                        </StackPanel>
+                                    </Grid>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
 
 
-                        <controls:Expander Header="Core"
-                                           x:Name="coreHeader">
+                        <winui:Expander Header="Core"
+                                        x:Name="coreHeader"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch">
                             <controls:CorePropertiesControl Core="{x:Bind ViewModel.CurrentFile.CoreProperties, Mode=OneWay}"
                                                             x:Name="coreProperties"
-                                                            x:Load="{x:Bind coreHeader.IsOpen, Mode=OneWay}" />
-                        </controls:Expander>
-
-                        <controls:Expander Header="Document"
-                                           x:Name="documentHeader">
+                                                            x:Load="{x:Bind coreHeader.IsExpanded, Mode=OneWay}" />
+                        </winui:Expander>
+                        
+                        <winui:Expander Header="Document"
+                                        x:Name="documentHeader"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch">
                             <controls:DocumentPropertiesControl Document="{x:Bind ViewModel.CurrentFile.DocumentProperties, Mode=OneWay}"
                                                                 x:Name="documentProperties"
-                                                                x:Load="{x:Bind documentHeader.IsOpen, Mode=OneWay}" />
-                        </controls:Expander>
+                                                                x:Load="{x:Bind documentHeader.IsExpanded, Mode=OneWay}" />
+                        </winui:Expander>
 
-                        <controls:Expander Header="Image"
-                                           x:Name="imageHeader">
+                        <winui:Expander Header="Image"
+                                        x:Name="imageHeader"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch">
                             <controls:ImagePropertiesControl Image="{x:Bind ViewModel.CurrentFile.ImageProperties, Mode=OneWay}"
                                                              x:Name="imageProperties"
-                                                             x:Load="{x:Bind imageHeader.IsOpen, Mode=OneWay}" />
-                        </controls:Expander>
+                                                             x:Load="{x:Bind imageHeader.IsExpanded, Mode=OneWay}" />
+                        </winui:Expander>
 
-                        <controls:Expander Header="Photo"
-                                           x:Name="photoHeader">
+                        <winui:Expander Header="Photo"
+                                        x:Name="photoHeader"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch">
                             <controls:PhotoPropertiesControl Photo="{x:Bind ViewModel.CurrentFile.PhotoProperties, Mode=OneWay}"
                                                              x:Name="photoProperties"
-                                                             x:Load="{x:Bind photoHeader.IsOpen, Mode=OneWay}" />
-                        </controls:Expander>
+                                                             x:Load="{x:Bind photoHeader.IsExpanded, Mode=OneWay}" />
+                        </winui:Expander>
 
-                        <controls:Expander Header="Media"
-                                        x:Name="mediaHeader">
+                        <winui:Expander Header="Media"
+                                        x:Name="mediaHeader"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch">
                             <controls:MediaPropertiesControl Media="{x:Bind ViewModel.CurrentFile.MediaProperties, Mode=OneWay}"
                                                              x:Name="mediaProperties"
-                                                             x:Load="{x:Bind mediaHeader.IsOpen, Mode=OneWay}" />
-                        </controls:Expander>
+                                                             x:Load="{x:Bind mediaHeader.IsExpanded, Mode=OneWay}" />
+                        </winui:Expander>
 
-                        <controls:Expander Header="Audio"
-                                           x:Name="audioHeader">
+                        <winui:Expander Header="Audio"
+                                        x:Name="audioHeader"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch">
                             <controls:AudioPropertiesControl Audio="{x:Bind ViewModel.CurrentFile.AudioProperties, Mode=OneWay}"
                                                              x:Name="audioProperties"
-                                                             x:Load="{x:Bind audioHeader.IsOpen, Mode=OneWay}" />
-                        </controls:Expander>
+                                                             x:Load="{x:Bind audioHeader.IsExpanded, Mode=OneWay}" />
+                        </winui:Expander>
 
-                        <controls:Expander Header="Music"
-                                           x:Name="musicHeader">
+                        <winui:Expander Header="Music"
+                                        x:Name="musicHeader"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch">
                             <controls:MusicPropertiesControl Music="{x:Bind ViewModel.CurrentFile.MusicProperties, Mode=OneWay}"
                                                              x:Name="musicProperties"
-                                                             x:Load="{x:Bind musicHeader.IsOpen, Mode=OneWay}" />
-                        </controls:Expander>
+                                                             x:Load="{x:Bind musicHeader.IsExpanded, Mode=OneWay}" />
+                        </winui:Expander>
 
-                        <controls:Expander Header="Video"
-                                           x:Name="videoHeader">
+                        <winui:Expander Header="Video"
+                                        x:Name="videoHeader"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch">
                             <controls:VideoPropertiesControl Video="{x:Bind ViewModel.CurrentFile.VideoProperties, Mode=OneWay}"
                                                              x:Name="videoProperties"
-                                                             x:Load="{x:Bind videoHeader.IsOpen, Mode=OneWay}" />
-                        </controls:Expander>
+                                                             x:Load="{x:Bind videoHeader.IsExpanded, Mode=OneWay}" />
+                        </winui:Expander>
 
-                        <controls:Expander Header="DRM"
-                                           x:Name="drmHeader">
+                        <winui:Expander Header="DRM"
+                                        x:Name="drmHeader"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch">
                             <controls:DrmPropertiesControl Drm="{x:Bind ViewModel.CurrentFile.DrmProperties, Mode=OneWay}"
                                                            x:Name="drmProperties"
-                                                           x:Load="{x:Bind drmHeader.IsOpen, Mode=OneWay}" />
-                        </controls:Expander>
+                                                           x:Load="{x:Bind drmHeader.IsExpanded, Mode=OneWay}" />
+                        </winui:Expander>
 
-                        <controls:Expander Header="GPS"
-                                           x:Name="gpsHeader">
+                        <winui:Expander Header="GPS"
+                                        x:Name="gpsHeader"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch">
                             <controls:GpsPropertiesControl Gps="{x:Bind ViewModel.CurrentFile.GpsProperties, Mode=OneWay}"
                                                            x:Name="gpsProperties"
-                                                           x:Load="{x:Bind gpsHeader.IsOpen, Mode=OneWay}" />
-                        </controls:Expander>
+                                                           x:Load="{x:Bind gpsHeader.IsExpanded, Mode=OneWay}" />
+                        </winui:Expander>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
