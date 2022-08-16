@@ -259,7 +259,7 @@ namespace JumpPoint.ViewModels.Helpers
                 var result = await dialogService.Show(DialogKeys.NewFile, viewModel);
                 if (result && tab.Context.Item is DirectoryBase parent)
                 {
-                    var newFile = await StorageService.CreateFile(parent, viewModel.Name, CreateOption.GenerateUniqueName);
+                    var newFile = await StorageService.CreateFile(parent, viewModel.Name, CreateOption.GenerateUniqueName, null);
                     if (newFile != null && parent.StorageType == StorageType.Cloud)
                     {
                         await tab.Context.RefreshCommand.TryExecute();
@@ -322,7 +322,7 @@ namespace JumpPoint.ViewModels.Helpers
                 });
                 if (result && viewModel.Provider != null)
                 {
-                    var appLinkInfo = await AppLinkProviderManager.Pick(viewModel.Provider);
+                    var appLinkInfo = await AppLinkProviderService.Pick(viewModel.Provider);
                     if (appLinkInfo != null)
                     {
                         var appLink = await AppLinkService.Create(appLinkInfo);
@@ -347,7 +347,11 @@ namespace JumpPoint.ViewModels.Helpers
                 });
                 if (result && viewModel.NewItem != null && tab.Context.Item is DirectoryBase destination)
                 {
-                    await NewItemManager.Run(viewModel.NewItem, destination);
+                    await NewItemService.Run(viewModel.NewItem, destination);
+                    if (destination.StorageType == StorageType.Cloud)
+                    {
+                        await tab.Context.RefreshCommand.TryExecute();
+                    }
                 }
             }));
 
@@ -763,7 +767,15 @@ namespace JumpPoint.ViewModels.Helpers
             {
                 if (context is null) return;
 
-                await JumpPointService.Delete(context.SelectedItems, false);
+                var result = await dialogService.ShowMessage("Are you sure you want to delete these items?", "Delete Items", "Delete", "Cancel");
+                if (result)
+                {
+                    await JumpPointService.Delete(context.SelectedItems, false);
+                    if (context.Item is DirectoryBase dir && dir.StorageType == StorageType.Cloud)
+                    {
+                        await context.RefreshCommand.TryExecute();
+                    }
+                }
             }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _DeletePermanently;
@@ -772,7 +784,15 @@ namespace JumpPoint.ViewModels.Helpers
             {
                 if (context is null) return;
 
-                await JumpPointService.Delete(context.SelectedItems, true);
+                var result = await dialogService.ShowMessage("Are you sure you want to delete these permanently?", "Delete Items Permanently", "Delete", "Cancel");
+                if (result)
+                {
+                    await JumpPointService.Delete(context.SelectedItems, true);
+                    if (context.Item is DirectoryBase dir && dir.StorageType == StorageType.Cloud)
+                    {
+                        await context.RefreshCommand.TryExecute();
+                    }
+                }
             }));
 
         #endregion
@@ -1045,7 +1065,7 @@ namespace JumpPoint.ViewModels.Helpers
                 });
                 if (result && viewModel.Tool != null)
                 {
-                    var toolResult = await ToolManager.Run(viewModel.Tool, list);
+                    var toolResult = await ToolService.Run(viewModel.Tool, list);
                 }
             }));
 

@@ -236,15 +236,15 @@ namespace JumpPoint.Platform.Services
             }
         }
 
-        public static async Task<CloudFile> CreateFile(DirectoryBase directory, string name, CreateOption option)
+        public static async Task<CloudFile> CreateFile(DirectoryBase directory, string name, CreateOption option, byte[] content)
         {
             switch (directory)
             {
                 case OneDriveDrive odDrive:
-                    return await OneDriveService.CreateFile(odDrive, name, option);
+                    return await OneDriveService.CreateFile(odDrive, name, option, content);
 
                 case OneDriveFolder odFolder:
-                    return await OneDriveService.CreateFile(odFolder, name, option);
+                    return await OneDriveService.CreateFile(odFolder, name, option, content);
 
                 default:
                     return null;

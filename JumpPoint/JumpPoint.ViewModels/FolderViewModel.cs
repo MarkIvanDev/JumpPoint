@@ -19,6 +19,7 @@ namespace JumpPoint.ViewModels
 {
     public class FolderViewModel : ShellContextViewModelBase
     {
+        private readonly SemaphoreSlim changeSemaphore = new SemaphoreSlim(1, 1);
 
         public FolderViewModel(IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
         {
@@ -92,62 +93,73 @@ namespace JumpPoint.ViewModels
 
         private async void ItemsChanged(NotifyChange change)
         {
-            await Xamarin.Essentials.MainThread.InvokeOnMainThreadAsync(async () =>
+            await changeSemaphore.WaitAsync();
+            try
             {
-                switch (change.ChangeType)
-                {
-                    case ChangeType.Created:
-                        StorageItemBase itemToCreate = change.IsDirectory ?
-                            (StorageItemBase)(await StorageService.GetFolder(change.FullPath, StorageType)) :
-                            await StorageService.GetFile(change.FullPath, StorageType);
-                        if (itemToCreate != null)
+                await Xamarin.Essentials.MainThread.InvokeOnMainThreadAsync(async () =>
+                    {
+                        switch (change.ChangeType)
                         {
-                            Items.Add(itemToCreate);
-                            await JumpPointService.Load(itemToCreate);
-                        }
-                        break;
+                            case ChangeType.Created:
+                                StorageItemBase itemToCreate = change.IsDirectory ?
+                                    (await StorageService.GetFolder(change.FullPath, StorageType)) as StorageItemBase :
+                                    await StorageService.GetFile(change.FullPath, StorageType);
+                                if (itemToCreate != null)
+                                {
+                                    Items.Add(itemToCreate);
+                                    await JumpPointService.Load(itemToCreate);
+                                }
+                                break;
 
-                    case ChangeType.Deleted:
-                        var itemToDelete = Items.FirstOrDefault(i => i.Name.Equals(change.Name, StringComparison.OrdinalIgnoreCase));
-                        if (itemToDelete != null)
-                        {
-                            Items.Remove(itemToDelete);
-                        }
-                        break;
+                            case ChangeType.Deleted:
+                                var itemToDelete = Items.FirstOrDefault(i => i.Name.Equals(change.Name, StringComparison.OrdinalIgnoreCase));
+                                if (itemToDelete != null)
+                                {
+                                    Items.Remove(itemToDelete);
+                                }
+                                break;
 
-                    case ChangeType.Changed:
-                        var itemToLoad = (StorageItemBase)Items.FirstOrDefault(i => i.Name.Equals(change.Name, StringComparison.OrdinalIgnoreCase));
-                        StorageItemBase refreshedItem = null;
-                        if (itemToLoad is FolderBase folder)
-                        {
-                            refreshedItem = await StorageService.GetFolder(folder.Path, StorageType);
-                        }
-                        else if (itemToLoad is FileBase file)
-                        {
-                            refreshedItem = await StorageService.GetFile(file.Path, StorageType);
-                        }
+                            case ChangeType.Changed:
+                                var itemToLoad = Items.FirstOrDefault(i => i.Name.Equals(change.Name, StringComparison.OrdinalIgnoreCase)) as StorageItemBase;
+                                StorageItemBase refreshedItem = null;
+                                if (itemToLoad is FolderBase folder)
+                                {
+                                    refreshedItem = await StorageService.GetFolder(folder.Path, StorageType);
+                                }
+                                else if (itemToLoad is FileBase file)
+                                {
+                                    refreshedItem = await StorageService.GetFile(file.Path, StorageType);
+                                }
 
-                        if (refreshedItem != null)
-                        {
-                            itemToLoad.Refresh(refreshedItem);
-                            await JumpPointService.Load(itemToLoad);
-                        }
-                        break;
+                                if (refreshedItem != null)
+                                {
+                                    itemToLoad.Refresh(refreshedItem);
+                                    await JumpPointService.Load(itemToLoad);
+                                }
+                                break;
 
-                    case ChangeType.Renamed:
-                        var itemToRename = (StorageItemBase)Items.FirstOrDefault(i => i.Name.Equals(change.OldName, StringComparison.OrdinalIgnoreCase));
-                        if (itemToRename != null)
-                        {
-                            itemToRename.Path = change.FullPath;
-                        }
-                        break;
+                            case ChangeType.Renamed:
+                                var itemToRename = Items.FirstOrDefault(i => i.Name.Equals(change.OldName, StringComparison.OrdinalIgnoreCase)) as StorageItemBase;
+                                if (itemToRename != null)
+                                {
+                                    itemToRename.Path = change.FullPath;
+                                }
+                                break;
 
-                    case ChangeType.Unknown:
-                    default:
-                        await RefreshCommand.TryExecute();
-                        break;
-                }
-            });
+                            case ChangeType.Unknown:
+                            default:
+                                await RefreshCommand.TryExecute();
+                                break;
+                        }
+                    });
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                changeSemaphore.Release();
+            }
         }
 
         public override void SaveState(Dictionary<string, object> state)

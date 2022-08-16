@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using JumpPoint.Extensions.AppLinkProviders;
+using JumpPoint.Platform.Extensions;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Models;
-using Windows.ApplicationModel.AppExtensions;
-using Windows.Foundation.Collections;
-using Windows.System;
 using JumpPoint.Platform.Models.Extensions;
+using Nito.AsyncEx;
 using NittyGritty.Extensions;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.AppExtensions;
 using Windows.ApplicationModel.AppService;
-using Nito.AsyncEx;
-using JumpPoint.Extensions.AppLinkProviders;
+using Windows.Foundation.Collections;
+using Windows.System;
 
-namespace JumpPoint.Platform.Extensions
+namespace JumpPoint.Platform.Services
 {
-    public static partial class AppLinkProviderManager
+    public static partial class AppLinkProviderService
     {
         private const string EXTENSION_CONTRACT =
 #if JPBETA
@@ -30,7 +32,7 @@ namespace JumpPoint.Platform.Extensions
         private static readonly List<AppLinkProvider> providers;
         private static readonly AppExtensionCatalog catalog;
 
-        static AppLinkProviderManager()
+        static AppLinkProviderService()
         {
             mutex = new AsyncLock();
             lazyInitialize = new AsyncLazy<Task>(Initialize);
@@ -81,7 +83,7 @@ namespace JumpPoint.Platform.Extensions
             }
         }
 
-        static void UpdateStatus(string packageId , bool isAvailable)
+        static void UpdateStatus(string packageId, bool isAvailable)
         {
             var packageExts = providers.Where(i => i.PackageId == packageId);
             foreach (var item in packageExts)

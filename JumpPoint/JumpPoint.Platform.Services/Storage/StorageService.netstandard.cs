@@ -16,7 +16,7 @@ namespace JumpPoint.Platform.Services
         static Task<FolderBase> PlatformCreateFolder(DirectoryBase directory, string name, CreateOption option)
             => throw new NotImplementedException();
 
-        static Task<FileBase> PlatformCreateFile(DirectoryBase directory, string name, CreateOption option)
+        static Task<FileBase> PlatformCreateFile(DirectoryBase directory, string name, CreateOption option, byte[] content)
             => throw new NotImplementedException();
 
         static Task PlatformCopyItem(DirectoryBase destination, StorageItemBase item)

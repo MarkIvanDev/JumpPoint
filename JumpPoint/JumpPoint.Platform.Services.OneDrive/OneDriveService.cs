@@ -283,7 +283,7 @@ namespace JumpPoint.Platform.Services.OneDrive
 
         public static async Task<OneDriveFolder> CreateFolder(OneDriveDrive drive, string name, CreateOption option)
         {
-            return await InternalCreateFolder(drive.Account, drive.GraphItem.Id, name, option);
+            return await InternalCreateFolder(drive.Account, drive.GraphItem.Root.Id, name, option);
         }
 
         public static async Task<OneDriveFolder> CreateFolder(OneDriveFolder folder, string name, CreateOption option)
@@ -311,23 +311,23 @@ namespace JumpPoint.Platform.Services.OneDrive
             }
         }
 
-        public static async Task<OneDriveFile> CreateFile(OneDriveDrive drive, string name, CreateOption option)
+        public static async Task<OneDriveFile> CreateFile(OneDriveDrive drive, string name, CreateOption option, byte[] content)
         {
-            return await InternalCreateFile(drive.Account, drive.GraphItem.Id, name, option);
+            return await InternalCreateFile(drive.Account, drive.GraphItem.Root.Id, name, option, content);
         }
 
-        public static async Task<OneDriveFile> CreateFile(OneDriveFolder folder, string name, CreateOption option)
+        public static async Task<OneDriveFile> CreateFile(OneDriveFolder folder, string name, CreateOption option, byte[] content)
         {
-            return await InternalCreateFile(folder.Account, folder.GraphItem.Id, name, option);
+            return await InternalCreateFile(folder.Account, folder.GraphItem.Id, name, option, content);
         }
 
-        private static async Task<OneDriveFile> InternalCreateFile(OneDriveAccount account, string id, string name, CreateOption option)
+        private static async Task<OneDriveFile> InternalCreateFile(OneDriveAccount account, string id, string name, CreateOption option, byte[] content)
         {
             try
             {
                 if (account != null && graphClients.TryGetValue(account.Identifier, out var graphClient))
                 {
-                    var newFile = await graphClient.CreateFile(id, name, option);
+                    var newFile = await graphClient.CreateFile(id, name, option, content);
                     if (newFile != null)
                     {
                         return newFile.Convert(account) as OneDriveFile;

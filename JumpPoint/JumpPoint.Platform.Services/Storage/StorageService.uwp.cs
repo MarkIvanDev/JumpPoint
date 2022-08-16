@@ -18,6 +18,7 @@ using CreationCollisionOption = Windows.Storage.CreationCollisionOption;
 using NameCollisionOption = Windows.Storage.NameCollisionOption;
 using NittyGritty.Extensions;
 using JumpPoint.Extensions;
+using NittyGritty.Utilities;
 
 namespace JumpPoint.Platform.Services
 {
@@ -280,13 +281,26 @@ namespace JumpPoint.Platform.Services
             return null;
         }
 
-        static async Task<FileBase> PlatformCreateFile(DirectoryBase directory, string name, CreateOption option)
+        static async Task<FileBase> PlatformCreateFile(DirectoryBase directory, string name, CreateOption option, byte[] content)
         {
             var storageFile = await FileInterop.GetStorageFolder(directory);
             if (storageFile != null)
             {
-                var newFile = await storageFile.CreateFileAsync(name, (CreationCollisionOption)option);
-                return await GetFile(directory.StorageType, newFile);
+                var newFile = await CodeHelper.InvokeOrDefault(async () => await storageFile.CreateFileAsync(name, (CreationCollisionOption)option));
+                if (newFile != null)
+                {
+                    if (content != null)
+                    {
+                        await CodeHelper.InvokeOrDefault(async () =>
+                        {
+                            using (var stream = await newFile.OpenStreamForWriteAsync())
+                            {
+                                stream.Write(content, 0, content.Length);
+                            }
+                        });
+                    }
+                    return await GetFile(directory.StorageType, newFile);
+                }
             }
             return null;
         }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using JumpPoint.Platform.Extensions;
+using JumpPoint.Platform.Services;
 using NittyGritty;
 
 namespace JumpPoint.ViewModels.Dialogs
@@ -49,7 +50,7 @@ namespace JumpPoint.ViewModels.Dialogs
         public async Task Initialize()
         {
             IsLoading = true;
-            var newItems = await NewItemManager.GetNewItems();
+            var newItems = await NewItemService.GetNewItems();
             var supportedTools = newItems.Where(i => i.IsAvailable && i.IsEnabled);
             NewItems = new Collection<NewItem>(newItems.Where(i => i.IsAvailable && i.IsEnabled).ToList());
             IsLoading = false;
