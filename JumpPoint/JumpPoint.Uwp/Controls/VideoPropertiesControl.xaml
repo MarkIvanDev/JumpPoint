@@ -20,8 +20,7 @@
     </UserControl.Resources>
 
     <Grid ColumnSpacing="8"
-          RowSpacing="4"
-          Padding="0,8">
+          RowSpacing="4">
         <Grid.Resources>
             <ngconv:StringInterpolationConverter x:Name="AspectRatioConverter"
                                                  Format="{}{0}:{1}">

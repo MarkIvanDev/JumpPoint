@@ -45,6 +45,13 @@ namespace JumpPoint.Platform.Services
         }
     }
 
+    public class NewItemListChatMessage : ListChatMessage<NewItem>
+    {
+        public NewItemListChatMessage(ChatMessageSource source) : base(ChatMessageType.NewItemList, source)
+        {
+        }
+    }
+
     public class CommandListChatMessage : ListChatMessage<CommandInfo>
     {
         public CommandListChatMessage(ChatMessageSource source) : base(ChatMessageType.CommandList, source)
