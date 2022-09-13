@@ -132,8 +132,8 @@ namespace JumpPoint.FullTrust
             if (payload != null)
             {
                 var flags = payload.IsPermanent ?
-                    FileOperationFlags.FOF_NOCONFIRMMKDIR | FileOperationFlags.FOFX_ADDUNDORECORD : //  | FileOperationFlags.FOF_WANTNUKEWARNING
-                    FileOperationFlags.FOF_NOCONFIRMMKDIR | FileOperationFlags.FOFX_ADDUNDORECORD | FileOperationFlags.FOFX_RECYCLEONDELETE;
+                    FileOperationFlags.FOF_NOCONFIRMMKDIR | FileOperationFlags.FOFX_ADDUNDORECORD | FileOperationFlags.FOF_NOCONFIRMATION : //  | FileOperationFlags.FOF_WANTNUKEWARNING
+                    FileOperationFlags.FOF_NOCONFIRMMKDIR | FileOperationFlags.FOFX_ADDUNDORECORD | FileOperationFlags.FOF_NOCONFIRMATION | FileOperationFlags.FOFX_RECYCLEONDELETE;
 
                 using (var fileOperation = new FileOperation(flags))
                 {
@@ -191,8 +191,8 @@ namespace JumpPoint.FullTrust
                 {
                     var process = Process.Start(new ProcessStartInfo
                     {
-                        FileName = SystemApp.Powershell,
-                        Arguments = $"-noexit -command \"cd \'{path}\'\"",
+                        FileName = SystemApp.WindowsTerminal,
+                        Arguments = $"-d \"{path.TrimEnd(Path.DirectorySeparatorChar)}\"",
                         UseShellExecute = false,
                     });
                     ShowWindow(process);

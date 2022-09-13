@@ -933,6 +933,11 @@
                                         </controls:IconSplitButton.Flyout>
                                     </controls:IconSplitButton>
                                     <controls:IconButton CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
+                                                         Command="{StaticResource DownloadItemsCommand}"
+                                                         IsEnabled="{x:Bind commands:Toolbar.IsDownloadEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
+                                                         IsCompact="True"
+                                                         Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
+                                    <controls:IconButton CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                          Command="{StaticResource ShareItemsCommand}"
                                                          IsEnabled="{x:Bind commands:Toolbar.IsShareEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                          IsCompact="True" />

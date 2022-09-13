@@ -11,7 +11,8 @@
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:icore="using:Microsoft.Xaml.Interactions.Core"
     xmlns:actions="using:NittyGritty.Uwp.Interactivity.Actions"
-    mc:Ignorable="d">
+            xmlns:commands="using:JumpPoint.ViewModels.Commands"
+            mc:Ignorable="d">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -36,11 +37,14 @@
                             CornerRadius="6"
                             Background="{ThemeResource ExpanderHeaderBackground}">
                     <controls:IconButton CommandParameter="{Binding Source={StaticResource Locator}, Path=TabbedShell.CurrentTab}"
-                                         Command="{StaticResource NewFileCommand}" />
+                                         Command="{StaticResource NewFileCommand}"
+                                         IsEnabled="{x:Bind commands:NavigationBar.IsNewFileEnabled(ViewModel), Mode=OneWay}" />
                     <controls:IconButton CommandParameter="{Binding Source={StaticResource Locator}, Path=TabbedShell.CurrentTab}"
-                                         Command="{StaticResource NewFolderCommand}" />
+                                         Command="{StaticResource NewFolderCommand}"
+                                         IsEnabled="{x:Bind commands:NavigationBar.IsNewFolderEnabled(ViewModel), Mode=OneWay}" />
                     <controls:IconButton CommandParameter="{Binding Source={StaticResource Locator}, Path=TabbedShell.CurrentTab}"
-                                         Command="{StaticResource MoreNewItemsCommand}" />
+                                         Command="{StaticResource MoreNewItemsCommand}"
+                                         IsEnabled="{x:Bind commands:NavigationBar.IsMoreNewItemsEnabled(ViewModel), Mode=OneWay}" />
                 </StackPanel>
             </controls:JumpPointViewer.QuickActions>
         </controls:JumpPointViewer>

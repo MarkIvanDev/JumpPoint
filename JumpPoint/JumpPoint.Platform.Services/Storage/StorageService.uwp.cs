@@ -16,6 +16,9 @@ using Windows.Storage;
 using WinStorage = Windows.Storage;
 using CreationCollisionOption = Windows.Storage.CreationCollisionOption;
 using NameCollisionOption = Windows.Storage.NameCollisionOption;
+using NittyGritty.Extensions;
+using JumpPoint.Extensions;
+using NittyGritty.Utilities;
 
 namespace JumpPoint.Platform.Services
 {
@@ -244,7 +247,7 @@ namespace JumpPoint.Platform.Services
             return pathBuilder.ToString();
         }
 
-        static async Task<string> PlatformRename(StorageItemBase item, string name, RenameCollisionOption option)
+        static async Task<string> PlatformRename(StorageItemBase item, string name, RenameOption option)
         {
             if (item is FileBase file)
             {
@@ -267,24 +270,37 @@ namespace JumpPoint.Platform.Services
             return string.Empty;
         }
 
-        static async Task<FolderBase> PlatformCreateFolder(DirectoryBase directory, string name)
+        static async Task<FolderBase> PlatformCreateFolder(DirectoryBase directory, string name, CreateOption option)
         {
             var storageFolder = await FileInterop.GetStorageFolder(directory);
             if (storageFolder != null)
             {
-                var newFolder = await storageFolder.CreateFolderAsync(name, CreationCollisionOption.GenerateUniqueName);
+                var newFolder = await storageFolder.CreateFolderAsync(name, (CreationCollisionOption)option);
                 return await GetFolder(directory.StorageType, newFolder);
             }
             return null;
         }
 
-        static async Task<FileBase> PlatformCreateFile(DirectoryBase directory, string name)
+        static async Task<FileBase> PlatformCreateFile(DirectoryBase directory, string name, CreateOption option, byte[] content)
         {
             var storageFile = await FileInterop.GetStorageFolder(directory);
             if (storageFile != null)
             {
-                var newFile = await storageFile.CreateFileAsync(name, CreationCollisionOption.GenerateUniqueName);
-                return await GetFile(directory.StorageType, newFile);
+                var newFile = await CodeHelper.InvokeOrDefault(async () => await storageFile.CreateFileAsync(name, (CreationCollisionOption)option));
+                if (newFile != null)
+                {
+                    if (content != null)
+                    {
+                        await CodeHelper.InvokeOrDefault(async () =>
+                        {
+                            using (var stream = await newFile.OpenStreamForWriteAsync())
+                            {
+                                stream.Write(content, 0, content.Length);
+                            }
+                        });
+                    }
+                    return await GetFile(directory.StorageType, newFile);
+                }
             }
             return null;
         }
@@ -508,6 +524,20 @@ namespace JumpPoint.Platform.Services
             catch (Exception ex)
             {
                 Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
+            }
+        }
+
+        static async Task<FileBase> PlatformDownloadFile(string fileName, Stream content)
+        {
+            try
+            {
+                var file = await DownloadsFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
+                await IOHelper.WriteBytes(file, content.ToByteArray());
+                return await GetFile(StorageType.Local, file);
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 

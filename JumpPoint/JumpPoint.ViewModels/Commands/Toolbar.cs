@@ -5,6 +5,8 @@ using System.Text;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform;
+using JumpPoint.Platform.Models.Extensions;
+using JumpPoint.Platform.Models;
 
 namespace JumpPoint.ViewModels.Commands
 {
@@ -27,9 +29,9 @@ namespace JumpPoint.ViewModels.Commands
                            {
                                switch (i.Type)
                                {
-                                   case JumpPointItemType.File:
-                                   case JumpPointItemType.Folder:
-                                   case JumpPointItemType.Drive:
+                                   case JumpPointItemType.File when ((FileBase)i).StorageType != StorageType.Cloud:
+                                   case JumpPointItemType.Folder when ((FolderBase)i).StorageType != StorageType.Cloud:
+                                   case JumpPointItemType.Drive when ((DriveBase)i).StorageType != StorageType.Cloud:
                                    case JumpPointItemType.Workspace:
                                    case JumpPointItemType.Library:
                                        return true;
@@ -64,9 +66,9 @@ namespace JumpPoint.ViewModels.Commands
                            {
                                switch (i.Type)
                                {
-                                   case JumpPointItemType.File:
-                                   case JumpPointItemType.Folder:
-                                   case JumpPointItemType.Drive:
+                                   case JumpPointItemType.File when ((FileBase)i).StorageType != StorageType.Cloud:
+                                   case JumpPointItemType.Folder when ((FolderBase)i).StorageType != StorageType.Cloud:
+                                   case JumpPointItemType.Drive when ((DriveBase)i).StorageType != StorageType.Cloud:
                                    case JumpPointItemType.Workspace:
                                    case JumpPointItemType.Library:
                                        return true;
@@ -97,7 +99,7 @@ namespace JumpPoint.ViewModels.Commands
         {
             if (context is null) return false;
 
-            return clipboardHasFiles && (context.PathInfo.Type == AppPath.Drive || context.PathInfo.Type == AppPath.Folder);
+            return clipboardHasFiles && (context.PathInfo.Type == AppPath.Drive || context.PathInfo.Type == AppPath.Folder) && context.Item is DirectoryBase dir && dir.StorageType != StorageType.Cloud;
         }
 
         public static bool IsRenameEnabled(ShellContextViewModelBase context)
@@ -195,8 +197,8 @@ namespace JumpPoint.ViewModels.Commands
                            {
                                switch (i.Type)
                                {
-                                   case JumpPointItemType.File:
-                                   case JumpPointItemType.Folder:
+                                   case JumpPointItemType.File when ((FileBase)i).StorageType != StorageType.Cloud:
+                                   case JumpPointItemType.Folder when ((FolderBase)i).StorageType != StorageType.Cloud:
                                    case JumpPointItemType.Workspace:
                                    case JumpPointItemType.AppLink:
                                        return true;
@@ -228,7 +230,7 @@ namespace JumpPoint.ViewModels.Commands
         public static bool IsOpenWithEnabled(ShellContextViewModelBase context)
         {
             if (context is null) return false;
-            return context.SelectedItems.Count == 1 && context.SelectedItems.All(i => i.Type == JumpPointItemType.File);
+            return context.SelectedItems.Count == 1 && context.SelectedItems.All(i => i is FileBase file && file.StorageType != StorageType.Cloud);
         }
 
         public static bool IsOpenInNewTabEnabled(ShellContextViewModelBase context)
@@ -257,34 +259,50 @@ namespace JumpPoint.ViewModels.Commands
         {
             if (context is null) return false;
             return context.SelectedItems.Count > 0 &&
-                   context.SelectedItems.All(i => i is StorageItemBase && !i.Path.StartsWith(@"\\?\"));
+                   context.SelectedItems.All(i =>
+                   {
+                       var pathKind = i.Path.GetPathKind();
+                       return i is StorageItemBase && pathKind != PathKind.Unmounted && pathKind != PathKind.Cloud;
+                   });
         }
 
         public static bool IsOpenInCommandPromptEnabled(ShellContextViewModelBase context)
         {
             if (context is null) return false;
             return context.SelectedItems.Count > 0 &&
-                   context.SelectedItems.All(i => i is DirectoryBase && !i.Path.StartsWith(@"\\?\"));
+                   context.SelectedItems.All(i =>
+                   {
+                       var pathKind = i.Path.GetPathKind();
+                       return i is DirectoryBase && pathKind != PathKind.Unmounted && pathKind != PathKind.Cloud;
+                    });
         }
 
         public static bool IsOpenInPowershellEnabled(ShellContextViewModelBase context)
         {
             if (context is null) return false;
             return context.SelectedItems.Count > 0 &&
-                   context.SelectedItems.All(i => i is DirectoryBase && !i.Path.StartsWith(@"\\?\"));
+                   context.SelectedItems.All(i =>
+                   {
+                       var pathKind = i.Path.GetPathKind();
+                       return i is DirectoryBase && pathKind != PathKind.Unmounted && pathKind != PathKind.Cloud;
+                   });
         }
 
         public static bool IsOpenInWindowsTerminalEnabled(ShellContextViewModelBase context)
         {
             if (context is null) return false;
             return context.SelectedItems.Count > 0 &&
-                   context.SelectedItems.All(i => i is DirectoryBase && !i.Path.StartsWith(@"\\?\"));
+                   context.SelectedItems.All(i =>
+                   {
+                       var pathKind = i.Path.GetPathKind();
+                       return i is DirectoryBase && pathKind != PathKind.Unmounted && pathKind != PathKind.Cloud;
+                   });
         }
 
         public static bool IsShareEnabled(ShellContextViewModelBase context)
         {
             if (context is null) return false;
-            return context.SelectedItems.Count > 0 && context.SelectedItems.All(i => i is StorageItemBase);
+            return context.SelectedItems.Count > 0 && context.SelectedItems.All(i => i is StorageItemBase item && item.StorageType != StorageType.Cloud);
         }
 
         public static bool IsPropertiesEnabled(ShellContextViewModelBase context)
@@ -340,6 +358,13 @@ namespace JumpPoint.ViewModels.Commands
             if (context is null) return false;
             return context.SelectedItems.Count > 0 &&
                    context.SelectedItems.All(i => i is FolderBase folder && folder.FolderType == FolderType.Regular);
+        }
+
+        public static bool IsDownloadEnabled(ShellContextViewModelBase context)
+        {
+            if (context is null) return false;
+            return context.SelectedItems.Count > 0 &&
+                   context.SelectedItems.All(i => i is FileBase file && file.StorageType == StorageType.Cloud);
         }
 
         public static bool IsSelectAllEnabled(ShellContextViewModelBase context)

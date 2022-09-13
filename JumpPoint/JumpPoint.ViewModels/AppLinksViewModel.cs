@@ -35,7 +35,7 @@ namespace JumpPoint.ViewModels
         public AsyncRelayCommand<AppLinkProvider> ProviderCommand => _Provider ?? (_Provider = new AsyncRelayCommand<AppLinkProvider>(
             async provider =>
             {
-                var appLinkInfo = await AppLinkProviderManager.Pick(provider);
+                var appLinkInfo = await AppLinkProviderService.Pick(provider);
                 if (appLinkInfo != null)
                 {
                     var appLink = await AppLinkService.Create(appLinkInfo);
@@ -45,7 +45,7 @@ namespace JumpPoint.ViewModels
 
         protected override async Task Refresh(CancellationToken token)
         {
-            var providers = await AppLinkProviderManager.GetProviders();
+            var providers = await AppLinkProviderService.GetProviders();
             Providers = new Collection<AppLinkProvider>(providers.Where(p => p.IsAvailable && p.IsEnabled).ToList());
             token.ThrowIfCancellationRequested();
 

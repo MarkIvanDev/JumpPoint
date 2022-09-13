@@ -1,5 +1,6 @@
 ﻿using JumpPoint.Extensions.AppLinkProviders;
 using JumpPoint.Platform.Extensions;
+using JumpPoint.Platform.Services;
 using NittyGritty.Commands;
 using NittyGritty.Platform.Payloads;
 using NittyGritty.ViewModels;
@@ -67,7 +68,7 @@ namespace JumpPoint.ViewModels.Hosted
         public AsyncRelayCommand RefreshCommand => _Refresh ?? (_Refresh = new AsyncRelayCommand(
             async () =>
             {
-                var appLinks = await AppLinkProviderManager.GetPayloads(Service, PackageId);
+                var appLinks = await AppLinkProviderService.GetPayloads(Service, PackageId);
                 AppLinks = new Collection<AppLinkPayload>(appLinks);
             }));
 

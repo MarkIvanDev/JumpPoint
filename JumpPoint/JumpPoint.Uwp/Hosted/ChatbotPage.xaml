@@ -494,6 +494,155 @@
                     </Grid>
                 </DataTemplate>
             </converters:MessageTypeTemplateSelector.AppLinkProviderList>
+            <converters:MessageTypeTemplateSelector.NewItemList>
+                <DataTemplate x:DataType="services:NewItemListChatMessage">
+                    <Grid CornerRadius="4"
+                          Background="{ThemeResource SystemChromeMediumLowColor}"
+                          Padding="16"
+                          MaxWidth="480"
+                          MinWidth="120"
+                          HorizontalAlignment="{x:Bind converters:ChatMessageConverter.GetHorizontalAlignment(Source)}"
+                          Margin="{x:Bind converters:ChatMessageConverter.GetMargin(Source)}"
+                          RowSpacing="12">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{x:Bind Title, Mode=OneWay}"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
+                        <winui:ItemsRepeater ItemsSource="{x:Bind Items}"
+                                             Grid.Row="1">
+                            <winui:ItemsRepeater.Layout>
+                                <winui:StackLayout Spacing="8" />
+                            </winui:ItemsRepeater.Layout>
+                            <DataTemplate x:DataType="extensions:NewItem">
+                                <StackPanel Spacing="8">
+                                    <Grid ColumnSpacing="4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Image Source="{x:Bind converters:IconConverter.GetImageSource(x:Null, Logo, x:Null, 36, 36), Mode=OneWay}"
+                                               Width="36"
+                                               Height="36" />
+                                        <TextBlock Text="{x:Bind Name, Mode=OneWay}"
+                                                   FontWeight="SemiBold"
+                                                   FontSize="16"
+                                                   Grid.Column="1"
+                                                   VerticalAlignment="Center"
+                                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
+                                        <TextBlock Text="{x:Bind Description, Mode=OneWay}"
+                                                   Grid.Row="1"
+                                                   Grid.ColumnSpan="2"
+                                                   FontSize="16"
+                                                   TextWrapping="WrapWholeWords"
+                                                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                   FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                                   FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                                   FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                                   FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
+                                    </Grid>
+                                    <Grid ColumnSpacing="4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Text="Package ID:" />
+                                        <TextBlock Text="{x:Bind PackageId, Mode=OneWay}"
+                                                   Grid.Column="1"
+                                                   TextWrapping="Wrap" />
+
+                                        <TextBlock Text="Extension ID:"
+                                                   Grid.Row="1" />
+                                        <TextBlock Text="{x:Bind ExtensionId, Mode=OneWay}"
+                                                   Grid.Row="1"
+                                                   Grid.Column="1"
+                                                   TextWrapping="Wrap" />
+
+                                        <TextBlock Text="Package:"
+                                                   Grid.Row="2" />
+                                        <TextBlock Text="{x:Bind Package, Mode=OneWay}"
+                                                   Grid.Row="2"
+                                                   Grid.Column="1"
+                                                   TextWrapping="Wrap" />
+
+                                        <TextBlock Text="Publisher:"
+                                                   Grid.Row="3" />
+                                        <TextBlock Text="{x:Bind Publisher, Mode=OneWay}"
+                                                   Grid.Row="3"
+                                                   Grid.Column="1"
+                                                   TextWrapping="Wrap" />
+
+                                        <TextBlock Text="Version:"
+                                                   Grid.Row="4" />
+                                        <TextBlock Text="{x:Bind Version, Mode=OneWay}"
+                                                   Grid.Row="4"
+                                                   Grid.Column="1"
+                                                   TextWrapping="Wrap" />
+
+                                        <TextBlock Text="Signature:"
+                                                   Grid.Row="5" />
+                                        <TextBlock Text="{x:Bind Signature, Converter={StaticResource HumanizerConverter}, Mode=OneWay}"
+                                                   Grid.Row="5"
+                                                   Grid.Column="1" />
+
+                                        <TextBlock Text="Is Enabled:"
+                                                   Grid.Row="6" />
+                                        <TextBlock Text="{x:Bind IsEnabled.ToString(), Mode=OneWay}"
+                                                   Grid.Row="6"
+                                                   Grid.Column="1" />
+
+                                        <TextBlock Text="Is Available:"
+                                                   Grid.Row="7" />
+                                        <TextBlock Text="{x:Bind IsAvailable.ToString(), Mode=OneWay}"
+                                                   Grid.Row="7"
+                                                   Grid.Column="1" />
+
+                                        <TextBlock Text="Link:"
+                                                   Grid.Row="8" />
+                                        <TextBlock Text="{x:Bind converters:ChatMessageConverter.IsEmpty(Link), Mode=OneWay}"
+                                                   Grid.Row="8"
+                                                   Grid.Column="1" />
+
+                                        <TextBlock Text="Service:"
+                                                   Grid.Row="9" />
+                                        <TextBlock Text="{x:Bind converters:ChatMessageConverter.IsEmpty(Service), Mode=OneWay}"
+                                                   Grid.Row="9"
+                                                   Grid.Column="1" />
+
+                                        <MenuFlyoutSeparator Grid.Row="10"
+                                                             Grid.ColumnSpan="2"
+                                                             Margin="0,8,0,0" />
+                                    </Grid>
+                                </StackPanel>
+                            </DataTemplate>
+                        </winui:ItemsRepeater>
+                    </Grid>
+                </DataTemplate>
+            </converters:MessageTypeTemplateSelector.NewItemList>
             <converters:MessageTypeTemplateSelector.CommandList>
                 <DataTemplate x:DataType="services:CommandListChatMessage">
                     <StackPanel CornerRadius="4"

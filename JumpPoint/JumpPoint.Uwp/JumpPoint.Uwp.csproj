@@ -4728,22 +4728,22 @@
       <Version>5.1.2</Version>
     </PackageReference>
     <PackageReference Include="NittyGritty">
-      <Version>2.1.0-prerelease06162022</Version>
+      <Version>2.1.0-prerelease07282022</Version>
     </PackageReference>
     <PackageReference Include="NittyGritty.Platform">
-      <Version>2.1.0-prerelease06162022</Version>
+      <Version>2.1.0-prerelease07282022</Version>
     </PackageReference>
     <PackageReference Include="NittyGritty.Services.Core">
-      <Version>2.1.0-prerelease06162022</Version>
+      <Version>2.1.0-prerelease07282022</Version>
     </PackageReference>
     <PackageReference Include="NittyGritty.Uwp">
-      <Version>2.1.0-prerelease06162022</Version>
+      <Version>2.1.0-prerelease07282022</Version>
     </PackageReference>
     <PackageReference Include="NittyGritty.Uwp.Interactivity">
-      <Version>2.1.0-prerelease06162022</Version>
+      <Version>2.1.0-prerelease07282022</Version>
     </PackageReference>
     <PackageReference Include="NittyGritty.Uwp.Services">
-      <Version>2.1.0-prerelease06162022</Version>
+      <Version>2.1.0-prerelease07282022</Version>
     </PackageReference>
     <PackageReference Include="sqlite-net-pcl">
       <Version>1.8.116</Version>

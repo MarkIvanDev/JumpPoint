@@ -39,6 +39,7 @@
             <ngconv:Binding Value="{x:Bind commands:Toolbar.IsOpenInFileExplorerEnabled(Context), Mode=OneWay}" />
             <ngconv:Binding Value="{x:Bind commands:Toolbar.IsOpenInCommandPromptEnabled(Context), Mode=OneWay}" />
             <ngconv:Binding Value="{x:Bind commands:Toolbar.IsOpenInPowershellEnabled(Context), Mode=OneWay}" />
+            <ngconv:Binding Value="{x:Bind commands:Toolbar.IsOpenInWindowsTerminalEnabled(Context), Mode=OneWay}" />
         </conv:AppBarSeparatorVisibilityConverter>
         <conv:AppBarSeparatorVisibilityConverter x:Key="ToolsGroupSeparatorConverter">
             <ngconv:Binding Value="{x:Bind commands:Toolbar.IsAddToWorkspaceEnabled(Context), Mode=OneWay}" />
@@ -107,6 +108,10 @@
                               Command="{StaticResource OpenItemsInPowershellCommand}"
                               IsEnabled="{x:Bind commands:Toolbar.IsOpenInPowershellEnabled(Context), Mode=OneWay}"
                               Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource OpenItemsInWindowsTerminalCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsOpenInWindowsTerminalEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
                 <AppBarSeparator Visibility="{Binding Source={StaticResource OpenGroupSeparatorConverter}, Path=Output, Mode=OneWay}" /> 
 
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
@@ -137,6 +142,10 @@
                               Command="{StaticResource CopyItemsPathCommand}"
                               IsEnabled="{x:Bind commands:Toolbar.IsCopyItemsPathEnabled(Context), Mode=OneWay}"
                               Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
+                <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
+                              Command="{StaticResource DownloadItemsCommand}"
+                              IsEnabled="{x:Bind commands:Toolbar.IsDownloadEnabled(Context), Mode=OneWay}"
+                              Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
                 <AppBarButton CommandParameter="{x:Bind Context, Mode=OneWay}"
                               Command="{StaticResource ShareItemsCommand}"
                               IsEnabled="{x:Bind commands:Toolbar.IsShareEnabled(Context), Mode=OneWay}"

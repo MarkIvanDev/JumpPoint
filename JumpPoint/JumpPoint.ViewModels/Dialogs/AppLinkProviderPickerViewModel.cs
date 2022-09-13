@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using JumpPoint.Platform.Extensions;
+using JumpPoint.Platform.Services;
 using NittyGritty;
 
 namespace JumpPoint.ViewModels.Dialogs
@@ -47,7 +48,7 @@ namespace JumpPoint.ViewModels.Dialogs
         public async Task Initialize()
         {
             IsLoading = true;
-            var appLinkProviders = await AppLinkProviderManager.GetProviders();
+            var appLinkProviders = await AppLinkProviderService.GetProviders();
             Providers = new Collection<AppLinkProvider>(appLinkProviders.Where(p => p.IsAvailable && p.IsEnabled).ToList());
             IsLoading = false;
         }

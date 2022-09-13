@@ -116,7 +116,7 @@ namespace JumpPoint.Platform.Services
             }
         }
 
-        public static async Task<string> Rename(StorageItemBase item, string name, RenameCollisionOption option)
+        public static async Task<string> Rename(StorageItemBase item, string name, RenameOption option)
         {
             try
             {
@@ -216,7 +216,10 @@ namespace JumpPoint.Platform.Services
 
             if (groups.TryGetValue(StorageType.Cloud, out var cloudItems))
             {
-
+                foreach (var item in cloudItems)
+                {
+                    await CloudStorageService.Delete(cloudItems);
+                }
             }
         }
 
@@ -298,7 +301,7 @@ namespace JumpPoint.Platform.Services
                 .ToList();
         }
 
-        public static async Task<FolderBase> CreateFolder(DirectoryBase directory, string name)
+        public static async Task<FolderBase> CreateFolder(DirectoryBase directory, string name, CreateOption option)
         {
             try
             {
@@ -307,10 +310,10 @@ namespace JumpPoint.Platform.Services
                     case StorageType.Local:
                     case StorageType.Portable:
                     case StorageType.Network:
-                        return await PlatformCreateFolder(directory, name);
+                        return await PlatformCreateFolder(directory, name, option);
 
                     case StorageType.Cloud:
-                        return await CloudStorageService.CreateFolder(directory, name);
+                        return await CloudStorageService.CreateFolder(directory, name, option);
 
                     default:
                         return null;
@@ -323,7 +326,7 @@ namespace JumpPoint.Platform.Services
             }
         }
 
-        public static async Task<FileBase> CreateFile(DirectoryBase directory, string name)
+        public static async Task<FileBase> CreateFile(DirectoryBase directory, string name, CreateOption option, byte[] content)
         {
             try
             {
@@ -332,10 +335,10 @@ namespace JumpPoint.Platform.Services
                     case StorageType.Local:
                     case StorageType.Portable:
                     case StorageType.Network:
-                        return await PlatformCreateFile(directory, name);
+                        return await PlatformCreateFile(directory, name, option, content);
 
                     case StorageType.Cloud:
-                        return await CloudStorageService.CreateFile(directory, name);
+                        return await CloudStorageService.CreateFile(directory, name, option, content);
 
                     default:
                         return null;
@@ -657,6 +660,12 @@ namespace JumpPoint.Platform.Services
                 default:
                     return null;
             }
+        }
+
+        public static async Task<FileBase> DownloadFile(string fileName, Stream content)
+        {
+            var file = await PlatformDownloadFile(fileName, content);
+            return file;
         }
 
         #endregion

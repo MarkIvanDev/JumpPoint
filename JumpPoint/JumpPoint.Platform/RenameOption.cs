@@ -4,7 +4,7 @@ using System.Text;
 
 namespace JumpPoint.Platform
 {
-    public enum RenameCollisionOption
+    public enum RenameOption
     {
         GenerateUniqueName = 0,
         ReplaceExisting = 1,

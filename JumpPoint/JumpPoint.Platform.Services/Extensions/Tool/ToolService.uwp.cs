@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using JumpPoint.Extensions;
 using JumpPoint.Extensions.Tools;
+using JumpPoint.Platform.Extensions;
 using JumpPoint.Platform.Interop;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Models.Extensions;
@@ -14,9 +16,9 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
 using Windows.System;
 
-namespace JumpPoint.Platform.Extensions
+namespace JumpPoint.Platform.Services
 {
-    public static partial class ToolManager
+    public static partial class ToolService
     {
         private const string EXTENSION_CONTRACT =
 #if JPBETA
@@ -30,7 +32,7 @@ namespace JumpPoint.Platform.Extensions
         private static readonly List<Tool> tools;
         private static readonly AppExtensionCatalog catalog;
 
-        static ToolManager()
+        static ToolService()
         {
             mutex = new AsyncLock();
             lazyInitialize = new AsyncLazy<Task>(Initialize);
@@ -176,7 +178,7 @@ namespace JumpPoint.Platform.Extensions
         static async Task<Tool> ToTool(AppExtension extension)
         {
             var tool = await ExtensionBase.Extract<Tool>(extension);
-            
+
             if (await extension.GetExtensionPropertiesAsync() is PropertySet properties)
             {
                 tool.Link = properties.TryGetValue(nameof(Tool.Link), out var l) && l is PropertySet lProp && lProp.ContainsKey("#text") ?
@@ -285,7 +287,7 @@ namespace JumpPoint.Platform.Extensions
                     Path = i.Path
                 }));
             }
-            
+
             return results;
         }
 
