@@ -180,6 +180,9 @@
     <Compile Include="Converters\StringConverter.cs" />
     <Compile Include="Converters\UriOrStreamToBitmapImageConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
+    <Compile Include="Dialogs\AddCloudAccountDialog.xaml.cs">
+      <DependentUpon>AddCloudAccountDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\AddToWorkspaceDialog.xaml.cs">
       <DependentUpon>AddToWorkspaceDialog.xaml</DependentUpon>
     </Compile>
@@ -354,6 +357,7 @@
     <Content Include="Assets\Icons\Celebrate.png" />
     <Content Include="Assets\Icons\Cloud\Box.png" />
     <Content Include="Assets\Icons\Cloud\OneDrive.png" />
+    <Content Include="Assets\Icons\Cloud\Storj.png" />
     <Content Include="Assets\Icons\Cloud\Unknown.png" />
     <Content Include="Assets\Icons\Cloud\Dropbox.png" />
     <Content Include="Assets\Icons\Cloud\GoogleDrive.png" />
@@ -4751,6 +4755,12 @@
     <PackageReference Include="System.CommandLine">
       <Version>2.0.0-beta1.20371.2</Version>
     </PackageReference>
+    <PackageReference Include="System.Text.Json">
+      <Version>6.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="uplink.NET.Win">
+      <Version>2.9.2858</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Essentials">
       <Version>1.7.1</Version>
     </PackageReference>
@@ -4768,6 +4778,10 @@
       <Project>{79b5d537-b511-4294-87e9-e73b3415ad0f}</Project>
       <Name>JumpPoint.Platform.Items.OneDrive</Name>
     </ProjectReference>
+    <ProjectReference Include="..\JumpPoint.Platform.Items.Storj\JumpPoint.Platform.Items.Storj.csproj">
+      <Project>{364e6f53-daf2-4064-9afa-67120a924cf6}</Project>
+      <Name>JumpPoint.Platform.Items.Storj</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JumpPoint.Platform.Items\JumpPoint.Platform.Items.csproj">
       <Project>{424298e1-c917-4b03-9379-26096134e514}</Project>
       <Name>JumpPoint.Platform.Items</Name>
@@ -4779,6 +4793,10 @@
     <ProjectReference Include="..\JumpPoint.Platform.Services.OneDrive\JumpPoint.Platform.Services.OneDrive.csproj">
       <Project>{69f2dc55-9eca-44bb-b43e-f6b4def0ebbf}</Project>
       <Name>JumpPoint.Platform.Services.OneDrive</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JumpPoint.Platform.Services.Storj\JumpPoint.Platform.Services.Storj.csproj">
+      <Project>{120ece35-8aa7-4bc2-a27b-f58fae53f32e}</Project>
+      <Name>JumpPoint.Platform.Services.Storj</Name>
     </ProjectReference>
     <ProjectReference Include="..\JumpPoint.Platform.Services\JumpPoint.Platform.Services.csproj">
       <Project>{beea9c15-90ee-4473-a630-d8e69274c3a0}</Project>
@@ -4851,6 +4869,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\VideoPropertiesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\AddCloudAccountDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

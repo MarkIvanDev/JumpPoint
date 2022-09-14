@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <LangVersion>7.3</LangVersion>
+    <Configurations>Debug;Release;Debug_BETA;Release_BETA</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug_BETA'">
+    <DefineConstants>$(DefineConstants);JPBETA</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release_BETA'">
+    <DefineConstants>$(DefineConstants);JPBETA</DefineConstants>
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fief.DataProtector" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JumpPoint.Platform.Items.Storj\JumpPoint.Platform.Items.Storj.csproj" />
+    <ProjectReference Include="..\JumpPoint.Platform.Models\JumpPoint.Platform.Models.csproj" />
+  </ItemGroup>
+
+</Project>

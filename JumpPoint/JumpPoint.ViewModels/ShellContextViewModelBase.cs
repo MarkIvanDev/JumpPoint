@@ -153,7 +153,7 @@ namespace JumpPoint.ViewModels
                         ProgressInfo.Start();
 
                         PathHash = HashTool.Sha256Hash(PathInfo.Path.ToUpperInvariant());
-                        Settings = new PathSettings(PathHash);
+                        Settings = new PathSettings(PathInfo.Type, PathHash);
                         IsPinned = shortcutService.Exists(PathHash);
 
                         Filter();
@@ -275,13 +275,12 @@ namespace JumpPoint.ViewModels
 
     public class PathSettings : ObservableObject
     {
-        private const string DRIVES_HASH = "77e9d94720614a9d8dbc5450dda97fd344f15bec5c7a786986fc4984eb4a9473";
-        private const string CLOUDDRIVES_HASH = "3ed8ca857698335e4f5ff193a2afed9130b68478aceeb809748e124f227fcc48";
-
+        private readonly AppPath appPath;
         private readonly string pathHash;
 
-        public PathSettings(string pathHash)
+        public PathSettings(AppPath appPath, string pathHash)
         {
+            this.appPath = appPath;
             this.pathHash = pathHash;
         }
 
@@ -289,7 +288,7 @@ namespace JumpPoint.ViewModels
 
         public string Layout
         {
-            get { return Preferences.Get(nameof(Layout), GetDefaultLayout(pathHash), pathHash); }
+            get { return Preferences.Get(nameof(Layout), GetDefaultLayout(appPath), pathHash); }
             set
             {
                 if (Layout != value)
@@ -304,15 +303,29 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        private static string GetDefaultLayout(string pathHash)
+        private static string GetDefaultLayout(AppPath appPath)
         {
-            if (pathHash == DRIVES_HASH || pathHash == CLOUDDRIVES_HASH)
+            switch (appPath)
             {
-                return LayoutModes.Tiles;
-            }
-            else
-            {
-                return LayoutModes.Grid;
+                case AppPath.Drives:
+                case AppPath.CloudDrives:
+                case AppPath.Cloud:
+                    return LayoutModes.Tiles;
+
+                case AppPath.Dashboard:
+                case AppPath.Settings:
+                case AppPath.Favorites:
+                case AppPath.Workspaces:
+                case AppPath.AppLinks:
+                case AppPath.Drive:
+                case AppPath.Folder:
+                case AppPath.Workspace:
+                case AppPath.Properties:
+                case AppPath.Chat:
+                case AppPath.ClipboardManager:
+                case AppPath.Unknown:
+                default:
+                    return LayoutModes.Grid;
             }
         }
 

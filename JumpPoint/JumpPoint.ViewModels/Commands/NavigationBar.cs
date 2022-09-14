@@ -5,6 +5,7 @@ using JumpPoint.Platform;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Models.Extensions;
+using JumpPoint.Platform.Services;
 
 namespace JumpPoint.ViewModels.Commands
 {
@@ -118,17 +119,17 @@ namespace JumpPoint.ViewModels.Commands
 
         public static bool IsNewFileEnabled(ShellContextViewModelBase context)
         {
-            return context != null && context.Item is DirectoryBase;
+            return context != null && context.Item is DirectoryBase dir && StorageService.CanCreateFile(dir);
         }
 
         public static bool IsNewFolderEnabled(ShellContextViewModelBase context)
         {
-            return context != null && context.Item is DirectoryBase;
+            return context != null && context.Item is DirectoryBase dir && StorageService.CanCreateFolder(dir);
         }
 
         public static bool IsMoreNewItemsEnabled(ShellContextViewModelBase context)
         {
-            return context != null && context.Item is DirectoryBase;
+            return context != null && context.Item is DirectoryBase dir && StorageService.CanCreateItem(dir);
         }
     }
 }

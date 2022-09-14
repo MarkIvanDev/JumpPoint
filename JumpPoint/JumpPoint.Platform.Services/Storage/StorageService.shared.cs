@@ -247,6 +247,53 @@ namespace JumpPoint.Platform.Services
             }
         }
 
+        #region Commands
+        public static bool CanCreateFolder(DirectoryBase directory)
+        {
+            switch (directory.StorageType)
+            {
+                case StorageType.Local:
+                case StorageType.Portable:
+                case StorageType.Network:
+                    return true;
+                case StorageType.Cloud:
+                    return CloudStorageService.CanCreateFolder(directory);
+                default:
+                    return false;
+            }
+        }
+
+        public static bool CanCreateFile(DirectoryBase directory)
+        {
+            switch (directory.StorageType)
+            {
+                case StorageType.Local:
+                case StorageType.Portable:
+                case StorageType.Network:
+                    return true;
+                case StorageType.Cloud:
+                    return CloudStorageService.CanCreateFile(directory);
+                default:
+                    return false;
+            }
+        }
+
+        public static bool CanCreateItem(DirectoryBase directory)
+        {
+            switch (directory.StorageType)
+            {
+                case StorageType.Local:
+                case StorageType.Portable:
+                case StorageType.Network:
+                    return true;
+                case StorageType.Cloud:
+                    return CloudStorageService.CanCreateItem(directory);
+                default:
+                    return false;
+            }
+        }
+        #endregion
+
         #region Directory
 
         public static async Task<DirectoryBase> GetDirectory(string path)

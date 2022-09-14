@@ -90,7 +90,24 @@ namespace JumpPoint.ViewModels
             {
                 if (provider.HasValue)
                 {
-                    var account = await CloudStorageService.AddAccount(provider.Value);
+                    IDictionary<string, string> data = null;
+                    if (CloudStorageService.TryGetAccountProperties(provider.Value, out var keys))
+                    {
+                        if (keys.Count > 0)
+                        {
+                            var dataViewModel = new AddCloudAccountViewModel(provider.Value, keys);
+                            var result = await dialogService.Show(DialogKeys.AddCloudAccount, dataViewModel);
+                            if (result)
+                            {
+                                data = dataViewModel.GetData();
+                            }
+                            else
+                            {
+                                return;
+                            }
+                        }
+                    }
+                    var account = await CloudStorageService.AddAccount(provider.Value, data);
                     if (account != null)
                     {
                         var group = Accounts.FirstOrDefault(g => g.Key == account.Provider);
@@ -193,7 +210,8 @@ namespace JumpPoint.ViewModels
 
             Accounts = new ObservableCollection<CloudAccountGroup>
             {
-                new CloudAccountGroup(CloudStorageProvider.OneDrive, await CloudStorageService.GetAccounts(CloudStorageProvider.OneDrive))
+                new CloudAccountGroup(CloudStorageProvider.OneDrive, await CloudStorageService.GetAccounts(CloudStorageProvider.OneDrive)),
+                new CloudAccountGroup(CloudStorageProvider.Storj, await CloudStorageService.GetAccounts(CloudStorageProvider.Storj))
             };
             token.ThrowIfCancellationRequested();
 

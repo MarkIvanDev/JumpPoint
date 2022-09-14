@@ -9,6 +9,8 @@ namespace JumpPoint.Platform.Items.CloudStorage
     {
         Unknown = 0,
         [Description("OneDrive")]
-        OneDrive = 1
+        OneDrive = 1,
+        [Description("Storj")]
+        Storj = 2
     }
 }
