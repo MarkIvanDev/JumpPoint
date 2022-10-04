@@ -78,8 +78,8 @@
             <ComboBox.ItemTemplate>
                 <DataTemplate x:DataType="hosted:TextEncoding">
                     <TextBlock>
-                        <Run Text="{x:Bind Encoding.EncodingName, Mode=OneWay}" />
-                        <Run Text="{x:Bind HasPreamble, Mode=OneWay, Converter={StaticResource BOMTextConverter}}" />
+                        <Run Text="{x:Bind Encoding.EncodingName}" />
+                        <Run Text="{x:Bind HasPreamble, Converter={StaticResource BOMTextConverter}}" />
                     </TextBlock>
                 </DataTemplate>
             </ComboBox.ItemTemplate>

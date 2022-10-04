@@ -38,7 +38,6 @@
     <ProjectReference Include="..\JumpPoint.Platform.Items\JumpPoint.Platform.Items.csproj" />
     <ProjectReference Include="..\JumpPoint.Platform.Models\JumpPoint.Platform.Models.csproj" />
     <ProjectReference Include="..\JumpPoint.Platform.Services\JumpPoint.Platform.Services.csproj" />
-    <ProjectReference Include="..\JumpPoint.Platform.Watchers\JumpPoint.Platform.Watchers.csproj" />
     <ProjectReference Include="..\JumpPoint.Platform\JumpPoint.Platform.csproj" />
   </ItemGroup>
 

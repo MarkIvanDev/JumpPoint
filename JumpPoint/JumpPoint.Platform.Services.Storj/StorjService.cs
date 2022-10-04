@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Fief.DataProtector;
+using Humanizer;
+using JumpPoint.Platform.Items.CloudStorage;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Items.Storj;
 using JumpPoint.Platform.Models.Extensions;
@@ -20,7 +22,7 @@ namespace JumpPoint.Platform.Services.Storj
 
         private static readonly SQLiteAsyncConnection connection;
         private static readonly DataProtectorService dataProtectorService;
-        private static readonly Dictionary<string, Access> accessGrants;
+        private static readonly Dictionary<int, Access> accessGrants;
 
         static StorjService()
         {
@@ -29,16 +31,16 @@ namespace JumpPoint.Platform.Services.Storj
                 SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex,
                 true));
             dataProtectorService = new DataProtectorService();
-            accessGrants = new Dictionary<string, Access>();
+            accessGrants = new Dictionary<int, Access>();
         }
 
         public static async Task Initialize()
         {
-            await connection.CreateTableAsync<StorjAccount>();
-            var accounts = await connection.Table<StorjAccount>().ToListAsync();
+            await connection.CreateTableAsync<StorjAccount>().ConfigureAwait(false);
+            var accounts = await connection.Table<StorjAccount>().ToListAsync().ConfigureAwait(false);
             foreach (var item in accounts)
             {
-                accessGrants.Add(item.AccessGrant, new Access(await dataProtectorService.Decrypt(item.AccessGrant)));
+                accessGrants.Add(item.Id, new Access(await dataProtectorService.Decrypt(item.AccessGrant).ConfigureAwait(false)));
             }
         }
 
@@ -63,20 +65,27 @@ namespace JumpPoint.Platform.Services.Storj
 
         public static async Task<StorjAccount> AddAccount(string name, string email, string accessGrant)
         {
-            var encryptedAccessGrant = await dataProtectorService.Encrypt(accessGrant);
-            accessGrants[encryptedAccessGrant] = new Access(accessGrant);
-            var account = new StorjAccount
+            try
             {
-                Name = name,
-                Email = email,
-                AccessGrant = encryptedAccessGrant
-            };
-            await connection.RunInTransactionAsync(db =>
+                var encryptedAccessGrant = await dataProtectorService.Encrypt(accessGrant).ConfigureAwait(false);
+                var account = new StorjAccount
+                {
+                    Name = name,
+                    Email = email,
+                    AccessGrant = encryptedAccessGrant
+                };
+                await connection.RunInTransactionAsync(db =>
+                {
+                    account.Name = GetAvailableName(db, account.Name);
+                    db.Insert(account);
+                }).ConfigureAwait(false);
+                accessGrants[account.Id] = new Access(accessGrant);
+                return account;
+            }
+            catch (Exception)
             {
-                account.Name = GetAvailableName(db, account.Name);
-                db.Insert(account);
-            }).ConfigureAwait(false);
-            return account;
+                return null;
+            }
         }
 
         public static async Task<string> RenameAccount(StorjAccount account, string newName)
@@ -86,8 +95,8 @@ namespace JumpPoint.Platform.Services.Storj
             {
                 name = GetAvailableName(db, newName);
                 db.Execute($"UPDATE {nameof(StorjAccount)} SET {nameof(StorjAccount.Name)} = ? " +
-                    $"WHERE {nameof(StorjAccount.AccessGrant)} = ?",
-                    name, account.AccessGrant);
+                    $"WHERE {nameof(StorjAccount.Id)} = ?",
+                    name, account.Id);
             }).ConfigureAwait(false);
             return name;
         }
@@ -95,8 +104,8 @@ namespace JumpPoint.Platform.Services.Storj
         public static async Task RemoveAccount(StorjAccount account)
         {
             await connection.ExecuteAsync(
-                $"DELETE FROM {nameof(StorjAccount)} WHERE {nameof(StorjAccount.AccessGrant)} = ?", account.AccessGrant).ConfigureAwait(false);
-            accessGrants.Remove(account.AccessGrant);
+                $"DELETE FROM {nameof(StorjAccount)} WHERE {nameof(StorjAccount.Id)} = ?", account.Id).ConfigureAwait(false);
+            accessGrants.Remove(account.Id);
         }
 
         public static async Task<IList<StorjDrive>> GetDrives()
@@ -105,7 +114,7 @@ namespace JumpPoint.Platform.Services.Storj
             foreach (var item in accessGrants)
             {
                 var account = await connection.FindWithQueryAsync<StorjAccount>(
-                    $"SELECT * FROM {nameof(StorjAccount)} WHERE {nameof(StorjAccount.AccessGrant)} = ?", item.Key);
+                    $"SELECT * FROM {nameof(StorjAccount)} WHERE {nameof(StorjAccount.Id)} = ?", item.Key);
                 drives.Add(new StorjDrive(account));
             }
             return drives;
@@ -116,9 +125,9 @@ namespace JumpPoint.Platform.Services.Storj
             var items = new List<StorageItemBase>();
             try
             {
-                if (drive.Account != null && accessGrants.TryGetValue(drive.Account.AccessGrant, out var accessGrant))
+                if (drive.Account != null && accessGrants.TryGetValue(drive.Account.Id, out var accessGrant))
                 {
-                    var buckets = await accessGrant.GetBuckets();
+                    var buckets = await accessGrant.GetBuckets().ConfigureAwait(false);
                     foreach (var item in buckets)
                     {
                         var i = item.Convert(drive.Account);
@@ -141,7 +150,7 @@ namespace JumpPoint.Platform.Services.Storj
             var items = new List<StorageItemBase>();
             try
             {
-                if (folder.Bucket != null && folder.Account != null && accessGrants.TryGetValue(folder.Account.AccessGrant, out var accessGrant))
+                if (folder.Bucket != null && folder.Account != null && accessGrants.TryGetValue(folder.Account.Id, out var accessGrant))
                 {
                     var prefix = folder.StorjObject is null ? string.Empty : folder.StorjObject.Key;
                     var objects = await accessGrant.GetObjects(folder.Bucket, prefix);
@@ -169,8 +178,10 @@ namespace JumpPoint.Platform.Services.Storj
                 if (path.GetPathKind() == PathKind.Cloud)
                 {
                     var crumbs = path.GetBreadcrumbs();
+                    var cloudCrumb = crumbs.FirstOrDefault(c => c.AppPath == AppPath.Cloud);
                     var lastCrumb = crumbs.LastOrDefault();
-                    if (lastCrumb != null && lastCrumb.AppPath == AppPath.Drive)
+                    if (cloudCrumb != null && cloudCrumb.DisplayName.Equals(CloudStorageProvider.Storj.Humanize(), StringComparison.OrdinalIgnoreCase) &&
+                        lastCrumb != null && lastCrumb.AppPath == AppPath.Drive)
                     {
                         var account = await connection.FindWithQueryAsync<StorjAccount>(
                             $"SELECT * FROM {nameof(StorjAccount)} WHERE {nameof(StorjAccount.Name)} = ?", lastCrumb.DisplayName);
@@ -195,14 +206,16 @@ namespace JumpPoint.Platform.Services.Storj
                 if (path.GetPathKind() == PathKind.Cloud)
                 {
                     var crumbs = path.GetBreadcrumbs();
+                    var cloudCrumb = crumbs.FirstOrDefault(c => c.AppPath == AppPath.Cloud);
                     var driveCrumb = crumbs.FirstOrDefault(c => c.AppPath == AppPath.Drive);
                     var bucketCrumb = crumbs.FirstOrDefault(c => c.AppPath == AppPath.Folder);
                     var lastCrumb = crumbs.LastOrDefault();
-                    if (driveCrumb != null && bucketCrumb != null && lastCrumb != null)
+                    if (cloudCrumb != null && cloudCrumb.DisplayName.Equals(CloudStorageProvider.Storj.Humanize(), StringComparison.OrdinalIgnoreCase) &&
+                        driveCrumb != null && bucketCrumb != null && lastCrumb != null)
                     {
                         var account = await connection.FindWithQueryAsync<StorjAccount>(
                             $"SELECT * FROM {nameof(StorjAccount)} WHERE {nameof(StorjAccount.Name)} = ?", driveCrumb.DisplayName);
-                        if (account != null && accessGrants.TryGetValue(account.AccessGrant, out var accessGrant))
+                        if (account != null && accessGrants.TryGetValue(account.Id, out var accessGrant))
                         {
                             var bucket = await accessGrant.GetBucket(bucketCrumb.DisplayName);
                             if (bucketCrumb != lastCrumb)
@@ -233,14 +246,16 @@ namespace JumpPoint.Platform.Services.Storj
                 if (path.GetPathKind() == PathKind.Cloud)
                 {
                     var crumbs = path.GetBreadcrumbs();
+                    var cloudCrumb = crumbs.FirstOrDefault(c => c.AppPath == AppPath.Cloud);
                     var driveCrumb = crumbs.FirstOrDefault(c => c.AppPath == AppPath.Drive);
                     var bucketCrumb = crumbs.FirstOrDefault(c => c.AppPath == AppPath.Folder);
                     var lastCrumb = crumbs.LastOrDefault();
-                    if (driveCrumb != null && bucketCrumb != null && lastCrumb != null)
+                    if (cloudCrumb != null && cloudCrumb.DisplayName.Equals(CloudStorageProvider.OpenDrive.Humanize(), StringComparison.OrdinalIgnoreCase) &&
+                        driveCrumb != null && bucketCrumb != null && lastCrumb != null)
                     {
                         var account = await connection.FindWithQueryAsync<StorjAccount>(
                             $"SELECT * FROM {nameof(StorjAccount)} WHERE {nameof(StorjAccount.Name)} = ?", driveCrumb.DisplayName);
-                        if (account != null && accessGrants.TryGetValue(account.AccessGrant, out var accessGrant))
+                        if (account != null && accessGrants.TryGetValue(account.Id, out var accessGrant))
                         {
                             var bucket = await accessGrant.GetBucket(bucketCrumb.DisplayName);
                             if (bucket != null)
@@ -275,7 +290,7 @@ namespace JumpPoint.Platform.Services.Storj
                 {
                     var account = await connection.FindWithQueryAsync<StorjAccount>(
                             $"SELECT * FROM {nameof(StorjAccount)} WHERE {nameof(StorjAccount.Name)} = ?", driveCrumb.DisplayName);
-                    if (account != null && accessGrants.TryGetValue(account.AccessGrant, out var accessGrant))
+                    if (account != null && accessGrants.TryGetValue(account.Id, out var accessGrant))
                     {
                         var bucket = await accessGrant.GetBucket(bucketCrumb.DisplayName);
                         if (bucket != null)
@@ -297,7 +312,7 @@ namespace JumpPoint.Platform.Services.Storj
         {
             try
             {
-                if (accessGrants.TryGetValue(folder.Account.AccessGrant, out var access))
+                if (accessGrants.TryGetValue(folder.Account.Id, out var access))
                 {
                     var newFolder = await access.CreateFolder(folder.Bucket, $"{(folder.StorjObject is null ? "" : folder.StorjObject.Key)}{name}/", option);
                     if (newFolder != null)
@@ -317,7 +332,7 @@ namespace JumpPoint.Platform.Services.Storj
         {
             try
             {
-                if (accessGrants.TryGetValue(folder.Account.AccessGrant, out var access))
+                if (accessGrants.TryGetValue(folder.Account.Id, out var access))
                 {
                     var newFile = await access.CreateFile(folder.Bucket, $"{(folder.StorjObject is null ? "" : folder.StorjObject.Key)}{name}", option, content);
                     if (newFile != null)
@@ -337,7 +352,7 @@ namespace JumpPoint.Platform.Services.Storj
         {
             try
             {
-                if (folder.StorjObject != null && accessGrants.TryGetValue(folder.Account.AccessGrant, out var access))
+                if (folder.StorjObject != null && accessGrants.TryGetValue(folder.Account.Id, out var access))
                 {
                     var segments = folder.StorjObject.Key.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
                     segments[segments.Length - 1] = name;
@@ -362,7 +377,7 @@ namespace JumpPoint.Platform.Services.Storj
         {
             try
             {
-                if (file.StorjObject != null && accessGrants.TryGetValue(file.Account.AccessGrant, out var access))
+                if (file.StorjObject != null && accessGrants.TryGetValue(file.Account.Id, out var access))
                 {
                     var segments = file.StorjObject.Key.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
                     segments[segments.Length - 1] = name;
@@ -385,7 +400,7 @@ namespace JumpPoint.Platform.Services.Storj
 
         public static async Task Delete(StorjFolder folder)
         {
-            if (folder.StorjObject != null && accessGrants.TryGetValue(folder.Account.AccessGrant, out var access))
+            if (folder.StorjObject != null && accessGrants.TryGetValue(folder.Account.Id, out var access))
             {
                 await access.Delete(folder.Bucket, folder.StorjObject.Key);
             }
@@ -393,7 +408,7 @@ namespace JumpPoint.Platform.Services.Storj
 
         public static async Task Delete(StorjFile file)
         {
-            if (accessGrants.TryGetValue(file.Account.AccessGrant, out var access))
+            if (accessGrants.TryGetValue(file.Account.Id, out var access))
             {
                 await access.Delete(file.Bucket, file.StorjObject.Key);
             }
@@ -401,7 +416,7 @@ namespace JumpPoint.Platform.Services.Storj
 
         public static string GetUrl(StorjFile file)
         {
-            if (accessGrants.TryGetValue(file.Account.AccessGrant, out var access))
+            if (accessGrants.TryGetValue(file.Account.Id, out var access))
             {
                 var url = access.CreateShareURL(file.Bucket.Name, file.StorjObject.Key, false, true);
                 return url.Replace("https://gateway.storjshare.io/", "https://link.storjshare.io/");

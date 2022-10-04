@@ -7,6 +7,7 @@ using System.Text;
 using Humanizer;
 using JumpPoint.Platform.Items.CloudStorage;
 using NittyGritty.Extensions;
+using NittyGritty.Utilities;
 
 namespace JumpPoint.Platform.Models.Extensions
 {
@@ -131,8 +132,8 @@ namespace JumpPoint.Platform.Models.Extensions
                         if (i == 0)
                         {
                             crumbs[i].AppPath = AppPath.Cloud;
-                            crumbs[i].DisplayName = Enum.TryParse<CloudStorageProvider>(crumbs[i].DisplayName, out var provider) ?
-                                provider.Humanize() : CloudStorageProvider.Unknown.Humanize();
+                            var provider = CodeHelper.InvokeOrDefault(() => crumbs[i].DisplayName.DehumanizeTo<CloudStorageProvider>(), CloudStorageProvider.Unknown);
+                            crumbs[i].DisplayName = provider.Humanize();
                         }
                         else
                         {

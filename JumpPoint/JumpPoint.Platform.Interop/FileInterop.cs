@@ -412,7 +412,7 @@ namespace JumpPoint.Platform.Interop
                         return null;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 //Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
                 return null;
@@ -439,7 +439,7 @@ namespace JumpPoint.Platform.Interop
                         return null;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 //Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
                 return null;

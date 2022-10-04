@@ -12,7 +12,7 @@ namespace JumpPoint.Platform.Items.Storj
 
         private string _accessGrant;
 
-        [Unique, NotNull]
+        [NotNull]
         public string AccessGrant
         {
             get { return _accessGrant ?? (_accessGrant = string.Empty); }

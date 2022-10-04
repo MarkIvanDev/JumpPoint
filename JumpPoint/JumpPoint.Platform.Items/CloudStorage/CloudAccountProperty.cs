@@ -7,15 +7,18 @@ namespace JumpPoint.Platform.Items.CloudStorage
 {
     public class CloudAccountProperty : ObservableObject
     {
-        public CloudAccountProperty(string name, bool isRequired)
+        public CloudAccountProperty(string name, bool isRequired, bool isSensitive)
         {
             Name = name;
             IsRequired = isRequired;
+            IsSensitive = isSensitive;
         }
 
         public string Name { get; }
 
         public bool IsRequired { get; }
+
+        public bool IsSensitive { get; }
 
         private string _value;
 

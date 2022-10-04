@@ -432,7 +432,7 @@ namespace JumpPoint.Platform.Services
                     file.Thumbnail = thumbnail.AsStreamForRead();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //Messenger.Default.Send(new NotificationMessage<Exception>(ex, ex.Message), MessengerTokens.ExceptionManagement);
             }

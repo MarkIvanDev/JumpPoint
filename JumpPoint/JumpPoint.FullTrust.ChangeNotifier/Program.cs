@@ -77,7 +77,7 @@ namespace JumpPoint.FullTrust.ChangeNotifier
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             {
             }
             finally

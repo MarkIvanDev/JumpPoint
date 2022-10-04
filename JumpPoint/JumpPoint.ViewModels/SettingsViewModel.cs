@@ -115,7 +115,7 @@ namespace JumpPoint.ViewModels
                         {
                             group.Items.Add(account);
                             Messenger.Default.Send(new NotificationMessage<SidebarMessage>(
-                                new SidebarMessage(CollectionChangedAction.Reset, null), provider.Value.ToString()),
+                                new SidebarMessage(CollectionChangedAction.Reset, null), nameof(AppPath.CloudDrives)),
                                 MessengerTokens.SidebarManagement);
                         }
                     }
@@ -133,7 +133,7 @@ namespace JumpPoint.ViewModels
                     var newName = await CloudStorageService.RenameAccount(account, viewModel.Name);
                     account.Name = newName;
                     Messenger.Default.Send(new NotificationMessage<SidebarMessage>(
-                        new SidebarMessage(CollectionChangedAction.Reset, null), account.Provider.ToString()),
+                        new SidebarMessage(CollectionChangedAction.Reset, null), nameof(AppPath.CloudDrives)),
                         MessengerTokens.SidebarManagement);
                 }
             }));
@@ -148,7 +148,7 @@ namespace JumpPoint.ViewModels
                 {
                     group.Items.Remove(account);
                     Messenger.Default.Send(new NotificationMessage<SidebarMessage>(
-                        new SidebarMessage(CollectionChangedAction.Reset, null), account.Provider.ToString()),
+                        new SidebarMessage(CollectionChangedAction.Reset, null), nameof(AppPath.CloudDrives)),
                         MessengerTokens.SidebarManagement);
                 }
             }));
@@ -211,7 +211,8 @@ namespace JumpPoint.ViewModels
             Accounts = new ObservableCollection<CloudAccountGroup>
             {
                 new CloudAccountGroup(CloudStorageProvider.OneDrive, await CloudStorageService.GetAccounts(CloudStorageProvider.OneDrive)),
-                new CloudAccountGroup(CloudStorageProvider.Storj, await CloudStorageService.GetAccounts(CloudStorageProvider.Storj))
+                new CloudAccountGroup(CloudStorageProvider.Storj, await CloudStorageService.GetAccounts(CloudStorageProvider.Storj)),
+                new CloudAccountGroup(CloudStorageProvider.OpenDrive, await CloudStorageService.GetAccounts(CloudStorageProvider.OpenDrive))
             };
             token.ThrowIfCancellationRequested();
 

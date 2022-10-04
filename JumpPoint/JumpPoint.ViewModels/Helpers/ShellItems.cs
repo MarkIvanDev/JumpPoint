@@ -206,8 +206,7 @@ namespace JumpPoint.ViewModels.Helpers
                         await UpdateWorkspacesSidebar(message.Content);
                         break;
 
-                    case nameof(CloudStorageProvider.OneDrive):
-                    case nameof(CloudStorageProvider.Storj):
+                    case nameof(AppPath.CloudDrives):
                         await RefreshCloudDrives();
                         break;
 
@@ -448,6 +447,12 @@ namespace JumpPoint.ViewModels.Helpers
                 foreach (var drive in sjds)
                 {
                     CloudDrives.Children.Add(GetShellItem(drive, DriveTemplate.Storj));
+                }
+
+                var opds = await CloudStorageService.GetAccounts(CloudStorageProvider.OpenDrive);
+                foreach (var drive in opds)
+                {
+                    CloudDrives.Children.Add(GetShellItem(drive, DriveTemplate.OpenDrive));
                 }
             }
         }
