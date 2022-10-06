@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Humanizer;
+using JumpPoint.Platform.Items.CloudStorage;
 using JumpPoint.Platform.Items.OneDrive;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Models.Extensions;
@@ -179,8 +181,10 @@ namespace JumpPoint.Platform.Services.OneDrive
                 if (path.GetPathKind() == PathKind.Cloud)
                 {
                     var crumbs = path.GetBreadcrumbs();
+                    var cloudCrumb = crumbs.FirstOrDefault(c => c.AppPath == AppPath.Cloud);
                     var lastCrumb = crumbs.LastOrDefault();
-                    if (lastCrumb != null && lastCrumb.AppPath == AppPath.Drive)
+                    if (cloudCrumb != null && cloudCrumb.DisplayName.Equals(CloudStorageProvider.OneDrive.Humanize(), StringComparison.OrdinalIgnoreCase) &&
+                        lastCrumb != null && lastCrumb.AppPath == AppPath.Drive)
                     {
                         var account = await connection.FindWithQueryAsync<OneDriveAccount>(
                             $"SELECT * FROM {nameof(OneDriveAccount)} WHERE {nameof(OneDriveAccount.Name)} = ?", lastCrumb.DisplayName);
@@ -205,9 +209,11 @@ namespace JumpPoint.Platform.Services.OneDrive
                 if (path.GetPathKind() == PathKind.Cloud)
                 {
                     var crumbs = path.GetBreadcrumbs();
+                    var cloudCrumb = crumbs.FirstOrDefault(c => c.AppPath == AppPath.Cloud);
                     var driveCrumb = crumbs.FirstOrDefault(c => c.AppPath == AppPath.Drive);
                     var lastCrumb = crumbs.LastOrDefault();
-                    if (driveCrumb != null && lastCrumb != null)
+                    if (cloudCrumb != null && cloudCrumb.DisplayName.Equals(CloudStorageProvider.OneDrive.Humanize(), StringComparison.OrdinalIgnoreCase) &&
+                        driveCrumb != null && lastCrumb != null)
                     {
                         var account = await connection.FindWithQueryAsync<OneDriveAccount>(
                             $"SELECT * FROM {nameof(OneDriveAccount)} WHERE {nameof(OneDriveAccount.Name)} = ?", driveCrumb.DisplayName);
@@ -234,9 +240,11 @@ namespace JumpPoint.Platform.Services.OneDrive
                 if (path.GetPathKind() == PathKind.Cloud)
                 {
                     var crumbs = path.GetBreadcrumbs();
+                    var cloudCrumb = crumbs.FirstOrDefault(c => c.AppPath == AppPath.Cloud);
                     var driveCrumb = crumbs.FirstOrDefault(c => c.AppPath == AppPath.Drive);
                     var lastCrumb = crumbs.LastOrDefault();
-                    if (driveCrumb != null && lastCrumb != null)
+                    if (cloudCrumb != null && cloudCrumb.DisplayName.Equals(CloudStorageProvider.OneDrive.Humanize(), StringComparison.OrdinalIgnoreCase) &&
+                        driveCrumb != null && lastCrumb != null)
                     {
                         var account = await connection.FindWithQueryAsync<OneDriveAccount>(
                             $"SELECT * FROM {nameof(OneDriveAccount)} WHERE {nameof(OneDriveAccount.Name)} = ?", driveCrumb.DisplayName);

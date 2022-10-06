@@ -1,12 +1,9 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>uap10.0.17763</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <DefaultLanguage>en-US</DefaultLanguage>
     <LangVersion>7.3</LangVersion>
-    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <Configurations>Debug;Release;Debug_BETA;Release_BETA</Configurations>
   </PropertyGroup>
 
@@ -20,11 +17,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
+    <PackageReference Include="Fief.DataProtector" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JumpPoint.Platform.Items\JumpPoint.Platform.Items.csproj" />
+    <ProjectReference Include="..\JumpPoint.Platform.Items.Storj\JumpPoint.Platform.Items.Storj.csproj" />
+    <ProjectReference Include="..\JumpPoint.Platform.Models\JumpPoint.Platform.Models.csproj" />
   </ItemGroup>
 
 </Project>

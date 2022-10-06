@@ -50,5 +50,7 @@ namespace JumpPoint.Platform.Items.Templates
 
         // Cloud Kinds
         OneDrive = 501,
+        Storj = 502,
+        OpenDrive = 503,
     }
 }

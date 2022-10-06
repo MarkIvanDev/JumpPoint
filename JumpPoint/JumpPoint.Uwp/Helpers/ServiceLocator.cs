@@ -40,6 +40,7 @@ namespace JumpPoint.Uwp.Helpers
                 dialogService.Configure(DialogKeys.AppLinkLaunchResults, typeof(Dialogs.AppLinkLaunchResultsDialog));
                 dialogService.Configure(DialogKeys.WorkspaceTemplatePicker, typeof(Dialogs.WorkspaceTemplatePicker));
                 dialogService.Configure(DialogKeys.FolderTemplatePicker, typeof(Dialogs.FolderTemplatePicker));
+                dialogService.Configure(DialogKeys.AddCloudAccount, typeof(Dialogs.AddCloudAccountDialog));
                 dialogService.Configure(DialogKeys.RenameCloudAccount, typeof(Dialogs.RenameCloudAccountDialog));
                 dialogService.Configure(DialogKeys.AppLinkProviderPicker, typeof(Dialogs.AppLinkProviderPicker));
                 dialogService.Configure(DialogKeys.ToolPicker, typeof(Dialogs.ToolPicker));

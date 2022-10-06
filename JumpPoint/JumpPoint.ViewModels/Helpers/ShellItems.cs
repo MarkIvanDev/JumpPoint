@@ -105,7 +105,7 @@ namespace JumpPoint.ViewModels.Helpers
                 new ShellItem()
                 {
                     Type = ShellItemType.Item,
-                    Content = "Clipboard Manager",
+                    Content = AppPath.ClipboardManager.Humanize(),
                     Key = ViewModelKeys.ClipboardManager,
                     Parameter = null,
                     Tag = AppPath.ClipboardManager
@@ -206,7 +206,7 @@ namespace JumpPoint.ViewModels.Helpers
                         await UpdateWorkspacesSidebar(message.Content);
                         break;
 
-                    case nameof(CloudStorageProvider.OneDrive):
+                    case nameof(AppPath.CloudDrives):
                         await RefreshCloudDrives();
                         break;
 
@@ -441,6 +441,18 @@ namespace JumpPoint.ViewModels.Helpers
                 foreach (var drive in odds)
                 {
                     CloudDrives.Children.Add(GetShellItem(drive, DriveTemplate.OneDrive));
+                }
+
+                var sjds = await CloudStorageService.GetAccounts(CloudStorageProvider.Storj);
+                foreach (var drive in sjds)
+                {
+                    CloudDrives.Children.Add(GetShellItem(drive, DriveTemplate.Storj));
+                }
+
+                var opds = await CloudStorageService.GetAccounts(CloudStorageProvider.OpenDrive);
+                foreach (var drive in opds)
+                {
+                    CloudDrives.Children.Add(GetShellItem(drive, DriveTemplate.OpenDrive));
                 }
             }
         }

@@ -207,6 +207,7 @@ namespace JumpPoint.ViewModels
         public static string AppLinkLaunchResults => nameof(AppLinkLaunchResults);
         public static string WorkspaceTemplatePicker => nameof(WorkspaceTemplatePicker);
         public static string FolderTemplatePicker => nameof(FolderTemplatePicker);
+        public static string AddCloudAccount => nameof(AddCloudAccount);
         public static string RenameCloudAccount => nameof(RenameCloudAccount);
         public static string AppLinkProviderPicker => nameof(AppLinkProviderPicker);
         public static string ToolPicker => nameof(ToolPicker);

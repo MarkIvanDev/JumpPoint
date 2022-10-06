@@ -69,6 +69,10 @@ namespace JumpPoint.Uwp.Converters
                     return GetCloudStorageIconUri(CloudStorageProvider.Unknown);
                 case DriveTemplate.OneDrive:
                     return GetCloudStorageIconUri(CloudStorageProvider.OneDrive);
+                case DriveTemplate.Storj:
+                    return GetCloudStorageIconUri(CloudStorageProvider.Storj);
+                case DriveTemplate.OpenDrive:
+                    return GetCloudStorageIconUri(CloudStorageProvider.OpenDrive);
 
                 case DriveTemplate.Unknown:
                 default:

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace JumpPoint.Platform
@@ -12,8 +13,10 @@ namespace JumpPoint.Platform
         Settings = 2,
         Favorites = 3,
         Drives = 4,
+        [Description("Cloud Drives")]
         CloudDrives = 5,
         Workspaces = 6,
+        [Description("App Links")]
         AppLinks = 7,
 
         Drive = 22,
@@ -23,6 +26,7 @@ namespace JumpPoint.Platform
 
         Properties = 41,
         Chat = 42,
+        [Description("Clipboard Manager")]
         ClipboardManager = 43,
     }
 

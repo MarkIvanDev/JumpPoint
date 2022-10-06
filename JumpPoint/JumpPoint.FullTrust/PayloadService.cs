@@ -3,6 +3,8 @@ using JumpPoint.FullTrust.Core;
 using JumpPoint.FullTrust.Core.Payloads;
 using Windows.Storage;
 
+#nullable enable
+
 namespace JumpPoint.FullTrust
 {
     public static class PayloadService

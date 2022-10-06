@@ -21,6 +21,14 @@ namespace JumpPoint.Platform.Items.CloudStorage
                     DriveTemplate = DriveTemplate.OneDrive;
                     break;
 
+                case CloudStorageProvider.Storj:
+                    DriveTemplate = DriveTemplate.Storj;
+                    break;
+
+                case CloudStorageProvider.OpenDrive:
+                    DriveTemplate = DriveTemplate.OpenDrive;
+                    break;
+
                 case CloudStorageProvider.Unknown:
                 default:
                     DriveTemplate = DriveTemplate.Cloud;

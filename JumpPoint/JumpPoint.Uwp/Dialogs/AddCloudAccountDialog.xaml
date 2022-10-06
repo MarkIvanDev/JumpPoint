@@ -1,0 +1,48 @@
+﻿<ContentDialog
+    x:Class="JumpPoint.Uwp.Dialogs.AddCloudAccountDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JumpPoint.Uwp.Dialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+               xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+               xmlns:cloudstorage="using:JumpPoint.Platform.Items.CloudStorage"
+               xmlns:selectors="using:JumpPoint.Uwp.Converters.Selectors"
+               mc:Ignorable="d"
+    Title="{x:Bind GetTitle(ViewModel.Provider)}"
+    PrimaryButtonText="Add"
+    SecondaryButtonText="Cancel"
+    DefaultButton="Primary"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.IsValid, Mode=OneWay}">
+
+    <ContentDialog.Resources>
+        <Style TargetType="local:AddCloudAccountDialog"
+               BasedOn="{StaticResource DefaultContentDialogStyle}" />
+    </ContentDialog.Resources>
+
+    <StackPanel Spacing="8">
+        <TextBox Header="Name:"
+                 Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Header="Email:"
+                 Text="{x:Bind ViewModel.Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Properties, Mode=OneWay}">
+            <winui:ItemsRepeater.Layout>
+                <winui:StackLayout Spacing="8" />
+            </winui:ItemsRepeater.Layout>
+            <selectors:CloudAccountPropertyTemplateSelector>
+                <selectors:CloudAccountPropertyTemplateSelector.Regular>
+                    <DataTemplate x:DataType="cloudstorage:CloudAccountProperty">
+                        <TextBox Header="{x:Bind Name, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0}:'}"
+                                 Text="{x:Bind Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DataTemplate>
+                </selectors:CloudAccountPropertyTemplateSelector.Regular>
+                <selectors:CloudAccountPropertyTemplateSelector.Sensitive>
+                    <DataTemplate x:DataType="cloudstorage:CloudAccountProperty">
+                        <PasswordBox Header="{x:Bind Name, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0}:'}"
+                                     Password="{x:Bind Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DataTemplate>
+                </selectors:CloudAccountPropertyTemplateSelector.Sensitive>
+            </selectors:CloudAccountPropertyTemplateSelector>
+        </winui:ItemsRepeater>
+    </StackPanel>
+</ContentDialog>
