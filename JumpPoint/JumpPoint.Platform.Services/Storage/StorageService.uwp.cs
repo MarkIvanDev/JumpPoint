@@ -19,6 +19,7 @@ using NameCollisionOption = Windows.Storage.NameCollisionOption;
 using NittyGritty.Extensions;
 using JumpPoint.Extensions;
 using NittyGritty.Utilities;
+using JumpPoint.Platform.Items.WslStorage;
 
 namespace JumpPoint.Platform.Services
 {
@@ -36,12 +37,14 @@ namespace JumpPoint.Platform.Services
                         BasicProperties.Key.Size,
                         BasicProperties.Key.FileSystem,
                         BasicProperties.Key.FreeSpace,
-                        BasicProperties.Key.Capacity
+                        BasicProperties.Key.Capacity,
+                        BasicProperties.Key.ParsingPath
                     });
                 var fileSystem = props[BasicProperties.Key.FileSystem] as string;
                 var freeSpace = props[BasicProperties.Key.FreeSpace] as ulong?;
                 var capacity = props[BasicProperties.Key.Capacity] as ulong?;
                 var usedSpace = capacity.HasValue && freeSpace.HasValue ? capacity - freeSpace : null;
+                var path = props[BasicProperties.Key.ParsingPath] as string;
 
                 switch (storageType)
                 {
@@ -94,6 +97,24 @@ namespace JumpPoint.Platform.Services
                             UsedSpace = usedSpace
                         };
 
+                    case StorageType.WSL:
+                        return new WslDrive(
+                            distro: WslStorageService.GetDistro(path),
+                            context: new NGFolder(drive),
+                            name: drive.DisplayName,
+                            path: path,
+                            dateAccessed: props[BasicProperties.Key.DateAccessed] as DateTimeOffset?,
+                            dateCreated: drive.DateCreated,
+                            dateModified: props[BasicProperties.Key.DateModified] as DateTimeOffset?,
+                            attributes: (System.IO.FileAttributes?)drive.Attributes,
+                            size: props[BasicProperties.Key.Size] as ulong?)
+                        {
+                            FileSystem = fileSystem,
+                            FreeSpace = freeSpace,
+                            Capacity = capacity,
+                            UsedSpace = usedSpace
+                        };
+
                     case StorageType.Cloud:
                     default:
                         return null;
@@ -115,8 +136,10 @@ namespace JumpPoint.Platform.Services
                     {
                         BasicProperties.Key.DateAccessed,
                         BasicProperties.Key.DateModified,
-                        BasicProperties.Key.Size
+                        BasicProperties.Key.Size,
+                        BasicProperties.Key.ParsingPath
                     });
+                var path = props[BasicProperties.Key.ParsingPath] as string;
 
                 switch (storageType)
                 {
@@ -148,6 +171,17 @@ namespace JumpPoint.Platform.Services
                             attributes: (System.IO.FileAttributes?)folder.Attributes,
                             size: props[BasicProperties.Key.Size] as ulong?);
 
+                    case StorageType.WSL:
+                        return new WslFolder(
+                            distro: WslStorageService.GetDistro(path),
+                            context: new NGFolder(folder),
+                            path: path,
+                            dateAccessed: props[BasicProperties.Key.DateAccessed] as DateTimeOffset?,
+                            dateCreated: folder.DateCreated,
+                            dateModified: props[BasicProperties.Key.DateModified] as DateTimeOffset?,
+                            attributes: (System.IO.FileAttributes?)folder.Attributes,
+                            size: props[BasicProperties.Key.Size] as ulong?);
+
                     case StorageType.Cloud:
                     default:
                         return null;
@@ -169,8 +203,10 @@ namespace JumpPoint.Platform.Services
                     {
                         BasicProperties.Key.DateAccessed,
                         BasicProperties.Key.DateModified,
-                        BasicProperties.Key.Size
+                        BasicProperties.Key.Size,
+                        BasicProperties.Key.ParsingPath,
                     });
+                var path = props[BasicProperties.Key.ParsingPath] as string;
 
                 switch (storageType)
                 {
@@ -196,6 +232,17 @@ namespace JumpPoint.Platform.Services
                     case StorageType.Network:
                         return new NetworkFile(
                             path: file.Path,
+                            dateAccessed: props[BasicProperties.Key.DateAccessed] as DateTimeOffset?,
+                            dateCreated: file.DateCreated,
+                            dateModified: props[BasicProperties.Key.DateModified] as DateTimeOffset?,
+                            attributes: (System.IO.FileAttributes?)file.Attributes,
+                            size: props[BasicProperties.Key.Size] as ulong?);
+
+                    case StorageType.WSL:
+                        return new WslFile(
+                            distro: WslStorageService.GetDistro(path),
+                            context: new NGFile(file),
+                            path: path,
                             dateAccessed: props[BasicProperties.Key.DateAccessed] as DateTimeOffset?,
                             dateCreated: file.DateCreated,
                             dateModified: props[BasicProperties.Key.DateModified] as DateTimeOffset?,
@@ -275,8 +322,11 @@ namespace JumpPoint.Platform.Services
             var storageFolder = await FileInterop.GetStorageFolder(directory);
             if (storageFolder != null)
             {
-                var newFolder = await storageFolder.CreateFolderAsync(name, (CreationCollisionOption)option);
-                return await GetFolder(directory.StorageType, newFolder);
+                var newFolder = await CodeHelper.InvokeOrDefault(async () => await storageFolder.CreateFolderAsync(name, (CreationCollisionOption)option));
+                if (newFolder != null)
+                {
+                    return await GetFolder(directory.StorageType, newFolder);
+                }
             }
             return null;
         }

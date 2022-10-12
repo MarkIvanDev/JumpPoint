@@ -14,7 +14,7 @@ namespace JumpPoint.Platform.Services
         public static async Task<IList<NewItem>> GetNewItems()
             => await PlatformGetNewItems();
 
-        public static async Task Run(NewItem newItem, DirectoryBase destination)
+        public static async Task<bool> Run(NewItem newItem, DirectoryBase destination)
             => await PlatformRun(newItem, destination);
     }
 }

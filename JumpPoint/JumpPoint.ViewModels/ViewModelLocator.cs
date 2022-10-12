@@ -37,6 +37,7 @@ namespace JumpPoint.ViewModels
             SimpleIoc.Default.Register<FolderViewModel>();
             SimpleIoc.Default.Register<CloudDrivesViewModel>();
             SimpleIoc.Default.Register<CloudViewModel>();
+            SimpleIoc.Default.Register<WslViewModel>();
             SimpleIoc.Default.Register<AppLinksViewModel>();
             SimpleIoc.Default.Register<LibrariesViewModel>();
             SimpleIoc.Default.Register<LibraryViewModel>();
@@ -108,6 +109,7 @@ namespace JumpPoint.ViewModels
             SimpleIoc.Default.Unregister<FolderViewModel>(key);
             SimpleIoc.Default.Unregister<WorkspaceViewModel>(key);
             SimpleIoc.Default.Unregister<CloudViewModel>(key);
+            SimpleIoc.Default.Unregister<WslViewModel>(key);
             SimpleIoc.Default.Unregister<PropertiesViewModel>(key);
             SimpleIoc.Default.Unregister<ChatbotViewModel>(key);
         }
@@ -149,6 +151,9 @@ namespace JumpPoint.ViewModels
                 case AppPath.Cloud:
                     return SimpleIoc.Default.GetInstance<CloudViewModel>(key);
 
+                case AppPath.WSL:
+                    return SimpleIoc.Default.GetInstance<WslViewModel>(key);
+
                 case AppPath.Properties:
                 case AppPath.Chat:
                 case AppPath.ClipboardManager:
@@ -179,6 +184,7 @@ namespace JumpPoint.ViewModels
         public static string Folder => nameof(Folder);
         public static string CloudDrives => nameof(CloudDrives);
         public static string Cloud => nameof(Cloud);
+        public static string WSL => nameof(WSL);
         public static string AppLinks => nameof(AppLinks);
         public static string Libraries => nameof(Libraries);
         public static string Library => nameof(Library);

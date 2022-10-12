@@ -15,7 +15,7 @@
             <helpers:ServiceLocator x:Key="Locator" x:Name="Locator" />
             
             <ResourceDictionary.MergedDictionaries>
-                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <ResourceDictionary Source="ms-appx:///Resources/IconSources.xaml" />
                 <ResourceDictionary Source="ms-appx:///Resources/Commands.xaml" />
                 <ResourceDictionary Source="ms-appx:///Resources/CustomStyles.xaml" />
@@ -23,6 +23,8 @@
                     <!--<Color x:Key="SystemAccentColor">#1B5EBF</Color>-->
                     <SolidColorBrush x:Key="SystemAccentBrush"
                                      Color="{StaticResource SystemAccentColor}" />
+
+                    <x:Double x:Key="NavigationViewItemOnLeftIconBoxHeight">20</x:Double>
 
                     <!--<AcrylicBrush x:Key="NavigationViewDefaultPaneBackground"
                                   BackgroundSource="HostBackdrop"

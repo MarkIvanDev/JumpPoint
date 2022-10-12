@@ -111,6 +111,7 @@ namespace JumpPoint.Uwp.Helpers
                 navigationService.Configure(ViewModelKeys.Folder, typeof(Views.FolderPage));
                 navigationService.Configure(ViewModelKeys.CloudDrives, typeof(Views.CloudDrivesPage));
                 navigationService.Configure(ViewModelKeys.Cloud, typeof(Views.CloudPage));
+                navigationService.Configure(ViewModelKeys.WSL, typeof(Views.WslPage));
                 navigationService.Configure(ViewModelKeys.AppLinks, typeof(Views.AppLinksPage));
                 navigationService.Configure(ViewModelKeys.Libraries, typeof(Views.LibrariesPage));
                 navigationService.Configure(ViewModelKeys.Library, typeof(Views.LibraryPage));

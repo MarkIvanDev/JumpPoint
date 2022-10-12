@@ -17,6 +17,7 @@ using JumpPoint.Platform.Items.NetworkStorage;
 using Windows.Storage;
 using System.Threading.Tasks;
 using FileAttributes = System.IO.FileAttributes;
+using JumpPoint.Platform.Items.WslStorage;
 
 namespace JumpPoint.Platform.Interop
 {
@@ -197,6 +198,7 @@ namespace JumpPoint.Platform.Interop
                         size: null);
 
                 case StorageType.Cloud:
+                case StorageType.WSL:
                 default:
                     return null;
             }
@@ -269,6 +271,7 @@ namespace JumpPoint.Platform.Interop
                         size: ComputeFileSize(data.nFileSizeHigh, data.nFileSizeLow));
 
                 case StorageType.Cloud:
+                case StorageType.WSL:
                 default:
                     return null;
             }
@@ -321,6 +324,7 @@ namespace JumpPoint.Platform.Interop
                         size: ComputeFileSize(data.nFileSizeHigh, data.nFileSizeLow));
 
                 case StorageType.Cloud:
+                case StorageType.WSL:
                 default:
                     return null;
             }
@@ -407,6 +411,11 @@ namespace JumpPoint.Platform.Interop
                             portableDirectory.Context.Context as StorageFolder :
                             await StorageFolder.GetFolderFromPathAsync(directory.Path);
 
+                    case StorageType.WSL when directory is IWslDirectory wslDirectory:
+                        return wslDirectory.Context != null ?
+                            wslDirectory.Context.Context as StorageFolder :
+                            await StorageFolder.GetFolderFromPathAsync(directory.Path);
+
                     case StorageType.Cloud:
                     default:
                         return null;
@@ -432,6 +441,11 @@ namespace JumpPoint.Platform.Interop
                     case StorageType.Portable when file is PortableFile portableFile:
                         return portableFile.Context != null ?
                             portableFile.Context.Context as StorageFile :
+                            await StorageFile.GetFileFromPathAsync(file.Path);
+
+                    case StorageType.WSL when file is WslFile wslFile:
+                        return wslFile.Context != null ?
+                            wslFile.Context.Context as StorageFile :
                             await StorageFile.GetFileFromPathAsync(file.Path);
 
                     case StorageType.Cloud:

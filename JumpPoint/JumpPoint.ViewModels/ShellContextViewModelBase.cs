@@ -310,6 +310,7 @@ namespace JumpPoint.ViewModels
                 case AppPath.Drives:
                 case AppPath.CloudDrives:
                 case AppPath.Cloud:
+                case AppPath.WSL:
                     return LayoutModes.Tiles;
 
                 case AppPath.Dashboard:

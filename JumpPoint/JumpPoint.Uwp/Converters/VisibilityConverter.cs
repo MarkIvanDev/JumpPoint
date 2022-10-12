@@ -21,6 +21,7 @@ namespace JumpPoint.Uwp.Converters
                 case AppPath.Dashboard:
                 case AppPath.Cloud:
                 case AppPath.CloudDrives:
+                case AppPath.WSL:
                     return Visibility.Visible;
 
                 case AppPath.Unknown:

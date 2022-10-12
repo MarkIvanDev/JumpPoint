@@ -16,6 +16,8 @@ namespace JumpPoint.Platform.Items.Storage.Properties
             public static string Attributes => "System.FileAttributes";
             public static string Size => "System.Size";
             public static string SizeOnDisk => "System.FileAllocationSize";
+            public static string ParsingPath => "System.ParsingPath";
+
             public static IEnumerable<string> Common()
             {
                 yield return DateAccessed;

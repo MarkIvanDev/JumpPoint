@@ -679,6 +679,16 @@ namespace JumpPoint.ViewModels
                             }
                             break;
 
+                        case AppPath.WSL:
+                            var wslDrives = await WslStorageService.GetDrives();
+                            Children.AddRange(wslDrives);
+                            foreach (var item in wslDrives)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                await JumpPointService.Load(item);
+                            }
+                            break;
+
                         case AppPath.AppLinks:
                         case AppPath.Settings:
                         case AppPath.Properties:

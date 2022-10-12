@@ -844,13 +844,18 @@
                                       ItemsSource="{TemplateBinding TabItemsSource}"
                                       ItemTemplate="{TemplateBinding TabHeaderTemplate}"
                                       SelectionMode="Single"
-                                      VerticalAlignment="Stretch">
+                                      VerticalAlignment="Stretch"
+                                      Padding="0">
                                 <!-- SelectedItem="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=SelectedItem, Mode=TwoWay}"
                                 SelectedIndex="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=SelectedIndex, Mode=TwoWay}"-->
                                 <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem">
+                                    <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                                        <Setter Property="CornerRadius"
+                                                Value="6,6,0,0" />
                                         <Setter Property="Padding"
                                                 Value="0" />
+                                        <Setter Property="Margin"
+                                                Value="-4,0,-4,-3" />
                                         <Setter Property="HorizontalContentAlignment"
                                                 Value="Stretch" />
                                         <Setter Property="VerticalContentAlignment"
@@ -882,7 +887,7 @@
                                                                            x:Name="Root"
                                                                            Control.IsTemplateFocusTarget="True"
                                                                            FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-                                                                           CornerRadius="6,6,0,0"
+                                                                           CornerRadius="{TemplateBinding CornerRadius}"
                                                                            SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
                                                                            CheckBrush="{ThemeResource ListViewItemCheckBrush}"
                                                                            CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
@@ -906,7 +911,7 @@
                                                                            ContentMargin="{TemplateBinding Padding}"
                                                                            CheckMode="{ThemeResource ListViewItemCheckMode}"
                                                                            RevealBackground="{ThemeResource ListViewItemRevealBackground}"
-                                                                           RevealBorderThickness="{ThemeResource ListViewItemRevealBorderThemeThickness}"
+                                                                           RevealBorderThickness="0"
                                                                            RevealBorderBrush="{ThemeResource ListViewItemRevealBorderBrush}">
 
                                                         <VisualStateManager.VisualStateGroups>

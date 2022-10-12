@@ -25,11 +25,15 @@ namespace JumpPoint.Platform.Models.Extensions
             if (string.IsNullOrEmpty(path)) return PathKind.Unknown;
 
             var workingPath = path.NormalizePath();
-            if (workingPath.StartsWith(Prefix.UNMOUNTED))
+            if (workingPath.StartsWith(Prefix.UNMOUNTED, StringComparison.OrdinalIgnoreCase))
             {
                 return PathKind.Unmounted;
             }
-            else if (workingPath.StartsWith(Prefix.NETWORK))
+            else if (workingPath.StartsWith(Prefix.WSL, StringComparison.OrdinalIgnoreCase))
+            {
+                return PathKind.WSL;
+            }
+            else if (workingPath.StartsWith(Prefix.NETWORK, StringComparison.OrdinalIgnoreCase))
             {
                 return PathKind.Network;
             }
@@ -49,7 +53,7 @@ namespace JumpPoint.Platform.Models.Extensions
             {
                 return PathKind.Mounted;
             }
-            else if (Enum.TryParse<AppPath>(workingPath, true, out var appPath) && appPath != AppPath.Unknown)
+            else if (CodeHelper.InvokeOrDefault(() => workingPath.DehumanizeTo<AppPath>(), AppPath.Unknown) != AppPath.Unknown)
             {
                 return PathKind.Local;
             }
@@ -96,7 +100,7 @@ namespace JumpPoint.Platform.Models.Extensions
 
             switch (pathKind)
             {
-                case PathKind.Local when Enum.TryParse<AppPath>(workingPath.TrimEnd('\\'), true, out var appPath):
+                case PathKind.Local when CodeHelper.InvokeOrDefault(() => workingPath.TrimEnd('\\').DehumanizeTo<AppPath>(), AppPath.Unknown) is AppPath appPath:
                     if (crumbs.Count > 1)
                     {
                         crumbs.RemoveRange(1, crumbs.Count - 1);
@@ -182,6 +186,21 @@ namespace JumpPoint.Platform.Models.Extensions
                     });
                     return crumbs;
 
+                case PathKind.WSL:
+                    for (int i = 0; i < crumbs.Count; i++)
+                    {
+                        crumbs[i].AppPath = i == 0 ?
+                            AppPath.Drive :
+                            AppPath.Folder;
+                    }
+                    crumbs.Insert(0, new Breadcrumb()
+                    {
+                        AppPath = AppPath.WSL,
+                        Path = nameof(AppPath.WSL),
+                        DisplayName = nameof(AppPath.WSL)
+                    });
+                    return crumbs;
+
                 case PathKind.Unknown:
                 default:
                     return new List<Breadcrumb>();
@@ -207,6 +226,9 @@ namespace JumpPoint.Platform.Models.Extensions
 
                 case PathKind.AppLink:
                     return Prefix.APPLINK;
+
+                case PathKind.WSL:
+                    return Prefix.WSL;
 
                 case PathKind.Local:
                 case PathKind.Mounted:
