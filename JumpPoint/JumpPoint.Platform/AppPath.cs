@@ -18,6 +18,7 @@ namespace JumpPoint.Platform
         Workspaces = 6,
         [Description("App Links")]
         AppLinks = 7,
+        WSL = 8,
 
         Drive = 22,
         Folder = 23,

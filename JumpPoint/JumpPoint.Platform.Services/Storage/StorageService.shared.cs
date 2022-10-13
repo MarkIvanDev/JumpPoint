@@ -14,6 +14,7 @@ using JumpPoint.Platform.Items.PortableStorage;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Items.Storage.Properties;
 using JumpPoint.Platform.Items.Templates;
+using JumpPoint.Platform.Items.WslStorage;
 using JumpPoint.Platform.Models.Extensions;
 using NittyGritty.Extensions;
 using NittyGritty.Platform.Storage;
@@ -109,6 +110,9 @@ namespace JumpPoint.Platform.Services
                 case PathKind.Cloud:
                     return StorageType.Cloud;
 
+                case PathKind.WSL:
+                    return StorageType.WSL;
+
                 case PathKind.Local:
                 case PathKind.Unknown:
                 default:
@@ -125,6 +129,7 @@ namespace JumpPoint.Platform.Services
                     case StorageType.Local:
                     case StorageType.Portable:
                     case StorageType.Network:
+                    case StorageType.WSL:
                         return await PlatformRename(item, name, option);
 
                     case StorageType.Cloud:
@@ -143,7 +148,7 @@ namespace JumpPoint.Platform.Services
 
         public static async Task Delete(IList<string> paths, bool deletePermanently)
         {
-            var groups = paths.GroupBy(p => p.StartsWith(@"\\?\")).ToDictionary(g => g.Key, g => g.ToList());
+            var groups = paths.GroupBy(p => p.StartsWith(@"\\?\") || p.StartsWith(Prefix.WSL, StringComparison.OrdinalIgnoreCase)).ToDictionary(g => g.Key, g => g.ToList());
 
             if (groups.TryGetValue(false, out var mountedPaths))
             {
@@ -197,6 +202,20 @@ namespace JumpPoint.Platform.Services
                     else
                     {
                         desktopDelete.Add(item);
+                    }
+                }
+            }
+            if (groups.TryGetValue(StorageType.WSL, out var wslItems))
+            {
+                foreach (var item in wslItems)
+                {
+                    if (item is WslFile wf && wf.Context != null)
+                    {
+                        ngDelete.Add(wf.Context);
+                    }
+                    else if (item is IWslDirectory wd && wd.Context != null)
+                    {
+                        ngDelete.Add(wd.Context);
                     }
                 }
             }
@@ -255,6 +274,7 @@ namespace JumpPoint.Platform.Services
                 case StorageType.Local:
                 case StorageType.Portable:
                 case StorageType.Network:
+                case StorageType.WSL:
                     return true;
                 case StorageType.Cloud:
                     return CloudStorageService.CanCreateFolder(directory);
@@ -270,6 +290,7 @@ namespace JumpPoint.Platform.Services
                 case StorageType.Local:
                 case StorageType.Portable:
                 case StorageType.Network:
+                case StorageType.WSL:
                     return true;
                 case StorageType.Cloud:
                     return CloudStorageService.CanCreateFile(directory);
@@ -285,6 +306,7 @@ namespace JumpPoint.Platform.Services
                 case StorageType.Local:
                 case StorageType.Portable:
                 case StorageType.Network:
+                case StorageType.WSL:
                     return true;
                 case StorageType.Cloud:
                     return CloudStorageService.CanCreateItem(directory);
@@ -333,6 +355,10 @@ namespace JumpPoint.Platform.Services
                     items.AddRange(await CloudStorageService.GetItems(cloudDirectory));
                     break;
 
+                case StorageType.WSL when directory is IWslDirectory wslDirectory:
+                    items.AddRange(await WslStorageService.GetItems(wslDirectory));
+                    break;
+
                 default:
                     break;
             }
@@ -357,6 +383,7 @@ namespace JumpPoint.Platform.Services
                     case StorageType.Local:
                     case StorageType.Portable:
                     case StorageType.Network:
+                    case StorageType.WSL:
                         return await PlatformCreateFolder(directory, name, option);
 
                     case StorageType.Cloud:
@@ -382,6 +409,7 @@ namespace JumpPoint.Platform.Services
                     case StorageType.Local:
                     case StorageType.Portable:
                     case StorageType.Network:
+                    case StorageType.WSL:
                         return await PlatformCreateFile(directory, name, option, content);
 
                     case StorageType.Cloud:
@@ -483,6 +511,9 @@ namespace JumpPoint.Platform.Services
                 case StorageType.Cloud:
                     return await CloudStorageService.GetDrive(path);
 
+                case StorageType.WSL:
+                    return await WslStorageService.GetDrive(path);
+
                 default:
                     return null;
             }
@@ -537,6 +568,9 @@ namespace JumpPoint.Platform.Services
                     case PathKind.Cloud:
                         return DriveTemplate.Cloud;
 
+                    case PathKind.WSL:
+                        return DriveTemplate.WSL;
+
                     case PathKind.Local:
                     case PathKind.Workspace:
                     case PathKind.Unknown:
@@ -575,6 +609,9 @@ namespace JumpPoint.Platform.Services
 
                 case StorageType.Cloud:
                     return await CloudStorageService.GetFolder(path);
+
+                case StorageType.WSL:
+                    return await WslStorageService.GetFolder(path);
 
                 default:
                     return null;
@@ -703,6 +740,9 @@ namespace JumpPoint.Platform.Services
 
                 case StorageType.Cloud:
                     return await CloudStorageService.GetFile(path);
+
+                case StorageType.WSL:
+                    return await WslStorageService.GetFile(path);
 
                 default:
                     return null;

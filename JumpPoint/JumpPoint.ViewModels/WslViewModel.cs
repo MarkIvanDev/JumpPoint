@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Humanizer;
 using JumpPoint.Platform;
 using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.Platform.Services;
@@ -11,19 +10,15 @@ using NittyGritty.Services.Core;
 
 namespace JumpPoint.ViewModels
 {
-    public class CloudDrivesViewModel : ShellContextViewModelBase
+    public class WslViewModel : ShellContextViewModelBase
     {
-
-        public CloudDrivesViewModel(IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
+        public WslViewModel(IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
         {
-
         }
-
-        public override bool HasCustomGrouping => true;
 
         protected override async Task Refresh(CancellationToken token)
         {
-            var drives = await CloudStorageService.GetDrives();
+            var drives = await WslStorageService.GetDrives();
             Items.AddRange(drives);
             token.ThrowIfCancellationRequested();
 
@@ -37,9 +32,8 @@ namespace JumpPoint.ViewModels
 
         protected override async Task Initialize(object parameter, Dictionary<string, object> state)
         {
-            PathInfo.Place(AppPath.CloudDrives.Humanize(), parameter);
+            PathInfo.Place(nameof(AppPath.WSL), parameter);
             await RefreshCommand.TryExecute();
         }
-
     }
 }

@@ -260,9 +260,16 @@ namespace JumpPoint.ViewModels.Helpers
                 if (result && tab.Context.Item is DirectoryBase parent)
                 {
                     var newFile = await StorageService.CreateFile(parent, viewModel.Name, CreateOption.GenerateUniqueName, null);
-                    if (newFile != null && parent.StorageType == StorageType.Cloud)
+                    if (newFile != null)
                     {
-                        await tab.Context.RefreshCommand.TryExecute();
+                        if (parent.StorageType == StorageType.Cloud || parent.StorageType == StorageType.WSL)
+                        {
+                            await tab.Context.RefreshCommand.TryExecute();
+                        }
+                    }
+                    else
+                    {
+                        await dialogService.ShowMessage("You may need permission to perform this action", "Destination Folder Access Denied");
                     }
                 }
             }));
@@ -278,9 +285,16 @@ namespace JumpPoint.ViewModels.Helpers
                 if (result && tab.Context.Item is DirectoryBase parent)
                 {
                     var newFolder = await StorageService.CreateFolder(parent, viewModel.Name, CreateOption.GenerateUniqueName);
-                    if (newFolder != null && parent.StorageType == StorageType.Cloud)
+                    if (newFolder != null)
                     {
-                        await tab.Context.RefreshCommand.TryExecute();
+                        if (parent.StorageType == StorageType.Cloud || parent.StorageType == StorageType.WSL)
+                        {
+                            await tab.Context.RefreshCommand.TryExecute();
+                        }
+                    }
+                    else
+                    {
+                        await dialogService.ShowMessage("You may need permission to perform this action", "Destination Folder Access Denied");
                     }
                 }
             }));
@@ -347,10 +361,17 @@ namespace JumpPoint.ViewModels.Helpers
                 });
                 if (result && viewModel.NewItem != null && tab.Context.Item is DirectoryBase destination)
                 {
-                    await NewItemService.Run(viewModel.NewItem, destination);
-                    if (destination.StorageType == StorageType.Cloud)
+                    var itemsCreated = await NewItemService.Run(viewModel.NewItem, destination);
+                    if (itemsCreated)
                     {
-                        await tab.Context.RefreshCommand.TryExecute();
+                        if (destination.StorageType == StorageType.Cloud || destination.StorageType == StorageType.WSL)
+                        {
+                            await tab.Context.RefreshCommand.TryExecute();
+                        }
+                    }
+                    else
+                    {
+                        await dialogService.ShowMessage("You may need permission to perform this action", "Destination Folder Access Denied");
                     }
                 }
             }));
@@ -771,7 +792,7 @@ namespace JumpPoint.ViewModels.Helpers
                 if (result)
                 {
                     await JumpPointService.Delete(context.SelectedItems, false);
-                    if (context.Item is DirectoryBase dir && dir.StorageType == StorageType.Cloud)
+                    if (context.Item is DirectoryBase dir && (dir.StorageType == StorageType.Cloud || dir.StorageType == StorageType.WSL))
                     {
                         await context.RefreshCommand.TryExecute();
                     }
@@ -788,7 +809,7 @@ namespace JumpPoint.ViewModels.Helpers
                 if (result)
                 {
                     await JumpPointService.Delete(context.SelectedItems, true);
-                    if (context.Item is DirectoryBase dir && dir.StorageType == StorageType.Cloud)
+                    if (context.Item is DirectoryBase dir && (dir.StorageType == StorageType.Cloud || dir.StorageType == StorageType.WSL))
                     {
                         await context.RefreshCommand.TryExecute();
                     }

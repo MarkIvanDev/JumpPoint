@@ -210,17 +210,18 @@
         </winui:CommandBarFlyout>
 
         <Style x:Key="AllLayoutItemStyle"
-           TargetType="ListViewItem">
+               TargetType="ListViewItem"
+               BasedOn="{StaticResource DefaultListViewItemStyle}">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="VerticalContentAlignment" Value="Stretch" />
             <Setter Property="Margin" Value="0" />
             <Setter Property="Padding" Value="0" />
-            <Setter Property="UseSystemFocusVisuals" Value="True" />
+            <!--<Setter Property="UseSystemFocusVisuals" Value="True" />
             <Setter Property="FocusVisualMargin" Value="0" />
             <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource ListViewItemFocusVisualPrimaryBrush}" />
             <Setter Property="FocusVisualPrimaryThickness" Value="2" />
             <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource ListViewItemFocusVisualSecondaryBrush}" />
-            <Setter Property="FocusVisualSecondaryThickness" Value="1" />
+            <Setter Property="FocusVisualSecondaryThickness" Value="1" />-->
             <Setter Property="TabNavigation" Value="Local" />
         </Style>
         
@@ -228,7 +229,7 @@
         <Style x:Key="DetailsLayoutItemStyle"
                TargetType="ListViewItem" BasedOn="{StaticResource AllLayoutItemStyle}">
             <Setter Property="Padding" Value="12,0" />
-            <Setter Property="Template">
+            <!--<Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListViewItem">
                         <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
@@ -262,7 +263,7 @@
                                                CheckMode="Inline" />
                     </ControlTemplate>
                 </Setter.Value>
-            </Setter>
+            </Setter>-->
         </Style>
 
         <DataTemplate x:Key="FolderDetailsTemplate" x:DataType="items:FolderBase">
@@ -642,8 +643,10 @@
         <!--#region Grid View -->
         <Style x:Key="GridLayoutItemStyle"
                TargetType="ListViewItem" BasedOn="{StaticResource AllLayoutItemStyle}">
+            <Setter Property="Padding"
+                    Value="4,0" />
             <!--<Setter Property="VerticalContentAlignment" Value="Top" />-->
-            <Setter Property="Template">
+            <!--<Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListViewItem">
                         <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
@@ -677,7 +680,7 @@
                                                CheckMode="Overlay" />
                     </ControlTemplate>
                 </Setter.Value>
-            </Setter>
+            </Setter>-->
         </Style>
 
         <DataTemplate x:Key="FolderGridTemplate" x:DataType="items:FolderBase">
@@ -842,7 +845,9 @@
                                  Margin="0,2"
                                  Maximum="{x:Bind Capacity, Converter={StaticResource NullableUlongToDoubleConverter}, Mode=OneWay}"
                                  Minimum="0"
-                                 Value="{x:Bind UsedSpace, Converter={StaticResource NullableUlongToDoubleConverter}, Mode=OneWay}" />
+                                 Value="{x:Bind UsedSpace, Converter={StaticResource NullableUlongToDoubleConverter}, Mode=OneWay}"
+                                 Visibility="{x:Bind Capacity, Converter={StaticResource CollapsedWhenNullConverter}, Mode=OneWay}"
+                                 Foreground="{x:Bind conv:DriveStorageColorConverter.GetBrush(Capacity, UsedSpace), Mode=OneWay}"/>
                     <TextBlock Text="" FontSize="14" Grid.Row="2" />
                 </Grid>
             </Grid>
@@ -987,7 +992,9 @@
         <!--#region Tiles View -->
         <Style x:Key="TilesLayoutItemStyle"
                TargetType="ListViewItem" BasedOn="{StaticResource AllLayoutItemStyle}">
-            <Setter Property="Template">
+            <Setter Property="Padding"
+                    Value="4,0" />
+            <!--<Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListViewItem">
                         <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
@@ -1021,7 +1028,7 @@
                                                CheckMode="Inline" />
                     </ControlTemplate>
                 </Setter.Value>
-            </Setter>
+            </Setter>-->
         </Style>
 
         <DataTemplate x:Key="FolderTilesTemplate" x:DataType="items:FolderBase">
@@ -1190,10 +1197,12 @@
                     <ProgressBar Grid.Row="1"
                                  VerticalAlignment="Stretch"
                                  Height="12"
-                                 Margin="0,2"
+                                 Margin="0,4,0,2"
                                  Maximum="{x:Bind Capacity, Converter={StaticResource NullableUlongToDoubleConverter}, Mode=OneWay}"
                                  Minimum="0"
-                                 Value="{x:Bind UsedSpace, Converter={StaticResource NullableUlongToDoubleConverter}, Mode=OneWay}"/>
+                                 Value="{x:Bind UsedSpace, Converter={StaticResource NullableUlongToDoubleConverter}, Mode=OneWay}"
+                                 Visibility="{x:Bind Capacity, Converter={StaticResource CollapsedWhenNullConverter}, Mode=OneWay}"
+                                 Foreground="{x:Bind conv:DriveStorageColorConverter.GetBrush(Capacity, UsedSpace), Mode=OneWay}" />
                     <TextBlock Grid.Row="2"
                                VerticalAlignment="Center"
                                TextWrapping="NoWrap"
@@ -1364,7 +1373,7 @@
                BasedOn="{StaticResource AllLayoutItemStyle}">
             <Setter Property="Padding"
                     Value="12,0" />
-            <Setter Property="Template">
+            <!--<Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListViewItem">
                         <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
@@ -1398,7 +1407,7 @@
                                                CheckMode="Inline" />
                     </ControlTemplate>
                 </Setter.Value>
-            </Setter>
+            </Setter>-->
         </Style>
 
         <DataTemplate x:Key="FolderListTemplate"

@@ -10,7 +10,6 @@ using Humanizer;
 using JumpPoint.Platform;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.CloudStorage;
-using JumpPoint.Platform.Items.OneDrive;
 using JumpPoint.Platform.Items.PortableStorage;
 using JumpPoint.Platform.Items.Templates;
 using JumpPoint.Platform.Models;
@@ -28,6 +27,7 @@ namespace JumpPoint.ViewModels.Helpers
         private readonly AsyncLock mutexWorkspaces;
         private readonly AsyncLock mutexDrives;
         private readonly AsyncLock mutexCloudDrives;
+        private readonly AsyncLock mutexWsl;
 
         public ShellItems()
         {
@@ -36,6 +36,7 @@ namespace JumpPoint.ViewModels.Helpers
             mutexWorkspaces = new AsyncLock();
             mutexDrives = new AsyncLock();
             mutexCloudDrives = new AsyncLock();
+            mutexWsl = new AsyncLock();
 
             Favorites = new ShellItem()
             {
@@ -81,15 +82,33 @@ namespace JumpPoint.ViewModels.Helpers
                 Tag = AppPath.CloudDrives,
                 Children = new ObservableCollection<ShellItem>()
             };
+            WSL = new ShellItem()
+            {
+                Type = ShellItemType.Item,
+                Content = AppPath.WSL.Humanize(),
+                Key = ViewModelKeys.WSL,
+                Parameter = null,
+                Tag = AppPath.WSL,
+                Children = new ObservableCollection<ShellItem>()
+            };
 
             Sidebar = new ObservableCollection<ShellItem>
             {
+                new ShellItem()
+                {
+                    Type = ShellItemType.Item,
+                    Content = AppPath.Dashboard.Humanize(),
+                    Key = ViewModelKeys.Dashboard,
+                    Parameter = null,
+                    Tag = AppPath.Dashboard
+                },
                 Favorites,
                 Workspaces,
                 ShellItem.Separator,
                 OneDrive,
                 Drives,
                 CloudDrives,
+                WSL,
                 ShellItem.Separator,
                 new ShellItem()
                 {
@@ -134,6 +153,8 @@ namespace JumpPoint.ViewModels.Helpers
         public ShellItem Drives { get; }
 
         public ShellItem CloudDrives { get; }
+
+        public ShellItem WSL { get; }
 
         public void Start()
         {
@@ -208,6 +229,10 @@ namespace JumpPoint.ViewModels.Helpers
 
                     case nameof(AppPath.CloudDrives):
                         await RefreshCloudDrives();
+                        break;
+
+                    case nameof(AppPath.WSL):
+                        await RefreshWSL();
                         break;
 
                     default:
@@ -358,6 +383,7 @@ namespace JumpPoint.ViewModels.Helpers
                 await RefreshWorkspaces();
                 await RefreshDrives();
                 await RefreshCloudDrives();
+                await RefreshWSL();
             }
         }
 
@@ -437,22 +463,24 @@ namespace JumpPoint.ViewModels.Helpers
             {
                 CloudDrives.Children.Clear();
 
-                var odds = await CloudStorageService.GetAccounts(CloudStorageProvider.OneDrive);
-                foreach (var drive in odds)
+                var accs = await CloudStorageService.GetAccounts();
+                foreach (var item in accs)
                 {
-                    CloudDrives.Children.Add(GetShellItem(drive, DriveTemplate.OneDrive));
+                    CloudDrives.Children.Add(GetShellItem(item, item.Provider.ToDriveTemplate()));
                 }
+            }
+        }
 
-                var sjds = await CloudStorageService.GetAccounts(CloudStorageProvider.Storj);
-                foreach (var drive in sjds)
-                {
-                    CloudDrives.Children.Add(GetShellItem(drive, DriveTemplate.Storj));
-                }
+        public async Task RefreshWSL()
+        {
+            using (await mutexWsl.LockAsync())
+            {
+                WSL.Children.Clear();
 
-                var opds = await CloudStorageService.GetAccounts(CloudStorageProvider.OpenDrive);
-                foreach (var drive in opds)
+                var wsl = await WslStorageService.GetDrives();
+                foreach (var item in wsl)
                 {
-                    CloudDrives.Children.Add(GetShellItem(drive, DriveTemplate.OpenDrive));
+                    WSL.Children.Add(GetShellItem(item));
                 }
             }
         }

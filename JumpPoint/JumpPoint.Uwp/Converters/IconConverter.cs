@@ -5,6 +5,7 @@ using JumpPoint.Platform;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.CloudStorage;
 using JumpPoint.Platform.Items.Templates;
+using JumpPoint.Platform.Items.WslStorage;
 using JumpPoint.ViewModels;
 using NittyGritty.Extensions;
 using Windows.UI.Xaml.Controls;
@@ -66,13 +67,23 @@ namespace JumpPoint.Uwp.Converters
                     return new Uri($@"ms-appx:///Assets/Icons/Drives/BD.png");
 
                 case DriveTemplate.Cloud:
-                    return GetCloudStorageIconUri(CloudStorageProvider.Unknown);
                 case DriveTemplate.OneDrive:
-                    return GetCloudStorageIconUri(CloudStorageProvider.OneDrive);
                 case DriveTemplate.Storj:
-                    return GetCloudStorageIconUri(CloudStorageProvider.Storj);
                 case DriveTemplate.OpenDrive:
-                    return GetCloudStorageIconUri(CloudStorageProvider.OpenDrive);
+                    return GetCloudStorageIconUri(driveTemplate.ToCloudStorageProvider());
+
+                case DriveTemplate.WSL:
+                case DriveTemplate.Ubuntu:
+                case DriveTemplate.Debian:
+                case DriveTemplate.Kali:
+                case DriveTemplate.OpenSuse:
+                case DriveTemplate.SLES:
+                case DriveTemplate.FedoraRemix:
+                case DriveTemplate.Pengwin:
+                case DriveTemplate.Oracle:
+                case DriveTemplate.Alma:
+                case DriveTemplate.Alpine:
+                    return GetWslDistroIconUri(driveTemplate.ToWslDistro());
 
                 case DriveTemplate.Unknown:
                 default:
@@ -98,6 +109,11 @@ namespace JumpPoint.Uwp.Converters
         public static Uri GetCloudStorageIconUri(CloudStorageProvider cloudStorageProvider)
         {
             return new Uri($@"ms-appx:///Assets/Icons/Cloud/{cloudStorageProvider}.png");
+        }
+
+        public static Uri GetWslDistroIconUri(WslDistro distro)
+        {
+            return new Uri($@"ms-appx:///Assets/Icons/Wsl/{distro}.png");
         }
 
         public static Uri GetDashboardItemIconUri(Enum name)
@@ -134,6 +150,7 @@ namespace JumpPoint.Uwp.Converters
                 case AppPath.Workspaces:
                 case AppPath.AppLinks:
                 case AppPath.CloudDrives:
+                case AppPath.WSL:
                 case AppPath.Dashboard:
                 case AppPath.Settings:
                 case AppPath.Properties:
@@ -168,6 +185,7 @@ namespace JumpPoint.Uwp.Converters
                 case AppPath.Workspaces:
                 case AppPath.AppLinks:
                 case AppPath.CloudDrives:
+                case AppPath.WSL:
                 case AppPath.Dashboard:
                 case AppPath.Settings:
                 case AppPath.Properties:
@@ -186,16 +204,18 @@ namespace JumpPoint.Uwp.Converters
             switch (pathType)
             {
                 case AppPath.Folder:
-                    return new BitmapIcon()
+                    return new Microsoft.UI.Xaml.Controls.ImageIcon()
                     {
-                        UriSource = tag is FolderTemplate folderTemplate ? GetFolderIconUri(folderTemplate) : GetFolderIconUri(FolderTemplate.General),
-                        ShowAsMonochrome = false
+                        Source = GetImageSource(
+                            tag is FolderTemplate folderTemplate ? GetFolderIconUri(folderTemplate) : GetFolderIconUri(FolderTemplate.General),
+                            null, null, 20, 20)
                     };
                 case AppPath.Drive:
-                    return new BitmapIcon()
+                    return new Microsoft.UI.Xaml.Controls.ImageIcon()
                     {
-                        UriSource = tag is DriveTemplate driveTemplate ? GetDriveIconUri(driveTemplate) : GetDriveIconUri(DriveTemplate.HDD),
-                        ShowAsMonochrome = false
+                        Source = GetImageSource(
+                            tag is DriveTemplate driveTemplate ? GetDriveIconUri(driveTemplate) : GetDriveIconUri(DriveTemplate.HDD),
+                            null, null, 20, 20)
                     };
                 case AppPath.Workspace:
                     return new FontIcon()
@@ -204,25 +224,26 @@ namespace JumpPoint.Uwp.Converters
                         FontFamily = new FontFamily("Segoe UI Emoji")
                     };
                 case AppPath.Cloud:
-                    return new BitmapIcon()
+                    return new Microsoft.UI.Xaml.Controls.ImageIcon()
                     {
-                        UriSource = tag is CloudStorageProvider cloudStorageProvider ? GetCloudStorageIconUri(cloudStorageProvider) : GetCloudStorageIconUri(CloudStorageProvider.Unknown),
-                        ShowAsMonochrome = false
+                        Source = GetImageSource(
+                            tag is CloudStorageProvider cloudStorageProvider ? GetCloudStorageIconUri(cloudStorageProvider) : GetCloudStorageIconUri(CloudStorageProvider.Unknown),
+                            null, null, 20, 20)
                     };
                 case AppPath.Drives:
                 case AppPath.Workspaces:
                 case AppPath.AppLinks:
                 case AppPath.CloudDrives:
+                case AppPath.WSL:
                 case AppPath.Dashboard:
                 case AppPath.Favorites:
                 case AppPath.Settings:
                 case AppPath.Properties:
                 case AppPath.Chat:
                 case AppPath.ClipboardManager:
-                    return new BitmapIcon()
+                    return new Microsoft.UI.Xaml.Controls.ImageIcon()
                     {
-                        UriSource = new Uri($@"ms-appx:///Assets/Icons/Path/{pathType}.png"),
-                        ShowAsMonochrome = false
+                        Source = GetImageSource(new Uri($@"ms-appx:///Assets/Icons/Path/{pathType}.png"), null, null, 20, 20)
                     };
                 case AppPath.Unknown:
                 default:
@@ -262,6 +283,7 @@ namespace JumpPoint.Uwp.Converters
                 case AppPath.Workspaces:
                 case AppPath.AppLinks:
                 case AppPath.CloudDrives:
+                case AppPath.WSL:
                 case AppPath.Dashboard:
                 case AppPath.Favorites:
                 case AppPath.Settings:
@@ -310,7 +332,8 @@ namespace JumpPoint.Uwp.Converters
                 key == ViewModelKeys.AppLinks ||
                 key == ViewModelKeys.CloudDrives ||
                 key == ViewModelKeys.Chatbot ||
-                key == ViewModelKeys.ClipboardManager)
+                key == ViewModelKeys.ClipboardManager ||
+                key == ViewModelKeys.WSL)
             {
                 return tag is AppPath pathType ?
                     GetPathTypeIconElement(pathType, null) :

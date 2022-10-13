@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Humanizer;
 using JumpPoint.Platform;
 using JumpPoint.Platform.Extensions;
 using JumpPoint.Platform.Models;
@@ -63,7 +64,7 @@ namespace JumpPoint.ViewModels
 
         protected override async Task Initialize(object parameter, Dictionary<string, object> state)
         {
-            PathInfo.Place(nameof(AppPath.AppLinks), parameter);
+            PathInfo.Place(AppPath.AppLinks.Humanize(), parameter);
             await RefreshCommand.TryExecute();
         }
 

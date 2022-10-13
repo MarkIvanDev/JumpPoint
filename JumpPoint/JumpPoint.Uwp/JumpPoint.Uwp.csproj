@@ -151,6 +151,7 @@
     <Compile Include="Converters\CharacterUnicodeConverter.cs" />
     <Compile Include="Converters\ChatMessageBackgroundConverter.cs" />
     <Compile Include="Converters\ChatMessageConverter.cs" />
+    <Compile Include="Converters\DriveStorageColorConverter.cs" />
     <Compile Include="Converters\EventArgs\ItemClickEventArgsConverter.cs" />
     <Compile Include="Converters\EventArgs\ItemDoubleClickEventArgsConverter.cs" />
     <Compile Include="Converters\FileThumbnailConverter.cs" />
@@ -344,6 +345,9 @@
     <Compile Include="Views\WorkspacesPage.xaml.cs">
       <DependentUpon>WorkspacesPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\WslPage.xaml.cs">
+      <DependentUpon>WslPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Icons\Attributes\Archive.png" />
@@ -460,6 +464,7 @@
     <Content Include="Assets\Icons\Path\Drives.png" />
     <Content Include="Assets\Icons\Path\Properties.png" />
     <Content Include="Assets\Icons\Path\Settings.png" />
+    <Content Include="Assets\Icons\Path\WSL.png" />
     <Content Include="Assets\Icons\Path\Workspaces.png" />
     <Content Include="Assets\Icons\Settings\AccessWorkOrSchool.png" />
     <Content Include="Assets\Icons\Settings\EmailAndAppAccounts.png" />
@@ -741,6 +746,17 @@
     <Content Include="Assets\Icons\Workspaces\YellowHeart.png" />
     <Content Include="Assets\Icons\Workspaces\ZipperMouth.png" />
     <Content Include="Assets\Icons\Workspaces\Zzz.png" />
+    <Content Include="Assets\Icons\Wsl\Alma.png" />
+    <Content Include="Assets\Icons\Wsl\Alpine.png" />
+    <Content Include="Assets\Icons\Wsl\Debian.png" />
+    <Content Include="Assets\Icons\Wsl\FedoraRemix.png" />
+    <Content Include="Assets\Icons\Wsl\Kali.png" />
+    <Content Include="Assets\Icons\Wsl\OpenSuse.png" />
+    <Content Include="Assets\Icons\Wsl\Oracle.png" />
+    <Content Include="Assets\Icons\Wsl\Pengwin.png" />
+    <Content Include="Assets\Icons\Wsl\SLES.png" />
+    <Content Include="Assets\Icons\Wsl\Ubuntu.png" />
+    <Content Include="Assets\Icons\Wsl\Unknown.png" />
     <Content Include="Assets\Images\LargeTile.scale-100.png" />
     <Content Include="Assets\Images\LargeTile.scale-125.png" />
     <Content Include="Assets\Images\LargeTile.scale-150.png" />
@@ -4723,7 +4739,7 @@
       <Version>7.1.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.7.1</Version>
+      <Version>2.8.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.1</Version>
@@ -5064,6 +5080,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\WorkspacesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WslPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

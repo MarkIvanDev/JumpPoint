@@ -344,9 +344,10 @@
                             <Button Background="Transparent"
                                     VerticalAlignment="Stretch"
                                     BorderThickness="0"
-                                    Margin="2">
-                                <Viewbox Width="16"
-                                         Height="16">
+                                    Margin="2"
+                                    Padding="8,4,8,4">
+                                <Viewbox Width="20"
+                                         Height="20">
                                     <IconSourceElement IconSource="{x:Bind converters:IconConverter.GetPathTypeIconSource(ViewModel.CurrentTab.Context.PathInfo.Type, ViewModel.CurrentTab.Context.PathInfo.Tag), Mode=OneWay}" />
                                 </Viewbox>
                                 <Button.Resources>
@@ -408,7 +409,7 @@
                                                         IsEnabled="{x:Bind commands:NavigationBar.IsSetFolderTemplateEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"
                                                         Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
 
-                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutSeparator Visibility="{x:Bind pathTemplateSeparator.Output, Mode=OneWay}" />
                                         <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                         Command="{StaticResource SharePathCommand}" />
                                         <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"

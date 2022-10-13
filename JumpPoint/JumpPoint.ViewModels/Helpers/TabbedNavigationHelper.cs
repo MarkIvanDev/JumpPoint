@@ -150,6 +150,10 @@ namespace JumpPoint.ViewModels.Helpers
                     NavigationService.NavigateTo(ViewModelKeys.CloudDrives, GetTabParameter());
                     break;
 
+                case AppPath.WSL:
+                    NavigationService.NavigateTo(ViewModelKeys.WSL, GetTabParameter());
+                    break;
+
                 case AppPath.Properties:
                 case AppPath.Dashboard:
                 case AppPath.Chat:
@@ -198,6 +202,7 @@ namespace JumpPoint.ViewModels.Helpers
                 case AppPath.AppLinks:
                 case AppPath.Settings:
                 case AppPath.CloudDrives:
+                case AppPath.WSL:
                     NavigationService.NavigateTo(ViewModelKeys.Dashboard, GetTabParameter());
                     break;
 
@@ -273,6 +278,7 @@ namespace JumpPoint.ViewModels.Helpers
 
                 case PathKind.Unmounted:
                 case PathKind.Cloud:
+                case PathKind.WSL:
                     return drive;
 
                 case PathKind.Unknown:
@@ -299,6 +305,7 @@ namespace JumpPoint.ViewModels.Helpers
 
                 case PathKind.Unmounted:
                 case PathKind.Cloud:
+                case PathKind.WSL:
                     return folder;
 
                 case PathKind.Unknown:

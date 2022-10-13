@@ -35,6 +35,7 @@ namespace JumpPoint.Platform
 #endif
 
         public const string UNMOUNTED = @"\\?\";
+        public const string WSL = @"\\wsl.localhost\";
         public const string NETWORK = @"\\";
         public const string CLOUD = @"cloud:\";
         public const string WORKSPACE = @"workspace:\";

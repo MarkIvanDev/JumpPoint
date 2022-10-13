@@ -15,25 +15,7 @@ namespace JumpPoint.Platform.Items.CloudStorage
             base(StorageType.Cloud, name, path, dateAccessed, dateCreated, dateModified, attributes, size)
         {
             Provider = provider;
-            switch (provider)
-            {
-                case CloudStorageProvider.OneDrive:
-                    DriveTemplate = DriveTemplate.OneDrive;
-                    break;
-
-                case CloudStorageProvider.Storj:
-                    DriveTemplate = DriveTemplate.Storj;
-                    break;
-
-                case CloudStorageProvider.OpenDrive:
-                    DriveTemplate = DriveTemplate.OpenDrive;
-                    break;
-
-                case CloudStorageProvider.Unknown:
-                default:
-                    DriveTemplate = DriveTemplate.Cloud;
-                    break;
-            }
+            DriveTemplate = provider.ToDriveTemplate();
         }
 
         public CloudStorageProvider Provider { get; }

@@ -85,6 +85,7 @@
     <Grid x:Name="root">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid x:Name="AppTitleBar"
@@ -121,7 +122,10 @@
                            FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
             </Grid>
         </Grid>
-        <Pivot Grid.Row="1">
+        <winui:ProgressBar IsIndeterminate="{x:Bind ViewModel.RefreshCommand.IsRunning, Mode=OneWay}"
+                           Visibility="{x:Bind ViewModel.RefreshCommand.IsRunning, Mode=OneWay}"
+                           Grid.Row="1"/>
+        <Pivot Grid.Row="2">
             <Pivot.HeaderTemplate>
                 <DataTemplate>
                     <TextBlock Style="{StaticResource BodyTextBlockStyle}"
@@ -1302,12 +1306,12 @@
                 </ScrollViewer>
             </PivotItem>
         </Pivot>
-        <ProgressRing HorizontalAlignment="Center"
+        <!--<ProgressRing HorizontalAlignment="Center"
                       Grid.Row="1"
                       Width="36"
                       Height="36"
                       IsActive="{x:Bind ViewModel.RefreshCommand.IsRunning, Mode=OneWay}"
-                      Visibility="{x:Bind ViewModel.RefreshCommand.IsRunning, Mode=OneWay}"/>
+                      Visibility="{x:Bind ViewModel.RefreshCommand.IsRunning, Mode=OneWay}"/>-->
         <winui:TeachingTip x:Name="notifyGrantAccess"
                           Title="GRANT ACCESS"
                           Subtitle="File System"

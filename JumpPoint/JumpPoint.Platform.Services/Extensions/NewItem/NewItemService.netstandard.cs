@@ -12,7 +12,7 @@ namespace JumpPoint.Platform.Services
         static Task<IList<NewItem>> PlatformGetNewItems()
             => throw new NotImplementedException();
 
-        static Task PlatformRun(NewItem newItem, DirectoryBase destination)
+        static Task<bool> PlatformRun(NewItem newItem, DirectoryBase destination)
             => throw new NotImplementedException();
     }
 }

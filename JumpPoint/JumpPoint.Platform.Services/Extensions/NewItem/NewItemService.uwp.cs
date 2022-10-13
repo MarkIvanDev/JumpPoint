@@ -200,7 +200,7 @@ namespace JumpPoint.Platform.Services
             return newItems;
         }
 
-        static async Task PlatformRun(NewItem newItem, DirectoryBase destination)
+        static async Task<bool> PlatformRun(NewItem newItem, DirectoryBase destination)
         {
             var results = new List<NewItemResultPayload>();
 
@@ -238,6 +238,7 @@ namespace JumpPoint.Platform.Services
                 }
             }
 
+            var itemsCreated = false;
             foreach (var item in results)
             {
                 var folder = destination;
@@ -261,14 +262,23 @@ namespace JumpPoint.Platform.Services
                     if (i == segments.Length - 1)
                     {
                         var content = string.IsNullOrEmpty(item.ContentToken) ? null : await IOHelper.ReadBytes(item.ContentToken);
-                        await StorageService.CreateFile(folder, segment, CreateOption.GenerateUniqueName, content);
+                        var newFile = await StorageService.CreateFile(folder, segment, CreateOption.GenerateUniqueName, content);
+                        if (newFile != null)
+                        {
+                            itemsCreated = true;
+                        }
                     }
                     else
                     {
                         folder = await StorageService.CreateFolder(folder, segment, CreateOption.OpenIfExists);
+                        if (folder != null)
+                        {
+                            itemsCreated = true;
+                        }
                     }
                 }
             }
+            return itemsCreated;
         }
     }
 }

@@ -13,6 +13,7 @@ namespace JumpPoint.Platform
         Network = 4,
         Cloud = 5,
         Workspace = 6,
-        AppLink = 7
+        AppLink = 7,
+        WSL = 8,
     }
 }

@@ -9,6 +9,7 @@ namespace JumpPoint.Platform.Items.Storage
         Local = 0,
         Portable = 1,
         Network = 2,
-        Cloud = 3
+        Cloud = 3,
+        WSL = 4,
     }
 }
