@@ -61,10 +61,13 @@ namespace JumpPoint.Uwp.Interactivity.Behaviors
                     // A new frame is generated for an existing tab, this happens when Tabs are being rearranged by the user
                     var previousFrame = ((NavigationService)tabViewModel.NavigationHelper.NavigationService).Context;
 
-                    // Retain navigation history and content
-                    var previousNavigationState = previousFrame.GetNavigationState();
-                    AssociatedObject.SetNavigationState(previousNavigationState);
-                    ((NavigationService)tabViewModel.NavigationHelper.NavigationService).Context = AssociatedObject;
+                    // We need to check if the frames are not the same because there are times that a frame is reused for the same tab
+                    if (previousFrame != AssociatedObject)
+                    {
+                        var previousNavigationState = previousFrame.GetNavigationState();
+                        AssociatedObject.SetNavigationState(previousNavigationState);
+                        ((NavigationService)tabViewModel.NavigationHelper.NavigationService).Context = AssociatedObject;
+                    }
                 }
                 AssociatedObject.Visibility = tabViewModel.Key.Equals(SelectedTab?.Key) ? Visibility.Visible : Visibility.Collapsed;
             }
