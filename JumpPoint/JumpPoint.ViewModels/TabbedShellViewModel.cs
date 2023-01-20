@@ -121,6 +121,16 @@ namespace JumpPoint.ViewModels
                 }
             }));
 
+        private AsyncRelayCommand<ShellContextViewModelBase> _OpenPathInNewTab;
+        public AsyncRelayCommand<ShellContextViewModelBase> OpenPathInNewTabCommand => _OpenPathInNewTab ?? (_OpenPathInNewTab = new AsyncRelayCommand<ShellContextViewModelBase>(
+            async (context) =>
+            {
+                if (context?.PathInfo is null) return;
+                var currentIndex = Tabs.IndexOf(CurrentTab);
+                NewTab(currentIndex != -1 ? currentIndex += 1 : currentIndex, context.PathInfo.Type, context.PathInfo.Parameter.Parameter);
+                await Task.CompletedTask;
+            }));
+
         private AsyncRelayCommand<ShellContextViewModelBase> _OpenItemsInNewTab;
         public AsyncRelayCommand<ShellContextViewModelBase> OpenItemsInNewTabCommand => _OpenItemsInNewTab ?? (_OpenItemsInNewTab = new AsyncRelayCommand<ShellContextViewModelBase>(
             async (context) =>
@@ -130,30 +140,35 @@ namespace JumpPoint.ViewModels
 
                 foreach (var item in context.SelectedItems)
                 {
-                    switch (item.Type)
-                    {
-                        case JumpPointItemType.Folder:
-                            NewTab(currentIndex != -1 ? currentIndex += 1 : currentIndex, AppPath.Folder, TabbedNavigationHelper.GetParameter(item));
-                            break;
-
-                        case JumpPointItemType.Drive:
-                            NewTab(currentIndex != -1 ? currentIndex += 1 : currentIndex, AppPath.Drive, TabbedNavigationHelper.GetParameter(item));
-                            break;
-
-                        case JumpPointItemType.Workspace:
-                            NewTab(currentIndex != -1 ? currentIndex += 1 : currentIndex, AppPath.Workspace, TabbedNavigationHelper.GetParameter(item));
-                            break;
-
-                        case JumpPointItemType.Unknown:
-                        case JumpPointItemType.File:
-                        case JumpPointItemType.AppLink:
-                        case JumpPointItemType.Library:
-                        default:
-                            break;
-                    }
+                    OpenItemInNewTab(currentIndex, item);
                 }
                 await Task.CompletedTask;
             }));
+
+        private void OpenItemInNewTab(int currentIndex, JumpPointItem item)
+        {
+            switch (item?.Type)
+            {
+                case JumpPointItemType.Folder:
+                    NewTab(currentIndex != -1 ? currentIndex += 1 : currentIndex, AppPath.Folder, TabbedNavigationHelper.GetParameter(item));
+                    break;
+
+                case JumpPointItemType.Drive:
+                    NewTab(currentIndex != -1 ? currentIndex += 1 : currentIndex, AppPath.Drive, TabbedNavigationHelper.GetParameter(item));
+                    break;
+
+                case JumpPointItemType.Workspace:
+                    NewTab(currentIndex != -1 ? currentIndex += 1 : currentIndex, AppPath.Workspace, TabbedNavigationHelper.GetParameter(item));
+                    break;
+
+                case JumpPointItemType.Unknown:
+                case JumpPointItemType.File:
+                case JumpPointItemType.AppLink:
+                case JumpPointItemType.Library:
+                default:
+                    break;
+            }
+        }
 
         private void NewTab(int index, AppPath appPath, string parameter = null)
         {

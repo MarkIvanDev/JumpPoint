@@ -366,6 +366,8 @@
                                                         Command="{StaticResource CopyPathCommand}" />
                                         <MenuFlyoutSeparator />
                                         <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
+                                                        Command="{StaticResource OpenPathInNewTabCommand}" />
+                                        <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                         Command="{StaticResource OpenPathInNewWindowCommand}" />
                                         <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
                                                         Command="{StaticResource OpenPathInFileExplorerCommand}"

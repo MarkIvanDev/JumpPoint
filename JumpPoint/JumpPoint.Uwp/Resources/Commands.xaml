@@ -134,6 +134,12 @@
                                  Key="N" />
         </XamlUICommand.KeyboardAccelerators>
     </XamlUICommand>
+    <XamlUICommand x:Key="OpenPathInNewTabCommand"
+                   IconSource="{StaticResource OpenPathInNewTabIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=TabbedShell.OpenPathInNewTabCommand}"
+                   Label="Open in New Tab"
+                   Description="Open in New Tab">
+    </XamlUICommand>
     <XamlUICommand x:Key="OpenPathInNewWindowCommand"
                    IconSource="{StaticResource OpenPathInNewWindowIcon}"
                    Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenPathInNewWindowCommand}"

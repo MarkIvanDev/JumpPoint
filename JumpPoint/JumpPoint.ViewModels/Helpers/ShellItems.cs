@@ -718,4 +718,5 @@ namespace JumpPoint.ViewModels.Helpers
         #endregion
 
     }
+
 }
