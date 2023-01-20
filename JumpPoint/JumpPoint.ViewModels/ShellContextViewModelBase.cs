@@ -183,16 +183,14 @@ namespace JumpPoint.ViewModels
             await initializeSemaphore.WaitAsync();
             try
             {
-                if (parameter is TabParameter tabParameter)
-                {
-                    TabKey = tabParameter.TabKey;
-                }
+                var tabParameter = TabParameter.FromJson(parameter?.ToString());
+                TabKey = tabParameter?.TabKey;
                 PathInfo.PropertyChanged += PathInfo_PropertyChanged;
                 Items.CollectionChanged += Items_CollectionChanged;
                 SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
                 appSettings.PropertyChanged += AppSettings_PropertyChanged;
 
-                await Initialize(parameter, state);
+                await Initialize(tabParameter, state);
             }
             catch (Exception ex)
             {
@@ -204,7 +202,7 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        protected abstract Task Initialize(object parameter, Dictionary<string, object> state);
+        protected abstract Task Initialize(TabParameter parameter, Dictionary<string, object> state);
 
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {

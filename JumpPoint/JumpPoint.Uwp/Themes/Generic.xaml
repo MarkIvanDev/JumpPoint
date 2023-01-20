@@ -702,11 +702,11 @@
                                 <Setter Property="SingleSelectionFollowsFocus"
                                         Value="False" />
                                 <Setter Property="CanReorderItems"
-                                        Value="False" />
+                                        Value="True" />
                                 <Setter Property="CanDragItems"
                                         Value="False" />
                                 <Setter Property="AllowDrop"
-                                        Value="False" />
+                                        Value="True" />
                                 <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
                                         Value="Auto" />
                                 <Setter Property="ScrollViewer.VerticalScrollBarVisibility"

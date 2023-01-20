@@ -1,4 +1,4 @@
-﻿<uwp:NGPage xmlns:uwp="using:NittyGritty.Uwp"
+﻿<controls:PageBase
             x:Class="JumpPoint.Uwp.Views.SettingsPage"
             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -23,7 +23,7 @@
             xmlns:behaviors="using:JumpPoint.Uwp.Interactivity.Behaviors"
             mc:Ignorable="d">
 
-    <uwp:NGPage.Resources>
+    <controls:PageBase.Resources>
         <XamlUICommand x:Key="AddAccountCommand"
                        Command="{x:Bind ViewModel.AddAccountCommand}">
             <i:Interaction.Behaviors>
@@ -42,7 +42,7 @@
                 <behaviors:NotifyCommandBehavior />
             </i:Interaction.Behaviors>
         </XamlUICommand>
-    </uwp:NGPage.Resources>
+    </controls:PageBase.Resources>
 
     <Grid>
         <Pivot Margin="8,8,0,0">
@@ -755,4 +755,4 @@
             </PivotItem>
         </Pivot>
     </Grid>
-</uwp:NGPage>
+</controls:PageBase>

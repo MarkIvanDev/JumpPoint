@@ -91,11 +91,6 @@ namespace JumpPoint.Uwp
         #region Activation
         protected override async Task HandleActivation(LaunchActivatedEventArgs args)
         {
-            if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
-            {
-                await SuspensionManager.RestoreAsync();
-            }
-
             var source = args.GetLaunchSource();
             switch (source)
             {
@@ -119,6 +114,7 @@ namespace JumpPoint.Uwp
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Maximized;
             var appView = ApplicationView.GetForCurrentView();
             appView.SetPreferredMinSize(new Size(400, 400));
+            await Task.CompletedTask;
         }
 
         protected override async Task HandleActivation(ProtocolActivatedEventArgs args)

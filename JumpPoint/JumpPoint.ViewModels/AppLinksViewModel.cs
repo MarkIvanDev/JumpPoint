@@ -62,7 +62,7 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(TabParameter parameter, Dictionary<string, object> state)
         {
             PathInfo.Place(AppPath.AppLinks.Humanize(), parameter);
             await RefreshCommand.TryExecute();

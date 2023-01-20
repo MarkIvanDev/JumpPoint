@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using JumpPoint.Platform;
+using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.Platform.Services;
 using NittyGritty.Services.Core;
@@ -30,7 +31,7 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(TabParameter parameter, Dictionary<string, object> state)
         {
             PathInfo.Place(nameof(AppPath.WSL), parameter);
             await RefreshCommand.TryExecute();

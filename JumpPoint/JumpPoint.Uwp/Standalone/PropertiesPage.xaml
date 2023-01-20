@@ -1,5 +1,4 @@
-﻿<uwp:NGPage xmlns:uwp="using:NittyGritty.Uwp"
-            x:Class="JumpPoint.Uwp.Standalone.PropertiesPage"
+﻿<controls:PageBase x:Class="JumpPoint.Uwp.Standalone.PropertiesPage"
             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
             xmlns:local="using:JumpPoint.Uwp.Standalone"
@@ -33,7 +32,7 @@
             x:Name="rootPage"
             DataContext="{Binding Source={StaticResource Locator}, Path=Properties}">
 
-    <uwp:NGPage.Resources>
+    <controls:PageBase.Resources>
         <Style TargetType="PivotHeaderItem">
             <Setter Property="Height"
                     Value="40" />
@@ -80,7 +79,7 @@
                 </ngconv:BooleanValueConverter.FalseValue>
             </ngconv:BooleanValueConverter>
         </ngconv:ChainConverter>
-    </uwp:NGPage.Resources>
+    </controls:PageBase.Resources>
 
     <Grid x:Name="root">
         <Grid.RowDefinitions>
@@ -1365,4 +1364,4 @@
             </i:Interaction.Behaviors>
         </winui:TeachingTip>
     </Grid>
-</uwp:NGPage>
+</controls:PageBase>

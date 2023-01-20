@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Humanizer;
 using JumpPoint.Platform;
+using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.Platform.Services;
 using NittyGritty.Services.Core;
@@ -35,7 +36,7 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(TabParameter parameter, Dictionary<string, object> state)
         {
             PathInfo.Place(AppPath.CloudDrives.Humanize(), parameter);
             await RefreshCommand.TryExecute();

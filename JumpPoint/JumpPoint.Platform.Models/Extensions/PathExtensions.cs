@@ -238,7 +238,7 @@ namespace JumpPoint.Platform.Models.Extensions
             }
         }
 
-        public static void Place(this PathInfo pathInfo, string path, object parameter)
+        public static void Place(this PathInfo pathInfo, string path, TabParameter parameter)
         {
             pathInfo.Breadcrumbs = new Collection<Breadcrumb>(path.GetBreadcrumbs());
             pathInfo.Parameter = parameter;

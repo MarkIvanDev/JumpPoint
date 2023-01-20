@@ -1,4 +1,4 @@
-﻿<nguwp:NGPage
+﻿<controls:PageBase
     xmlns:nguwp="using:NittyGritty.Uwp"
     x:Class="JumpPoint.Uwp.Views.DashboardPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -120,4 +120,4 @@
             </Button>
         </Grid>
     </Grid>
-</nguwp:NGPage>
+</controls:PageBase>

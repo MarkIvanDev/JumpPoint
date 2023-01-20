@@ -37,8 +37,9 @@ namespace JumpPoint.ViewModels
 
         protected override async Task Refresh(CancellationToken token)
         {
-            Item = PathInfo.Parameter is TabParameter tab && tab.Parameter is DriveBase db ?
-                    db : await StorageService.GetDrive(PathInfo.Path, StorageType);
+            Item = await StorageService.GetDrive(PathInfo.Path, StorageType);
+            //Item = PathInfo.Parameter is TabParameter tab && tab.Parameter is DriveBase db ?
+            //        db : await StorageService.GetDrive(PathInfo.Path, StorageType);
 
             if (!(Item is DriveBase drive))
             {
@@ -61,24 +62,16 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(TabParameter parameter, Dictionary<string, object> state)
         {
             string path = null;
-            if (parameter is TabParameter tab)
+            if (parameter?.Parameter is string queryString)
             {
-                if (tab.Parameter is string queryString)
-                {
-                    var args = QueryString.Parse(queryString);
-                    path = args[nameof(PathInfo.Path)];
-                    StorageType = args.TryGetValue(nameof(DriveBase.StorageType), out var st) &&
-                        Enum.TryParse<StorageType>(st, true, out var storageType) ?
-                        storageType : (StorageType?)null;
-                }
-                else if (tab.Parameter is DriveBase drive)
-                {
-                    path = drive.Path;
-                    StorageType = drive.StorageType;
-                }
+                var args = QueryString.Parse(queryString);
+                path = args[nameof(PathInfo.Path)];
+                StorageType = args.TryGetValue(nameof(DriveBase.StorageType), out var st) &&
+                    Enum.TryParse<StorageType>(st, true, out var storageType) ?
+                    storageType : (StorageType?)null;
             }
             else if (state != null)
             {

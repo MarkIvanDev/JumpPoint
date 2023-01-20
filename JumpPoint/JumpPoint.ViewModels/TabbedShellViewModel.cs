@@ -155,7 +155,7 @@ namespace JumpPoint.ViewModels
                 await Task.CompletedTask;
             }));
 
-        private void NewTab(int index, AppPath appPath, object parameter = null)
+        private void NewTab(int index, AppPath appPath, string parameter = null)
         {
             var newTab = ViewModelLocator.Instance.GetNewTab();
             newTab.InitialParameter = new NewTabParameter(appPath, parameter);
@@ -196,7 +196,7 @@ namespace JumpPoint.ViewModels
                 }
                 else if (!(item.Key is null))
                 {
-                    CurrentTab?.NavigationHelper.ToKey(item.Key, item.Parameter);
+                    CurrentTab?.NavigationHelper.ToKey(item.Key, item.Parameter?.ToString());
                 }
             }));
 
@@ -386,10 +386,9 @@ namespace JumpPoint.ViewModels
                 }.ToString());
             }
             await ShellItems.Refresh();
-            Messenger.Default.Send(new NotificationMessage(nameof(CurrentTab)), MessengerTokens.CommandManagement);
+            //Messenger.Default.Send(new NotificationMessage(nameof(CurrentTab)), MessengerTokens.CommandManagement);
 
             // Hook Up Listeners
-            //PropertyChanged += TabbedShellViewModel_PropertyChanged;
             ShellItems.Start();
             shareService.Start();
             await DesktopService.ChangeNotifier();
@@ -420,8 +419,7 @@ namespace JumpPoint.ViewModels
                 }.ToString();
             }
 
-            // Unhook Listeners
-            //PropertyChanged -= TabbedShellViewModel_PropertyChanged;
+            // Unhook listeners
             ShellItems.Stop();
             shareService.Stop();
         }
@@ -437,47 +435,6 @@ namespace JumpPoint.ViewModels
         private void ManageCommands(NotificationMessage message)
         {
             CurrentTab?.RaisePropertyChanged(nameof(CurrentTab.Context));
-            //switch (message.Notification)
-            //{
-            //    case nameof(CurrentTab):
-            //    case nameof(CurrentTab.Context):
-            //        commandHelper.NotifyNaviagtionBarCommands();
-            //        commandHelper.NotifyToolbarCommands();
-            //        break;
-
-            //    case nameof(CurrentTab.Context.Item):
-            //        commandHelper.NotifyNaviagtionBarCommands();
-            //        break;
-
-            //    case nameof(CurrentTab.Context.PathInfo):
-            //        // Navigation Bar
-            //        commandHelper.UpCommand.RaiseCanExecuteChanged();
-            //        commandHelper.PathPropertiesCommand.RaiseCanExecuteChanged();
-
-            //        // Toolbar
-            //        commandHelper.CopyCommand.RaiseCanExecuteChanged();
-            //        commandHelper.CutCommand.RaiseCanExecuteChanged();
-            //        commandHelper.RenameCommand.RaiseCanExecuteChanged();
-            //        commandHelper.DeleteCommand.RaiseCanExecuteChanged();
-            //        commandHelper.DeletePermanentlyCommand.RaiseCanExecuteChanged();
-            //        break;
-
-            //    case nameof(CurrentTab.Context.SelectedItems):
-            //        // Toolbar
-            //        OpenItemsInNewTabCommand.RaiseCanExecuteChanged();
-            //        //commandHelper.NotifyToolbarCommands();
-            //        CurrentTab?.RaisePropertyChanged(nameof(CurrentTab.Context));
-            //        break;
-
-            //    case nameof(CommandHelper.ClipboardHasFiles):
-            //        commandHelper.PasteCommand.RaiseCanExecuteChanged();
-            //        break;
-
-            //    case nameof(JumpPointItem.IsFavorite):
-            //        commandHelper.AddItemsToFavoritesCommand.RaiseCanExecuteChanged();
-            //        commandHelper.RemoveItemsFromFavoritesCommand.RaiseCanExecuteChanged();
-            //        break;
-            //}
         }
     }
 
@@ -513,7 +470,7 @@ namespace JumpPoint.ViewModels
 
     public class NewTabParameter
     {
-        public NewTabParameter(AppPath appPath, object parameter = null)
+        public NewTabParameter(AppPath appPath, string parameter = null)
         {
             AppPath = appPath;
             Parameter = parameter;
@@ -521,7 +478,7 @@ namespace JumpPoint.ViewModels
 
         public AppPath AppPath { get; }
 
-        public object Parameter { get; }
+        public string Parameter { get; }
     }
 
     public class BreadcrumbChildrenViewModel : ObservableObject

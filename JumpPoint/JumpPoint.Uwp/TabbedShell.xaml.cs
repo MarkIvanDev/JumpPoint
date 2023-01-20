@@ -1,44 +1,26 @@
-﻿using GalaSoft.MvvmLight.Messaging;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Numerics;
+using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Models;
+using JumpPoint.Uwp.Controls;
 using JumpPoint.Uwp.Helpers;
 using JumpPoint.ViewModels;
-using Microsoft.UI.Xaml.Controls;
-using NittyGritty.Services;
-using NittyGritty.Uwp;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.Core;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core.Preview;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace JumpPoint.Uwp
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class TabbedShell : NGPage
+    public sealed partial class TabbedShell : PageBase
     {
         private SystemNavigationManagerPreview systemNavPreview;
 
@@ -199,28 +181,5 @@ namespace JumpPoint.Uwp
             ViewModel.CurrentTab.NavigationHelper.ToItem(e.ClickedItem as JumpPointItem);
         }
 
-        //private void ManageTabs(GenericMessage<NewTabParameter> message)
-        //{
-        //    var tabData = ViewModelLocator.GetNewTab();
-
-        //    var tabItemTemplate = this.Resources["TabItemTemplate"] as DataTemplate;
-        //    var tabItem = tabItemTemplate.GetElement(new Windows.UI.Xaml.ElementFactoryGetArgs() { Data = tabData }) as TabViewItem;
-        //    tabItem.DataContext = tabData;
-        //    ((NavigationService)tabData.NavigationHelper.NavigationService).Context = tabItem.Content as Frame;
-
-        //    ViewModel.Tabs.Add(tabData);
-        //    tabView.TabItems.Add(tabItem);
-
-        //    tabData.NavigationHelper.ToPathType(message.Content.AppPath, message.Content.Parameter);
-        //}
-
-        //private void TabView_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
-        //{
-        //    if (args.Tab.DataContext is TabViewModel tabData)
-        //    {
-        //        ViewModel.Tabs.Remove(tabData);
-        //        tabView.TabItems.Remove(args.Tab);
-        //    }
-        //}
     }
 }

@@ -134,6 +134,7 @@
     <Compile Include="Controls\MusicPropertiesControl.xaml.cs">
       <DependentUpon>MusicPropertiesControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PageBase.cs" />
     <Compile Include="Controls\PanedTabView2.cs" />
     <Compile Include="Controls\PhotoPropertiesControl.xaml.cs">
       <DependentUpon>PhotoPropertiesControl.xaml</DependentUpon>

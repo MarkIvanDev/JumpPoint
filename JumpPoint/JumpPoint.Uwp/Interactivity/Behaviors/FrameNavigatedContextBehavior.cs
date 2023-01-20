@@ -46,8 +46,10 @@ namespace JumpPoint.Uwp.Interactivity.Behaviors
                             h => page.DataContextChanged += h,
                             h => page.DataContextChanged -= h,
                             h => (o, e) => h(o, e),
-                            (subscriber, s, e) => tabViewModel.Context = page.DataContext as ShellContextViewModelBase);
-                        Messenger.Default.Send(new NotificationMessage(nameof(TabViewModel.Context)), MessengerTokens.CommandManagement);
+                            (subscriber, s, e) =>
+                            {
+                                tabViewModel.Context = page.DataContext as ShellContextViewModelBase;
+                            });
                     }
                     else
                     {
@@ -60,11 +62,8 @@ namespace JumpPoint.Uwp.Interactivity.Behaviors
                     var previousFrame = ((NavigationService)tabViewModel.NavigationHelper.NavigationService).Context;
 
                     // Retain navigation history and content
-                    AssociatedObject.BackStack.AddRange(previousFrame.BackStack.Select(b => new PageStackEntry(b.SourcePageType, b.Parameter, b.NavigationTransitionInfo)));
-                    AssociatedObject.ForwardStack.AddRange(previousFrame.ForwardStack.Select(f => new PageStackEntry(f.SourcePageType, f.Parameter, f.NavigationTransitionInfo)));
-                    var content = previousFrame.Content;
-                    previousFrame.Content = null;
-                    AssociatedObject.Content = content;
+                    var previousNavigationState = previousFrame.GetNavigationState();
+                    AssociatedObject.SetNavigationState(previousNavigationState);
                     ((NavigationService)tabViewModel.NavigationHelper.NavigationService).Context = AssociatedObject;
                 }
                 AssociatedObject.Visibility = tabViewModel.Key.Equals(SelectedTab?.Key) ? Visibility.Visible : Visibility.Collapsed;
@@ -80,7 +79,10 @@ namespace JumpPoint.Uwp.Interactivity.Behaviors
                     h => page.DataContextChanged += h,
                     h => page.DataContextChanged -= h,
                     h => (o, e) => h(o, e),
-                    (subscriber, s, e) => tabViewModel.Context = page.DataContext as ShellContextViewModelBase);
+                    (subscriber, s, e) =>
+                    {
+                        tabViewModel.Context = page.DataContext as ShellContextViewModelBase;
+                    });
             }
         }
 
