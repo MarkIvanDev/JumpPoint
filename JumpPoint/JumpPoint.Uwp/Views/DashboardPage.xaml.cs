@@ -77,6 +77,5 @@ namespace JumpPoint.Uwp.Views
             base.OnNavigatedTo(e);
         }
 
-
     }
 }

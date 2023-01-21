@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NittyGritty.ViewModels;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -12,6 +13,16 @@ namespace JumpPoint.Uwp.Controls
 {
     public class PageBase : Page
     {
+        public PageBase()
+        {
+            Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            this.Focus(FocusState.Programmatic);
+        }
+
         private SystemNavigationManager currentView;
         private IStateManager PageViewModel => base.DataContext as IStateManager;
 

@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using JumpPoint.Platform;
 using GalaSoft.MvvmLight.Messaging;
+using Windows.UI.Xaml.Input;
 
 namespace JumpPoint.Uwp.Interactivity.Behaviors
 {
@@ -69,7 +70,7 @@ namespace JumpPoint.Uwp.Interactivity.Behaviors
                         ((NavigationService)tabViewModel.NavigationHelper.NavigationService).Context = AssociatedObject;
                     }
                 }
-                AssociatedObject.Visibility = tabViewModel.Key.Equals(SelectedTab?.Key) ? Visibility.Visible : Visibility.Collapsed;
+                ChangeFrameVisibility(AssociatedObject, tabViewModel.Key.Equals(SelectedTab?.Key));
             }
         }
 
@@ -115,8 +116,21 @@ namespace JumpPoint.Uwp.Interactivity.Behaviors
         {
             if (d is FrameNavigatedContextBehavior behavior && behavior.AssociatedObject != null && behavior.AssociatedObject.DataContext is TabViewModel tab)
             {
-                behavior.AssociatedObject.Visibility = tab.Key.Equals(behavior.SelectedTab?.Key) ? Visibility.Visible : Visibility.Collapsed;
+                ChangeFrameVisibility(behavior.AssociatedObject, tab.Key.Equals(behavior.SelectedTab?.Key));
             }
+        }
+
+        private static void ChangeFrameVisibility(Frame frame, bool isSameKey)
+        {
+            if (isSameKey)
+            {
+                frame.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                frame.Visibility = Visibility.Collapsed;
+            }
+
         }
     }
 }
