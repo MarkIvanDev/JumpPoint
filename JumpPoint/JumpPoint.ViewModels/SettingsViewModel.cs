@@ -96,7 +96,7 @@ namespace JumpPoint.ViewModels
                         if (keys.Count > 0)
                         {
                             var dataViewModel = new AddCloudAccountViewModel(provider.Value, keys);
-                            var result = await dialogService.Show(DialogKeys.AddCloudAccount, dataViewModel);
+                            var result = await dialogService.Show(DialogKeys.AddCloudAccount, dataViewModel, appSettings.Theme);
                             if (result)
                             {
                                 data = dataViewModel.GetData();
@@ -127,7 +127,7 @@ namespace JumpPoint.ViewModels
             async account =>
             {
                 var viewModel = new RenameCloudAccountViewModel(account);
-                var result = await dialogService.Show(DialogKeys.RenameCloudAccount, viewModel);
+                var result = await dialogService.Show(DialogKeys.RenameCloudAccount, viewModel, appSettings.Theme);
                 if (result)
                 {
                     var newName = await CloudStorageService.RenameAccount(account, viewModel.Name);

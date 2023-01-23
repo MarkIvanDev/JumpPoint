@@ -760,6 +760,7 @@
                     <convevent:ItemClickEventArgsConverter x:Key="ItemClickEventArgsConverter" />
                     <convevent:ItemDoubleClickEventArgsConverter x:Key="ItemDoubleClickEventArgsConverter" />
                     <conv:NavigationViewItemInvokedEventArgsConverter x:Key="NavigationViewItemInvokedEventArgsConverter" />
+                    <conv:AppThemeConverter x:Key="AppThemeConverter" />
                     <conv:UriOrStreamToBitmapImageConverter x:Key="AppLinkDetailsLogoConverter"
                                                             Height="24" />
                     <conv:UriOrStreamToBitmapImageConverter x:Key="AppLinkGridTilesLogoConverter"

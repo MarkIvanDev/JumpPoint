@@ -35,10 +35,12 @@ namespace JumpPoint.ViewModels
         private readonly IDialogService dialogService;
         private readonly IAddOnService addOnService;
         private readonly IShareService shareService;
+        private readonly AppSettings appSettings;
 
         public TabbedShellViewModel(IDialogService dialogService,
                                     IAddOnService addOnService,
                                     IShareService shareService,
+                                    AppSettings appSettings,
                                     ShellItems shellItems,
                                     CommandHelper commandHelper,
                                     BreadcrumbChildrenViewModel breadcrumbChildren)
@@ -46,6 +48,7 @@ namespace JumpPoint.ViewModels
             this.dialogService = dialogService;
             this.addOnService = addOnService;
             this.shareService = shareService;
+            this.appSettings = appSettings;
             ShellItems = shellItems;
             CommandHelper = commandHelper;
             BreadcrumbChildren = breadcrumbChildren;
@@ -267,7 +270,7 @@ namespace JumpPoint.ViewModels
                 var lastCrumb = crumbs.LastOrDefault();
                 if (lastCrumb is null && !string.IsNullOrWhiteSpace(PathQuery))
                 {
-                    await dialogService.ShowMessage($"\'{PathQuery}\' is an invalid path", "Unknown Path", "OK");
+                    await dialogService.ShowMessage($"\'{PathQuery}\' is an invalid path", "Unknown Path", "OK", appSettings.Theme);
                 }
                 else if (lastCrumb != null && !lastCrumb.Path.Equals(CurrentTab.Context.PathInfo.Path, StringComparison.OrdinalIgnoreCase))
                 {
@@ -326,7 +329,7 @@ namespace JumpPoint.ViewModels
             {
                 if (item.IsActive)
                 {
-                    await dialogService.ShowMessage("Your support for Jump Point is deeply appreciated.", "Thank you!");
+                    await dialogService.ShowMessage("Your support for Jump Point is deeply appreciated.", "Thank you!", appSettings.Theme);
                 }
                 else
                 {
@@ -345,7 +348,7 @@ namespace JumpPoint.ViewModels
                 var result = await JumpPointService.Rate();
                 if (result)
                 {
-                    await dialogService.ShowMessage("Your review is much appreciated.", "Thank you!");
+                    await dialogService.ShowMessage("Your review is much appreciated.", "Thank you!", appSettings.Theme);
                 }
             }));
 

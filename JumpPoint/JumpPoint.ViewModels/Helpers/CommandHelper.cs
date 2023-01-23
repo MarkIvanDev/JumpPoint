@@ -108,7 +108,7 @@ namespace JumpPoint.ViewModels.Helpers
                         if (launchType == AppLinkLaunchTypes.All || appLink.Query.Count > 0 || appLink.InputData.Count > 0)
                         {
                             var appLinkLaunch = new AppLinkLaunchViewModel(appLink);
-                            await dialogService.Show(DialogKeys.AppLinkLaunch, appLinkLaunch);
+                            await dialogService.Show(DialogKeys.AppLinkLaunch, appLinkLaunch, appSettings.Theme);
                             launchType = appLinkLaunch.LaunchType;
                         }
 
@@ -120,7 +120,7 @@ namespace JumpPoint.ViewModels.Helpers
                             case AppLinkLaunchTypes.UriForResults:
                                 var results = await AppLinkService.OpenUriForResults(appLink);
                                 var appLinkLaunchResults = new AppLinkLaunchResultsViewModel(appLink, results);
-                                await dialogService.Show(DialogKeys.AppLinkLaunchResults, appLinkLaunchResults);
+                                await dialogService.Show(DialogKeys.AppLinkLaunchResults, appLinkLaunchResults, appSettings.Theme);
                                 break;
                             case AppLinkLaunchTypes.All:
                             case AppLinkLaunchTypes.None:
@@ -164,7 +164,7 @@ namespace JumpPoint.ViewModels.Helpers
                     }
                     vm.Workspaces = collection;
                     vm.IsLoading = false;
-                });
+                }, appSettings.Theme);
 
             if (result)
             {
@@ -269,7 +269,7 @@ namespace JumpPoint.ViewModels.Helpers
                     }
                     else
                     {
-                        await dialogService.ShowMessage("You may need permission to perform this action", "Destination Folder Access Denied");
+                        await dialogService.ShowMessage("You may need permission to perform this action", "Destination Folder Access Denied", appSettings.Theme);
                     }
                 }
             }));
@@ -281,7 +281,7 @@ namespace JumpPoint.ViewModels.Helpers
                 if (tab?.Context is null) return;
 
                 var viewModel = new NewFolderViewModel();
-                var result = await dialogService.Show(DialogKeys.NewFolder, viewModel);
+                var result = await dialogService.Show(DialogKeys.NewFolder, viewModel, appSettings.Theme);
                 if (result && tab.Context.Item is DirectoryBase parent)
                 {
                     var newFolder = await StorageService.CreateFolder(parent, viewModel.Name, CreateOption.GenerateUniqueName);
@@ -294,7 +294,7 @@ namespace JumpPoint.ViewModels.Helpers
                     }
                     else
                     {
-                        await dialogService.ShowMessage("You may need permission to perform this action", "Destination Folder Access Denied");
+                        await dialogService.ShowMessage("You may need permission to perform this action", "Destination Folder Access Denied", appSettings.Theme);
                     }
                 }
             }));
@@ -304,7 +304,7 @@ namespace JumpPoint.ViewModels.Helpers
             async (tab) =>
             {
                 var viewModel = new NewWorkspaceViewModel();
-                var result = await dialogService.Show(DialogKeys.NewWorkspace, viewModel);
+                var result = await dialogService.Show(DialogKeys.NewWorkspace, viewModel, appSettings.Theme);
                 if (result)
                 {
                     var ws = new WorkspaceInfo()
@@ -333,7 +333,7 @@ namespace JumpPoint.ViewModels.Helpers
                 var result = await dialogService.Show(DialogKeys.AppLinkProviderPicker, viewModel, async (vm) =>
                 {
                     await vm.Initialize();
-                });
+                }, appSettings.Theme);
                 if (result && viewModel.Provider != null)
                 {
                     var appLinkInfo = await AppLinkProviderService.Pick(viewModel.Provider);
@@ -358,7 +358,7 @@ namespace JumpPoint.ViewModels.Helpers
                 var result = await dialogService.Show(DialogKeys.NewItemPicker, viewModel, async (vm) =>
                 {
                     await vm.Initialize();
-                });
+                }, appSettings.Theme);
                 if (result && viewModel.NewItem != null && tab.Context.Item is DirectoryBase destination)
                 {
                     var itemsCreated = await NewItemService.Run(viewModel.NewItem, destination);
@@ -371,7 +371,7 @@ namespace JumpPoint.ViewModels.Helpers
                     }
                     else
                     {
-                        await dialogService.ShowMessage("You may need permission to perform this action", "Destination Folder Access Denied");
+                        await dialogService.ShowMessage("You may need permission to perform this action", "Destination Folder Access Denied", appSettings.Theme);
                     }
                 }
             }));
@@ -489,7 +489,7 @@ namespace JumpPoint.ViewModels.Helpers
                 if (context?.Item is null) return;
 
                 var viewModel = new WorkspaceTemplatePickerViewModel();
-                var result = await dialogService.Show(DialogKeys.WorkspaceTemplatePicker, viewModel);
+                var result = await dialogService.Show(DialogKeys.WorkspaceTemplatePicker, viewModel, appSettings.Theme);
                 if (result && viewModel.Template.HasValue && context.Item is Workspace ws)
                 {
                     await WorkspaceService.SetTemplate(ws.Id, viewModel.Template.Value);
@@ -508,7 +508,7 @@ namespace JumpPoint.ViewModels.Helpers
                 if (context?.Item is null) return;
 
                 var viewModel = new FolderTemplatePickerViewModel();
-                var result = await dialogService.Show(DialogKeys.FolderTemplatePicker, viewModel);
+                var result = await dialogService.Show(DialogKeys.FolderTemplatePicker, viewModel, appSettings.Theme);
                 if (result && viewModel.Template.HasValue && context.Item is FolderBase f)
                 {
                     await FolderTemplateService.SetFolderTemplate(f, viewModel.Template.Value);
@@ -700,13 +700,13 @@ namespace JumpPoint.ViewModels.Helpers
                     if (unmountedItems.Count > 0)
                     {
                         var viewModel = new CopyViewModel(dialogService, copyTo.Destination, unmountedItems);
-                        await dialogService.Show(DialogKeys.Copy, viewModel, async (vm) => await vm.Start());
+                        await dialogService.Show(DialogKeys.Copy, viewModel, async (vm) => await vm.Start(), appSettings.Theme);
                     }
                 }
                 else if (pathKind == PathKind.Unmounted)
                 {
                     var viewModel = new CopyViewModel(dialogService, copyTo.Destination, copyTo.Items);
-                    await dialogService.Show(DialogKeys.Copy, viewModel, async (vm) => await vm.Start());
+                    await dialogService.Show(DialogKeys.Copy, viewModel, async (vm) => await vm.Start(), appSettings.Theme);
                 }
             }));
 
@@ -737,13 +737,13 @@ namespace JumpPoint.ViewModels.Helpers
                     if (unmountedItems.Count > 0)
                     {
                         var viewModel = new MoveViewModel(dialogService, moveTo.Destination, unmountedItems);
-                        await dialogService.Show(DialogKeys.Move, viewModel, async (vm) => await vm.Start());
+                        await dialogService.Show(DialogKeys.Move, viewModel, async (vm) => await vm.Start(), appSettings.Theme);
                     }
                 }
                 else if (pathKind == PathKind.Unmounted)
                 {
                     var viewModel = new MoveViewModel(dialogService, moveTo.Destination, moveTo.Items);
-                    await dialogService.Show(DialogKeys.Move, viewModel, async (vm) => await vm.Start());
+                    await dialogService.Show(DialogKeys.Move, viewModel, async (vm) => await vm.Start(), appSettings.Theme);
                 }
             }));
 
@@ -768,7 +768,7 @@ namespace JumpPoint.ViewModels.Helpers
                     .Where(i => i.Type == JumpPointItemType.Folder || i.Type == JumpPointItemType.File || i.Type == JumpPointItemType.Workspace || i.Type == JumpPointItemType.AppLink)
                     .ToList();
                 var viewModel = new RenameViewModel(toRename.Select(i => i.Name).ToList());
-                var result = await dialogService.Show(DialogKeys.Rename, viewModel);
+                var result = await dialogService.Show(DialogKeys.Rename, viewModel, appSettings.Theme);
                 if (result)
                 {
                     foreach (var item in toRename)
@@ -788,7 +788,7 @@ namespace JumpPoint.ViewModels.Helpers
             {
                 if (context is null) return;
 
-                var result = await dialogService.ShowMessage("Are you sure you want to delete these items?", "Delete Items", "Delete", "Cancel");
+                var result = await dialogService.ShowMessage("Are you sure you want to delete these items?", "Delete Items", "Delete", "Cancel", appSettings.Theme);
                 if (result)
                 {
                     await JumpPointService.Delete(context.SelectedItems, false);
@@ -805,7 +805,7 @@ namespace JumpPoint.ViewModels.Helpers
             {
                 if (context is null) return;
 
-                var result = await dialogService.ShowMessage("Are you sure you want to delete these permanently?", "Delete Items Permanently", "Delete", "Cancel");
+                var result = await dialogService.ShowMessage("Are you sure you want to delete these permanently?", "Delete Items Permanently", "Delete", "Cancel", appSettings.Theme);
                 if (result)
                 {
                     await JumpPointService.Delete(context.SelectedItems, true);
@@ -867,7 +867,7 @@ namespace JumpPoint.ViewModels.Helpers
                         if (!result)
                         {
                             var openInFE = await dialogService.ShowMessage("You could open the file from file explorer which we will open for you. Proceed?",
-                                "Open in File Explorer?", "Open", "Cancel");
+                                "Open in File Explorer?", "Open", "Cancel", appSettings.Theme);
                             if (openInFE)
                             {
                                 await JumpPointService.OpenInFileExplorer(Path.GetDirectoryName(file.Path), new List<StorageItemBase> { file });
@@ -885,7 +885,7 @@ namespace JumpPoint.ViewModels.Helpers
                     if (launchType == AppLinkLaunchTypes.All || appLink.Query.Count > 0 || appLink.InputData.Count > 0)
                     {
                         var appLinkLaunch = new AppLinkLaunchViewModel(appLink);
-                        await dialogService.Show(DialogKeys.AppLinkLaunch, appLinkLaunch);
+                        await dialogService.Show(DialogKeys.AppLinkLaunch, appLinkLaunch, appSettings.Theme);
                         launchType = appLinkLaunch.LaunchType;
                     }
 
@@ -897,7 +897,7 @@ namespace JumpPoint.ViewModels.Helpers
                         case AppLinkLaunchTypes.UriForResults:
                             var results = await AppLinkService.OpenUriForResults(appLink);
                             var appLinkLaunchResults = new AppLinkLaunchResultsViewModel(appLink, results);
-                            await dialogService.Show(DialogKeys.AppLinkLaunchResults, appLinkLaunchResults);
+                            await dialogService.Show(DialogKeys.AppLinkLaunchResults, appLinkLaunchResults, appSettings.Theme);
                             break;
                         case AppLinkLaunchTypes.All:
                         case AppLinkLaunchTypes.None:
@@ -1083,7 +1083,7 @@ namespace JumpPoint.ViewModels.Helpers
                 var result = await dialogService.Show(DialogKeys.ToolPicker, viewModel, async (vm) =>
                 {
                     await vm.Initialize();
-                });
+                }, appSettings.Theme);
                 if (result && viewModel.Tool != null)
                 {
                     var toolResult = await ToolService.Run(viewModel.Tool, list);
@@ -1097,7 +1097,7 @@ namespace JumpPoint.ViewModels.Helpers
                 if (context is null) return;
 
                 var viewModel = new WorkspaceTemplatePickerViewModel();
-                var result = await dialogService.Show(DialogKeys.WorkspaceTemplatePicker, viewModel);
+                var result = await dialogService.Show(DialogKeys.WorkspaceTemplatePicker, viewModel, appSettings.Theme);
                 if (result && viewModel.Template.HasValue)
                 {
                     var wss = context.SelectedItems.Where(i => i.Type == JumpPointItemType.Workspace).ToList();
@@ -1119,7 +1119,7 @@ namespace JumpPoint.ViewModels.Helpers
                 if (context is null) return;
 
                 var viewModel = new FolderTemplatePickerViewModel();
-                var result = await dialogService.Show(DialogKeys.FolderTemplatePicker, viewModel);
+                var result = await dialogService.Show(DialogKeys.FolderTemplatePicker, viewModel, appSettings.Theme);
                 if (result && viewModel.Template.HasValue)
                 {
                     var fs = context.SelectedItems.Where(i => i.Type == JumpPointItemType.Folder).ToList();

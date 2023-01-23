@@ -334,11 +334,11 @@ namespace JumpPoint.Platform.Services
                         break;
 
                     case StartupTaskState.DisabledByUser:
-                        await dialogService.ShowMessage("You have disabled this app's startup in Settings. You can enable it in the Apps > Startup page.", "Startup Disabled", "OK");
+                        await dialogService.ShowMessage("You have disabled this app's startup in Settings. You can enable it in the Apps > Startup page.", "Startup Disabled", "OK", Theme);
                         break;
 
                     case StartupTaskState.DisabledByPolicy:
-                        await dialogService.ShowMessage("Startup disabled by group policy, or not supported on this device", "Startup Disabled", "OK");
+                        await dialogService.ShowMessage("Startup disabled by group policy, or not supported on this device", "Startup Disabled", "OK", Theme);
                         break;
 
                     case StartupTaskState.Enabled:

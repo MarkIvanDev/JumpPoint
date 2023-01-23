@@ -28,10 +28,12 @@ namespace JumpPoint.ViewModels.Standalone
     {
         private static readonly SemaphoreSlim refreshSemaphore = new SemaphoreSlim(1, 1);
         private readonly IDialogService dialogService;
+        private readonly AppSettings appSettings;
 
-        public PropertiesViewModel(IDialogService dialogService)
+        public PropertiesViewModel(IDialogService dialogService, AppSettings appSettings)
         {
             this.dialogService = dialogService;
+            this.appSettings = appSettings;
         }
 
         #region Items
@@ -252,7 +254,7 @@ namespace JumpPoint.ViewModels.Standalone
                         if (!fileLaunchResult)
                         {
                             var openInFE = await dialogService.ShowMessage("You could open the file from file explorer which we will open for you. Proceed?",
-                                "Open in File Explorer?", "Open", "Cancel");
+                                "Open in File Explorer?", "Open", "Cancel", appSettings.Theme);
                             if (openInFE)
                             {
                                 await JumpPointService.OpenInFileExplorer(Path.GetDirectoryName(item.Path), new List<StorageItemBase> { file });
@@ -264,7 +266,7 @@ namespace JumpPoint.ViewModels.Standalone
                         if (launchType == AppLinkLaunchTypes.All || appLink.Query.Count > 0 || appLink.InputData.Count > 0)
                         {
                             var appLinkLaunch = new AppLinkLaunchViewModel(appLink);
-                            await dialogService.Show(DialogKeys.AppLinkLaunch, appLinkLaunch);
+                            await dialogService.Show(DialogKeys.AppLinkLaunch, appLinkLaunch, appSettings.Theme);
                             launchType = appLinkLaunch.LaunchType;
                         }
 
@@ -276,7 +278,7 @@ namespace JumpPoint.ViewModels.Standalone
                             case AppLinkLaunchTypes.UriForResults:
                                 var results = await AppLinkService.OpenUriForResults(appLink);
                                 var appLinkLaunchResults = new AppLinkLaunchResultsViewModel(appLink, results);
-                                await dialogService.Show(DialogKeys.AppLinkLaunchResults, appLinkLaunchResults);
+                                await dialogService.Show(DialogKeys.AppLinkLaunchResults, appLinkLaunchResults, appSettings.Theme);
                                 break;
                             case AppLinkLaunchTypes.All:
                             case AppLinkLaunchTypes.None:

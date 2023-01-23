@@ -146,7 +146,7 @@ namespace JumpPoint.Uwp
             if (ViewModel.Tabs.Count > 1)
             {
                 var result = await ServiceLocator.DialogService.ShowMessage($"You are about to close {ViewModel.Tabs.Count} tabs. Are you sure you want to continue?",
-                "Confirm exit", "Close", "Cancel");
+                "Confirm exit", "Close", "Cancel", ServiceLocator.AppSettings.Theme);
                 if (!result)
                 {
                     e.Handled = true;
