@@ -41,7 +41,7 @@ namespace JumpPoint.ViewModels.Helpers
             Favorites = new ShellItem()
             {
                 Type = ShellItemType.Item,
-                Content = nameof(AppPath.Favorites),
+                Content = AppPath.Favorites,
                 Key = ViewModelKeys.Favorites,
                 Parameter = null,
                 Tag = AppPath.Favorites,
@@ -50,7 +50,7 @@ namespace JumpPoint.ViewModels.Helpers
             Workspaces = new ShellItem()
             {
                 Type = ShellItemType.Item,
-                Content = nameof(AppPath.Workspaces),
+                Content = AppPath.Workspaces,
                 Key = ViewModelKeys.Workspaces,
                 Parameter = null,
                 Tag = AppPath.Workspaces,
@@ -67,7 +67,7 @@ namespace JumpPoint.ViewModels.Helpers
             Drives = new ShellItem()
             {
                 Type = ShellItemType.Item,
-                Content = nameof(AppPath.Drives),
+                Content = AppPath.Drives,
                 Key = ViewModelKeys.Drives,
                 Parameter = null,
                 Tag = AppPath.Drives,
@@ -76,7 +76,7 @@ namespace JumpPoint.ViewModels.Helpers
             CloudDrives = new ShellItem()
             {
                 Type = ShellItemType.Item,
-                Content = AppPath.CloudDrives.Humanize(),
+                Content = AppPath.CloudDrives,
                 Key = ViewModelKeys.CloudDrives,
                 Parameter = null,
                 Tag = AppPath.CloudDrives,
@@ -85,7 +85,7 @@ namespace JumpPoint.ViewModels.Helpers
             WSL = new ShellItem()
             {
                 Type = ShellItemType.Item,
-                Content = AppPath.WSL.Humanize(),
+                Content = AppPath.WSL,
                 Key = ViewModelKeys.WSL,
                 Parameter = null,
                 Tag = AppPath.WSL,
@@ -97,7 +97,7 @@ namespace JumpPoint.ViewModels.Helpers
                 new ShellItem()
                 {
                     Type = ShellItemType.Item,
-                    Content = AppPath.Dashboard.Humanize(),
+                    Content = AppPath.Dashboard,
                     Key = ViewModelKeys.Dashboard,
                     Parameter = null,
                     Tag = AppPath.Dashboard
@@ -113,7 +113,7 @@ namespace JumpPoint.ViewModels.Helpers
                 new ShellItem()
                 {
                     Type = ShellItemType.Item,
-                    Content = AppPath.AppLinks.Humanize(),
+                    Content = AppPath.AppLinks,
                     Key = ViewModelKeys.AppLinks,
                     Parameter = null,
                     Tag = AppPath.AppLinks
@@ -124,7 +124,7 @@ namespace JumpPoint.ViewModels.Helpers
                 new ShellItem()
                 {
                     Type = ShellItemType.Item,
-                    Content = AppPath.ClipboardManager.Humanize(),
+                    Content = AppPath.ClipboardManager,
                     Key = ViewModelKeys.ClipboardManager,
                     Parameter = null,
                     Tag = AppPath.ClipboardManager
@@ -132,7 +132,7 @@ namespace JumpPoint.ViewModels.Helpers
                 new ShellItem()
                 {
                     Type = ShellItemType.Item,
-                    Content = "Chat",
+                    Content = AppPath.Chat,
                     Key = ViewModelKeys.Chatbot,
                     Parameter = null,
                     Tag = AppPath.Chat
@@ -463,10 +463,10 @@ namespace JumpPoint.ViewModels.Helpers
             {
                 CloudDrives.Children.Clear();
 
-                var accs = await CloudStorageService.GetAccounts();
-                foreach (var item in accs)
+                var drives = await CloudStorageService.GetDrives();
+                foreach (var item in drives)
                 {
-                    CloudDrives.Children.Add(GetShellItem(item, item.Provider.ToDriveTemplate()));
+                    CloudDrives.Children.Add(GetShellItem(item));
                 }
             }
         }
@@ -615,18 +615,6 @@ namespace JumpPoint.ViewModels.Helpers
                 Key = null,
                 Parameter = TabbedNavigationHelper.GetParameter(appLink),
                 Tag = null
-            };
-        }
-
-        public static ShellItem GetShellItem(CloudAccount account, DriveTemplate driveTemplate)
-        {
-            return new ShellItem()
-            {
-                Type = ShellItemType.Item,
-                Content = $"{account.Name} ({account.Email})",
-                Key = ViewModelKeys.Drive,
-                Parameter = TabbedNavigationHelper.GetParameter(account),
-                Tag = driveTemplate
             };
         }
 

@@ -1964,8 +1964,6 @@
                             <EntranceThemeTransition IsStaggeringEnabled="False"
                                                      x:Name="entranceTransition" />
                             <AddDeleteThemeTransition />
-                            <!--<ReorderThemeTransition />
-                    <RepositionThemeTransition />-->
                         </TransitionCollection>
                     </ListView.ItemContainerTransitions>
                     <i:Interaction.Behaviors>
@@ -2047,7 +2045,7 @@
                             x:Name="quickActions" />
         </StackPanel>
 
-        <Canvas HorizontalAlignment="Stretch"
+        <!--<Canvas HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 Grid.Row="1">
             <Rectangle x:Name="rectRubberBand"
@@ -2059,6 +2057,6 @@
                        Opacity=".5"
                        Stroke="{ThemeResource SystemAccentColorLight1}"
                        StrokeThickness="1" />
-        </Canvas>
+        </Canvas>-->
     </Grid>
 </UserControl>

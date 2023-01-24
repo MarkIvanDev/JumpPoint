@@ -28,6 +28,8 @@ using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.ViewModels.Dialogs.Clipboard;
 using System.Diagnostics;
 using JumpPoint.Platform.Items.CloudStorage;
+using NittyGritty.Models;
+using Humanizer;
 
 namespace JumpPoint.ViewModels.Helpers
 {
@@ -373,6 +375,62 @@ namespace JumpPoint.ViewModels.Helpers
                     {
                         await dialogService.ShowMessage("You may need permission to perform this action", "Destination Folder Access Denied", appSettings.Theme);
                     }
+                }
+            }));
+
+        #endregion
+
+        #region Sidebar
+
+        private AsyncRelayCommand<ShellItem> _OpenShellItemInNewWindow;
+        public AsyncRelayCommand<ShellItem> OpenShellItemInNewWindowCommand => _OpenShellItemInNewWindow ?? (_OpenShellItemInNewWindow = new AsyncRelayCommand<ShellItem>(
+            async (item) =>
+            {
+                if (item?.Content is null) return;
+                if (item.Content is JumpPointItem jpItem)
+                {
+                    switch (jpItem.Type)
+                    {
+                        case JumpPointItemType.Drive:
+                            await JumpPointService.OpenNewWindow(AppPath.Drive, jpItem.Path);
+                            break;
+                        case JumpPointItemType.Folder:
+                            await JumpPointService.OpenNewWindow(AppPath.Folder, jpItem.Path);
+                            break;
+                        case JumpPointItemType.Workspace:
+                            await JumpPointService.OpenNewWindow(AppPath.Workspace, jpItem.Path);
+                            break;
+                        case JumpPointItemType.File:
+                        case JumpPointItemType.AppLink:
+                        case JumpPointItemType.Library:
+                        case JumpPointItemType.Unknown:
+                        default:
+                            break;
+                    }
+                }
+                else if (item.Content is AppPath appPath)
+                {
+                    await JumpPointService.OpenNewWindow(appPath, appPath.Humanize());
+                }
+                
+            }));
+
+        private AsyncRelayCommand<ShellItem> _CopyShellItemPath;
+        public AsyncRelayCommand<ShellItem> CopyShellItemPathCommand => _CopyShellItemPath ?? (_CopyShellItemPath = new AsyncRelayCommand<ShellItem>(
+            async (item) =>
+            {
+                if (item?.Content is null) return;
+                switch (item.Content)
+                {
+                    case JumpPointItem jpItem:
+                        await Clipboard.SetTextAsync(jpItem.Path);
+                        break;
+                    case AppPath appPath:
+                        await Clipboard.SetTextAsync(appPath.Humanize());
+                        break;
+                    default:
+                        await Clipboard.SetTextAsync(item.Content.ToString());
+                        break;
                 }
             }));
 

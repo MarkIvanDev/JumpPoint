@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
+using Humanizer;
 using JumpPoint.Platform;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.CloudStorage;
@@ -122,6 +123,23 @@ namespace JumpPoint.ViewModels
                         ViewModelLocator.Instance.DisposeTab(key);
                     }
                 }
+            }));
+
+        private AsyncRelayCommand<ShellItem> _OpenShellItemInNewTab;
+        public AsyncRelayCommand<ShellItem> OpenShellItemInNewTabCommand => _OpenShellItemInNewTab ?? (_OpenShellItemInNewTab = new AsyncRelayCommand<ShellItem>(
+            async (item) =>
+            {
+                if (item?.Content is null) return;
+                var currentIndex = Tabs.IndexOf(CurrentTab);
+                if (item.Content is JumpPointItem jpItem)
+                {
+                    OpenItemInNewTab(currentIndex, jpItem);
+                }
+                else if (item.Content is AppPath appPath)
+                {
+                    NewTab(currentIndex != -1 ? currentIndex += 1 : currentIndex, appPath, TabbedNavigationHelper.GetParameter(appPath, appPath.Humanize(), null));
+                }
+                await Task.CompletedTask;
             }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _OpenPathInNewTab;

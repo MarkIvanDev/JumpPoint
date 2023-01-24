@@ -29,7 +29,8 @@
     xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
     xmlns:commands="using:JumpPoint.ViewModels.Commands"
     xmlns:helpers="using:JumpPoint.Uwp.Helpers"
-    mc:Ignorable="d"
+                   xmlns:platform="using:JumpPoint.Platform"
+                   mc:Ignorable="d"
     extensions:ApplicationViewExtensions.Title="{x:Bind ViewModel.CurrentTab.Context.PathInfo.DisplayName, Mode=OneWay}"
     extensions:TitleBarExtensions.ButtonBackgroundColor="Transparent"
     extensions:TitleBarExtensions.ButtonInactiveBackgroundColor="Transparent"
@@ -61,6 +62,15 @@
                                FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
                 </DataTemplate>
             </converters:ShellItemContentTemplateSelector.JumpPointItem>
+            <converters:ShellItemContentTemplateSelector.AppPath>
+                <DataTemplate x:DataType="platform:AppPath">
+                    <TextBlock Text="{x:Bind Converter={StaticResource HumanizerConverter}, Mode=OneWay}"
+                               FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                               FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}" />
+                </DataTemplate>
+            </converters:ShellItemContentTemplateSelector.AppPath>
         </converters:ShellItemContentTemplateSelector>
 
         <DataTemplate x:Key="ItemTemplate"
@@ -69,6 +79,20 @@
                                       MenuItemsSource="{x:Bind Children, Mode=OneWay}"
                                       SelectsOnInvoked="{x:Bind converters:NavigationViewItemConverter.SelectsOnInvoked(Key), Mode=OneWay}"
                                       Tag="{x:Bind Mode=OneWay}">
+                <winui:NavigationViewItem.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem CommandParameter="{x:Bind Mode=OneWay}"
+                                        Command="{StaticResource OpenShellItemInNewTabCommand}"
+                                        IsEnabled="{x:Bind commands:Sidebar.IsOpenInNewTabEnabled(Content), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}"/>
+                        <MenuFlyoutItem CommandParameter="{x:Bind Mode=OneWay}"
+                                        Command="{StaticResource OpenShellItemInNewWindowCommand}"
+                                        IsEnabled="{x:Bind commands:Sidebar.IsOpenInNewWindowEnabled(Content), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutItem CommandParameter="{x:Bind Mode=OneWay}"
+                                        Command="{StaticResource CopyShellItemPathCommand}" />
+                    </MenuFlyout>
+                </winui:NavigationViewItem.ContextFlyout>
                 <ContentControl Content="{x:Bind Content, Mode=OneWay}"
                                 ContentTemplateSelector="{StaticResource ShellItemContentTemplateSelector}" />
                 <ToolTipService.ToolTip>
