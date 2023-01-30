@@ -33,7 +33,6 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
@@ -115,15 +114,7 @@
                    Grid.Column="1"
                    TextWrapping="Wrap" />
 
-        <TextBlock Text="Size on Disk:"
-                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
-                   Grid.Row="8" />
-        <TextBlock Text="{x:Bind File.SizeOnDisk, Mode=OneWay, Converter={StaticResource ByteSizeConverter}}"
-                   Grid.Row="8"
-                   Grid.Column="1"
-                   TextWrapping="Wrap" />
-
-        <Grid Grid.Row="9"
+        <Grid Grid.Row="8"
               Grid.ColumnSpan="2"
               Margin="0,4">
             <Grid.ColumnDefinitions>
@@ -188,7 +179,7 @@
             </winui:SplitButton>
         </Grid>
 
-        <MenuFlyoutSeparator Grid.Row="10"
+        <MenuFlyoutSeparator Grid.Row="9"
                              Grid.ColumnSpan="2" />
     </Grid>
 </UserControl>

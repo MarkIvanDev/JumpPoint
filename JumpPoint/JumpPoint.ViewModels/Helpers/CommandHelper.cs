@@ -264,6 +264,28 @@ namespace JumpPoint.ViewModels.Helpers
             }
         }
 
+        public async Task<CloudAccount> AddCloudAccount(CloudStorageProvider provider)
+        {
+            IDictionary<string, string> data = null;
+            if (CloudStorageService.TryGetAccountProperties(provider, out var keys))
+            {
+                if (keys.Count > 0)
+                {
+                    var dataViewModel = new AddCloudAccountViewModel(provider, keys);
+                    var result = await dialogService.Show(DialogKeys.AddCloudAccount, dataViewModel, appSettings.Theme);
+                    if (result)
+                    {
+                        data = dataViewModel.GetData();
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+            return await CloudStorageService.AddAccount(provider, data);
+        }
+
         #region Navigation Bar
 
         #region Direction Commands

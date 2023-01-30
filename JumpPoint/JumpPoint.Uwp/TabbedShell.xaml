@@ -1379,7 +1379,7 @@
                                     <Run Text="{x:Bind ViewModel.CurrentTab.Context.ItemStats.HasItemsWithNoSizes, Converter={StaticResource HasNullFileSizeIndicatorConverter}, Mode=OneWay}" />
                                 </TextBlock>
                                 <controls:IconButton Grid.Column="1"
-                                                     IconSource="{StaticResource QuestionIcon}"
+                                                     IconSource="{StaticResource ChevronDownIcon}"
                                                      IsCompact="True"
                                                      Flyout="{StaticResource AllItemsFlyout}" />
                             </Grid>
@@ -1508,7 +1508,7 @@
                                     <Run Text="{x:Bind ViewModel.CurrentTab.Context.SelectedItemStats.HasItemsWithNoSizes, Converter={StaticResource HasNullFileSizeIndicatorConverter}, Mode=OneWay}" />
                                 </TextBlock>
                                 <controls:IconButton Grid.Column="1"
-                                                     IconSource="{StaticResource QuestionIcon}"
+                                                     IconSource="{StaticResource ChevronDownIcon}"
                                                      IsCompact="True"
                                                      Flyout="{StaticResource SelectedItemsFlyout}"/>
                             </Grid>

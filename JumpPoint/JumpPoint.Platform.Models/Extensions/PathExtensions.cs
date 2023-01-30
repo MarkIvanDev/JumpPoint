@@ -20,6 +20,11 @@ namespace JumpPoint.Platform.Models.Extensions
                 path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar).Trim();
         }
 
+        public static string NormalizeDirPath(this string path)
+        {
+            return path?.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar).Trim().WithEnding($"{Path.DirectorySeparatorChar}");
+        }
+
         public static PathKind GetPathKind(this string path)
         {
             if (string.IsNullOrEmpty(path)) return PathKind.Unknown;

@@ -262,7 +262,7 @@ namespace JumpPoint.ViewModels.Helpers
                     {
                         foreach (var jpi in message.Items)
                         {
-                            if (jpi.Type == JumpPointItemType.Workspace && jpi.Type == JumpPointItemType.Drive && jpi.Type == JumpPointItemType.Folder &&
+                            if ((jpi.Type == JumpPointItemType.Workspace || jpi.Type == JumpPointItemType.Drive || jpi.Type == JumpPointItemType.Folder) &&
                                 Favorites.Children.FirstOrDefault(i =>
                                     i.Content is JumpPointItem item && item.Type == jpi.Type &&
                                     item.Path == jpi.Path) is null)

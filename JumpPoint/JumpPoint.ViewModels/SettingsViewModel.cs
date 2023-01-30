@@ -19,17 +19,20 @@ using JumpPoint.Platform.Items.CloudStorage;
 using System.Linq;
 using JumpPoint.Platform.Extensions;
 using Glif.Pickers;
+using JumpPoint.ViewModels.Helpers;
 
 namespace JumpPoint.ViewModels
 {
     public class SettingsViewModel : ShellContextViewModelBase
     {
         private readonly IDialogService dialogService;
+        private readonly CommandHelper commandHelper;
         private readonly AppSettings appSettings;
 
-        public SettingsViewModel(IDialogService dialogService, IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
+        public SettingsViewModel(IDialogService dialogService, IShortcutService shortcutService, CommandHelper commandHelper, AppSettings appSettings) : base(shortcutService, appSettings)
         {
             this.dialogService = dialogService;
+            this.commandHelper = commandHelper;
             this.appSettings = appSettings;
         }
 
@@ -90,24 +93,7 @@ namespace JumpPoint.ViewModels
             {
                 if (provider.HasValue)
                 {
-                    IDictionary<string, string> data = null;
-                    if (CloudStorageService.TryGetAccountProperties(provider.Value, out var keys))
-                    {
-                        if (keys.Count > 0)
-                        {
-                            var dataViewModel = new AddCloudAccountViewModel(provider.Value, keys);
-                            var result = await dialogService.Show(DialogKeys.AddCloudAccount, dataViewModel, appSettings.Theme);
-                            if (result)
-                            {
-                                data = dataViewModel.GetData();
-                            }
-                            else
-                            {
-                                return;
-                            }
-                        }
-                    }
-                    var account = await CloudStorageService.AddAccount(provider.Value, data);
+                    var account = await commandHelper.AddCloudAccount(provider.Value);
                     if (account != null)
                     {
                         var group = Accounts.FirstOrDefault(g => g.Key == account.Provider);
