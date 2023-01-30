@@ -214,6 +214,23 @@ namespace JumpPoint.ViewModels
                 ViewModelLocator.Instance.DisposeTab(tab.Key);
             }));
 
+        private RelayCommand _CloseDetailsPane;
+        public RelayCommand CloseDetailsPaneCommand => _CloseDetailsPane ?? (_CloseDetailsPane = new RelayCommand(
+            () =>
+            {
+                appSettings.ShowDetailsPane = false;
+            }));
+
+        private AsyncRelayCommand<AppPath?> _OpenAppPathInNewWindow;
+        public AsyncRelayCommand<AppPath?> OpenAppPathInNewWindowCommand => _OpenAppPathInNewWindow ?? (_OpenAppPathInNewWindow = new AsyncRelayCommand<AppPath?>(
+            async (appPath) =>
+            {
+                if (appPath.HasValue)
+                {
+                    await JumpPointService.OpenNewWindow(appPath.Value, appPath.Humanize());
+                }
+            }));
+
         #region Pane
 
         public ShellItems ShellItems { get; }

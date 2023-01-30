@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Text;
 using Windows.UI.Xaml.Data;
-using JumpPoint.Platform.Items.Templates;
+using JumpPoint.Platform.Items.Storage;
 
 namespace JumpPoint.Uwp.Converters
 {
-    public class IsGeneralFolderTemplateConverter : IValueConverter
+    public class IsRegularFolderTypeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return value is FolderTemplate template && template == FolderTemplate.General;
+            return value is FolderType type && type == FolderType.Regular;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

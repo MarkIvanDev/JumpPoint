@@ -100,8 +100,14 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\AppLinkDetails.xaml.cs">
+      <DependentUpon>AppLinkDetails.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\AttributeIcon.xaml.cs">
       <DependentUpon>AttributeIcon.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AttributesDetails.xaml.cs">
+      <DependentUpon>AttributesDetails.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\AudioPropertiesControl.xaml.cs">
       <DependentUpon>AudioPropertiesControl.xaml</DependentUpon>
@@ -112,10 +118,19 @@
     <Compile Include="Controls\DocumentPropertiesControl.xaml.cs">
       <DependentUpon>DocumentPropertiesControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DriveDetails.xaml.cs">
+      <DependentUpon>DriveDetails.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DrmPropertiesControl.xaml.cs">
       <DependentUpon>DrmPropertiesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Expander.cs" />
+    <Compile Include="Controls\FileDetails.xaml.cs">
+      <DependentUpon>FileDetails.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FolderDetails.xaml.cs">
+      <DependentUpon>FolderDetails.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\GpsPropertiesControl.xaml.cs">
       <DependentUpon>GpsPropertiesControl.xaml</DependentUpon>
     </Compile>
@@ -124,6 +139,7 @@
     <Compile Include="Controls\ImagePropertiesControl.xaml.cs">
       <DependentUpon>ImagePropertiesControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ItemDetails.cs" />
     <Compile Include="Controls\JumpPointViewer.xaml.cs">
       <DependentUpon>JumpPointViewer.xaml</DependentUpon>
     </Compile>
@@ -145,6 +161,9 @@
     <Compile Include="Controls\VideoPropertiesControl.xaml.cs">
       <DependentUpon>VideoPropertiesControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\WorkspaceDetails.xaml.cs">
+      <DependentUpon>WorkspaceDetails.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\AppBarSeparatorVisibilityConverter.cs" />
     <Compile Include="Converters\AppLinkUtilityConverter.cs" />
     <Compile Include="Converters\AppThemeConverter.cs" />
@@ -162,8 +181,9 @@
     <Compile Include="Converters\HiddenOpacityConverter.cs" />
     <Compile Include="Converters\HumanizerConverter.cs" />
     <Compile Include="Converters\IconConverter.cs" />
+    <Compile Include="Converters\IconSourceElementExtension.cs" />
     <Compile Include="Converters\IsEqualConverter.cs" />
-    <Compile Include="Converters\IsGeneralFolderTemplateConverter.cs" />
+    <Compile Include="Converters\IsRegularFolderTypeConverter.cs" />
     <Compile Include="Converters\ItemIconConverter.cs" />
     <Compile Include="Converters\MessageTypeTemplateSelector.cs" />
     <Compile Include="Converters\NavigationViewItemConverter.cs" />
@@ -179,8 +199,10 @@
     <Compile Include="Converters\Properties\PropertyValueConverter.cs" />
     <Compile Include="Converters\Properties\ThumbnailConverter.cs" />
     <Compile Include="Converters\NavigationViewItemInvokedEventArgsConverter.cs" />
+    <Compile Include="Converters\QuantityHumanizerConverter.cs" />
     <Compile Include="Converters\Selectors\ClipboardItemTemplateSelector.cs" />
     <Compile Include="Converters\Selectors\CloudAccountPropertyTemplateSelector.cs" />
+    <Compile Include="Converters\Selectors\ItemDetailsTemplateSelector.cs" />
     <Compile Include="Converters\ShellItemContentTemplateSelector.cs" />
     <Compile Include="Converters\StringConverter.cs" />
     <Compile Include="Converters\UriOrStreamToBitmapImageConverter.cs" />
@@ -287,6 +309,7 @@
     <Compile Include="Interactivity\Behaviors\ScrollIncreaseButtonBehavior.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\DataTemplates.cs" />
     <Compile Include="Standalone\ClipboardManagerPage.xaml.cs">
       <DependentUpon>ClipboardManagerPage.xaml</DependentUpon>
     </Compile>
@@ -4837,7 +4860,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\AppLinkDetails.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\AttributeIcon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\AttributesDetails.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4853,7 +4884,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\DriveDetails.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\DrmPropertiesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\FileDetails.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\FolderDetails.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4886,6 +4929,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\VideoPropertiesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\WorkspaceDetails.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4986,6 +5033,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Hosted\ShareAppLinkPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\DataTemplates.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

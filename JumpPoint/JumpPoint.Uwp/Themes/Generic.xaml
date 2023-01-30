@@ -951,25 +951,39 @@
                                               FooterMenuItemsSource="{TemplateBinding FooterMenuItemsSource}"
                                               PaneDisplayMode="Left"
                                               Canvas.ZIndex="0">
-                            
-                            <ItemsControl ItemsSource="{TemplateBinding TabItemsSource}"
-                                          ItemTemplate="{TemplateBinding TabItemTemplate}"
-                                          HorizontalAlignment="Stretch"
-                                          VerticalAlignment="Stretch">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <Grid />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemContainerStyle>
-                                    <Style TargetType="ContentPresenter">
-                                        <Setter Property="HorizontalContentAlignment"
-                                                Value="Stretch" />
-                                        <Setter Property="VerticalContentAlignment"
-                                                Value="Stretch" />
-                                    </Style>
-                                </ItemsControl.ItemContainerStyle>
-                            </ItemsControl>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ItemsControl ItemsSource="{TemplateBinding TabItemsSource}"
+                                              ItemTemplate="{TemplateBinding TabItemTemplate}"
+                                              HorizontalAlignment="Stretch"
+                                              VerticalAlignment="Stretch">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Grid />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style TargetType="ContentPresenter">
+                                            <Setter Property="HorizontalContentAlignment"
+                                                    Value="Stretch" />
+                                            <Setter Property="VerticalContentAlignment"
+                                                    Value="Stretch" />
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
+                                </ItemsControl>
+
+                                <ContentPresenter Grid.Column="1"
+                                                  Width="320"
+                                                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                  Content="{TemplateBinding DetailsPane}"
+                                                  HorizontalAlignment="Stretch"
+                                                  VerticalAlignment="Stretch"
+                                                  Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsDetailsPaneOpen, Mode=OneWay, Converter={StaticResource VisibleWhenTrueConverter}}" />
+                            </Grid>
                         </winui:NavigationView>
                     </Grid>
                 </ControlTemplate>

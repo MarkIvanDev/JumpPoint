@@ -52,7 +52,11 @@ namespace JumpPoint.Platform.Items
         public ulong AppLinkCount
         {
             get { return _appLinkCount; }
-            set { Set(ref _appLinkCount, value); }
+            set
+            {
+                Set(ref _appLinkCount, value);
+                RaisePropertyChanged(nameof(ItemCount));
+            }
         }
 
         private ulong driveCount;
@@ -60,7 +64,11 @@ namespace JumpPoint.Platform.Items
         public ulong DriveCount
         {
             get { return driveCount; }
-            set { Set(ref driveCount, value); }
+            set
+            {
+                Set(ref driveCount, value);
+                RaisePropertyChanged(nameof(ItemCount));
+            }
         }
 
         private ulong folderCount;
@@ -68,7 +76,11 @@ namespace JumpPoint.Platform.Items
         public ulong FolderCount
         {
             get { return folderCount; }
-            set { Set(ref folderCount, value); }
+            set
+            {
+                Set(ref folderCount, value);
+                RaisePropertyChanged(nameof(ItemCount));
+            }
         }
 
         private ulong fileCount;
@@ -76,8 +88,14 @@ namespace JumpPoint.Platform.Items
         public ulong FileCount
         {
             get { return fileCount; }
-            set { Set(ref fileCount, value); }
+            set
+            {
+                Set(ref fileCount, value);
+                RaisePropertyChanged(nameof(ItemCount));
+            }
         }
+
+        public ulong ItemCount => DriveCount + FolderCount + FileCount + AppLinkCount;
 
     }
 

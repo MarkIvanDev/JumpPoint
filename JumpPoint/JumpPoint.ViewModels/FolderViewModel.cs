@@ -36,8 +36,6 @@ namespace JumpPoint.ViewModels
         protected override async Task Refresh(CancellationToken token)
         {
             Item = await StorageService.GetFolder(PathInfo.Path, StorageType);
-            //Item = PathInfo.Parameter is TabParameter tab && tab.Parameter is FolderBase fb ?
-            //    fb : await StorageService.GetFolder(PathInfo.Path, StorageType);
 
             if (!(Item is FolderBase folder))
             {

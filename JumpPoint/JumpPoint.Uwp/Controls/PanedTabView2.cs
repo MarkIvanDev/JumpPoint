@@ -271,6 +271,30 @@ namespace JumpPoint.Uwp.Controls
 
 
 
+        public bool IsDetailsPaneOpen
+        {
+            get { return (bool)GetValue(IsDetailsPaneOpenProperty); }
+            set { SetValue(IsDetailsPaneOpenProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for IsDetailsPaneOpen.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsDetailsPaneOpenProperty =
+            DependencyProperty.Register("IsDetailsPaneOpen", typeof(bool), typeof(PanedTabView2), new PropertyMetadata(false));
+
+
+
+        public object DetailsPane
+        {
+            get { return (object)GetValue(DetailsPaneProperty); }
+            set { SetValue(DetailsPaneProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for DetailsPane.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DetailsPaneProperty =
+            DependencyProperty.Register("DetailsPane", typeof(object), typeof(PanedTabView2), new PropertyMetadata(null));
+
+
+
         public event TypedEventHandler<MUXC.NavigationView, MUXC.NavigationViewItemInvokedEventArgs> ItemInvoked;
         private ListView TabHeaderList;
         private Grid TabHeaderGrid;

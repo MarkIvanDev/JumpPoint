@@ -1,0 +1,194 @@
+﻿<UserControl
+    x:Class="JumpPoint.Uwp.Controls.FileDetails"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JumpPoint.Uwp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:JumpPoint.Uwp.Converters"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:behaviors="using:JumpPoint.Uwp.Interactivity.Behaviors"
+    xmlns:gtext="using:Glif.Core.Text"
+    xmlns:helpers="using:JumpPoint.Uwp.Helpers"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+    xmlns:commands="using:JumpPoint.ViewModels.Commands"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid RowSpacing="4"
+          ColumnSpacing="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.5*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Image Source="{x:Bind converters:FileThumbnailConverter.Convert(File.FileType, File.Thumbnail, 28, 0), Mode=OneWay}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Width="28"
+                   Height="28"/>
+            <TextBlock Text="{x:Bind File.DisplayName}"
+                       Grid.Column="1"
+                       Margin="8,0"
+                       TextTrimming="CharacterEllipsis"
+                       VerticalAlignment="Center"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}">
+                <i:Interaction.Behaviors>
+                    <behaviors:FontFamilyBehavior FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
+                </i:Interaction.Behaviors>
+            </TextBlock>
+        </Grid>
+
+        <TextBlock Text="File Type:"
+                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                   Grid.Row="1" />
+        <TextBlock Text="{x:Bind File.FileType, Mode=OneWay}"
+                   Grid.Row="1"
+                   Grid.Column="1"
+                   TextWrapping="Wrap" />
+
+        <TextBlock Text="Path:"
+                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                   Grid.Row="2" />
+        <TextBlock Text="{x:Bind File.Path, Mode=OneWay}"
+                   Grid.Row="2"
+                   Grid.Column="1"
+                   TextWrapping="Wrap" />
+
+        <TextBlock Text="Date Created:"
+                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                   Grid.Row="3" />
+        <TextBlock Text="{x:Bind File.DateCreated, Mode=OneWay, Converter={StaticResource NullableDateTimeOffsetToLocalConverter}}"
+                   Grid.Row="3"
+                   Grid.Column="1"
+                   TextWrapping="Wrap" />
+
+        <TextBlock Text="Date Modified:"
+                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                   Grid.Row="4" />
+        <TextBlock Text="{x:Bind File.DateModified, Mode=OneWay, Converter={StaticResource NullableDateTimeOffsetToLocalConverter}}"
+                   Grid.Row="4"
+                   Grid.Column="1"
+                   TextWrapping="Wrap" />
+
+        <TextBlock Text="Date Accessed:"
+                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                   Grid.Row="5" />
+        <TextBlock Text="{x:Bind File.DateAccessed, Mode=OneWay, Converter={StaticResource NullableDateTimeOffsetToLocalConverter}}"
+                   Grid.Row="5"
+                   Grid.Column="1"
+                   TextWrapping="Wrap" />
+
+        <TextBlock Text="Attributes:"
+                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                   Grid.Row="6" />
+        <local:AttributesDetails Grid.Row="6"
+                                 Grid.Column="1"
+                                 Data="{x:Bind File.Attributes, Mode=OneWay}" />
+
+        <TextBlock Text="Size:"
+                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                   Grid.Row="7" />
+        <TextBlock Text="{x:Bind File.Size, Mode=OneWay, Converter={StaticResource ByteSizeConverter}}"
+                   Grid.Row="7"
+                   Grid.Column="1"
+                   TextWrapping="Wrap" />
+
+        <TextBlock Text="Size on Disk:"
+                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                   Grid.Row="8" />
+        <TextBlock Text="{x:Bind File.SizeOnDisk, Mode=OneWay, Converter={StaticResource ByteSizeConverter}}"
+                   Grid.Row="8"
+                   Grid.Column="1"
+                   TextWrapping="Wrap" />
+
+        <Grid Grid.Row="9"
+              Grid.ColumnSpan="2"
+              Margin="0,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <local:IconButton IsCompact="True"
+                              VerticalAlignment="Stretch"
+                              IconSource="{StaticResource ItemsPropertiesIcon}"
+                              CommandParameter="{x:Bind File, Mode=OneWay}"
+                              Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemPropertiesCommand}"
+                              Visibility="{x:Bind IsInDetailsPane, Mode=OneWay, Converter={StaticResource VisibleWhenTrueConverter}}"
+                              Margin="0,0,8,0" />
+            <winui:SplitButton Grid.Column="1"
+                               HorizontalAlignment="Stretch"
+                               CommandParameter="{x:Bind File, Mode=OneWay}"
+                               Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemInNewWindowCommand}">
+                <StackPanel Orientation="Horizontal"
+                            Spacing="8">
+                    <IconSourceElement IconSource="{StaticResource OpenIcon}" />
+                    <TextBlock Text="Open" />
+                </StackPanel>
+                <winui:SplitButton.Flyout>
+                    <MenuFlyout Placement="BottomEdgeAlignedRight">
+                        <MenuFlyoutItem Text="Open with..."
+                                        Icon="{converters:IconSourceElement Source={StaticResource OpenWithIcon}}"
+                                        CommandParameter="{x:Bind File, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemWithCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsOpenWithEnabled(File), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutItem Text="Open in File Explorer"
+                                        Icon="{converters:IconSourceElement Source={StaticResource OpenItemsInFileExplorerIcon}}"
+                                        CommandParameter="{x:Bind File, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemInFileExplorerCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsOpenInFileExplorerEnabled(File), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem Text="Add to Workspace"
+                                        Icon="{converters:IconSourceElement Source={StaticResource AddItemsToWorkspaceIcon}}"
+                                        CommandParameter="{x:Bind File, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.AddItemToWorkspaceCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsAddToWorkspaceEnabled(File), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutItem Text="Add to Favorites"
+                                        Icon="{converters:IconSourceElement Source={StaticResource AddItemsToFavoritesIcon}}"
+                                        CommandParameter="{x:Bind File, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.AddItemToFavoritesCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsAddToFavoritesEnabled(File), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutItem Text="Remove from Favorites"
+                                        Icon="{converters:IconSourceElement Source={StaticResource RemoveItemsFromFavoritesIcon}}"
+                                        CommandParameter="{x:Bind File, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.RemoveItemFromFavoritesCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsRemoveFromFavoritesEnabled(File), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutItem Text="More Tools..."
+                                        Icon="{converters:IconSourceElement Source={StaticResource MoreToolsIcon}}"
+                                        CommandParameter="{x:Bind File, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.ItemMoreToolsCommand}" />
+                    </MenuFlyout>
+                </winui:SplitButton.Flyout>
+            </winui:SplitButton>
+        </Grid>
+
+        <MenuFlyoutSeparator Grid.Row="10"
+                             Grid.ColumnSpan="2" />
+    </Grid>
+</UserControl>

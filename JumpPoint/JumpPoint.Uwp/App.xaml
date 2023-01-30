@@ -7,7 +7,8 @@
     xmlns:ngconv="using:NittyGritty.Uwp.Converters"
     xmlns:convevent="using:JumpPoint.Uwp.Converters.EventArgs"
     xmlns:helpers="using:JumpPoint.Uwp.Helpers"
-    xmlns:conv="using:JumpPoint.Uwp.Converters">
+    xmlns:conv="using:JumpPoint.Uwp.Converters"
+           xmlns:resources="using:JumpPoint.Uwp.Resources">
 
     <uwp:NGApp.Resources>
         <ResourceDictionary>
@@ -19,6 +20,7 @@
                 <ResourceDictionary Source="ms-appx:///Resources/IconSources.xaml" />
                 <ResourceDictionary Source="ms-appx:///Resources/Commands.xaml" />
                 <ResourceDictionary Source="ms-appx:///Resources/CustomStyles.xaml" />
+                <resources:DataTemplates />
                 <ResourceDictionary>
                     <!--<Color x:Key="SystemAccentColor">#1B5EBF</Color>-->
                     <SolidColorBrush x:Key="SystemAccentBrush"
@@ -700,6 +702,15 @@
                             <Visibility>Visible</Visibility>
                         </ngconv:ValueWhenConverter.Otherwise>
                     </ngconv:ValueWhenConverter>
+                    <ngconv:ValueWhenConverter x:Key="VisibleWhenNullConverter"
+                                               When="{x:Null}">
+                        <ngconv:ValueWhenConverter.Value>
+                            <Visibility>Visible</Visibility>
+                        </ngconv:ValueWhenConverter.Value>
+                        <ngconv:ValueWhenConverter.Otherwise>
+                            <Visibility>Collapsed</Visibility>
+                        </ngconv:ValueWhenConverter.Otherwise>
+                    </ngconv:ValueWhenConverter>
                     <ngconv:NullValueConverter x:Key="ZeroWhenNullConverter">
                         <ngconv:NullValueConverter.Value>
                             <x:Double>0</x:Double>
@@ -735,8 +746,8 @@
                             <ListViewSelectionMode>Extended</ListViewSelectionMode>
                         </ngconv:BooleanValueConverter.FalseValue>
                     </ngconv:BooleanValueConverter>
-                    <ngconv:ChainConverter x:Key="CollapsedWhenGeneralFolderConverter">
-                        <conv:IsGeneralFolderTemplateConverter />
+                    <ngconv:ChainConverter x:Key="CollapsedWhenRegularFolderConverter">
+                        <conv:IsRegularFolderTypeConverter />
                         <ngconv:BooleanValueConverter>
                             <ngconv:BooleanValueConverter.TrueValue>
                                 <Visibility>Collapsed</Visibility>
@@ -746,8 +757,8 @@
                             </ngconv:BooleanValueConverter.FalseValue>
                         </ngconv:BooleanValueConverter>
                     </ngconv:ChainConverter>
-                    <ngconv:ChainConverter x:Key="VisibleWhenGeneralFolderConverter">
-                        <conv:IsGeneralFolderTemplateConverter />
+                    <ngconv:ChainConverter x:Key="VisibleWhenRegularFolderConverter">
+                        <conv:IsRegularFolderTypeConverter />
                         <ngconv:BooleanValueConverter>
                             <ngconv:BooleanValueConverter.TrueValue>
                                 <Visibility>Visible</Visibility>
@@ -757,6 +768,7 @@
                             </ngconv:BooleanValueConverter.FalseValue>
                         </ngconv:BooleanValueConverter>
                     </ngconv:ChainConverter>
+
                     <convevent:ItemClickEventArgsConverter x:Key="ItemClickEventArgsConverter" />
                     <convevent:ItemDoubleClickEventArgsConverter x:Key="ItemDoubleClickEventArgsConverter" />
                     <conv:NavigationViewItemInvokedEventArgsConverter x:Key="NavigationViewItemInvokedEventArgsConverter" />
@@ -773,6 +785,7 @@
                     <conv:NullableUlongToDoubleConverter x:Key="NullableUlongToDoubleConverter" />
                     <conv:FontFamilyConverter x:Key="FontFamilyConverter" />
                     <conv:HiddenOpacityConverter x:Key="HiddenOpacityConverter" />
+                    <conv:QuantityHumanizerConverter x:Key="QuantityHumanizerConverter" />
                 </ResourceDictionary>
 
             </ResourceDictionary.MergedDictionaries>

@@ -171,19 +171,24 @@ namespace JumpPoint.ViewModels.Helpers
                 {
                     case NotifyCollectionChangedAction.Add:
                     case NotifyCollectionChangedAction.Replace:
-                        var item = GetShellItem(e.Drive);
-                        await MainThread.InvokeOnMainThreadAsync(() =>
+                        var drive = await PortableStorageService.GetDriveFromId(e.DeviceId);
+                        if (drive != null)
                         {
-                            if (existingItem != null)
+                            await JumpPointService.Load(drive);
+                            var item = GetShellItem(drive);
+                            await MainThread.InvokeOnMainThreadAsync(() =>
                             {
-                                var index = Drives.Children.IndexOf(existingItem);
-                                Drives.Children[index] = item;
-                            }
-                            else
-                            {
-                                Drives.Children.Add(item);
-                            }
-                        });
+                                if (existingItem != null)
+                                {
+                                    var index = Drives.Children.IndexOf(existingItem);
+                                    Drives.Children[index] = item;
+                                }
+                                else
+                                {
+                                    Drives.Children.Add(item);
+                                }
+                            });
+                        }
                         break;
 
                     case NotifyCollectionChangedAction.Remove:

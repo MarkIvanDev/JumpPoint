@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using JumpPoint.Platform.Items.CloudStorage;
 using JumpPoint.Platform.Items.WslStorage;
@@ -52,16 +53,20 @@ namespace JumpPoint.Platform.Items.Templates
         Camera = 65,
 
         // Cloud Kinds
+        [Description("OneDrive")]
         OneDrive = 501,
         Storj = 502,
+        [Description("OpenDrive")]
         OpenDrive = 503,
 
         // Wsl Kinds
         Ubuntu = 1001,
         Debian = 1002,
         Kali = 1003,
+        [Description("OpenSuse")]
         OpenSuse = 1004,
         SLES = 1005,
+        [Description("Fedora Remix")]
         FedoraRemix = 1006,
         Pengwin = 1007,
         Oracle = 1008,

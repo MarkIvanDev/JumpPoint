@@ -38,8 +38,6 @@ namespace JumpPoint.ViewModels
         protected override async Task Refresh(CancellationToken token)
         {
             Item = await StorageService.GetDrive(PathInfo.Path, StorageType);
-            //Item = PathInfo.Parameter is TabParameter tab && tab.Parameter is DriveBase db ?
-            //        db : await StorageService.GetDrive(PathInfo.Path, StorageType);
 
             if (!(Item is DriveBase drive))
             {

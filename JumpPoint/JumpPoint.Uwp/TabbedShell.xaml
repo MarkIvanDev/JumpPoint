@@ -29,8 +29,9 @@
     xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
     xmlns:commands="using:JumpPoint.ViewModels.Commands"
     xmlns:helpers="using:JumpPoint.Uwp.Helpers"
-                   xmlns:platform="using:JumpPoint.Platform"
-                   mc:Ignorable="d"
+    xmlns:platform="using:JumpPoint.Platform"
+    xmlns:jpselectors="using:JumpPoint.Uwp.Converters.Selectors"
+    mc:Ignorable="d"
     extensions:ApplicationViewExtensions.Title="{x:Bind ViewModel.CurrentTab.Context.PathInfo.DisplayName, Mode=OneWay}"
     extensions:TitleBarExtensions.ButtonBackgroundColor="Transparent"
     extensions:TitleBarExtensions.ButtonInactiveBackgroundColor="Transparent"
@@ -112,6 +113,206 @@
                                              ItemTemplate="{StaticResource ItemTemplate}"
                                              HeaderTemplate="{StaticResource HeaderTemplate}"
                                              SeparatorTemplate="{StaticResource SeparatorTemplate}" />
+        <DataTemplate x:Key="ItemStatsTemplate"
+                      x:DataType="models:ItemStats">
+            <Grid ColumnSpacing="8"
+                  RowSpacing="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Image Width="24"
+                       Height="24">
+                    <Image.Source>
+                        <BitmapImage DecodePixelHeight="24"
+                                     DecodePixelWidth="24"
+                                     DecodePixelType="Logical"
+                                     UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.Drive)}" />
+                    </Image.Source>
+                </Image>
+                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Drive', Drive, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                           Grid.Column="1"
+                           VerticalAlignment="Center" />
+
+                <Image Width="24"
+                       Height="24"
+                       Grid.Row="1">
+                    <Image.Source>
+                        <BitmapImage DecodePixelHeight="24"
+                                     DecodePixelWidth="24"
+                                     DecodePixelType="Logical"
+                                     UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.Folder)}" />
+                    </Image.Source>
+                </Image>
+                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Folder', Folder, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                           Grid.Column="1"
+                           Grid.Row="1"
+                           VerticalAlignment="Center" />
+
+                <Image Width="24"
+                       Height="24"
+                       Grid.Row="2">
+                    <Image.Source>
+                        <BitmapImage DecodePixelHeight="24"
+                                     DecodePixelWidth="24"
+                                     DecodePixelType="Logical"
+                                     UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.File)}" />
+                    </Image.Source>
+                </Image>
+                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('File', File, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                           Grid.Column="1"
+                           Grid.Row="2"
+                           VerticalAlignment="Center" />
+                <TextBlock Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                           Grid.Column="2"
+                           Grid.Row="2"
+                           VerticalAlignment="Center">
+                    <Run Text="{x:Bind FileSize, Converter={StaticResource ByteSizeConverter}, Mode=OneWay}" />
+                    <Run Text="{x:Bind HasNullFileSize, Converter={StaticResource HasNullFileSizeIndicatorConverter}, Mode=OneWay}" />
+                </TextBlock>
+
+                <Image Width="24"
+                       Height="24"
+                       Grid.Row="3">
+                    <Image.Source>
+                        <BitmapImage DecodePixelHeight="24"
+                                     DecodePixelWidth="24"
+                                     DecodePixelType="Logical"
+                                     UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.Workspace)}" />
+                    </Image.Source>
+                </Image>
+                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Workspace', Workspace, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                           Grid.Column="1"
+                           Grid.Row="3"
+                           VerticalAlignment="Center" />
+
+                <Image Width="24"
+                       Height="24"
+                       Grid.Row="4">
+                    <Image.Source>
+                        <BitmapImage DecodePixelHeight="24"
+                                     DecodePixelWidth="24"
+                                     DecodePixelType="Logical"
+                                     UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.AppLink)}" />
+                    </Image.Source>
+                </Image>
+                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('App link', AppLink, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                           Grid.Column="1"
+                           Grid.Row="4"
+                           VerticalAlignment="Center" />
+            </Grid>
+        </DataTemplate>
+        <Flyout x:Key="AllItemsFlyout"
+                Placement="TopEdgeAlignedLeft">
+            <Grid RowSpacing="4"
+                  MinWidth="240">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="ALL ITEMS"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('item', ViewModel.CurrentTab.Context.ItemStats.Total, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                           Grid.Row="1" />
+
+                <Button Grid.Column="1"
+                        Grid.RowSpan="2"
+                        MinWidth="0"
+                        MinHeight="0"
+                        VerticalAlignment="Top"
+                        Padding="4"
+                        Background="Transparent"
+                        BorderThickness="0">
+                    <FontIcon FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                              Glyph="&#xF639;"
+                              FontSize="18" />
+                    <Button.Flyout>
+                        <Flyout>
+                            <TextBlock Text="* Some sizes might be unavailable" />
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+                <ContentControl Content="{x:Bind ViewModel.CurrentTab.Context.ItemStats, Mode=OneWay}"
+                                ContentTemplate="{StaticResource ItemStatsTemplate}"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch"
+                                Grid.Row="2"
+                                Grid.ColumnSpan="2"
+                                Margin="0,8,0,0" />
+            </Grid>
+        </Flyout>
+        <Flyout x:Key="SelectedItemsFlyout"
+                Placement="TopEdgeAlignedLeft">
+            <Grid RowSpacing="4"
+                  MinWidth="240">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="SELECTED ITEMS"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('item', ViewModel.CurrentTab.Context.SelectedItems.Count, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                           Grid.Row="1" />
+                <Button Grid.Column="1"
+                        Grid.RowSpan="2"
+                        MinWidth="0"
+                        MinHeight="0"
+                        VerticalAlignment="Top"
+                        Padding="4"
+                        Background="Transparent"
+                        BorderThickness="0">
+                    <FontIcon FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                              Glyph="&#xF639;"
+                              FontSize="18" />
+                    <Button.Flyout>
+                        <Flyout>
+                            <TextBlock Text="* Some sizes might be unavailable" />
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+                <ContentControl Content="{x:Bind ViewModel.CurrentTab.Context.SelectedItemStats, Mode=OneWay}"
+                                ContentTemplate="{StaticResource ItemStatsTemplate}"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch"
+                                Grid.Row="2"
+                                Grid.ColumnSpan="2"
+                                Margin="0,8,0,0" />
+                <Button Grid.Row="3"
+                        Grid.ColumnSpan="2"
+                        Margin="0,8,0,0"
+                        HorizontalAlignment="Stretch"
+                        Visibility="{x:Bind ViewModel.CurrentTab.Context.SelectedItemStats.Total, Mode=OneWay, Converter={StaticResource VisibleWhenMoreThanZeroConverter}}"
+                        CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
+                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.ItemsPropertiesCommand}">
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="8">
+                        <FontIcon FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                                  Glyph="&#xF4A4;"
+                                  FontSize="18" />
+                        <TextBlock Text="Properties" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Flyout>
     </controls:PageBase.Resources>
 
     <Grid>
@@ -150,11 +351,6 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <!--<Grid.ChildrenTransitions>
-            <TransitionCollection>
-                <RepositionThemeTransition />
-            </TransitionCollection>
-        </Grid.ChildrenTransitions>-->
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -166,6 +362,7 @@
                                 FooterMenuItemsSource="{x:Bind ViewModel.ShellItems.Footer, Mode=OneWay}"
                                 MenuItemTemplateSelector="{StaticResource ShellItemTemplateSelector}"
                                 HeaderBackground="{ThemeResource TitleBarBackground}"
+                                IsDetailsPaneOpen="{x:Bind helpers:ServiceLocator.AppSettings.ShowDetailsPane, Mode=OneWay}"
                                 x:Name="panedTabView">
             <controls:PanedTabView2.TabHeaderTemplate>
                 <DataTemplate x:DataType="viewmodels:TabViewModel">
@@ -805,6 +1002,12 @@
                                                     <IconSourceElement IconSource="{StaticResource HiddenItemsIcon}" />
                                                 </ToggleMenuFlyoutItem.Icon>
                                             </ToggleMenuFlyoutItem>
+                                            <ToggleMenuFlyoutItem Text="Details Pane"
+                                                                  IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowDetailsPane, Mode=TwoWay}">
+                                                <ToggleMenuFlyoutItem.Icon>
+                                                    <IconSourceElement IconSource="{StaticResource DetailsPaneIcon}" />
+                                                </ToggleMenuFlyoutItem.Icon>
+                                            </ToggleMenuFlyoutItem>
                                             <MenuFlyoutSeparator />
                                             <ToggleMenuFlyoutItem Text="Back button"
                                                                   IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowBack, Mode=TwoWay}">
@@ -1042,6 +1245,13 @@
                                             <winui:RadioMenuFlyoutItem Command="{StaticResource ListLayoutCommand}"
                                                                        IsChecked="{x:Bind ViewModel.CurrentTab.Context.Settings.IsListLayout, Mode=TwoWay}"
                                                                        GroupName="Layout" />
+                                            <MenuFlyoutSeparator />
+                                            <ToggleMenuFlyoutItem Text="Details Pane"
+                                                                  IsChecked="{x:Bind helpers:ServiceLocator.AppSettings.ShowDetailsPane, Mode=TwoWay}">
+                                                <ToggleMenuFlyoutItem.Icon>
+                                                    <IconSourceElement IconSource="{StaticResource DetailsPaneIcon}" />
+                                                </ToggleMenuFlyoutItem.Icon>
+                                            </ToggleMenuFlyoutItem>
                                         </MenuFlyout>
                                     </controls:IconButton.Flyout>
                                 </controls:IconButton>
@@ -1127,6 +1337,224 @@
                     </Grid>
                 </Grid>
             </controls:PanedTabView2.TabStripContent>
+            <controls:PanedTabView2.DetailsPane>
+                <Grid Padding="16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Details"
+                               Style="{StaticResource SubtitleTextBlockStyle}"/>
+                    <controls:IconButton Grid.Column="1"
+                                         IsCompact="True"
+                                         IconSource="{StaticResource CloseTabIcon}"
+                                         Command="{x:Bind ViewModel.CloseDetailsPaneCommand}" />
+                    <ScrollViewer Grid.Row="1"
+                                  Grid.ColumnSpan="2"
+                                  Margin="-16,0,-16,-16">
+                        <StackPanel Margin="16,12,16,64">
+                            <Grid Visibility="{x:Bind ViewModel.CurrentTab.Context.Items.Count, Mode=OneWay, Converter={StaticResource VisibleWhenMoreThanZeroConverter}}"
+                                  Margin="0,0,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock FontWeight="SemiBold"
+                                           FontSize="16">
+                                    <Run Text="Contains" />
+                                    <Run Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('item', ViewModel.CurrentTab.Context.Items.Count, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}" />
+                                </TextBlock>
+                                <TextBlock Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                           Grid.Row="1"
+                                           Visibility="{x:Bind ViewModel.CurrentTab.Context.ItemStats.FileSize, Mode=OneWay, Converter={StaticResource VisibleWhenMoreThanZeroConverter}}">
+                                    <Run Text="{x:Bind ViewModel.CurrentTab.Context.ItemStats.FileSize, Converter={StaticResource ByteSizeConverter}, Mode=OneWay}" />
+                                    <Run Text="{x:Bind ViewModel.CurrentTab.Context.ItemStats.HasItemsWithNoSizes, Converter={StaticResource HasNullFileSizeIndicatorConverter}, Mode=OneWay}" />
+                                </TextBlock>
+                                <controls:IconButton Grid.Column="1"
+                                                     IconSource="{StaticResource QuestionIcon}"
+                                                     IsCompact="True"
+                                                     Flyout="{StaticResource AllItemsFlyout}" />
+                            </Grid>
+                            
+                            <ContentControl HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Stretch"
+                                            Content="{x:Bind ViewModel.CurrentTab.Context.Item, Mode=OneWay}"
+                                            Visibility="{x:Bind ViewModel.CurrentTab.Context.Item, Mode=OneWay, Converter={StaticResource CollapsedWhenNullConverter}}"
+                                            Margin="0,0,0,8">
+                                <ContentControl.ContentTemplateSelector>
+                                    <jpselectors:ItemDetailsTemplateSelector>
+                                        <jpselectors:ItemDetailsTemplateSelector.Drive>
+                                            <DataTemplate x:DataType="items:DriveBase">
+                                                <controls:DriveDetails Drive="{x:Bind Mode=OneWay}"
+                                                                       IsInDetailsPane="True" />
+                                            </DataTemplate>
+                                        </jpselectors:ItemDetailsTemplateSelector.Drive>
+                                        <jpselectors:ItemDetailsTemplateSelector.Folder>
+                                            <DataTemplate x:DataType="items:FolderBase">
+                                                <controls:FolderDetails Folder="{x:Bind Mode=OneWay}"
+                                                                        IsInDetailsPane="True" />
+                                            </DataTemplate>
+                                        </jpselectors:ItemDetailsTemplateSelector.Folder>
+                                        <jpselectors:ItemDetailsTemplateSelector.File>
+                                            <DataTemplate x:DataType="items:FileBase">
+                                                <controls:FileDetails File="{x:Bind Mode=OneWay}"
+                                                                      IsInDetailsPane="True" />
+                                            </DataTemplate>
+                                        </jpselectors:ItemDetailsTemplateSelector.File>
+                                        <jpselectors:ItemDetailsTemplateSelector.Workspace>
+                                            <DataTemplate x:DataType="items:Workspace">
+                                                <controls:WorkspaceDetails Workspace="{x:Bind Mode=OneWay}"
+                                                                           IsInDetailsPane="True" />
+                                            </DataTemplate>
+                                        </jpselectors:ItemDetailsTemplateSelector.Workspace>
+                                        <jpselectors:ItemDetailsTemplateSelector.AppLink>
+                                            <DataTemplate x:DataType="items:AppLink">
+                                                <controls:AppLinkDetails AppLink="{x:Bind Mode=OneWay}"
+                                                                         IsInDetailsPane="True" />
+                                            </DataTemplate>
+                                        </jpselectors:ItemDetailsTemplateSelector.AppLink>
+                                    </jpselectors:ItemDetailsTemplateSelector>
+                                </ContentControl.ContentTemplateSelector>
+                            </ContentControl>
+
+                            <Grid Visibility="{x:Bind ViewModel.CurrentTab.Context.Item, Mode=OneWay, Converter={StaticResource VisibleWhenNullConverter}}"
+                                  Margin="0,0,0,8"
+                                  RowSpacing="4"
+                                  ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Viewbox Width="28"
+                                         Height="28">
+                                    <IconSourceElement IconSource="{x:Bind converters:IconConverter.GetPathTypeIconSource(ViewModel.CurrentTab.Context.PathInfo.Type, ViewModel.CurrentTab.Context.PathInfo.Tag), Mode=OneWay}" />
+                                </Viewbox>
+                                <TextBlock Text="{x:Bind ViewModel.CurrentTab.Context.PathInfo.DisplayName, Mode=OneWay}"
+                                           Grid.Column="1"
+                                           Margin="8,0"
+                                           TextTrimming="CharacterEllipsis"
+                                           VerticalAlignment="Center"
+                                           FontSize="16"
+                                           FontWeight="SemiBold"
+                                           FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                           FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:FontFamilyBehavior FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
+                                    </i:Interaction.Behaviors>
+                                </TextBlock>
+
+                                <TextBlock Text="Path:"
+                                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                           Grid.Row="1" />
+                                <TextBlock Text="{x:Bind ViewModel.CurrentTab.Context.PathInfo.Path, Mode=OneWay}"
+                                           Grid.Row="1"
+                                           Grid.Column="1"
+                                           TextWrapping="Wrap" />
+
+                                <winui:SplitButton Grid.Row="2"
+                                                   Grid.ColumnSpan="2"
+                                                   Margin="0,4"
+                                                   HorizontalAlignment="Stretch"
+                                                   CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
+                                                   Command="{x:Bind ViewModel.OpenPathInNewTabCommand}">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <IconSourceElement IconSource="{StaticResource OpenPathInNewTabIcon}" />
+                                        <TextBlock Text="Open in New Tab" />
+                                    </StackPanel>
+                                    <winui:SplitButton.Flyout>
+                                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                            <MenuFlyoutItem CommandParameter="{x:Bind ViewModel.CurrentTab.Context, Mode=OneWay}"
+                                                            Command="{StaticResource OpenPathInNewWindowCommand}" />
+                                        </MenuFlyout>
+                                    </winui:SplitButton.Flyout>
+                                </winui:SplitButton>
+
+                                <MenuFlyoutSeparator Grid.ColumnSpan="2"
+                                                     Grid.Row="3" />
+                            </Grid>
+
+                            <Grid Visibility="{x:Bind ViewModel.CurrentTab.Context.SelectedItems.Count, Mode=OneWay, Converter={StaticResource VisibleWhenMoreThanZeroConverter}}"
+                                  Margin="0,4,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('selected item', ViewModel.CurrentTab.Context.SelectedItems.Count, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
+                                           FontWeight="SemiBold"
+                                           FontSize="16" />
+                                <TextBlock Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                           Visibility="{x:Bind ViewModel.CurrentTab.Context.SelectedItemStats.FileSize, Mode=OneWay, Converter={StaticResource VisibleWhenMoreThanZeroConverter}}"
+                                           Grid.Row="1">
+                                    <Run Text="{x:Bind ViewModel.CurrentTab.Context.SelectedItemStats.FileSize, Converter={StaticResource ByteSizeConverter}, Mode=OneWay}" />
+                                    <Run Text="{x:Bind ViewModel.CurrentTab.Context.SelectedItemStats.HasItemsWithNoSizes, Converter={StaticResource HasNullFileSizeIndicatorConverter}, Mode=OneWay}" />
+                                </TextBlock>
+                                <controls:IconButton Grid.Column="1"
+                                                     IconSource="{StaticResource QuestionIcon}"
+                                                     IsCompact="True"
+                                                     Flyout="{StaticResource SelectedItemsFlyout}"/>
+                            </Grid>
+
+                            <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.CurrentTab.Context.SelectedItems, Mode=OneWay}">
+                                <winui:ItemsRepeater.Layout>
+                                    <winui:StackLayout Orientation="Vertical"
+                                                       Spacing="8"/>
+                                </winui:ItemsRepeater.Layout>
+                                <jpselectors:ItemDetailsTemplateSelector>
+                                    <jpselectors:ItemDetailsTemplateSelector.Drive>
+                                        <DataTemplate x:DataType="items:DriveBase">
+                                            <controls:DriveDetails Drive="{x:Bind Mode=OneWay}"
+                                                                   IsInDetailsPane="True"/>
+                                        </DataTemplate>
+                                    </jpselectors:ItemDetailsTemplateSelector.Drive>
+                                    <jpselectors:ItemDetailsTemplateSelector.Folder>
+                                        <DataTemplate x:DataType="items:FolderBase">
+                                            <controls:FolderDetails Folder="{x:Bind Mode=OneWay}"
+                                                                    IsInDetailsPane="True"/>
+                                        </DataTemplate>
+                                    </jpselectors:ItemDetailsTemplateSelector.Folder>
+                                    <jpselectors:ItemDetailsTemplateSelector.File>
+                                        <DataTemplate x:DataType="items:FileBase">
+                                            <controls:FileDetails File="{x:Bind Mode=OneWay}"
+                                                                  IsInDetailsPane="True"/>
+                                        </DataTemplate>
+                                    </jpselectors:ItemDetailsTemplateSelector.File>
+                                    <jpselectors:ItemDetailsTemplateSelector.Workspace>
+                                        <DataTemplate x:DataType="items:Workspace">
+                                            <controls:WorkspaceDetails Workspace="{x:Bind Mode=OneWay}"
+                                                                       IsInDetailsPane="True"/>
+                                        </DataTemplate>
+                                    </jpselectors:ItemDetailsTemplateSelector.Workspace>
+                                    <jpselectors:ItemDetailsTemplateSelector.AppLink>
+                                        <DataTemplate x:DataType="items:AppLink">
+                                            <controls:AppLinkDetails AppLink="{x:Bind Mode=OneWay}"
+                                                                     IsInDetailsPane="True"/>
+                                        </DataTemplate>
+                                    </jpselectors:ItemDetailsTemplateSelector.AppLink>
+                                </jpselectors:ItemDetailsTemplateSelector>
+                            </winui:ItemsRepeater>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </controls:PanedTabView2.DetailsPane>
             <i:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="ItemInvoked">
                     <core:InvokeCommandAction Command="{x:Bind ViewModel.ShellItemCommand}"
@@ -1165,105 +1593,6 @@
               Background="{StaticResource SystemAccentBrush}"
               ColumnSpacing="4"
               x:Name="statusBar">
-            <Grid.Resources>
-                <DataTemplate x:Key="ItemStatsTemplate"
-                              x:DataType="models:ItemStats">
-                    <Grid ColumnSpacing="8"
-                          RowSpacing="4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Image Width="24"
-                               Height="24">
-                            <Image.Source>
-                                <BitmapImage DecodePixelHeight="24"
-                                             DecodePixelWidth="24"
-                                             DecodePixelType="Logical"
-                                             UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.Drive)}" />
-                            </Image.Source>
-                        </Image>
-                        <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Drive', Drive, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
-                                   Grid.Column="1"
-                                   VerticalAlignment="Center" />
-
-                        <Image Width="24"
-                               Height="24"
-                               Grid.Row="1">
-                            <Image.Source>
-                                <BitmapImage DecodePixelHeight="24"
-                                             DecodePixelWidth="24"
-                                             DecodePixelType="Logical"
-                                             UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.Folder)}" />
-                            </Image.Source>
-                        </Image>
-                        <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Folder', Folder, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
-                                   Grid.Column="1"
-                                   Grid.Row="1"
-                                   VerticalAlignment="Center" />
-
-                        <Image Width="24"
-                               Height="24"
-                               Grid.Row="2">
-                            <Image.Source>
-                                <BitmapImage DecodePixelHeight="24"
-                                             DecodePixelWidth="24"
-                                             DecodePixelType="Logical"
-                                             UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.File)}" />
-                            </Image.Source>
-                        </Image>
-                        <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('File', File, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
-                                   Grid.Column="1"
-                                   Grid.Row="2"
-                                   VerticalAlignment="Center" />
-                        <TextBlock Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
-                                   Grid.Column="2"
-                                   Grid.Row="2"
-                                   VerticalAlignment="Center">
-                            <Run Text="{x:Bind FileSize, Converter={StaticResource ByteSizeConverter}, Mode=OneWay}" />
-                            <Run Text="{x:Bind HasNullFileSize, Converter={StaticResource HasNullFileSizeIndicatorConverter}, Mode=OneWay}" />
-                        </TextBlock>
-
-                        <Image Width="24"
-                               Height="24"
-                               Grid.Row="3">
-                            <Image.Source>
-                                <BitmapImage DecodePixelHeight="24"
-                                             DecodePixelWidth="24"
-                                             DecodePixelType="Logical"
-                                             UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.Workspace)}" />
-                            </Image.Source>
-                        </Image>
-                        <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('Workspace', Workspace, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
-                                   Grid.Column="1"
-                                   Grid.Row="3"
-                                   VerticalAlignment="Center" />
-
-                        <Image Width="24"
-                               Height="24"
-                               Grid.Row="4">
-                            <Image.Source>
-                                <BitmapImage DecodePixelHeight="24"
-                                             DecodePixelWidth="24"
-                                             DecodePixelType="Logical"
-                                             UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.AppLink)}" />
-                            </Image.Source>
-                        </Image>
-                        <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('App link', AppLink, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
-                                   Grid.Column="1"
-                                   Grid.Row="4"
-                                   VerticalAlignment="Center" />
-                    </Grid>
-                </DataTemplate>
-            </Grid.Resources>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -1325,104 +1654,17 @@
                 </Button.Flyout>
             </Button>
             <Button Style="{StaticResource StatusBarButton}"
+                    Flyout="{StaticResource AllItemsFlyout}"
                     Grid.Column="1">
                 <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('item', ViewModel.CurrentTab.Context.ItemStats.Total, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
                            Foreground="White" />
-                <Button.Flyout>
-                    <Flyout Placement="TopEdgeAlignedLeft">
-                        <Grid RowSpacing="4"
-                              MinWidth="240">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="ALL ITEMS"
-                                       FontWeight="SemiBold" />
-                            <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('item', ViewModel.CurrentTab.Context.ItemStats.Total, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
-                                       Grid.Row="1"/>
-
-                            <Button Grid.Column="1"
-                                    Grid.RowSpan="2"
-                                    MinWidth="0"
-                                    MinHeight="0"
-                                    VerticalAlignment="Top"
-                                    Padding="4"
-                                    Background="Transparent"
-                                    BorderThickness="0">
-                                <FontIcon FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
-                                          Glyph="&#xF4A4;"
-                                          FontSize="18" />
-                                <Button.Flyout>
-                                    <Flyout>
-                                        <TextBlock Text="* Some sizes might be unavailable" />
-                                    </Flyout>
-                                </Button.Flyout>
-                            </Button>
-                            <ContentControl Content="{x:Bind ViewModel.CurrentTab.Context.ItemStats, Mode=OneWay}"
-                                            ContentTemplate="{StaticResource ItemStatsTemplate}"
-                                            HorizontalAlignment="Stretch"
-                                            HorizontalContentAlignment="Stretch"
-                                            Grid.Row="2"
-                                            Grid.ColumnSpan="2"
-                                            Margin="0,8,0,0" />
-                        </Grid>
-                    </Flyout>
-                </Button.Flyout>
             </Button>
 
             <Button Style="{StaticResource StatusBarButton}"
+                    Flyout="{StaticResource SelectedItemsFlyout}"
                     Grid.Column="2">
                 <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('selected item', ViewModel.CurrentTab.Context.SelectedItems.Count, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
                            Foreground="White" />
-                <Button.Flyout>
-                    <Flyout Placement="TopEdgeAlignedLeft">
-                        <Grid RowSpacing="4"
-                              MinWidth="240">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="SELECTED ITEMS"
-                                       FontWeight="SemiBold" />
-                            <TextBlock Text="{x:Bind humanizer:ToQuantityExtensions.ToQuantity('item', ViewModel.CurrentTab.Context.SelectedItems.Count, humanizer:ShowQuantityAs.Numeric), Mode=OneWay}"
-                                       Grid.Row="1"/>
-                            <Button Grid.Column="1"
-                                    Grid.RowSpan="2"
-                                    MinWidth="0"
-                                    MinHeight="0"
-                                    VerticalAlignment="Top"
-                                    Padding="4"
-                                    Background="Transparent"
-                                    BorderThickness="0">
-                                <FontIcon FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
-                                          Glyph="&#xF4A4;"
-                                          FontSize="18" />
-                                <Button.Flyout>
-                                    <Flyout>
-                                        <TextBlock Text="* Some sizes might be unavailable" />
-                                    </Flyout>
-                                </Button.Flyout>
-                            </Button>
-                            <ContentControl Content="{x:Bind ViewModel.CurrentTab.Context.SelectedItemStats, Mode=OneWay}"
-                                            ContentTemplate="{StaticResource ItemStatsTemplate}"
-                                            HorizontalAlignment="Stretch"
-                                            HorizontalContentAlignment="Stretch"
-                                            Grid.Row="2"
-                                            Grid.ColumnSpan="2"
-                                            Margin="0,8,0,0" />
-                        </Grid>
-                    </Flyout>
-                </Button.Flyout>
             </Button>
         </Grid>
 

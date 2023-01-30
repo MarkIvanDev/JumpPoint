@@ -265,6 +265,19 @@ namespace JumpPoint.Platform.Services
             }
         }
 
+        public bool ShowDetailsPane
+        {
+            get { return Preferences.Get(nameof(ShowDetailsPane), true); }
+            set
+            {
+                if (ShowDetailsPane != value)
+                {
+                    Preferences.Set(nameof(ShowDetailsPane), value);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         #endregion
 
         #region System

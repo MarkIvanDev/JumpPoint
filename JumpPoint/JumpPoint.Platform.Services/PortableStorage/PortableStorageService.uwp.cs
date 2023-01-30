@@ -75,14 +75,20 @@ namespace JumpPoint.Platform.Services
         {
             await lazyInitialize;
 
+            PortableDrive drive = null;
+            NotifyCollectionChangedAction? action = null;
             using (await mutex.LockAsync())
             {
-                var drive = await PlatformGetDriveFromId(args.Id);
+                drive = await PlatformGetDriveFromId(args.Id);
                 if (drive != null)
                 {
-                    var action = AddOrUpdate(drive);
-                    PortableDriveCollectionChanged?.Invoke(null, new PortableDriveCollectionChangedEventArgs(action, args.Id, drive));
+                    action = AddOrUpdate(drive);
                 }
+            }
+
+            if (drive != null && action != null)
+            {
+                PortableDriveCollectionChanged?.Invoke(null, new PortableDriveCollectionChangedEventArgs(action.Value, args.Id));
             }
         }
 
@@ -96,23 +102,29 @@ namespace JumpPoint.Platform.Services
                 if (index != -1)
                 {
                     drives.RemoveAt(index);
-                    PortableDriveCollectionChanged?.Invoke(null, new PortableDriveCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, args.Id, null));
                 }
             }
+            PortableDriveCollectionChanged?.Invoke(null, new PortableDriveCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, args.Id));
         }
 
         private static async void OnDeviceUpdated(DeviceWatcher sender, DeviceInformationUpdate args)
         {
             await lazyInitialize;
 
+            PortableDrive drive = null;
+            NotifyCollectionChangedAction? action = null;
             using (await mutex.LockAsync())
             {
-                var drive = await PlatformGetDriveFromId(args.Id);
+                drive = await PlatformGetDriveFromId(args.Id);
                 if (drive != null)
                 {
-                    var action = AddOrUpdate(drive);
-                    PortableDriveCollectionChanged?.Invoke(null, new PortableDriveCollectionChangedEventArgs(action, args.Id, drive));
+                    action = AddOrUpdate(drive);
                 }
+            }
+
+            if (drive != null && action != null)
+            {
+                PortableDriveCollectionChanged?.Invoke(null, new PortableDriveCollectionChangedEventArgs(action.Value, args.Id));
             }
         }
 

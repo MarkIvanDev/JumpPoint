@@ -1,0 +1,206 @@
+﻿<UserControl
+    x:Class="JumpPoint.Uwp.Controls.DriveDetails"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JumpPoint.Uwp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:JumpPoint.Uwp.Converters"
+    xmlns:gtext="using:Glif.Core.Text"
+    xmlns:helpers="using:JumpPoint.Uwp.Helpers"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:behaviors="using:JumpPoint.Uwp.Interactivity.Behaviors"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+    xmlns:commands="using:JumpPoint.ViewModels.Commands"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid RowSpacing="4"
+          ColumnSpacing="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.5*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Image Width="28"
+                   Height="28">
+                <Image.Source>
+                    <BitmapImage DecodePixelHeight="28"
+                                 DecodePixelWidth="28"
+                                 DecodePixelType="Logical"
+                                 UriSource="{x:Bind converters:IconConverter.GetDriveIconUri(Drive.DriveTemplate), Mode=OneWay}" />
+                </Image.Source>
+            </Image>
+            <TextBlock Text="{x:Bind Drive.DisplayName, Mode=OneWay}"
+                       Grid.Column="1"
+                       Margin="8,0"
+                       TextTrimming="CharacterEllipsis"
+                       VerticalAlignment="Center"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}">
+                <i:Interaction.Behaviors>
+                    <behaviors:FontFamilyBehavior FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
+                </i:Interaction.Behaviors>
+            </TextBlock>
+        </Grid>
+
+        <TextBlock Text="Drive Type:"
+                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                   Grid.Row="1" />
+        <TextBlock Text="{x:Bind Drive.DisplayType, Mode=OneWay}"
+                   Grid.Row="1"
+                   Grid.Column="1"
+                   TextWrapping="Wrap"/>
+
+        <TextBlock Text="File System:"
+                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                   Grid.Row="2" />
+        <TextBlock Text="{x:Bind Drive.FileSystem, Mode=OneWay}"
+                   Grid.Row="2"
+                   Grid.Column="1"
+                   TextWrapping="Wrap" />
+
+        <TextBlock Text="Used Space:"
+                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                   Grid.Row="3" />
+        <TextBlock Text="{x:Bind Drive.UsedSpace, Converter={StaticResource ByteSizeConverter}, Mode=OneWay}"
+                   Grid.Row="3"
+                   Grid.Column="1"
+                   TextWrapping="Wrap" />
+
+        <TextBlock Text="Free Space:"
+                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                   Grid.Row="4" />
+        <TextBlock Text="{x:Bind Drive.FreeSpace, Converter={StaticResource ByteSizeConverter}, Mode=OneWay}"
+                   Grid.Row="4"
+                   Grid.Column="1"
+                   TextWrapping="Wrap" />
+
+        <TextBlock Text="Capacity:"
+                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                   Grid.Row="5" />
+        <TextBlock Text="{x:Bind Drive.Capacity, Converter={StaticResource ByteSizeConverter}, Mode=OneWay}"
+                   Grid.Row="5"
+                   Grid.Column="1"
+                   TextWrapping="Wrap" />
+
+        <ProgressBar Grid.ColumnSpan="2"
+                     Grid.Row="6"
+                     Margin="0,2"
+                     Height="18"
+                     CornerRadius="4"
+                     Maximum="{x:Bind Drive.Capacity, Converter={StaticResource NullableUlongToDoubleConverter}, Mode=OneWay}"
+                     Value="{x:Bind Drive.UsedSpace, Converter={StaticResource NullableUlongToDoubleConverter}, Mode=OneWay}"
+                     Foreground="{x:Bind converters:DriveStorageColorConverter.GetBrush(Drive.Capacity, Drive.UsedSpace), Mode=OneWay}"/>
+
+        <Grid Grid.Row="7"
+              Grid.ColumnSpan="2"
+              Margin="0,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <local:IconButton IsCompact="True"
+                              VerticalAlignment="Stretch"
+                              IconSource="{StaticResource ItemsPropertiesIcon}"
+                              CommandParameter="{x:Bind Drive, Mode=OneWay}"
+                              Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemPropertiesCommand}"
+                              Visibility="{x:Bind IsInDetailsPane, Mode=OneWay, Converter={StaticResource VisibleWhenTrueConverter}}"
+                              Margin="0,0,8,0"/>
+            <winui:SplitButton Grid.Column="1"
+                               HorizontalAlignment="Stretch"
+                               CommandParameter="{x:Bind Drive, Mode=OneWay}"
+                               Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemInNewWindowCommand}">
+                <StackPanel Orientation="Horizontal"
+                            Spacing="8">
+                    <IconSourceElement IconSource="{StaticResource OpenItemsInNewWindowIcon}" />
+                    <TextBlock Text="Open in New Window" />
+                </StackPanel>
+                <winui:SplitButton.Flyout>
+                    <MenuFlyout Placement="BottomEdgeAlignedRight">
+                        <MenuFlyoutItem Text="Open in File Explorer"
+                                        Icon="{converters:IconSourceElement Source={StaticResource OpenItemsInFileExplorerIcon}}"
+                                        CommandParameter="{x:Bind Drive, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemInFileExplorerCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsOpenInFileExplorerEnabled(Drive), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutItem Text="Open in Command Prompt"
+                                        Icon="{converters:IconSourceElement Source={StaticResource OpenItemsInCommandPromptIcon}}"
+                                        CommandParameter="{x:Bind Drive, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemInCommandPromptCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsOpenInCommandPromptEnabled(Drive), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutItem Text="Open in Powershell"
+                                        Icon="{converters:IconSourceElement Source={StaticResource OpenItemsInPowershellIcon}}"
+                                        CommandParameter="{x:Bind Drive, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemInPowershellCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsOpenInPowershellEnabled(Drive), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutItem Text="Open in Windows Terminal"
+                                        Icon="{converters:IconSourceElement Source={StaticResource OpenItemsInWindowsTerminalIcon}}"
+                                        CommandParameter="{x:Bind Drive, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemInWindowsTerminalCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsOpenInWindowsTerminalEnabled(Drive), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem Text="Add to Workspace"
+                                        Icon="{converters:IconSourceElement Source={StaticResource AddItemsToWorkspaceIcon}}"
+                                        CommandParameter="{x:Bind Drive, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.AddItemToWorkspaceCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsAddToWorkspaceEnabled(Drive), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutItem Text="Add to Favorites"
+                                        Icon="{converters:IconSourceElement Source={StaticResource AddItemsToFavoritesIcon}}"
+                                        CommandParameter="{x:Bind Drive, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.AddItemToFavoritesCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsAddToFavoritesEnabled(Drive), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutItem Text="Remove from Favorites"
+                                        Icon="{converters:IconSourceElement Source={StaticResource RemoveItemsFromFavoritesIcon}}"
+                                        CommandParameter="{x:Bind Drive, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.RemoveItemFromFavoritesCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsRemoveFromFavoritesEnabled(Drive), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutItem Text="Storage Sense"
+                                        Icon="{converters:IconSourceElement Source={StaticResource StorageSenseIcon}}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.StorageSenseCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsStorageSenseEnabled(Drive), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutItem Text="Clean Manager"
+                                        Icon="{converters:IconSourceElement Source={StaticResource CleanManagerIcon}}"
+                                        CommandParameter="{x:Bind Drive, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.CleanManagerCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsCleanManagerEnabled(Drive), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutItem Text="More Tools..."
+                                        Icon="{converters:IconSourceElement Source={StaticResource MoreToolsIcon}}"
+                                        CommandParameter="{x:Bind Drive, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.ItemMoreToolsCommand}" />
+                    </MenuFlyout>
+                </winui:SplitButton.Flyout>
+            </winui:SplitButton>
+        </Grid>
+
+        <MenuFlyoutSeparator Grid.ColumnSpan="2"
+                             Grid.Row="8" />
+
+    </Grid>
+</UserControl>

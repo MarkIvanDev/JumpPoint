@@ -232,6 +232,10 @@
                     Glyph="&#xF3FC;"
                     FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
                     FontSize="18" />
+    <FontIconSource x:Key="DetailsPaneIcon"
+                    Glyph="&#x0071;"
+                    FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                    FontSize="18" />
 
     <FontIconSource x:Key="SettingsIcon"
                     FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
@@ -387,6 +391,16 @@
     <FontIconSource x:Key="QuestionIcon"
                     FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
                     Glyph="&#xF639;"
+                    FontSize="18" />
+
+    <FontIconSource x:Key="StorageSenseIcon"
+                    FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                    Glyph="&#xF72C;"
+                    FontSize="18" />
+
+    <FontIconSource x:Key="CleanManagerIcon"
+                    FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                    Glyph="&#xF202;"
                     FontSize="18" />
 
 </ResourceDictionary>

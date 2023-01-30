@@ -24,9 +24,9 @@ namespace JumpPoint.ViewModels
 
         }
 
-        private Collection<AppLinkProvider> _providers;
+        private IList<AppLinkProvider> _providers;
 
-        public Collection<AppLinkProvider> Providers
+        public IList<AppLinkProvider> Providers
         {
             get { return _providers; }
             set { Set(ref _providers, value); }
@@ -40,14 +40,14 @@ namespace JumpPoint.ViewModels
                 if (appLinkInfo != null)
                 {
                     var appLink = await AppLinkService.Create(appLinkInfo);
-                    await RefreshCommand.TryExecute();
+                    Items.Add(appLink);
                 }
             }));
 
         protected override async Task Refresh(CancellationToken token)
         {
             var providers = await AppLinkProviderService.GetProviders();
-            Providers = new Collection<AppLinkProvider>(providers.Where(p => p.IsAvailable && p.IsEnabled).ToList());
+            Providers = providers.Where(p => p.IsAvailable && p.IsEnabled).ToList();
             token.ThrowIfCancellationRequested();
 
             var appLinks = await AppLinkService.GetAppLinks();

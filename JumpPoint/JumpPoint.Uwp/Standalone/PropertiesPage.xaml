@@ -60,14 +60,6 @@
                 </ngconv:BooleanValueConverter.FalseValue>
             </ngconv:BooleanValueConverter>
         </ngconv:ChainConverter>
-        <ngconv:BooleanValueConverter x:Key="FavoriteStatusConverter">
-            <ngconv:BooleanValueConverter.TrueValue>
-                <x:String>Favorite</x:String>
-            </ngconv:BooleanValueConverter.TrueValue>
-            <ngconv:BooleanValueConverter.FalseValue>
-                <x:String>Not Favorite</x:String>
-            </ngconv:BooleanValueConverter.FalseValue>
-        </ngconv:BooleanValueConverter>
         <ngconv:ChainConverter x:Key="CollapsedWhenZeroConverter">
             <ngconv:IsEqualConverter />
             <ngconv:BooleanValueConverter>
@@ -142,37 +134,35 @@
                     <ScrollViewer>
                         <StackPanel Padding="12,12,20,64"
                                     Spacing="4">
-                                <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Items.Values, Mode=OneWay}"
-                                                     HorizontalAlignment="Center">
-                                    <winui:ItemsRepeater.Layout>
-                                        <winui:UniformGridLayout Orientation="Horizontal"
-                                                                 MinRowSpacing="4"
-                                                                 MinColumnSpacing="12"
-                                                                 ItemsJustification="SpaceEvenly"
-                                                                 MinItemWidth="100"/>
-                                        <!--<winui:StackLayout Orientation="Horizontal"
-                                                           Spacing="24" />-->
-                                    </winui:ItemsRepeater.Layout>
-                                    <DataTemplate x:DataType="sa:JPGroup">
-                                        <StackPanel Orientation="Horizontal"
-                                                    HorizontalAlignment="Center">
-                                            <TextBlock VerticalAlignment="Center"
-                                                       FontSize="16"
-                                                       FontWeight="SemiBold"
-                                                       Text="{x:Bind Items.Count}" />
-                                            <Image Width="28"
-                                                   Height="28"
-                                                   Margin="4,0,0,0">
-                                                <Image.Source>
-                                                    <BitmapImage DecodePixelHeight="28"
-                                                                 DecodePixelWidth="28"
-                                                                 DecodePixelType="Logical"
-                                                                 UriSource="{x:Bind Key, Converter={StaticResource ItemIconConverter}}" />
-                                                </Image.Source>
-                                            </Image>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </winui:ItemsRepeater>
+                            <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Items.Values, Mode=OneWay}"
+                                                 HorizontalAlignment="Center">
+                                <winui:ItemsRepeater.Layout>
+                                    <winui:UniformGridLayout Orientation="Horizontal"
+                                                             MinRowSpacing="4"
+                                                             MinColumnSpacing="12"
+                                                             ItemsJustification="SpaceEvenly"
+                                                             MinItemWidth="100"/>
+                                </winui:ItemsRepeater.Layout>
+                                <DataTemplate x:DataType="sa:JPGroup">
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Center">
+                                        <TextBlock VerticalAlignment="Center"
+                                                   FontSize="16"
+                                                   FontWeight="SemiBold"
+                                                   Text="{x:Bind Items.Count}" />
+                                        <Image Width="28"
+                                               Height="28"
+                                               Margin="4,0,0,0">
+                                            <Image.Source>
+                                                <BitmapImage DecodePixelHeight="28"
+                                                             DecodePixelWidth="28"
+                                                             DecodePixelType="Logical"
+                                                             UriSource="{x:Bind Key, Converter={StaticResource ItemIconConverter}}" />
+                                            </Image.Source>
+                                        </Image>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </winui:ItemsRepeater>
 
                             <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Items.Values, Mode=OneWay}">
                                 <properties:GeneralPropertiesTemplateSelector>
@@ -379,20 +369,10 @@
 
                                                 <TextBlock Text="Attributes:"
                                                            Grid.Row="10" />
-                                                <winui:ItemsRepeater ItemsSource="{Binding Source={StaticResource Locator}, Path=Properties.Attributes}"
-                                                                     Grid.Row="10"
-                                                                     Grid.Column="1">
-                                                    <winui:ItemsRepeater.Layout>
-                                                        <winui:StackLayout Orientation="Horizontal" />
-                                                    </winui:ItemsRepeater.Layout>
-                                                    <DataTemplate x:DataType="io:FileAttributes">
-                                                        <controls:AttributeIcon Attribute="{x:Bind}"
-                                                                                Data="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalAttributesFolders}"
-                                                                                IconWidth="20"
-                                                                                IconHeight="20" />
-                                                    </DataTemplate>
-                                                </winui:ItemsRepeater>
-
+                                                <controls:AttributesDetails Grid.Row="10"
+                                                                            Grid.Column="1"
+                                                                            Data="{Binding Source={StaticResource Locator}, Path=Properties.SubtotalAttributesFolders}"/>
+                                                
                                                 <TextBlock Text="SIZE:"
                                                            FontWeight="SemiBold"
                                                            FontSize="16"
@@ -746,124 +726,7 @@
                                          Margin="0,12,20,64"
                                          x:Name="listDrives">
                         <DataTemplate x:DataType="items:DriveBase">
-                            <Grid RowSpacing="4">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="0.5*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid Grid.ColumnSpan="2">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Image Width="28"
-                                           Height="28">
-                                        <Image.Source>
-                                            <BitmapImage DecodePixelHeight="28"
-                                                         DecodePixelWidth="28"
-                                                         DecodePixelType="Logical"
-                                                         UriSource="{x:Bind converters:IconConverter.GetDriveIconUri(DriveTemplate), Mode=OneWay}" />
-                                        </Image.Source>
-                                    </Image>
-                                    <TextBlock Text="{x:Bind DisplayName}"
-                                               Grid.Column="1"
-                                               Margin="8,0"
-                                               TextTrimming="CharacterEllipsis"
-                                               VerticalAlignment="Center"
-                                               FontSize="16"
-                                               FontWeight="SemiBold"
-                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
-                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}">
-                                        <i:Interaction.Behaviors>
-                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
-                                        </i:Interaction.Behaviors>
-                                    </TextBlock>
-                                </Grid>
-
-                                <TextBlock Text="Drive Type:"
-                                           Grid.Row="1" />
-                                <TextBlock Text="{x:Bind DisplayType}"
-                                           Grid.Row="1"
-                                           Grid.Column="1" />
-
-                                <TextBlock Text="File System:"
-                                           Grid.Row="2" />
-                                <TextBlock Text="{x:Bind FileSystem}"
-                                           Grid.Row="2"
-                                           Grid.Column="1" />
-
-                                <TextBlock Text="Used Space:"
-                                           Grid.Row="3" />
-                                <TextBlock Text="{x:Bind UsedSpace, Converter={StaticResource ByteSizeConverter}}"
-                                           Grid.Row="3"
-                                           Grid.Column="1" />
-
-                                <TextBlock Text="Free Space:"
-                                           Grid.Row="4" />
-                                <TextBlock Text="{x:Bind FreeSpace, Converter={StaticResource ByteSizeConverter}}"
-                                           Grid.Row="4"
-                                           Grid.Column="1" />
-
-                                <TextBlock Text="Capacity:"
-                                           Grid.Row="5" />
-                                <TextBlock Text="{x:Bind Capacity, Converter={StaticResource ByteSizeConverter}}"
-                                           Grid.Row="5"
-                                           Grid.Column="1" />
-
-                                <ProgressBar Grid.ColumnSpan="2"
-                                             Grid.Row="6"
-                                             Margin="0,2"
-                                             Height="18"
-                                             CornerRadius="4"
-                                             Maximum="{x:Bind Capacity, Converter={StaticResource NullableUlongToDoubleConverter}}"
-                                             Value="{x:Bind UsedSpace, Converter={StaticResource NullableUlongToDoubleConverter}}" />
-
-                                <winui:SplitButton Grid.Row="7"
-                                                   HorizontalAlignment="Right"
-                                                   Grid.Column="1"
-                                                   Margin="0,4"
-                                                   Content="Storage Sense"
-                                                   Command="{Binding Source={StaticResource Locator}, Path=Properties.StorageSenseCommand}">
-                                    <winui:SplitButton.Flyout>
-                                        <MenuFlyout Placement="BottomEdgeAlignedRight">
-                                            <MenuFlyoutItem Text="Open in New Window"
-                                                            CommandParameter="{x:Bind}"
-                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenCommand}" />
-                                            <MenuFlyoutItem Text="Open in File Explorer"
-                                                            CommandParameter="{x:Bind}"
-                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenFileExplorerCommand}" />
-                                            <MenuFlyoutItem Text="Open in Command Prompt"
-                                                            CommandParameter="{x:Bind}"
-                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenCommandPromptCommand}" />
-                                            <MenuFlyoutItem Text="Open in Powershell"
-                                                            CommandParameter="{x:Bind}"
-                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenPowershellCommand}" />
-                                            <MenuFlyoutItem Text="Open in Windows Terminal"
-                                                            CommandParameter="{x:Bind}"
-                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenWindowsTerminalCommand}" />
-                                            <MenuFlyoutSeparator />
-                                            <MenuFlyoutItem Text="Clean Manager"
-                                                            CommandParameter="{x:Bind}"
-                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.CleanManagerCommand}" />
-                                        </MenuFlyout>
-                                    </winui:SplitButton.Flyout>
-                                </winui:SplitButton>
-
-                                <MenuFlyoutSeparator Grid.ColumnSpan="2"
-                                                     Grid.Row="8" />
-
-                            </Grid>
+                            <controls:DriveDetails Drive="{x:Bind Mode=OneWay}" />
                         </DataTemplate>
                     </winui:ItemsRepeater>
                 </ScrollViewer>
@@ -876,109 +739,7 @@
                     <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Items['Folder'].Items, Mode=OneWay}"
                                          Margin="0,12,20,64">
                         <DataTemplate x:DataType="items:FolderBase">
-                            <Grid RowSpacing="4">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="0.5*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid Grid.ColumnSpan="2">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Image Width="28"
-                                           Height="28">
-                                        <Image.Source>
-                                            <BitmapImage DecodePixelHeight="28"
-                                                         DecodePixelWidth="28"
-                                                         DecodePixelType="Logical"
-                                                         UriSource="{x:Bind converters:IconConverter.GetFolderIconUri(FolderTemplate), Mode=OneWay}" />
-                                        </Image.Source>
-                                    </Image>
-                                    <TextBlock Text="{x:Bind DisplayName}"
-                                               Grid.Column="1"
-                                               Margin="8,0"
-                                               TextTrimming="CharacterEllipsis"
-                                               VerticalAlignment="Center"
-                                               FontSize="16"
-                                               FontWeight="SemiBold"
-                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
-                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}">
-                                        <i:Interaction.Behaviors>
-                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
-                                        </i:Interaction.Behaviors>
-                                    </TextBlock>
-                                </Grid>
-
-                                <TextBlock Text="Folder Type:"
-                                           Grid.Row="1" />
-                                <TextBlock Text="{x:Bind DisplayType}"
-                                           Grid.Row="1"
-                                           Grid.Column="1" />
-
-                                <TextBlock Text="File Count:"
-                                           Grid.Row="2" />
-                                <TextBlock Text="{x:Bind FileCount, Mode=OneWay}"
-                                           Grid.Row="2"
-                                           Grid.Column="1" />
-
-                                <TextBlock Text="Folder Count:"
-                                           Grid.Row="3" />
-                                <TextBlock Text="{x:Bind FolderCount, Mode=OneWay}"
-                                           Grid.Row="3"
-                                           Grid.Column="1" />
-
-                                <TextBlock Text="Favorite Status:"
-                                           Grid.Row="4" />
-                                <TextBlock Text="{x:Bind IsFavorite, Converter={StaticResource FavoriteStatusConverter}}"
-                                           Grid.Row="4"
-                                           Grid.Column="1" />
-
-                                <TextBlock Text="Path:"
-                                           Grid.Row="5" />
-                                <TextBlock Text="{x:Bind Path}"
-                                           Grid.Row="5"
-                                           Grid.Column="1"
-                                           TextWrapping="Wrap" />
-
-                                <winui:SplitButton Grid.Row="6"
-                                                   HorizontalAlignment="Right"
-                                                   Grid.Column="1"
-                                                   Margin="0,4"
-                                                   Content="Open in New Window"
-                                                   CommandParameter="{x:Bind}"
-                                                   Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenCommand}">
-                                    <winui:SplitButton.Flyout>
-                                        <MenuFlyout Placement="BottomEdgeAlignedRight">
-                                            <MenuFlyoutItem Text="Open in File Explorer"
-                                                            CommandParameter="{x:Bind}"
-                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenFileExplorerCommand}" />
-                                            <MenuFlyoutItem Text="Open in Command Prompt"
-                                                            CommandParameter="{x:Bind}"
-                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenCommandPromptCommand}" />
-                                            <MenuFlyoutItem Text="Open in Powershell"
-                                                            CommandParameter="{x:Bind}"
-                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenPowershellCommand}" />
-                                            <MenuFlyoutItem Text="Open in Windows Terminal"
-                                                            CommandParameter="{x:Bind}"
-                                                            Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenWindowsTerminalCommand}" />
-                                        </MenuFlyout>
-                                    </winui:SplitButton.Flyout>
-                                </winui:SplitButton>
-
-                                <MenuFlyoutSeparator Grid.Row="7"
-                                                     Grid.ColumnSpan="2" />
-                            </Grid>
+                            <controls:FolderDetails Folder="{x:Bind Mode=OneWay}" />
                         </DataTemplate>
                     </winui:ItemsRepeater>
                 </ScrollViewer>
@@ -990,11 +751,11 @@
                 <ScrollViewer>
                     <StackPanel Spacing="4"
                                 Padding="0,12,20,64">
-                        <StackPanel.ChildrenTransitions>
+                        <!--<StackPanel.ChildrenTransitions>
                             <TransitionCollection>
                                 <RepositionThemeTransition />
                             </TransitionCollection>
-                        </StackPanel.ChildrenTransitions>
+                        </StackPanel.ChildrenTransitions>-->
 
                         <ComboBox ItemsSource="{x:Bind ViewModel.Items['File'].Items, Mode=OneWay}"
                                   SelectedItem="{x:Bind ViewModel.CurrentFile, Mode=TwoWay, Converter={StaticResource ChangeTypeConverter}}"
@@ -1136,73 +897,7 @@
                     <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Items['Workspace'].Items, Mode=OneWay}"
                                          Margin="0,12,20,64">
                         <DataTemplate x:DataType="items:Workspace">
-                            <Grid RowSpacing="4">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="0.5*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid Grid.ColumnSpan="2">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock IsColorFontEnabled="True"
-                                               FontFamily="Segoe UI Emoji"
-                                               FontSize="21"
-                                               Text="{x:Bind converters:IconConverter.GetWorkspaceGlyph(Template)}" />
-                                    <TextBlock Text="{x:Bind DisplayName}"
-                                               Grid.Column="1"
-                                               Margin="8,0"
-                                               TextTrimming="CharacterEllipsis"
-                                               VerticalAlignment="Center"
-                                               FontSize="16"
-                                               FontWeight="SemiBold"
-                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
-                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}">
-                                        <i:Interaction.Behaviors>
-                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
-                                        </i:Interaction.Behaviors>
-                                    </TextBlock>
-                                </Grid>
-
-                                <TextBlock Text="Date Created:"
-                                           Grid.Row="1" />
-                                <TextBlock Text="{x:Bind DateCreated.LocalDateTime.ToString()}"
-                                           Grid.Row="1"
-                                           Grid.Column="1" />
-
-                                <TextBlock Text="File Count:"
-                                           Grid.Row="2" />
-                                <TextBlock Text="{x:Bind FileCount, Mode=OneWay}"
-                                           Grid.Row="2"
-                                           Grid.Column="1" />
-
-                                <TextBlock Text="Folder Count:"
-                                           Grid.Row="3" />
-                                <TextBlock Text="{x:Bind FolderCount, Mode=OneWay}"
-                                           Grid.Row="3"
-                                           Grid.Column="1" />
-
-                                <Button Content="Open in New Window"
-                                        Grid.Row="4"
-                                        HorizontalAlignment="Right"
-                                        Grid.Column="1"
-                                        Margin="0,4"
-                                        CommandParameter="{x:Bind}"
-                                        Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenCommand}" />
-
-                                <MenuFlyoutSeparator Grid.Row="5"
-                                                     Grid.ColumnSpan="2" />
-
-                            </Grid>
+                            <controls:WorkspaceDetails Workspace="{x:Bind Mode=OneWay}" />
                         </DataTemplate>
                     </winui:ItemsRepeater>
                 </ScrollViewer>
@@ -1215,102 +910,12 @@
                     <winui:ItemsRepeater ItemsSource="{x:Bind ViewModel.Items['AppLink'].Items, Mode=OneWay}"
                                          Margin="0,12,20,64">
                         <DataTemplate x:DataType="items:AppLink">
-                            <Grid RowSpacing="4">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="0.5*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid Grid.ColumnSpan="2">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Border x:Phase="1"
-                                            Width="28"
-                                            Height="28"
-                                            Background="{x:Bind Background, Converter={StaticResource DrawingColorBrushConverter}, Mode=OneWay}">
-                                        <Image Source="{x:Bind Logo, Converter={StaticResource AppLinkGridTilesLogoConverter}, Mode=OneWay}"
-                                               Width="28"
-                                               Height="28" />
-                                    </Border>
-
-                                    <TextBlock Text="{x:Bind DisplayName}"
-                                               Grid.Column="1"
-                                               Margin="8,0"
-                                               TextTrimming="CharacterEllipsis"
-                                               VerticalAlignment="Center"
-                                               FontSize="16"
-                                               FontWeight="SemiBold"
-                                               FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
-                                               FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}">
-                                        <i:Interaction.Behaviors>
-                                            <behaviors:FontFamilyBehavior FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
-                                        </i:Interaction.Behaviors>
-                                    </TextBlock>
-                                </Grid>
-
-                                <TextBlock Text="App Name:"
-                                           Grid.Row="1" />
-                                <TextBlock Text="{x:Bind AppName, Converter={StaticResource StringEmptyConverter}, ConverterParameter='Not set'}"
-                                           Grid.Row="1"
-                                           Grid.Column="1"
-                                           TextWrapping="Wrap" />
-
-                                <TextBlock Text="App Identifier:"
-                                           Grid.Row="2" />
-                                <TextBlock Text="{x:Bind AppId, Converter={StaticResource StringEmptyConverter}, ConverterParameter='Not set'}"
-                                           Grid.Row="2"
-                                           Grid.Column="1"
-                                           TextWrapping="Wrap"/>
-
-                                <TextBlock Text="Link:"
-                                           Grid.Row="3" />
-                                <TextBlock Text="{x:Bind Link}"
-                                           Grid.Row="3"
-                                           Grid.Column="1"
-                                           TextWrapping="Wrap" />
-
-                                <TextBlock Text="Launch Types:"
-                                           Grid.Row="4" />
-                                <StackPanel Grid.Row="4"
-                                            Grid.Column="1">
-                                    <TextBlock Text="Uri"
-                                               Visibility="{x:Bind converters:AppLinkUtilityConverter.IsLaunchTypeVisible(LaunchTypes, items:AppLinkLaunchTypes.Uri), Mode=OneWay}"/>
-                                    <TextBlock Text="Uri for Results"
-                                               Visibility="{x:Bind converters:AppLinkUtilityConverter.IsLaunchTypeVisible(LaunchTypes, items:AppLinkLaunchTypes.UriForResults), Mode=OneWay}"/>
-                                </StackPanel>
-
-                                <Button Content="Launch"
-                                        Grid.Row="5"
-                                        HorizontalAlignment="Right"
-                                        Grid.Column="1"
-                                        Margin="0,4"
-                                        CommandParameter="{x:Bind}"
-                                        Command="{Binding Source={StaticResource Locator}, Path=Properties.OpenCommand}" />
-
-                                <MenuFlyoutSeparator Grid.ColumnSpan="2"
-                                                     Grid.Row="6" />
-                            </Grid>
+                            <controls:AppLinkDetails AppLink="{x:Bind Mode=OneWay}" />
                         </DataTemplate>
                     </winui:ItemsRepeater>
                 </ScrollViewer>
             </PivotItem>
         </Pivot>
-        <!--<ProgressRing HorizontalAlignment="Center"
-                      Grid.Row="1"
-                      Width="36"
-                      Height="36"
-                      IsActive="{x:Bind ViewModel.RefreshCommand.IsRunning, Mode=OneWay}"
-                      Visibility="{x:Bind ViewModel.RefreshCommand.IsRunning, Mode=OneWay}"/>-->
         <winui:TeachingTip x:Name="notifyGrantAccess"
                           Title="GRANT ACCESS"
                           Subtitle="File System"

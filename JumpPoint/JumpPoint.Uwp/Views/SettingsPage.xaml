@@ -166,6 +166,8 @@
                                       IsOn="{x:Bind helpers:ServiceLocator.AppSettings.ShowFileExtension, Mode=TwoWay}" />
                         <ToggleSwitch Header="Show Hidden Items"
                                       IsOn="{x:Bind helpers:ServiceLocator.AppSettings.ShowHiddenItems, Mode=TwoWay}" />
+                        <ToggleSwitch Header="Show Details Pane"
+                                      IsOn="{x:Bind helpers:ServiceLocator.AppSettings.ShowDetailsPane, Mode=TwoWay}" />
 
                         <ComboBox Header="Copy Path Delimiter"
                                   ItemsSource="{x:Bind helpers:ServiceLocator.AppSettings.CopyPathDelimiters}"
