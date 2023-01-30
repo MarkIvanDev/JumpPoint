@@ -81,9 +81,26 @@
                     Glyph="&#xFB1C;"
                     FontSize="18" />
 
+    <FontIconSource x:Key="OpenShellItemInNewTabIcon"
+                    FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                    Glyph="&#xF747;"
+                    FontSize="18" />
+    <FontIconSource x:Key="OpenShellItemInNewWindowIcon"
+                    FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                    Glyph="&#x00F8;"
+                    FontSize="18" />
+    <FontIconSource x:Key="CopyShellItemPathIcon"
+                    FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                    Glyph="&#xF9A3;"
+                    FontSize="18" />
+
     <FontIconSource x:Key="NewWindowIcon"
                     FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
                     Glyph="&#x00F8;"
+                    FontSize="18" />
+    <FontIconSource x:Key="OpenPathInNewTabIcon"
+                    FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                    Glyph="&#xF747;"
                     FontSize="18" />
     <FontIconSource x:Key="OpenPathInNewWindowIcon"
                     FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
@@ -213,6 +230,10 @@
                     FontSize="18" />
     <FontIconSource x:Key="HiddenItemsIcon"
                     Glyph="&#xF3FC;"
+                    FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                    FontSize="18" />
+    <FontIconSource x:Key="DetailsPaneIcon"
+                    Glyph="&#x0071;"
                     FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
                     FontSize="18" />
 
@@ -367,9 +388,24 @@
                     Glyph="&#xFE36;"
                     FontSize="18" />
 
+    <FontIconSource x:Key="ChevronDownIcon"
+                    FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                    Glyph="&#xF2A4;"
+                    FontSize="18" />
+
     <FontIconSource x:Key="QuestionIcon"
                     FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
                     Glyph="&#xF639;"
+                    FontSize="18" />
+
+    <FontIconSource x:Key="StorageSenseIcon"
+                    FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                    Glyph="&#xF72C;"
+                    FontSize="18" />
+
+    <FontIconSource x:Key="CleanManagerIcon"
+                    FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                    Glyph="&#xF202;"
                     FontSize="18" />
 
 </ResourceDictionary>

@@ -34,6 +34,8 @@ namespace JumpPoint.Platform.Models
 
         public bool HasNullFileSize => items.OfType<FileBase>().Any(i => !i.Size.HasValue);
 
+        public bool HasItemsWithNoSizes => Total > File || HasNullFileSize;
+
         public int Workspace => items.Count(i => i.Type == JumpPointItemType.Workspace);
 
         public int AppLink => items.Count(i => i.Type == JumpPointItemType.AppLink);

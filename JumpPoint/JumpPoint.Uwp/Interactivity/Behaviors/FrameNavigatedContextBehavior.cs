@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using JumpPoint.Platform;
 using GalaSoft.MvvmLight.Messaging;
+using Windows.UI.Xaml.Input;
 
 namespace JumpPoint.Uwp.Interactivity.Behaviors
 {
@@ -46,8 +47,10 @@ namespace JumpPoint.Uwp.Interactivity.Behaviors
                             h => page.DataContextChanged += h,
                             h => page.DataContextChanged -= h,
                             h => (o, e) => h(o, e),
-                            (subscriber, s, e) => tabViewModel.Context = page.DataContext as ShellContextViewModelBase);
-                        Messenger.Default.Send(new NotificationMessage(nameof(TabViewModel.Context)), MessengerTokens.CommandManagement);
+                            (subscriber, s, e) =>
+                            {
+                                tabViewModel.Context = page.DataContext as ShellContextViewModelBase;
+                            });
                     }
                     else
                     {
@@ -59,15 +62,15 @@ namespace JumpPoint.Uwp.Interactivity.Behaviors
                     // A new frame is generated for an existing tab, this happens when Tabs are being rearranged by the user
                     var previousFrame = ((NavigationService)tabViewModel.NavigationHelper.NavigationService).Context;
 
-                    // Retain navigation history and content
-                    AssociatedObject.BackStack.AddRange(previousFrame.BackStack.Select(b => new PageStackEntry(b.SourcePageType, b.Parameter, b.NavigationTransitionInfo)));
-                    AssociatedObject.ForwardStack.AddRange(previousFrame.ForwardStack.Select(f => new PageStackEntry(f.SourcePageType, f.Parameter, f.NavigationTransitionInfo)));
-                    var content = previousFrame.Content;
-                    previousFrame.Content = null;
-                    AssociatedObject.Content = content;
-                    ((NavigationService)tabViewModel.NavigationHelper.NavigationService).Context = AssociatedObject;
+                    // We need to check if the frames are not the same because there are times that a frame is reused for the same tab
+                    if (previousFrame != AssociatedObject)
+                    {
+                        var previousNavigationState = previousFrame.GetNavigationState();
+                        AssociatedObject.SetNavigationState(previousNavigationState);
+                        ((NavigationService)tabViewModel.NavigationHelper.NavigationService).Context = AssociatedObject;
+                    }
                 }
-                AssociatedObject.Visibility = tabViewModel.Key.Equals(SelectedTab?.Key) ? Visibility.Visible : Visibility.Collapsed;
+                ChangeFrameVisibility(AssociatedObject, tabViewModel.Key.Equals(SelectedTab?.Key));
             }
         }
 
@@ -80,7 +83,10 @@ namespace JumpPoint.Uwp.Interactivity.Behaviors
                     h => page.DataContextChanged += h,
                     h => page.DataContextChanged -= h,
                     h => (o, e) => h(o, e),
-                    (subscriber, s, e) => tabViewModel.Context = page.DataContext as ShellContextViewModelBase);
+                    (subscriber, s, e) =>
+                    {
+                        tabViewModel.Context = page.DataContext as ShellContextViewModelBase;
+                    });
             }
         }
 
@@ -110,8 +116,21 @@ namespace JumpPoint.Uwp.Interactivity.Behaviors
         {
             if (d is FrameNavigatedContextBehavior behavior && behavior.AssociatedObject != null && behavior.AssociatedObject.DataContext is TabViewModel tab)
             {
-                behavior.AssociatedObject.Visibility = tab.Key.Equals(behavior.SelectedTab?.Key) ? Visibility.Visible : Visibility.Collapsed;
+                ChangeFrameVisibility(behavior.AssociatedObject, tab.Key.Equals(behavior.SelectedTab?.Key));
             }
+        }
+
+        private static void ChangeFrameVisibility(Frame frame, bool isSameKey)
+        {
+            if (isSameKey)
+            {
+                frame.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                frame.Visibility = Visibility.Collapsed;
+            }
+
         }
     }
 }

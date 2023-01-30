@@ -76,7 +76,7 @@ namespace JumpPoint.Platform.Services
                     {
                         case DriveType.CDRom:
                         case DriveType.Fixed:
-                            if (Path.GetPathRoot(Environment.SystemDirectory).NormalizeDirectory() == driveRoot.NormalizeDirectory())
+                            if (Path.GetPathRoot(Environment.SystemDirectory).NormalizeDirPath() == driveRoot.NormalizeDirPath())
                             {
                                 return StorageType.Local;
                             }
@@ -528,8 +528,8 @@ namespace JumpPoint.Platform.Services
                 {
                     case PathKind.Mounted:
                         var driveInfo = new DriveInfo(path);
-                        var driveRoot = driveInfo.RootDirectory.FullName.NormalizeDirectory();
-                        if (driveRoot == path.NormalizeDirectory())
+                        var driveRoot = driveInfo.RootDirectory.FullName.NormalizeDirPath();
+                        if (driveRoot == path.NormalizeDirPath())
                         {
                             switch (driveInfo.DriveType)
                             {
@@ -537,7 +537,7 @@ namespace JumpPoint.Platform.Services
                                     return DriveTemplate.Optical;
 
                                 case DriveType.Fixed:
-                                    return Path.GetPathRoot(Environment.SystemDirectory).NormalizeDirectory() == driveRoot ?
+                                    return Path.GetPathRoot(Environment.SystemDirectory).NormalizeDirPath() == driveRoot ?
                                         DriveTemplate.System :
                                         DriveTemplate.Local;
 

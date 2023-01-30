@@ -702,11 +702,11 @@
                                 <Setter Property="SingleSelectionFollowsFocus"
                                         Value="False" />
                                 <Setter Property="CanReorderItems"
-                                        Value="False" />
+                                        Value="True" />
                                 <Setter Property="CanDragItems"
                                         Value="False" />
                                 <Setter Property="AllowDrop"
-                                        Value="False" />
+                                        Value="True" />
                                 <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
                                         Value="Auto" />
                                 <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
@@ -784,52 +784,17 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        
-                        <winui:NavigationView x:Name="navView"
-                                              Grid.Row="2"
-                                              IsBackButtonVisible="Collapsed"
-                                              IsBackEnabled="False"
-                                              IsSettingsVisible="False"
-                                              IsPaneToggleButtonVisible="False"
-                                              IsPaneOpen="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsPaneOpen, Mode=TwoWay}"
-                                              MenuItemsSource="{TemplateBinding MenuItemsSource}"
-                                              MenuItemTemplateSelector="{TemplateBinding MenuItemTemplateSelector}"
-                                              FooterMenuItemsSource="{TemplateBinding FooterMenuItemsSource}"
-                                              PaneDisplayMode="Left">
-                            
-                            <ItemsControl ItemsSource="{TemplateBinding TabItemsSource}"
-                                          ItemTemplate="{TemplateBinding TabItemTemplate}"
-                                          HorizontalAlignment="Stretch"
-                                          VerticalAlignment="Stretch">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <Grid />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemContainerStyle>
-                                    <Style TargetType="ContentPresenter">
-                                        <Setter Property="HorizontalContentAlignment"
-                                                Value="Stretch" />
-                                        <Setter Property="VerticalContentAlignment"
-                                                Value="Stretch" />
-                                    </Style>
-                                </ItemsControl.ItemContainerStyle>
-                            </ItemsControl>
-                        </winui:NavigationView>
-
-                        <ContentPresenter x:Name="BelowHeaderPresenter"
-                                          Grid.Row="1"
-                                          Content="{TemplateBinding TabStripContent}"
-                                          ContentTemplate="{TemplateBinding TabStripContentTemplate}"
-                                          HorizontalAlignment="Stretch"
-                                          VerticalAlignment="Stretch" />
 
                         <Grid x:Name="TabHeaderGrid"
-                              Background="{TemplateBinding HeaderBackground}">
+                              Background="{TemplateBinding HeaderBackground}"
+                              Canvas.ZIndex="2">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" x:Name="LeftHeaderColumn" />
-                                <ColumnDefinition Width="Auto" x:Name="TabHeaderColumn" />
-                                <ColumnDefinition Width="*" x:Name="RightHeaderColumn" />
+                                <ColumnDefinition Width="Auto"
+                                                  x:Name="LeftHeaderColumn" />
+                                <ColumnDefinition Width="Auto"
+                                                  x:Name="TabHeaderColumn" />
+                                <ColumnDefinition Width="*"
+                                                  x:Name="RightHeaderColumn" />
                             </Grid.ColumnDefinitions>
 
                             <ContentPresenter x:Name="LeftHeaderPresenter"
@@ -849,7 +814,8 @@
                                 <!-- SelectedItem="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=SelectedItem, Mode=TwoWay}"
                                 SelectedIndex="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=SelectedIndex, Mode=TwoWay}"-->
                                 <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                                    <Style TargetType="ListViewItem"
+                                           BasedOn="{StaticResource DefaultListViewItemStyle}">
                                         <Setter Property="CornerRadius"
                                                 Value="6,6,0,0" />
                                         <Setter Property="Padding"
@@ -965,7 +931,60 @@
                                               VerticalAlignment="Stretch" />
                         </Grid>
 
+                        <ContentPresenter x:Name="BelowHeaderPresenter"
+                                          Grid.Row="1"
+                                          Content="{TemplateBinding TabStripContent}"
+                                          ContentTemplate="{TemplateBinding TabStripContentTemplate}"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch"
+                                          Canvas.ZIndex="1"/>
 
+                        <winui:NavigationView x:Name="navView"
+                                              Grid.Row="2"
+                                              IsBackButtonVisible="Collapsed"
+                                              IsBackEnabled="False"
+                                              IsSettingsVisible="False"
+                                              IsPaneToggleButtonVisible="False"
+                                              IsPaneOpen="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsPaneOpen, Mode=TwoWay}"
+                                              MenuItemsSource="{TemplateBinding MenuItemsSource}"
+                                              MenuItemTemplateSelector="{TemplateBinding MenuItemTemplateSelector}"
+                                              FooterMenuItemsSource="{TemplateBinding FooterMenuItemsSource}"
+                                              PaneDisplayMode="Left"
+                                              Canvas.ZIndex="0">
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ItemsControl ItemsSource="{TemplateBinding TabItemsSource}"
+                                              ItemTemplate="{TemplateBinding TabItemTemplate}"
+                                              HorizontalAlignment="Stretch"
+                                              VerticalAlignment="Stretch">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Grid />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style TargetType="ContentPresenter">
+                                            <Setter Property="HorizontalContentAlignment"
+                                                    Value="Stretch" />
+                                            <Setter Property="VerticalContentAlignment"
+                                                    Value="Stretch" />
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
+                                </ItemsControl>
+
+                                <ContentPresenter Grid.Column="1"
+                                                  Width="320"
+                                                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                  Content="{TemplateBinding DetailsPane}"
+                                                  HorizontalAlignment="Stretch"
+                                                  VerticalAlignment="Stretch"
+                                                  Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsDetailsPaneOpen, Mode=OneWay, Converter={StaticResource VisibleWhenTrueConverter}}" />
+                            </Grid>
+                        </winui:NavigationView>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

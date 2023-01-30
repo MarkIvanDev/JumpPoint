@@ -10,6 +10,7 @@ using JumpPoint.Platform.Items.PortableStorage;
 using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.Platform.Services;
+using Nito.AsyncEx;
 using NittyGritty.Services.Core;
 using MainThread = Xamarin.Essentials.MainThread;
 
@@ -17,28 +18,38 @@ namespace JumpPoint.ViewModels
 {
     public class DrivesViewModel : ShellContextViewModelBase
     {
+        private readonly SemaphoreSlim itemsSemaphore;
+
         public DrivesViewModel(IShortcutService shortcutService, AppSettings appSettings) : base(shortcutService, appSettings)
         {
-
+            itemsSemaphore = new SemaphoreSlim(1, 1);
         }
 
         public override bool HasCustomGrouping => true;
 
         protected override async Task Refresh(CancellationToken token)
         {
-            var drives = await StorageService.GetDrives();
-            Items.AddRange(drives);
-            token.ThrowIfCancellationRequested();
-
-            for (int i = 0; i < drives.Count; i++)
+            await itemsSemaphore.WaitAsync();
+            try
             {
+                var drives = await StorageService.GetDrives();
+                Items.AddRange(drives);
                 token.ThrowIfCancellationRequested();
-                await JumpPointService.Load(drives[i]);
-                ProgressInfo.Update(Items.Count, i + 1, string.Empty);
+
+                for (int i = 0; i < drives.Count; i++)
+                {
+                    token.ThrowIfCancellationRequested();
+                    await JumpPointService.Load(drives[i]);
+                    ProgressInfo.Update(Items.Count, i + 1, string.Empty);
+                }
+            }
+            finally
+            {
+                itemsSemaphore.Release();
             }
         }
 
-        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(TabParameter parameter, Dictionary<string, object> state)
         {
             PathInfo.Place(nameof(AppPath.Drives), parameter);
             await RefreshCommand.TryExecute();
@@ -47,42 +58,60 @@ namespace JumpPoint.ViewModels
 
         private async void PortableStorageService_PortableDriveCollectionChanged(object sender, PortableDriveCollectionChangedEventArgs e)
         {
-            switch (e.Action)
+            await Run(async (token) =>
             {
-                case NotifyCollectionChangedAction.Add:
-                case NotifyCollectionChangedAction.Replace:
-                    await MainThread.InvokeOnMainThreadAsync(async () =>
+                await itemsSemaphore.WaitAsync();
+                try
+                {
+                    var item = Items.OfType<PortableDrive>().FirstOrDefault(i => i.DeviceId == e.DeviceId);
+                    token.ThrowIfCancellationRequested();
+                    switch (e.Action)
                     {
-                        var item = Items.OfType<PortableDrive>().FirstOrDefault(i => i.DeviceId == e.DeviceId);
-                        await JumpPointService.Load(e.Drive);
-                        if (item != null)
-                        {
-                            var index = Items.IndexOf(item);
-                            Items[index] = e.Drive;
-                        }
-                        else
-                        {
-                            Items.Add(e.Drive);
-                        }
-                    });
-                    break;
+                        case NotifyCollectionChangedAction.Add:
+                        case NotifyCollectionChangedAction.Replace:
+                            var drive = await PortableStorageService.GetDriveFromId(e.DeviceId);
+                            token.ThrowIfCancellationRequested();
+                            if (drive != null)
+                            {
+                                await JumpPointService.Load(drive);
+                                token.ThrowIfCancellationRequested();
+                                await MainThread.InvokeOnMainThreadAsync(() =>
+                                {
+                                    if (item != null)
+                                    {
+                                        var index = Items.IndexOf(item);
+                                        Items[index] = drive;
+                                    }
+                                    else
+                                    {
+                                        Items.Add(drive);
+                                    }
+                                });
+                            }
+                            break;
 
-                case NotifyCollectionChangedAction.Remove:
-                    await MainThread.InvokeOnMainThreadAsync(() =>
-                    {
-                        var item = Items.OfType<PortableDrive>().FirstOrDefault(i => i.DeviceId == e.DeviceId);
-                        if (item != null)
-                        {
-                            Items.Remove(item);
-                        }
-                    });
-                    break;
+                        case NotifyCollectionChangedAction.Remove:
+                            await MainThread.InvokeOnMainThreadAsync(() =>
+                            {
+                                if (item != null)
+                                {
+                                    Items.Remove(item);
+                                }
+                            });
+                            break;
 
-                case NotifyCollectionChangedAction.Move:
-                case NotifyCollectionChangedAction.Reset:
-                default:
-                    break;
-            }
+                        case NotifyCollectionChangedAction.Move:
+                        case NotifyCollectionChangedAction.Reset:
+                        default:
+                            break;
+                    }
+                }
+                catch { }
+                finally
+                {
+                    itemsSemaphore.Release();
+                }
+            });
         }
 
         public override void SaveState(Dictionary<string, object> state)

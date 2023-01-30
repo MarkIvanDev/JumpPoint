@@ -15,14 +15,6 @@
 
     <UserControl.Resources>
         <properties:AttributeIconConverter x:Key="AttributeIconConverter" />
-        <!--<properties:AttributeOpacityConverter x:Name="AttributeOpacityConverter">
-            <conv:Binding Value="{x:Bind Data, Mode=OneWay}" />
-            <conv:Binding Value="{x:Bind Attribute, Mode=OneWay}" />
-        </properties:AttributeOpacityConverter>
-        <properties:AttributeVisibilityConverter x:Name="AttributeVisibilityConverter">
-            <conv:Binding Value="{x:Bind Data, Mode=OneWay}" />
-            <conv:Binding Value="{x:Bind Attribute, Mode=OneWay}" />
-        </properties:AttributeVisibilityConverter>-->
     </UserControl.Resources>
 
     <Image x:Name="image"
@@ -30,10 +22,6 @@
            Height="{x:Bind IconHeight, Mode=OneWay}"
            Margin="0,0,8,0"
            ToolTipService.ToolTip="{x:Bind Attribute, Converter={StaticResource HumanizerConverter}}">
-        <!-- 
-           Opacity="{x:Bind AttributeOpacityConverter.Output, Mode=OneWay}"
-           Visibility="{x:Bind AttributeVisibilityConverter.Output, Mode=OneWay}"
-        -->
         <Image.Source>
             <BitmapImage DecodePixelWidth="{x:Bind IconWidth, Mode=OneWay}"
                          DecodePixelHeight="{x:Bind IconHeight, Mode=OneWay}"

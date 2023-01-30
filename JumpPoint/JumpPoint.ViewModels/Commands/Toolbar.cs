@@ -230,7 +230,7 @@ namespace JumpPoint.ViewModels.Commands
         public static bool IsOpenWithEnabled(ShellContextViewModelBase context)
         {
             if (context is null) return false;
-            return context.SelectedItems.Count == 1 && context.SelectedItems.All(i => i is FileBase file && file.StorageType != StorageType.Cloud);
+            return context.SelectedItems.Count == 1 && context.SelectedItems.All(i => DetailsPane.IsOpenWithEnabled(i));
         }
 
         public static bool IsOpenInNewTabEnabled(ShellContextViewModelBase context)
@@ -261,8 +261,7 @@ namespace JumpPoint.ViewModels.Commands
             return context.SelectedItems.Count > 0 &&
                    context.SelectedItems.All(i =>
                    {
-                       var pathKind = i.Path.GetPathKind();
-                       return i is StorageItemBase && pathKind != PathKind.Unmounted && pathKind != PathKind.Cloud;
+                       return DetailsPane.IsOpenInFileExplorerEnabled(i);
                    });
         }
 
@@ -272,8 +271,7 @@ namespace JumpPoint.ViewModels.Commands
             return context.SelectedItems.Count > 0 &&
                    context.SelectedItems.All(i =>
                    {
-                       var pathKind = i.Path.GetPathKind();
-                       return i is DirectoryBase && pathKind != PathKind.Unmounted && pathKind != PathKind.Cloud;
+                       return DetailsPane.IsOpenInCommandPromptEnabled(i);
                     });
         }
 
@@ -283,8 +281,7 @@ namespace JumpPoint.ViewModels.Commands
             return context.SelectedItems.Count > 0 &&
                    context.SelectedItems.All(i =>
                    {
-                       var pathKind = i.Path.GetPathKind();
-                       return i is DirectoryBase && pathKind != PathKind.Unmounted && pathKind != PathKind.Cloud;
+                       return DetailsPane.IsOpenInPowershellEnabled(i);
                    });
         }
 
@@ -294,8 +291,7 @@ namespace JumpPoint.ViewModels.Commands
             return context.SelectedItems.Count > 0 &&
                    context.SelectedItems.All(i =>
                    {
-                       var pathKind = i.Path.GetPathKind();
-                       return i is DirectoryBase && pathKind != PathKind.Unmounted && pathKind != PathKind.Cloud;
+                       return DetailsPane.IsOpenInWindowsTerminalEnabled(i);
                    });
         }
 
@@ -321,7 +317,7 @@ namespace JumpPoint.ViewModels.Commands
         {
             if (context is null) return false;
             return context.SelectedItems.Count > 0 &&
-                   context.SelectedItems.All(i => i is StorageItemBase || i is AppLink);
+                   context.SelectedItems.All(i => DetailsPane.IsAddToWorkspaceEnabled(i));
         }
 
         public static bool IsAddToFavoritesEnabled(ShellContextViewModelBase context)
@@ -329,7 +325,7 @@ namespace JumpPoint.ViewModels.Commands
             if (context is null) return false;
             return context.SelectedItems.Count > 0 &&
                    context.SelectedItems.All(i => i.Type != JumpPointItemType.Unknown && i.Type != JumpPointItemType.Library) &&
-                   context.SelectedItems.Any(i => !i.IsFavorite);
+                   context.SelectedItems.Any(i => DetailsPane.IsAddToFavoritesEnabled(i));
         }
 
         public static bool IsRemoveFromFavoritesEnabled(ShellContextViewModelBase context)
@@ -337,7 +333,7 @@ namespace JumpPoint.ViewModels.Commands
             if (context is null) return false;
             return context.SelectedItems.Count > 0 &&
                    context.SelectedItems.All(i => i.Type != JumpPointItemType.Unknown && i.Type != JumpPointItemType.Library) &&
-                   context.SelectedItems.Any(i => i.IsFavorite);
+                   context.SelectedItems.Any(i => DetailsPane.IsRemoveFromFavoritesEnabled(i));
         }
 
         public static bool IsMoreToolsEnabled(ShellContextViewModelBase context)
@@ -350,14 +346,14 @@ namespace JumpPoint.ViewModels.Commands
         {
             if (context is null) return false;
             return context.SelectedItems.Count > 0 &&
-                   context.SelectedItems.All(i => i.Type == JumpPointItemType.Workspace);
+                   context.SelectedItems.All(i => DetailsPane.IsSetWorkspaceTemplateEnabled(i));
         }
 
         public static bool IsSetFolderTemplateEnabled(ShellContextViewModelBase context)
         {
             if (context is null) return false;
             return context.SelectedItems.Count > 0 &&
-                   context.SelectedItems.All(i => i is FolderBase folder && folder.FolderType == FolderType.Regular);
+                   context.SelectedItems.All(i => DetailsPane.IsSetFolderTemplateEnabled(i));
         }
 
         public static bool IsDownloadEnabled(ShellContextViewModelBase context)

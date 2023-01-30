@@ -730,7 +730,7 @@
                     <TextBlock Grid.Row="1" FontSize="12" HorizontalTextAlignment="Center"
                                Text="{x:Bind DisplayType, Mode=OneWay}" TextTrimming="CharacterEllipsis"
                                ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}"
-                               Visibility="{x:Bind FolderTemplate, Converter={StaticResource CollapsedWhenGeneralFolderConverter}, Mode=OneWay}"
+                               Visibility="{x:Bind FolderType, Converter={StaticResource CollapsedWhenRegularFolderConverter}, Mode=OneWay}"
                                Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                     <TextBlock Text="" FontSize="14" Grid.Row="2" />
                 </Grid>
@@ -841,8 +841,9 @@
                     </HyperlinkButton>
                     <ProgressBar Grid.Row="1"
                                  VerticalAlignment="Stretch"
-                                 Height="12"
+                                 Height="16"
                                  Margin="0,2"
+                                 CornerRadius="4"
                                  Maximum="{x:Bind Capacity, Converter={StaticResource NullableUlongToDoubleConverter}, Mode=OneWay}"
                                  Minimum="0"
                                  Value="{x:Bind UsedSpace, Converter={StaticResource NullableUlongToDoubleConverter}, Mode=OneWay}"
@@ -1074,14 +1075,14 @@
                     <!-- Date -->
                     <TextBlock Text="{x:Bind DateModified, Mode=OneWay, Converter={StaticResource NullableDateTimeOffsetToLocalConverter}}"
                                ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}"
-                               Visibility="{x:Bind FolderTemplate, Converter={StaticResource VisibleWhenGeneralFolderConverter}, Mode=OneWay}"
+                               Visibility="{x:Bind FolderType, Converter={StaticResource VisibleWhenRegularFolderConverter}, Mode=OneWay}"
                                Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
                                TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
 
                     <!-- Display Type -->
                     <TextBlock Text="{x:Bind DisplayType, Mode=OneWay}"
                                ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}"
-                               Visibility="{x:Bind FolderTemplate, Converter={StaticResource CollapsedWhenGeneralFolderConverter}, Mode=OneWay}"
+                               Visibility="{x:Bind FolderType, Converter={StaticResource CollapsedWhenRegularFolderConverter}, Mode=OneWay}"
                                Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
                                TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
                 </StackPanel>
@@ -1196,8 +1197,9 @@
                     <!-- Space -->
                     <ProgressBar Grid.Row="1"
                                  VerticalAlignment="Stretch"
-                                 Height="12"
+                                 Height="16"
                                  Margin="0,4,0,2"
+                                 CornerRadius="4"
                                  Maximum="{x:Bind Capacity, Converter={StaticResource NullableUlongToDoubleConverter}, Mode=OneWay}"
                                  Minimum="0"
                                  Value="{x:Bind UsedSpace, Converter={StaticResource NullableUlongToDoubleConverter}, Mode=OneWay}"
@@ -1964,8 +1966,6 @@
                             <EntranceThemeTransition IsStaggeringEnabled="False"
                                                      x:Name="entranceTransition" />
                             <AddDeleteThemeTransition />
-                            <!--<ReorderThemeTransition />
-                    <RepositionThemeTransition />-->
                         </TransitionCollection>
                     </ListView.ItemContainerTransitions>
                     <i:Interaction.Behaviors>
@@ -2047,7 +2047,7 @@
                             x:Name="quickActions" />
         </StackPanel>
 
-        <Canvas HorizontalAlignment="Stretch"
+        <!--<Canvas HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 Grid.Row="1">
             <Rectangle x:Name="rectRubberBand"
@@ -2059,6 +2059,6 @@
                        Opacity=".5"
                        Stroke="{ThemeResource SystemAccentColorLight1}"
                        StrokeThickness="1" />
-        </Canvas>
+        </Canvas>-->
     </Grid>
 </UserControl>

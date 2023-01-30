@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
+using JumpPoint.Platform;
 using JumpPoint.Platform.Items;
-using NittyGritty.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -12,6 +12,8 @@ namespace JumpPoint.Uwp.Converters
         public DataTemplate Text { get; set; }
 
         public DataTemplate JumpPointItem { get; set; }
+
+        public DataTemplate AppPath { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
@@ -27,6 +29,9 @@ namespace JumpPoint.Uwp.Converters
 
                 case string _:
                     return Text;
+
+                case AppPath _:
+                    return AppPath;
 
                 default:
                     return null;

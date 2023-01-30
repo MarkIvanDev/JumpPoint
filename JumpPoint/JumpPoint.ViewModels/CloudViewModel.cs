@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using JumpPoint.Platform.Items.CloudStorage;
+using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.Platform.Services;
 using JumpPoint.ViewModels.Helpers;
@@ -42,10 +43,10 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(TabParameter parameter, Dictionary<string, object> state)
         {
             string path = null;
-            if (parameter is TabParameter tab && tab.Parameter is string queryString)
+            if (parameter?.Parameter is string queryString)
             {
                 var args = QueryString.Parse(queryString);
                 path = args[nameof(PathInfo.Path)];

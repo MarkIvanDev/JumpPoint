@@ -28,6 +28,9 @@ using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.ViewModels.Dialogs.Clipboard;
 using System.Diagnostics;
 using JumpPoint.Platform.Items.CloudStorage;
+using NittyGritty.Models;
+using Humanizer;
+using JumpPoint.FullTrust.Core;
 
 namespace JumpPoint.ViewModels.Helpers
 {
@@ -108,7 +111,7 @@ namespace JumpPoint.ViewModels.Helpers
                         if (launchType == AppLinkLaunchTypes.All || appLink.Query.Count > 0 || appLink.InputData.Count > 0)
                         {
                             var appLinkLaunch = new AppLinkLaunchViewModel(appLink);
-                            await dialogService.Show(DialogKeys.AppLinkLaunch, appLinkLaunch);
+                            await dialogService.Show(DialogKeys.AppLinkLaunch, appLinkLaunch, appSettings.Theme);
                             launchType = appLinkLaunch.LaunchType;
                         }
 
@@ -120,7 +123,7 @@ namespace JumpPoint.ViewModels.Helpers
                             case AppLinkLaunchTypes.UriForResults:
                                 var results = await AppLinkService.OpenUriForResults(appLink);
                                 var appLinkLaunchResults = new AppLinkLaunchResultsViewModel(appLink, results);
-                                await dialogService.Show(DialogKeys.AppLinkLaunchResults, appLinkLaunchResults);
+                                await dialogService.Show(DialogKeys.AppLinkLaunchResults, appLinkLaunchResults, appSettings.Theme);
                                 break;
                             case AppLinkLaunchTypes.All:
                             case AppLinkLaunchTypes.None:
@@ -164,7 +167,7 @@ namespace JumpPoint.ViewModels.Helpers
                     }
                     vm.Workspaces = collection;
                     vm.IsLoading = false;
-                });
+                }, appSettings.Theme);
 
             if (result)
             {
@@ -188,6 +191,100 @@ namespace JumpPoint.ViewModels.Helpers
             }
         }
 
+        private async Task AddToFavorites(IList<JumpPointItem> items)
+        {
+            foreach (var item in items)
+            {
+                await DashboardService.SetStatus(item, true);
+                item.IsFavorite = true;
+            }
+            Messenger.Default.Send(new NotificationMessage<SidebarMessage>(
+                new SidebarMessage(CollectionChangedAction.Add, items), nameof(AppPath.Favorites)),
+                MessengerTokens.SidebarManagement);
+            Messenger.Default.Send(new NotificationMessage(nameof(JumpPointItem.IsFavorite)), MessengerTokens.CommandManagement);
+        }
+
+        private async Task RemoveFromFavorites(IList<JumpPointItem> items)
+        {
+            foreach (var item in items)
+            {
+                await DashboardService.SetStatus(item, false);
+                item.IsFavorite = false;
+            }
+            Messenger.Default.Send(new NotificationMessage<SidebarMessage>(
+                new SidebarMessage(CollectionChangedAction.Remove, items), nameof(AppPath.Favorites)),
+                MessengerTokens.SidebarManagement);
+            Messenger.Default.Send(new NotificationMessage(nameof(JumpPointItem.IsFavorite)), MessengerTokens.CommandManagement);
+        }
+
+        private async Task SetFolderTemplate(IList<JumpPointItem> items)
+        {
+            var viewModel = new FolderTemplatePickerViewModel();
+            var result = await dialogService.Show(DialogKeys.FolderTemplatePicker, viewModel, appSettings.Theme);
+            if (result && viewModel.Template.HasValue)
+            {
+                foreach (FolderBase f in items)
+                {
+                    await FolderTemplateService.SetFolderTemplate(f, viewModel.Template.Value);
+                    f.FolderTemplate = viewModel.Template.Value;
+                }
+                Messenger.Default.Send(new NotificationMessage<SidebarMessage>(
+                    new SidebarMessage(CollectionChangedAction.Update, items), nameof(AppPath.Folder)),
+                    MessengerTokens.SidebarManagement);
+            }
+        }
+
+        private async Task SetWorkspaceTemplate(IList<JumpPointItem> items)
+        {
+            var viewModel = new WorkspaceTemplatePickerViewModel();
+            var result = await dialogService.Show(DialogKeys.WorkspaceTemplatePicker, viewModel, appSettings.Theme);
+            if (result && viewModel.Template.HasValue)
+            {
+                foreach (Workspace ws in items)
+                {
+                    await WorkspaceService.SetTemplate(ws.Id, viewModel.Template.Value);
+                    ws.Template = viewModel.Template.Value;
+                }
+                Messenger.Default.Send(new NotificationMessage<SidebarMessage>(
+                    new SidebarMessage(CollectionChangedAction.Update, items), nameof(AppPath.Workspace)),
+                    MessengerTokens.SidebarManagement);
+            }
+        }
+
+        private async Task MoreTools(IList<JumpPointItem> items)
+        {
+            var viewModel = new ToolPickerViewModel(items);
+            var result = await dialogService.Show(DialogKeys.ToolPicker, viewModel, async (vm) =>
+            {
+                await vm.Initialize();
+            }, appSettings.Theme);
+            if (result && viewModel.Tool != null)
+            {
+                var toolResult = await ToolService.Run(viewModel.Tool, items);
+            }
+        }
+
+        public async Task<CloudAccount> AddCloudAccount(CloudStorageProvider provider)
+        {
+            IDictionary<string, string> data = null;
+            if (CloudStorageService.TryGetAccountProperties(provider, out var keys))
+            {
+                if (keys.Count > 0)
+                {
+                    var dataViewModel = new AddCloudAccountViewModel(provider, keys);
+                    var result = await dialogService.Show(DialogKeys.AddCloudAccount, dataViewModel, appSettings.Theme);
+                    if (result)
+                    {
+                        data = dataViewModel.GetData();
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+            return await CloudStorageService.AddAccount(provider, data);
+        }
 
         #region Navigation Bar
 
@@ -269,7 +366,7 @@ namespace JumpPoint.ViewModels.Helpers
                     }
                     else
                     {
-                        await dialogService.ShowMessage("You may need permission to perform this action", "Destination Folder Access Denied");
+                        await dialogService.ShowMessage("You may need permission to perform this action", "Destination Folder Access Denied", appSettings.Theme);
                     }
                 }
             }));
@@ -281,7 +378,7 @@ namespace JumpPoint.ViewModels.Helpers
                 if (tab?.Context is null) return;
 
                 var viewModel = new NewFolderViewModel();
-                var result = await dialogService.Show(DialogKeys.NewFolder, viewModel);
+                var result = await dialogService.Show(DialogKeys.NewFolder, viewModel, appSettings.Theme);
                 if (result && tab.Context.Item is DirectoryBase parent)
                 {
                     var newFolder = await StorageService.CreateFolder(parent, viewModel.Name, CreateOption.GenerateUniqueName);
@@ -294,7 +391,7 @@ namespace JumpPoint.ViewModels.Helpers
                     }
                     else
                     {
-                        await dialogService.ShowMessage("You may need permission to perform this action", "Destination Folder Access Denied");
+                        await dialogService.ShowMessage("You may need permission to perform this action", "Destination Folder Access Denied", appSettings.Theme);
                     }
                 }
             }));
@@ -304,7 +401,7 @@ namespace JumpPoint.ViewModels.Helpers
             async (tab) =>
             {
                 var viewModel = new NewWorkspaceViewModel();
-                var result = await dialogService.Show(DialogKeys.NewWorkspace, viewModel);
+                var result = await dialogService.Show(DialogKeys.NewWorkspace, viewModel, appSettings.Theme);
                 if (result)
                 {
                     var ws = new WorkspaceInfo()
@@ -333,7 +430,7 @@ namespace JumpPoint.ViewModels.Helpers
                 var result = await dialogService.Show(DialogKeys.AppLinkProviderPicker, viewModel, async (vm) =>
                 {
                     await vm.Initialize();
-                });
+                }, appSettings.Theme);
                 if (result && viewModel.Provider != null)
                 {
                     var appLinkInfo = await AppLinkProviderService.Pick(viewModel.Provider);
@@ -358,7 +455,7 @@ namespace JumpPoint.ViewModels.Helpers
                 var result = await dialogService.Show(DialogKeys.NewItemPicker, viewModel, async (vm) =>
                 {
                     await vm.Initialize();
-                });
+                }, appSettings.Theme);
                 if (result && viewModel.NewItem != null && tab.Context.Item is DirectoryBase destination)
                 {
                     var itemsCreated = await NewItemService.Run(viewModel.NewItem, destination);
@@ -371,8 +468,64 @@ namespace JumpPoint.ViewModels.Helpers
                     }
                     else
                     {
-                        await dialogService.ShowMessage("You may need permission to perform this action", "Destination Folder Access Denied");
+                        await dialogService.ShowMessage("You may need permission to perform this action", "Destination Folder Access Denied", appSettings.Theme);
                     }
+                }
+            }));
+
+        #endregion
+
+        #region Sidebar
+
+        private AsyncRelayCommand<ShellItem> _OpenShellItemInNewWindow;
+        public AsyncRelayCommand<ShellItem> OpenShellItemInNewWindowCommand => _OpenShellItemInNewWindow ?? (_OpenShellItemInNewWindow = new AsyncRelayCommand<ShellItem>(
+            async (item) =>
+            {
+                if (item?.Content is null) return;
+                if (item.Content is JumpPointItem jpItem)
+                {
+                    switch (jpItem.Type)
+                    {
+                        case JumpPointItemType.Drive:
+                            await JumpPointService.OpenNewWindow(AppPath.Drive, jpItem.Path);
+                            break;
+                        case JumpPointItemType.Folder:
+                            await JumpPointService.OpenNewWindow(AppPath.Folder, jpItem.Path);
+                            break;
+                        case JumpPointItemType.Workspace:
+                            await JumpPointService.OpenNewWindow(AppPath.Workspace, jpItem.Path);
+                            break;
+                        case JumpPointItemType.File:
+                        case JumpPointItemType.AppLink:
+                        case JumpPointItemType.Library:
+                        case JumpPointItemType.Unknown:
+                        default:
+                            break;
+                    }
+                }
+                else if (item.Content is AppPath appPath)
+                {
+                    await JumpPointService.OpenNewWindow(appPath, appPath.Humanize());
+                }
+                
+            }));
+
+        private AsyncRelayCommand<ShellItem> _CopyShellItemPath;
+        public AsyncRelayCommand<ShellItem> CopyShellItemPathCommand => _CopyShellItemPath ?? (_CopyShellItemPath = new AsyncRelayCommand<ShellItem>(
+            async (item) =>
+            {
+                if (item?.Content is null) return;
+                switch (item.Content)
+                {
+                    case JumpPointItem jpItem:
+                        await Clipboard.SetTextAsync(jpItem.Path);
+                        break;
+                    case AppPath appPath:
+                        await Clipboard.SetTextAsync(appPath.Humanize());
+                        break;
+                    default:
+                        await Clipboard.SetTextAsync(item.Content.ToString());
+                        break;
                 }
             }));
 
@@ -489,7 +642,7 @@ namespace JumpPoint.ViewModels.Helpers
                 if (context?.Item is null) return;
 
                 var viewModel = new WorkspaceTemplatePickerViewModel();
-                var result = await dialogService.Show(DialogKeys.WorkspaceTemplatePicker, viewModel);
+                var result = await dialogService.Show(DialogKeys.WorkspaceTemplatePicker, viewModel, appSettings.Theme);
                 if (result && viewModel.Template.HasValue && context.Item is Workspace ws)
                 {
                     await WorkspaceService.SetTemplate(ws.Id, viewModel.Template.Value);
@@ -508,7 +661,7 @@ namespace JumpPoint.ViewModels.Helpers
                 if (context?.Item is null) return;
 
                 var viewModel = new FolderTemplatePickerViewModel();
-                var result = await dialogService.Show(DialogKeys.FolderTemplatePicker, viewModel);
+                var result = await dialogService.Show(DialogKeys.FolderTemplatePicker, viewModel, appSettings.Theme);
                 if (result && viewModel.Template.HasValue && context.Item is FolderBase f)
                 {
                     await FolderTemplateService.SetFolderTemplate(f, viewModel.Template.Value);
@@ -700,13 +853,13 @@ namespace JumpPoint.ViewModels.Helpers
                     if (unmountedItems.Count > 0)
                     {
                         var viewModel = new CopyViewModel(dialogService, copyTo.Destination, unmountedItems);
-                        await dialogService.Show(DialogKeys.Copy, viewModel, async (vm) => await vm.Start());
+                        await dialogService.Show(DialogKeys.Copy, viewModel, async (vm) => await vm.Start(), appSettings.Theme);
                     }
                 }
                 else if (pathKind == PathKind.Unmounted)
                 {
                     var viewModel = new CopyViewModel(dialogService, copyTo.Destination, copyTo.Items);
-                    await dialogService.Show(DialogKeys.Copy, viewModel, async (vm) => await vm.Start());
+                    await dialogService.Show(DialogKeys.Copy, viewModel, async (vm) => await vm.Start(), appSettings.Theme);
                 }
             }));
 
@@ -737,13 +890,13 @@ namespace JumpPoint.ViewModels.Helpers
                     if (unmountedItems.Count > 0)
                     {
                         var viewModel = new MoveViewModel(dialogService, moveTo.Destination, unmountedItems);
-                        await dialogService.Show(DialogKeys.Move, viewModel, async (vm) => await vm.Start());
+                        await dialogService.Show(DialogKeys.Move, viewModel, async (vm) => await vm.Start(), appSettings.Theme);
                     }
                 }
                 else if (pathKind == PathKind.Unmounted)
                 {
                     var viewModel = new MoveViewModel(dialogService, moveTo.Destination, moveTo.Items);
-                    await dialogService.Show(DialogKeys.Move, viewModel, async (vm) => await vm.Start());
+                    await dialogService.Show(DialogKeys.Move, viewModel, async (vm) => await vm.Start(), appSettings.Theme);
                 }
             }));
 
@@ -768,7 +921,7 @@ namespace JumpPoint.ViewModels.Helpers
                     .Where(i => i.Type == JumpPointItemType.Folder || i.Type == JumpPointItemType.File || i.Type == JumpPointItemType.Workspace || i.Type == JumpPointItemType.AppLink)
                     .ToList();
                 var viewModel = new RenameViewModel(toRename.Select(i => i.Name).ToList());
-                var result = await dialogService.Show(DialogKeys.Rename, viewModel);
+                var result = await dialogService.Show(DialogKeys.Rename, viewModel, appSettings.Theme);
                 if (result)
                 {
                     foreach (var item in toRename)
@@ -788,7 +941,7 @@ namespace JumpPoint.ViewModels.Helpers
             {
                 if (context is null) return;
 
-                var result = await dialogService.ShowMessage("Are you sure you want to delete these items?", "Delete Items", "Delete", "Cancel");
+                var result = await dialogService.ShowMessage("Are you sure you want to delete these items?", "Delete Items", "Delete", "Cancel", appSettings.Theme);
                 if (result)
                 {
                     await JumpPointService.Delete(context.SelectedItems, false);
@@ -805,7 +958,7 @@ namespace JumpPoint.ViewModels.Helpers
             {
                 if (context is null) return;
 
-                var result = await dialogService.ShowMessage("Are you sure you want to delete these permanently?", "Delete Items Permanently", "Delete", "Cancel");
+                var result = await dialogService.ShowMessage("Are you sure you want to delete these permanently?", "Delete Items Permanently", "Delete", "Cancel", appSettings.Theme);
                 if (result)
                 {
                     await JumpPointService.Delete(context.SelectedItems, true);
@@ -867,7 +1020,7 @@ namespace JumpPoint.ViewModels.Helpers
                         if (!result)
                         {
                             var openInFE = await dialogService.ShowMessage("You could open the file from file explorer which we will open for you. Proceed?",
-                                "Open in File Explorer?", "Open", "Cancel");
+                                "Open in File Explorer?", "Open", "Cancel", appSettings.Theme);
                             if (openInFE)
                             {
                                 await JumpPointService.OpenInFileExplorer(Path.GetDirectoryName(file.Path), new List<StorageItemBase> { file });
@@ -885,7 +1038,7 @@ namespace JumpPoint.ViewModels.Helpers
                     if (launchType == AppLinkLaunchTypes.All || appLink.Query.Count > 0 || appLink.InputData.Count > 0)
                     {
                         var appLinkLaunch = new AppLinkLaunchViewModel(appLink);
-                        await dialogService.Show(DialogKeys.AppLinkLaunch, appLinkLaunch);
+                        await dialogService.Show(DialogKeys.AppLinkLaunch, appLinkLaunch, appSettings.Theme);
                         launchType = appLinkLaunch.LaunchType;
                     }
 
@@ -897,7 +1050,7 @@ namespace JumpPoint.ViewModels.Helpers
                         case AppLinkLaunchTypes.UriForResults:
                             var results = await AppLinkService.OpenUriForResults(appLink);
                             var appLinkLaunchResults = new AppLinkLaunchResultsViewModel(appLink, results);
-                            await dialogService.Show(DialogKeys.AppLinkLaunchResults, appLinkLaunchResults);
+                            await dialogService.Show(DialogKeys.AppLinkLaunchResults, appLinkLaunchResults, appSettings.Theme);
                             break;
                         case AppLinkLaunchTypes.All:
                         case AppLinkLaunchTypes.None:
@@ -1042,15 +1195,7 @@ namespace JumpPoint.ViewModels.Helpers
                 if (context is null) return;
 
                 var list = context.SelectedItems.ToList();
-                foreach (var item in list)
-                {
-                    await DashboardService.SetStatus(item, true);
-                    item.IsFavorite = true;
-                }
-                Messenger.Default.Send(new NotificationMessage<SidebarMessage>(
-                    new SidebarMessage(CollectionChangedAction.Add, list), nameof(AppPath.Favorites)),
-                    MessengerTokens.SidebarManagement);
-                Messenger.Default.Send(new NotificationMessage(nameof(JumpPointItem.IsFavorite)), MessengerTokens.CommandManagement);
+                await AddToFavorites(list);
             }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _RemoveItemsFromFavorites;
@@ -1060,15 +1205,7 @@ namespace JumpPoint.ViewModels.Helpers
                 if (context is null) return;
 
                 var list = context.SelectedItems.ToList();
-                foreach (var item in list)
-                {
-                    await DashboardService.SetStatus(item, false);
-                    item.IsFavorite = false;
-                }
-                Messenger.Default.Send(new NotificationMessage<SidebarMessage>(
-                    new SidebarMessage(CollectionChangedAction.Remove, list), nameof(AppPath.Favorites)),
-                    MessengerTokens.SidebarManagement);
-                Messenger.Default.Send(new NotificationMessage(nameof(JumpPointItem.IsFavorite)), MessengerTokens.CommandManagement);
+                await RemoveFromFavorites(list);
             }));
 
 
@@ -1079,15 +1216,7 @@ namespace JumpPoint.ViewModels.Helpers
                 if (context is null) return;
 
                 var list = context.SelectedItems.ToList();
-                var viewModel = new ToolPickerViewModel(list);
-                var result = await dialogService.Show(DialogKeys.ToolPicker, viewModel, async (vm) =>
-                {
-                    await vm.Initialize();
-                });
-                if (result && viewModel.Tool != null)
-                {
-                    var toolResult = await ToolService.Run(viewModel.Tool, list);
-                }
+                await MoreTools(list);
             }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _SetItemsWorkspaceTemplate;
@@ -1096,20 +1225,8 @@ namespace JumpPoint.ViewModels.Helpers
             {
                 if (context is null) return;
 
-                var viewModel = new WorkspaceTemplatePickerViewModel();
-                var result = await dialogService.Show(DialogKeys.WorkspaceTemplatePicker, viewModel);
-                if (result && viewModel.Template.HasValue)
-                {
-                    var wss = context.SelectedItems.Where(i => i.Type == JumpPointItemType.Workspace).ToList();
-                    foreach (Workspace ws in wss)
-                    {
-                        await WorkspaceService.SetTemplate(ws.Id, viewModel.Template.Value);
-                        ws.Template = viewModel.Template.Value;
-                    }
-                    Messenger.Default.Send(new NotificationMessage<SidebarMessage>(
-                        new SidebarMessage(CollectionChangedAction.Update, wss), nameof(AppPath.Workspace)),
-                        MessengerTokens.SidebarManagement);
-                }
+                var list = context.SelectedItems.Where(i => i.Type == JumpPointItemType.Workspace).ToList();
+                await SetWorkspaceTemplate(list);
             }));
 
         private AsyncRelayCommand<ShellContextViewModelBase> _SetItemsFolderTemplate;
@@ -1118,20 +1235,8 @@ namespace JumpPoint.ViewModels.Helpers
             {
                 if (context is null) return;
 
-                var viewModel = new FolderTemplatePickerViewModel();
-                var result = await dialogService.Show(DialogKeys.FolderTemplatePicker, viewModel);
-                if (result && viewModel.Template.HasValue)
-                {
-                    var fs = context.SelectedItems.Where(i => i.Type == JumpPointItemType.Folder).ToList();
-                    foreach (FolderBase f in fs)
-                    {
-                        await FolderTemplateService.SetFolderTemplate(f, viewModel.Template.Value);
-                        f.FolderTemplate = viewModel.Template.Value;
-                    }
-                    Messenger.Default.Send(new NotificationMessage<SidebarMessage>(
-                        new SidebarMessage(CollectionChangedAction.Update, fs), nameof(AppPath.Folder)),
-                        MessengerTokens.SidebarManagement);
-                }
+                var list = context.SelectedItems.Where(i => i.Type == JumpPointItemType.Folder).ToList();
+                await SetFolderTemplate(list);
             }));
 
 
@@ -1207,6 +1312,271 @@ namespace JumpPoint.ViewModels.Helpers
 
 
         #endregion
-    
+
+        #region Individual Commands
+
+        private AsyncRelayCommand _StorageSense;
+        public AsyncRelayCommand StorageSenseCommand => _StorageSense ?? (_StorageSense = new AsyncRelayCommand(
+            async () =>
+            {
+                await Xamarin.Essentials.Launcher.OpenAsync("ms-settings:storagepolicies");
+            }));
+
+        private AsyncRelayCommand<DriveBase> _CleanManager;
+        public AsyncRelayCommand<DriveBase> CleanManagerCommand => _CleanManager ?? (_CleanManager = new AsyncRelayCommand<DriveBase>(
+            async drive =>
+            {
+                await DesktopService.OpenCleanManager(drive.Path.FirstOrDefault());
+            }));
+
+        private AsyncRelayCommand _DiskDefragmenter;
+        public AsyncRelayCommand DiskDefragmenterCommand => _DiskDefragmenter ?? (_DiskDefragmenter = new AsyncRelayCommand(
+            async () =>
+            {
+                await DesktopService.OpenSystemApp(SystemApp.DiskDefragmenter);
+            }));
+
+        private AsyncRelayCommand<JumpPointItem> _OpenItemProperties;
+        public AsyncRelayCommand<JumpPointItem> OpenItemPropertiesCommand => _OpenItemProperties ?? (_OpenItemProperties = new AsyncRelayCommand<JumpPointItem>(
+            async (item) =>
+            {
+                if (item is null) return;
+
+                var seeds = new Collection<Seed>
+                {
+                    new Seed
+                    {
+                        Type = item.Type,
+                        Path = item.Path,
+                    }
+                };
+
+                await JumpPointService.OpenProperties(seeds);
+            }));
+
+        private AsyncRelayCommand<JumpPointItem> _OpenItemInNewWindow;
+        public AsyncRelayCommand<JumpPointItem> OpenItemInNewWindowCommand => _OpenItemInNewWindow ?? (_OpenItemInNewWindow = new AsyncRelayCommand<JumpPointItem>(
+            async item =>
+            {
+                switch (item.Type)
+                {
+                    case JumpPointItemType.Folder:
+                        await JumpPointService.OpenNewWindow(AppPath.Folder, item.Path);
+                        break;
+                    case JumpPointItemType.Drive:
+                        await JumpPointService.OpenNewWindow(AppPath.Drive, item.Path);
+                        break;
+                    case JumpPointItemType.Workspace:
+                        await JumpPointService.OpenNewWindow(AppPath.Workspace, item.Path);
+                        break;
+                    case JumpPointItemType.File when item is FileBase file:
+                        var fileLaunchResult = await JumpPointService.OpenFile(file, true);
+                        if (!fileLaunchResult)
+                        {
+                            var openInFE = await dialogService.ShowMessage("You could open the file from file explorer which we will open for you. Proceed?",
+                                "Open in File Explorer?", "Open", "Cancel", appSettings.Theme);
+                            if (openInFE)
+                            {
+                                await JumpPointService.OpenInFileExplorer(Path.GetDirectoryName(item.Path), new List<StorageItemBase> { file });
+                            }
+                        }
+                        break;
+                    case JumpPointItemType.AppLink when item is AppLink appLink:
+                        var launchType = appLink.LaunchTypes;
+                        if (launchType == AppLinkLaunchTypes.All || appLink.Query.Count > 0 || appLink.InputData.Count > 0)
+                        {
+                            var appLinkLaunch = new AppLinkLaunchViewModel(appLink);
+                            await dialogService.Show(DialogKeys.AppLinkLaunch, appLinkLaunch, appSettings.Theme);
+                            launchType = appLinkLaunch.LaunchType;
+                        }
+
+                        switch (launchType)
+                        {
+                            case AppLinkLaunchTypes.Uri:
+                                await AppLinkService.OpenUri(appLink);
+                                break;
+                            case AppLinkLaunchTypes.UriForResults:
+                                var results = await AppLinkService.OpenUriForResults(appLink);
+                                var appLinkLaunchResults = new AppLinkLaunchResultsViewModel(appLink, results);
+                                await dialogService.Show(DialogKeys.AppLinkLaunchResults, appLinkLaunchResults, appSettings.Theme);
+                                break;
+                            case AppLinkLaunchTypes.All:
+                            case AppLinkLaunchTypes.None:
+                            default:
+                                break;
+                        }
+                        break;
+
+                    case JumpPointItemType.Library:
+                        break;
+                }
+            }));
+
+        private AsyncRelayCommand<JumpPointItem> _OpenItemWith;
+        public AsyncRelayCommand<JumpPointItem> OpenItemWithCommand => _OpenItemWith ?? (_OpenItemWith = new AsyncRelayCommand<JumpPointItem>(
+            async (item) =>
+            {
+                if (item is FileBase file)
+                {
+                    await JumpPointService.OpenFile(file, false);
+                }
+            }));
+
+        private AsyncRelayCommand<JumpPointItem> _OpenItemInFileExplorer;
+        public AsyncRelayCommand<JumpPointItem> OpenItemInFileExplorerCommand => _OpenItemInFileExplorer ?? (_OpenItemInFileExplorer = new AsyncRelayCommand<JumpPointItem>(
+            async item =>
+            {
+                switch (item.Type)
+                {
+                    case JumpPointItemType.File:
+                        var parent = Directory.GetParent(item.Path).FullName;
+                        await JumpPointService.OpenInFileExplorer(parent, Enumerable.Repeat(item as StorageItemBase, 1));
+                        break;
+                    case JumpPointItemType.Folder:
+                    case JumpPointItemType.Drive:
+                        await JumpPointService.OpenInFileExplorer(item.Path);
+                        break;
+                    case JumpPointItemType.Workspace:
+                    case JumpPointItemType.Library:
+                    case JumpPointItemType.AppLink:
+                    case JumpPointItemType.Unknown:
+                    default:
+                        break;
+                }
+
+            }));
+
+        private AsyncRelayCommand<JumpPointItem> _OpenItemInCommandPrompt;
+        public AsyncRelayCommand<JumpPointItem> OpenItemInCommandPromptCommand => _OpenItemInCommandPrompt ?? (_OpenItemInCommandPrompt = new AsyncRelayCommand<JumpPointItem>(
+            async item =>
+            {
+                switch (item.Type)
+                {
+                    case JumpPointItemType.Folder:
+                    case JumpPointItemType.Drive:
+                        await DesktopService.OpenInCommandPrompt(new List<string> { item.Path });
+                        break;
+                    case JumpPointItemType.File:
+                    case JumpPointItemType.Workspace:
+                    case JumpPointItemType.Library:
+                    case JumpPointItemType.AppLink:
+                    case JumpPointItemType.Unknown:
+                    default:
+                        break;
+                }
+            }));
+
+        private AsyncRelayCommand<JumpPointItem> _OpenItemInPowershell;
+        public AsyncRelayCommand<JumpPointItem> OpenItemInPowershellCommand => _OpenItemInPowershell ?? (_OpenItemInPowershell = new AsyncRelayCommand<JumpPointItem>(
+            async item =>
+            {
+                switch (item.Type)
+                {
+                    case JumpPointItemType.Folder:
+                    case JumpPointItemType.Drive:
+                        await DesktopService.OpenInPowershell(new List<string> { item.Path });
+                        break;
+                    case JumpPointItemType.File:
+                    case JumpPointItemType.Workspace:
+                    case JumpPointItemType.Library:
+                    case JumpPointItemType.AppLink:
+                    case JumpPointItemType.Unknown:
+                    default:
+                        break;
+                }
+            }));
+
+
+        private AsyncRelayCommand<JumpPointItem> _OpenItemInWindowsTerminal;
+        public AsyncRelayCommand<JumpPointItem> OpenItemInWindowsTerminalCommand => _OpenItemInWindowsTerminal ?? (_OpenItemInWindowsTerminal = new AsyncRelayCommand<JumpPointItem>(
+            async (item) =>
+            {
+                switch (item.Type)
+                {
+                    case JumpPointItemType.Folder:
+                    case JumpPointItemType.Drive:
+                        await DesktopService.OpenInWindowsTerminal(new List<string> { item.Path });
+                        break;
+                    case JumpPointItemType.File:
+                    case JumpPointItemType.Workspace:
+                    case JumpPointItemType.Library:
+                    case JumpPointItemType.AppLink:
+                    case JumpPointItemType.Unknown:
+                    default:
+                        break;
+                }
+            }));
+
+
+        private AsyncRelayCommand<JumpPointItem> _AddItemToWorkspace;
+        public AsyncRelayCommand<JumpPointItem> AddItemToWorkspaceCommand => _AddItemToWorkspace ?? (_AddItemToWorkspace = new AsyncRelayCommand<JumpPointItem>(
+            async (item) =>
+            {
+                if (item is null) return;
+
+                switch (item.Type)
+                {
+                    case JumpPointItemType.Drive:
+                    case JumpPointItemType.Folder:
+                    case JumpPointItemType.File:
+                    case JumpPointItemType.AppLink:
+                        await AddToWorkspace(new List<JumpPointItem> { item });
+                        break;
+
+                    case JumpPointItemType.Workspace:
+                    case JumpPointItemType.Library:
+                    case JumpPointItemType.Unknown:
+                    default:
+                        break;
+                }
+            }));
+
+        private AsyncRelayCommand<JumpPointItem> _AddItemToFavorites;
+        public AsyncRelayCommand<JumpPointItem> AddItemToFavoritesCommand => _AddItemToFavorites ?? (_AddItemToFavorites = new AsyncRelayCommand<JumpPointItem>(
+            async (item) =>
+            {
+                if (item is null) return;
+
+                await AddToFavorites(new List<JumpPointItem> { item });
+            }));
+
+        private AsyncRelayCommand<JumpPointItem> _RemoveItemFromFavorites;
+        public AsyncRelayCommand<JumpPointItem> RemoveItemFromFavoritesCommand => _RemoveItemFromFavorites ?? (_RemoveItemFromFavorites = new AsyncRelayCommand<JumpPointItem>(
+            async (item) =>
+            {
+                if (item is null) return;
+
+                await RemoveFromFavorites(new List<JumpPointItem> { item });
+            }));
+
+        private AsyncRelayCommand<JumpPointItem> _SetItemFolderTemplate;
+        public AsyncRelayCommand<JumpPointItem> SetItemFolderTemplateCommand => _SetItemFolderTemplate ?? (_SetItemFolderTemplate = new AsyncRelayCommand<JumpPointItem>(
+            async (item) =>
+            {
+                if (item is null) return;
+
+                await SetFolderTemplate(new List<JumpPointItem> { item });
+            }));
+
+        private AsyncRelayCommand<JumpPointItem> _SetItemWorkspaceTemplate;
+        public AsyncRelayCommand<JumpPointItem> SetItemWorkspaceTemplateCommand => _SetItemWorkspaceTemplate ?? (_SetItemWorkspaceTemplate = new AsyncRelayCommand<JumpPointItem>(
+            async (item) =>
+            {
+                if (item is null) return;
+
+                await SetWorkspaceTemplate(new List<JumpPointItem> { item });
+            }));
+
+        private AsyncRelayCommand<JumpPointItem> _ItemMoreTools;
+        public AsyncRelayCommand<JumpPointItem> ItemMoreToolsCommand => _ItemMoreTools ?? (_ItemMoreTools = new AsyncRelayCommand<JumpPointItem>(
+            async (item) =>
+            {
+                if (item is null) return;
+
+                await MoreTools(new List<JumpPointItem> { item });
+            }));
+
+        #endregion
+
     }
 }

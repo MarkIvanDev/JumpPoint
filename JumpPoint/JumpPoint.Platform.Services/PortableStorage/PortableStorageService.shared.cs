@@ -36,18 +36,16 @@ namespace JumpPoint.Platform.Services
 
     public class PortableDriveCollectionChangedEventArgs
     {
-        public PortableDriveCollectionChangedEventArgs(NotifyCollectionChangedAction action, string deviceId, PortableDrive drive)
+        public PortableDriveCollectionChangedEventArgs(NotifyCollectionChangedAction action, string deviceId)
         {
             Action = action;
             DeviceId = deviceId;
-            Drive = drive;
         }
 
         public NotifyCollectionChangedAction Action { get; }
 
         public string DeviceId { get; }
 
-        public PortableDrive Drive { get; }
     }
 
 }

@@ -1,4 +1,4 @@
-﻿<nguwp:NGPage
+﻿<controls:PageBase
     x:Class="JumpPoint.Uwp.Views.AppLinksPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -14,10 +14,10 @@
     xmlns:actions="using:NittyGritty.Uwp.Interactivity.Actions"
     mc:Ignorable="d">
 
-    <nguwp:NGPage.Resources>
+    <controls:PageBase.Resources>
         <XamlUICommand x:Key="AppLinkProviderCommand"
                        Command="{x:Bind ViewModel.ProviderCommand}" />
-    </nguwp:NGPage.Resources>
+    </controls:PageBase.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -138,4 +138,4 @@
             </Button>
         </Grid>
     </Grid>
-</nguwp:NGPage>
+</controls:PageBase>
