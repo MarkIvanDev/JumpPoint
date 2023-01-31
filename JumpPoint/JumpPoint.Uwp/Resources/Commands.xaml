@@ -81,6 +81,27 @@
                    Label="Copy Path"
                    Description="Copy Path">
     </XamlUICommand>
+    
+    <!--#region Sidebar-->
+    <XamlUICommand x:Key="OpenShellItemInNewTabCommand"
+                   IconSource="{StaticResource OpenShellItemInNewTabIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=TabbedShell.OpenShellItemInNewTabCommand}"
+                   Label="Open in New Tab"
+                   Description="Open in New Tab">
+    </XamlUICommand>
+    <XamlUICommand x:Key="OpenShellItemInNewWindowCommand"
+                   IconSource="{StaticResource OpenShellItemInNewWindowIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenShellItemInNewWindowCommand}"
+                   Label="Open in New Window"
+                   Description="Open in New Window">
+    </XamlUICommand>
+    <XamlUICommand x:Key="CopyShellItemPathCommand"
+                   IconSource="{StaticResource CopyShellItemPathIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.CopyShellItemPathCommand}"
+                   Label="Copy Path"
+                   Description="Copy Path">
+    </XamlUICommand>
+    <!--#endregion-->
 
     <!--#region Tabs -->
     <XamlUICommand x:Key="NewTabCommand"
@@ -133,6 +154,12 @@
             <KeyboardAccelerator Modifiers="Control"
                                  Key="N" />
         </XamlUICommand.KeyboardAccelerators>
+    </XamlUICommand>
+    <XamlUICommand x:Key="OpenPathInNewTabCommand"
+                   IconSource="{StaticResource OpenPathInNewTabIcon}"
+                   Command="{Binding Source={StaticResource Locator}, Path=TabbedShell.OpenPathInNewTabCommand}"
+                   Label="Open in New Tab"
+                   Description="Open in New Tab">
     </XamlUICommand>
     <XamlUICommand x:Key="OpenPathInNewWindowCommand"
                    IconSource="{StaticResource OpenPathInNewWindowIcon}"

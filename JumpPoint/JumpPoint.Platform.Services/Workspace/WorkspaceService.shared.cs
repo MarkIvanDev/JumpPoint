@@ -241,7 +241,7 @@ namespace JumpPoint.Platform.Services
                     var files = await connection.Table<WorkspaceFileItem>().Where(fi => fi.WorkspaceId == id).ToListAsync();
                     foreach (var file in files)
                     {
-                        var item = await LocalStorageService.GetFile(file.Path);
+                        var item = await StorageService.GetFile(file.Path);
                         if (item != null)
                         {
                             items.Add(item);
@@ -253,7 +253,7 @@ namespace JumpPoint.Platform.Services
                     var folders = await connection.Table<WorkspaceFolderItem>().Where(fi => fi.WorkspaceId == id).ToListAsync();
                     foreach (var folder in folders)
                     {
-                        var item = await LocalStorageService.GetFolder(folder.Path);
+                        var item = await StorageService.GetFolder(folder.Path);
                         if (item != null)
                         {
                             items.Add(item);
@@ -265,7 +265,7 @@ namespace JumpPoint.Platform.Services
                     var drives = await connection.Table<WorkspaceDriveItem>().Where(fi => fi.WorkspaceId == id).ToListAsync();
                     foreach (var drive in drives)
                     {
-                        var item = await LocalStorageService.GetDrive(drive.Path);
+                        var item = await StorageService.GetDrive(drive.Path);
                         if (item != null)
                         {
                             items.Add(item);
@@ -301,17 +301,17 @@ namespace JumpPoint.Platform.Services
                 case JumpPointItemType.File:
                     return await connection.FindWithQueryAsync<WorkspaceFileItem>($"SELECT * FROM {nameof(WorkspaceFileItem)} " +
                         $"WHERE {nameof(WorkspaceFileItem.WorkspaceId)} = ? AND {nameof(WorkspaceFileItem.Path)} = ?",
-                        id, item.Path) != null;
+                        id, item.Path.NormalizePath()) != null;
 
                 case JumpPointItemType.Folder:
                     return await connection.FindWithQueryAsync<WorkspaceFolderItem>($"SELECT * FROM {nameof(WorkspaceFolderItem)} " +
                         $"WHERE {nameof(WorkspaceFolderItem.WorkspaceId)} = ? AND {nameof(WorkspaceFolderItem.Path)} = ?",
-                        id, item.Path.NormalizeDirectory()) != null;
+                        id, item.Path.NormalizeDirPath()) != null;
 
                 case JumpPointItemType.Drive:
                     return await connection.FindWithQueryAsync<WorkspaceDriveItem>($"SELECT * FROM {nameof(WorkspaceDriveItem)} " +
                         $"WHERE {nameof(WorkspaceDriveItem.WorkspaceId)} = ? AND {nameof(WorkspaceDriveItem.Path)} = ?",
-                        id, item.Path.NormalizeDirectory()) != null;
+                        id, item.Path.NormalizeDirPath()) != null;
 
                 case JumpPointItemType.AppLink:
                     return await connection.FindWithQueryAsync<WorkspaceAppLinkItem>($"SELECT * FROM {nameof(WorkspaceAppLinkItem)} " +
@@ -333,16 +333,17 @@ namespace JumpPoint.Platform.Services
                 case JumpPointItemType.File:
                     await connection.RunInTransactionAsync(db =>
                     {
+                        var path = item.Path.NormalizePath();
                         var exists = db.FindWithQuery<WorkspaceFileItem>($"SELECT * FROM {nameof(WorkspaceFileItem)} " +
                             $"WHERE {nameof(WorkspaceFileItem.WorkspaceId)} = ? AND {nameof(WorkspaceFileItem.Path)} = ?",
-                            id, item.Path) != null;
+                            id, path) != null;
                         if (!exists)
                         {
                             db.Insert(
                                 new WorkspaceFileItem()
                                 {
                                     WorkspaceId = id,
-                                    Path = item.Path
+                                    Path = path
                                 });
                         }
                     });
@@ -351,16 +352,17 @@ namespace JumpPoint.Platform.Services
                 case JumpPointItemType.Folder:
                     await connection.RunInTransactionAsync(db =>
                     {
+                        var path = item.Path.NormalizeDirPath();
                         var exists = db.FindWithQuery<WorkspaceFolderItem>($"SELECT * FROM {nameof(WorkspaceFolderItem)} " +
                             $"WHERE {nameof(WorkspaceFolderItem.WorkspaceId)} = ? AND {nameof(WorkspaceFolderItem.Path)} = ?",
-                            id, item.Path.NormalizeDirectory()) != null;
+                            id, path) != null;
                         if (!exists)
                         {
                             db.Insert(
                                 new WorkspaceFolderItem()
                                 {
                                     WorkspaceId = id,
-                                    Path = item.Path.NormalizeDirectory()
+                                    Path = path
                                 });
                         }
                     });
@@ -369,16 +371,17 @@ namespace JumpPoint.Platform.Services
                 case JumpPointItemType.Drive:
                     await connection.RunInTransactionAsync(db =>
                     {
+                        var path = item.Path.NormalizeDirPath();
                         var exists = db.FindWithQuery<WorkspaceDriveItem>($"SELECT * FROM {nameof(WorkspaceDriveItem)} " +
                             $"WHERE {nameof(WorkspaceDriveItem.WorkspaceId)} = ? AND {nameof(WorkspaceDriveItem.Path)} = ?",
-                            id, item.Path.NormalizeDirectory()) != null;
+                            id, path) != null;
                         if (!exists)
                         {
                             db.Insert(
                                 new WorkspaceDriveItem()
                                 {
                                     WorkspaceId = id,
-                                    Path = item.Path.NormalizeDirectory()
+                                    Path = path
                                 });
                         }
                     });
@@ -417,19 +420,19 @@ namespace JumpPoint.Platform.Services
                 case JumpPointItemType.File:
                     await connection.ExecuteAsync($"DELETE FROM {nameof(WorkspaceFileItem)} " +
                         $"WHERE {nameof(WorkspaceFileItem.WorkspaceId)} = ? AND {nameof(WorkspaceFileItem.Path)} = ?",
-                        id, item.Path);
+                        id, item.Path.NormalizePath());
                     break;
 
                 case JumpPointItemType.Folder:
                     await connection.ExecuteAsync($"DELETE FROM {nameof(WorkspaceFolderItem)} " +
                         $"WHERE {nameof(WorkspaceFolderItem.WorkspaceId)} = ? AND {nameof(WorkspaceFolderItem.Path)} = ?",
-                        id, item.Path.NormalizeDirectory());
+                        id, item.Path.NormalizeDirPath());
                     break;
 
                 case JumpPointItemType.Drive:
                     await connection.ExecuteAsync($"DELETE FROM {nameof(WorkspaceDriveItem)} " +
                         $"WHERE {nameof(WorkspaceDriveItem.WorkspaceId)} = ? AND {nameof(WorkspaceDriveItem.Path)} = ?",
-                        id, item.Path.NormalizeDirectory());
+                        id, item.Path.NormalizeDirPath());
                     break;
 
                 case JumpPointItemType.AppLink:

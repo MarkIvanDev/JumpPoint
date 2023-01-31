@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Ioc;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Services;
@@ -8,6 +9,9 @@ using NittyGritty.Data;
 using NittyGritty.Platform.Store;
 using NittyGritty.Services.Core;
 using NittyGritty.Uwp.Services;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace JumpPoint.Uwp.Helpers
 {

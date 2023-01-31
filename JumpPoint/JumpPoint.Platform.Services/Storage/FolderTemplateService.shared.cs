@@ -9,6 +9,7 @@ using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Items.Templates;
 using JumpPoint.Platform.Models;
+using JumpPoint.Platform.Models.Extensions;
 using NittyGritty.Extensions;
 using SQLite;
 
@@ -64,7 +65,7 @@ namespace JumpPoint.Platform.Services
                     {
                         folder.FolderType = FolderType.Regular;
                         var info = await connection.FindWithQueryAsync<FolderInfo>(
-                            $"SELECT * FROM {nameof(FolderInfo)} WHERE {nameof(FolderInfo.Path)} = ?", folder.Path.NormalizeDirectory());
+                            $"SELECT * FROM {nameof(FolderInfo)} WHERE {nameof(FolderInfo.Path)} = ?", folder.Path.NormalizeDirPath());
                         return info?.Template ?? FolderTemplate.General;
                     }
                 }
@@ -80,7 +81,7 @@ namespace JumpPoint.Platform.Services
             await connection.RunInTransactionAsync((db) =>
             {
                 var f = db.FindWithQuery<FolderInfo>(
-                    $"SELECT * FROM {nameof(FolderInfo)} WHERE {nameof(FolderInfo.Path)} = ?", folder.Path.NormalizeDirectory());
+                    $"SELECT * FROM {nameof(FolderInfo)} WHERE {nameof(FolderInfo.Path)} = ?", folder.Path.NormalizeDirPath());
                 if (template == FolderTemplate.General)
                 {
                     if (f != null)
@@ -97,7 +98,7 @@ namespace JumpPoint.Platform.Services
                     }
                     else
                     {
-                        db.Insert(new FolderInfo() { Path = folder.Path.NormalizeDirectory(), Template = template });
+                        db.Insert(new FolderInfo() { Path = folder.Path.NormalizeDirPath(), Template = template });
                     }
                 }
             });
@@ -146,7 +147,7 @@ namespace JumpPoint.Platform.Services
             foreach (var item in GetUserFolderTemplates())
             {
                 if (userFolders.TryGetValue(item, out var userFolderPath) &&
-                    path.NormalizeDirectory().Equals(userFolderPath.NormalizeDirectory(), StringComparison.OrdinalIgnoreCase))
+                    path.NormalizeDirPath().Equals(userFolderPath.NormalizeDirPath(), StringComparison.OrdinalIgnoreCase))
                 {
                     return item;
                 }
@@ -186,7 +187,7 @@ namespace JumpPoint.Platform.Services
             foreach (var item in GetSystemFolderTemplates())
             {
                 if (systemFolders.TryGetValue(item, out var systemFolderPath) &&
-                    path.NormalizeDirectory().Equals(systemFolderPath.NormalizeDirectory(), StringComparison.OrdinalIgnoreCase))
+                    path.NormalizeDirPath().Equals(systemFolderPath.NormalizeDirPath(), StringComparison.OrdinalIgnoreCase))
                 {
                     return item;
                 }

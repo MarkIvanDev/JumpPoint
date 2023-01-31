@@ -18,8 +18,8 @@
 
   <ItemGroup>
     <PackageReference Include="Humanizer.Core" Version="2.14.1" />
-    <PackageReference Include="NittyGritty" Version="2.1.0-prerelease07282022" />
-    <PackageReference Include="NittyGritty.Platform" Version="2.1.0-prerelease07282022" />
+    <PackageReference Include="NittyGritty" Version="2.1.0-prerelease202301212234" />
+    <PackageReference Include="NittyGritty.Platform" Version="2.1.0-prerelease202301212234" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
   </ItemGroup>
 

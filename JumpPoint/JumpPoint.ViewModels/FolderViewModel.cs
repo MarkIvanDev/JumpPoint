@@ -35,8 +35,7 @@ namespace JumpPoint.ViewModels
 
         protected override async Task Refresh(CancellationToken token)
         {
-            Item = PathInfo.Parameter is TabParameter tab && tab.Parameter is FolderBase fb ?
-                fb : await StorageService.GetFolder(PathInfo.Path, StorageType);
+            Item = await StorageService.GetFolder(PathInfo.Path, StorageType);
 
             if (!(Item is FolderBase folder))
             {
@@ -58,24 +57,16 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(TabParameter parameter, Dictionary<string, object> state)
         {
             string path = null;
-            if (parameter is TabParameter tab)
+            if (parameter?.Parameter is string queryString)
             {
-                if (tab.Parameter is string queryString)
-                {
-                    var args = QueryString.Parse(queryString);
-                    path = args[nameof(PathInfo.Path)];
-                    StorageType = args.TryGetValue(nameof(DriveBase.StorageType), out var st) &&
-                        Enum.TryParse<StorageType>(st, true, out var storageType) ?
-                        storageType : (StorageType?)null;
-                }
-                else if (tab.Parameter is FolderBase folder)
-                {
-                    path = folder.Path;
-                    StorageType = folder.StorageType;
-                }
+                var args = QueryString.Parse(queryString);
+                path = args[nameof(PathInfo.Path)];
+                StorageType = args.TryGetValue(nameof(DriveBase.StorageType), out var st) &&
+                    Enum.TryParse<StorageType>(st, true, out var storageType) ?
+                    storageType : (StorageType?)null;
             }
             else if (state != null)
             {

@@ -7,12 +7,11 @@ namespace JumpPoint.Platform.Items.Storage
 {
     public enum FolderType
     {
-        Unknown = 0,
         [Description("File folder")]
-        Regular = 1,
+        Regular = 0,
         [Description("User folder")]
-        User = 2,
+        User = 1,
         [Description("System Folder")]
-        System = 3
+        System = 2
     }
 }

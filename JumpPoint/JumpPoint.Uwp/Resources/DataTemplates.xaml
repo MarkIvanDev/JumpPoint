@@ -1,0 +1,20 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:items="using:JumpPoint.Platform.Items"
+                    xmlns:converters="using:JumpPoint.Uwp.Converters"
+                    xmlns:gtext="using:Glif.Core.Text"
+                    xmlns:i="using:Microsoft.Xaml.Interactivity"
+                    xmlns:behaviors="using:JumpPoint.Uwp.Interactivity.Behaviors"
+                    xmlns:helpers="using:JumpPoint.Uwp.Helpers"
+                    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+                    xmlns:ngconv="using:NittyGritty.Uwp.Converters"
+                    x:Class="JumpPoint.Uwp.Resources.DataTemplates">
+
+    <DataTemplate x:Key="FileDetailsTemplate"
+                  x:DataType="items:FileBase">
+        <TextBlock Text="File Details" />
+    </DataTemplate>
+
+    
+
+</ResourceDictionary>

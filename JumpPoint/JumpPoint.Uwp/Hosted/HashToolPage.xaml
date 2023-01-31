@@ -1,10 +1,11 @@
-﻿<nguwp:NGPage
+﻿<controls:PageBase
     x:Class="JumpPoint.Uwp.Hosted.HashToolPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:JumpPoint.Uwp.Hosted"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:JumpPoint.Uwp.Controls"
     xmlns:nguwp="using:NittyGritty.Uwp"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:hosted="using:JumpPoint.ViewModels.Hosted"
@@ -70,4 +71,4 @@
             </winui:ItemsRepeater>
         </ScrollViewer>
     </Grid>
-</nguwp:NGPage>
+</controls:PageBase>

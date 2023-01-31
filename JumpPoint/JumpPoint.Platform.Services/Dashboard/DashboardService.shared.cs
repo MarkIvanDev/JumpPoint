@@ -172,22 +172,22 @@ namespace JumpPoint.Platform.Services
                 case JumpPointItemType.File:
                     return await connection.FindWithQueryAsync<FavoriteFile>(
                         $"SELECT * FROM {nameof(FavoriteFile)} WHERE {nameof(FavoriteFile.Path)} = ?",
-                        item.Path) != null;
+                        item.Path.NormalizePath()) != null;
 
                 case JumpPointItemType.Folder:
                     return await connection.FindWithQueryAsync<FavoriteFolder>(
                         $"SELECT * FROM {nameof(FavoriteFolder)} WHERE {nameof(FavoriteFolder.Path)} = ?",
-                        item.Path.NormalizeDirectory()) != null;
+                        item.Path.NormalizeDirPath()) != null;
 
                 case JumpPointItemType.Drive:
                     return await connection.FindWithQueryAsync<FavoriteDrive>(
                         $"SELECT * FROM {nameof(FavoriteDrive)} WHERE {nameof(FavoriteDrive.Path)} = ?",
-                        item.Path.NormalizeDirectory()) != null;
+                        item.Path.NormalizeDirPath()) != null;
 
                 case JumpPointItemType.Workspace:
                     return await connection.FindWithQueryAsync<FavoriteWorkspace>(
                         $"SELECT * FROM {nameof(FavoriteWorkspace)} WHERE {nameof(FavoriteWorkspace.Path)} = ?",
-                        item.Name) != null;
+                        item.Path) != null;
 
                 case JumpPointItemType.AppLink:
                     return await connection.FindWithQueryAsync<FavoriteAppLink>(
@@ -203,41 +203,46 @@ namespace JumpPoint.Platform.Services
 
         public static async Task SetStatus(JumpPointItem item, bool status)
         {
-            switch (item.Type)
+            await SetStatusInternal(item.Type, item.Path, status);
+        }
+
+        private static async Task SetStatusInternal(JumpPointItemType type, string path, bool status)
+        {
+            switch (type)
             {
-                case JumpPointItemType.File:
+                case JumpPointItemType.Drive:
                     _ = status ?
-                        await connection.InsertAsync(new FavoriteFile() { Path = item.Path }, "OR IGNORE") :
-                        await connection.ExecuteAsync($"DELETE FROM {nameof(FavoriteFile)} WHERE {nameof(FavoriteFile.Path)} = ?",
-                            item.Path);
+                        await connection.InsertAsync(new FavoriteDrive() { Path = path.NormalizeDirPath() }, "OR IGNORE") :
+                        await connection.ExecuteAsync($"DELETE FROM {nameof(FavoriteDrive)} WHERE {nameof(FavoriteDrive.Path)} = ?",
+                            path.NormalizeDirPath());
                     break;
 
                 case JumpPointItemType.Folder:
                     _ = status ?
-                        await connection.InsertAsync(new FavoriteFolder() { Path = item.Path.NormalizeDirectory() }, "OR IGNORE") :
+                        await connection.InsertAsync(new FavoriteFolder() { Path = path.NormalizeDirPath() }, "OR IGNORE") :
                         await connection.ExecuteAsync($"DELETE FROM {nameof(FavoriteFolder)} WHERE {nameof(FavoriteFolder.Path)} = ?",
-                            item.Path.NormalizeDirectory());
+                            path.NormalizeDirPath());
                     break;
 
-                case JumpPointItemType.Drive:
+                case JumpPointItemType.File:
                     _ = status ?
-                        await connection.InsertAsync(new FavoriteDrive() { Path = item.Path.NormalizeDirectory() }, "OR IGNORE") :
-                        await connection.ExecuteAsync($"DELETE FROM {nameof(FavoriteDrive)} WHERE {nameof(FavoriteDrive.Path)} = ?",
-                            item.Path.NormalizeDirectory());
+                        await connection.InsertAsync(new FavoriteFile() { Path = path.NormalizePath() }, "OR IGNORE") :
+                        await connection.ExecuteAsync($"DELETE FROM {nameof(FavoriteFile)} WHERE {nameof(FavoriteFile.Path)} = ?",
+                            path.NormalizePath());
                     break;
 
                 case JumpPointItemType.Workspace:
                     _ = status ?
-                        await connection.InsertAsync(new FavoriteWorkspace() { Path = item.Name }, "OR IGNORE") :
+                        await connection.InsertAsync(new FavoriteWorkspace() { Path = path }, "OR IGNORE") :
                         await connection.ExecuteAsync($"DELETE FROM {nameof(FavoriteWorkspace)} WHERE {nameof(FavoriteWorkspace.Path)} = ?",
-                            item.Name);
+                            path);
                     break;
 
                 case JumpPointItemType.AppLink:
                     _ = status ?
-                        await connection.InsertAsync(new FavoriteAppLink() { Path = item.Path }, "OR IGNORE") :
+                        await connection.InsertAsync(new FavoriteAppLink() { Path = path }, "OR IGNORE") :
                         await connection.ExecuteAsync($"DELETE FROM {nameof(FavoriteAppLink)} WHERE {nameof(FavoriteAppLink.Path)} = ?",
-                            item.Path);
+                            path);
                     break;
 
                 case JumpPointItemType.Library:

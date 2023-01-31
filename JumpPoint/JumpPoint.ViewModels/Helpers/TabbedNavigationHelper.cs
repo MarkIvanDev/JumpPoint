@@ -4,6 +4,7 @@ using JumpPoint.Platform.Items.CloudStorage;
 using JumpPoint.Platform.Items.Storage;
 using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Models.Extensions;
+using Newtonsoft.Json;
 using NittyGritty.Models;
 using NittyGritty.Services.Core;
 using System;
@@ -24,7 +25,7 @@ namespace JumpPoint.ViewModels.Helpers
             NavigationService = navigationService;
         }
 
-        public void ToKey(string key, object parameter = null)
+        public void ToKey(string key, string parameter = null)
         {
             NavigationService.NavigateTo(key, GetTabParameter(parameter));
         }
@@ -106,7 +107,7 @@ namespace JumpPoint.ViewModels.Helpers
             NavigationService.NavigateTo(ViewModelKeys.Library, GetTabParameter(GetParameter(library)));
         }
 
-        public void ToPathType(AppPath pathType, object parameter = null)
+        public void ToPathType(AppPath pathType, string parameter = null)
         {
             switch (pathType)
             {
@@ -217,13 +218,13 @@ namespace JumpPoint.ViewModels.Helpers
             }
         }
 
-        public TabParameter GetTabParameter(object parameter = null)
+        public string GetTabParameter(string parameter = null)
         {
-            return new TabParameter
+            return JsonConvert.SerializeObject(new TabParameter
             {
                 TabKey = Key,
                 Parameter = parameter
-            };
+            });
         }
 
         public static string GetParameter(AppPath pathType, string path, JumpPointItem item)
@@ -240,7 +241,7 @@ namespace JumpPoint.ViewModels.Helpers
             return queryString.ToString();
         }
 
-        public static object GetParameter(JumpPointItem item)
+        public static string GetParameter(JumpPointItem item)
         {
             switch (item.Type)
             {
@@ -262,61 +263,73 @@ namespace JumpPoint.ViewModels.Helpers
             }
         }
 
-        private static object GetParameter(DriveBase drive)
+        private static string GetParameter(DriveBase drive)
         {
-            var pathKind = drive.Path.GetPathKind();
-            switch (pathKind)
+            return new QueryString
             {
-                case PathKind.Mounted:
-                case PathKind.Network:
-                    return new QueryString
-                    {
-                        { nameof(PathInfo.Type), AppPath.Drive.ToString() },
-                        { nameof(DriveBase.StorageType), drive.StorageType.ToString() },
-                        { nameof(PathInfo.Path), drive.Path }
-                    }.ToString();
+                { nameof(PathInfo.Type), AppPath.Drive.ToString() },
+                { nameof(DriveBase.StorageType), drive.StorageType.ToString() },
+                { nameof(PathInfo.Path), drive.Path }
+            }.ToString();
+            //var pathKind = drive.Path.GetPathKind();
+            //switch (pathKind)
+            //{
+            //    case PathKind.Mounted:
+            //    case PathKind.Network:
+            //        return new QueryString
+            //        {
+            //            { nameof(PathInfo.Type), AppPath.Drive.ToString() },
+            //            { nameof(DriveBase.StorageType), drive.StorageType.ToString() },
+            //            { nameof(PathInfo.Path), drive.Path }
+            //        }.ToString();
 
-                case PathKind.Unmounted:
-                case PathKind.Cloud:
-                case PathKind.WSL:
-                    return drive;
+            //    case PathKind.Unmounted:
+            //    case PathKind.Cloud:
+            //    case PathKind.WSL:
+            //        return drive;
 
-                case PathKind.Unknown:
-                case PathKind.Local:
-                case PathKind.Workspace:
-                default:
-                    return null;
-            }
+            //    case PathKind.Unknown:
+            //    case PathKind.Local:
+            //    case PathKind.Workspace:
+            //    default:
+            //        return null;
+            //}
         }
 
-        private static object GetParameter(FolderBase folder)
+        private static string GetParameter(FolderBase folder)
         {
-            var pathKind = folder.Path.GetPathKind();
-            switch (pathKind)
+            return new QueryString
             {
-                case PathKind.Mounted:
-                case PathKind.Network:
-                    return new QueryString
-                    {
-                        { nameof(PathInfo.Type), AppPath.Folder.ToString() },
-                        { nameof(FolderBase.StorageType), folder.StorageType.ToString() },
-                        { nameof(PathInfo.Path), folder.Path }
-                    }.ToString();
+                { nameof(PathInfo.Type), AppPath.Folder.ToString() },
+                { nameof(FolderBase.StorageType), folder.StorageType.ToString() },
+                { nameof(PathInfo.Path), folder.Path }
+            }.ToString();
+            //var pathKind = folder.Path.GetPathKind();
+            //switch (pathKind)
+            //{
+            //    case PathKind.Mounted:
+            //    case PathKind.Network:
+            //        return new QueryString
+            //        {
+            //            { nameof(PathInfo.Type), AppPath.Folder.ToString() },
+            //            { nameof(FolderBase.StorageType), folder.StorageType.ToString() },
+            //            { nameof(PathInfo.Path), folder.Path }
+            //        }.ToString();
 
-                case PathKind.Unmounted:
-                case PathKind.Cloud:
-                case PathKind.WSL:
-                    return folder;
+            //    case PathKind.Unmounted:
+            //    case PathKind.Cloud:
+            //    case PathKind.WSL:
+            //        return folder;
 
-                case PathKind.Unknown:
-                case PathKind.Local:
-                case PathKind.Workspace:
-                default:
-                    return null;
-            }
+            //    case PathKind.Unknown:
+            //    case PathKind.Local:
+            //    case PathKind.Workspace:
+            //    default:
+            //        return null;
+            //}
         }
 
-        private static object GetParameter(Workspace workspace)
+        private static string GetParameter(Workspace workspace)
         {
             return new QueryString
             {
@@ -325,7 +338,7 @@ namespace JumpPoint.ViewModels.Helpers
             }.ToString();
         }
 
-        public static object GetParameter(CloudStorageProvider provider)
+        public static string GetParameter(CloudStorageProvider provider)
         {
             return new QueryString
             {
@@ -333,7 +346,7 @@ namespace JumpPoint.ViewModels.Helpers
             }.ToString();
         }
 
-        public static object GetParameter(CloudAccount account)
+        public static string GetParameter(CloudAccount account)
         {
             return new QueryString
             {

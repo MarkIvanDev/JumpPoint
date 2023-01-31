@@ -20,6 +20,11 @@ namespace JumpPoint.Platform.Models.Extensions
                 path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar).Trim();
         }
 
+        public static string NormalizeDirPath(this string path)
+        {
+            return path?.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar).Trim().WithEnding($"{Path.DirectorySeparatorChar}");
+        }
+
         public static PathKind GetPathKind(this string path)
         {
             if (string.IsNullOrEmpty(path)) return PathKind.Unknown;
@@ -238,7 +243,7 @@ namespace JumpPoint.Platform.Models.Extensions
             }
         }
 
-        public static void Place(this PathInfo pathInfo, string path, object parameter)
+        public static void Place(this PathInfo pathInfo, string path, TabParameter parameter)
         {
             pathInfo.Breadcrumbs = new Collection<Breadcrumb>(path.GetBreadcrumbs());
             pathInfo.Parameter = parameter;

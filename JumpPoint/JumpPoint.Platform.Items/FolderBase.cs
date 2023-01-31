@@ -15,7 +15,7 @@ namespace JumpPoint.Platform.Items
             base(JumpPointItemType.Folder, storageType, path, dateAccessed, dateCreated, dateModified, attributes, size)
         {
             DisplayName = Name;
-            FolderType = FolderType.Unknown;
+            FolderType = FolderType.Regular;
             FolderTemplate = FolderTemplate.General;
         }
 

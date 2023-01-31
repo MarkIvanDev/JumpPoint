@@ -44,10 +44,10 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(TabParameter parameter, Dictionary<string, object> state)
         {
             string path = null;
-            if (parameter is TabParameter tab && tab.Parameter is string queryString)
+            if (parameter?.Parameter is string queryString)
             {
                 var args = QueryString.Parse(queryString);
                 path = args[nameof(PathInfo.Path)];

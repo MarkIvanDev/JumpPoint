@@ -9,8 +9,6 @@ using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Services;
 using NittyGritty.Models;
-using NittyGritty.Commands;
-using JumpPoint.ViewModels.Helpers;
 using JumpPoint.Platform.Models.Extensions;
 using Humanizer;
 using NittyGritty.Services.Core;
@@ -62,15 +60,10 @@ namespace JumpPoint.ViewModels
             }
         }
         
-        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(TabParameter parameter, Dictionary<string, object> state)
         {
             PathInfo.Place(nameof(AppPath.Dashboard), parameter);
             await RefreshCommand.TryExecute();
-        }
-
-        public override void SaveState(Dictionary<string, object> state)
-        {
-            base.SaveState(state);
         }
     }
 }

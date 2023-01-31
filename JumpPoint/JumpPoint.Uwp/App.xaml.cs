@@ -12,7 +12,6 @@ using JumpPoint.Platform.Items.CloudStorage;
 using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.Platform.Services;
-using JumpPoint.Uwp.Helpers;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -31,7 +30,6 @@ using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
-using Windows.Networking.NetworkOperators;
 using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -41,18 +39,13 @@ using JumpListService = JumpPoint.Platform.Services.JumpListService;
 using GalaSoft.MvvmLight.Ioc;
 using System.Diagnostics;
 using Windows.Security.Authentication.Web;
+using NittyGritty.Platform.Theme;
+using Xamarin.Essentials;
 
 namespace JumpPoint.Uwp
 {
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
     sealed partial class App : NGApp
     {
-        /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
         public App()
         {
             this.InitializeComponent();
@@ -91,11 +84,6 @@ namespace JumpPoint.Uwp
         #region Activation
         protected override async Task HandleActivation(LaunchActivatedEventArgs args)
         {
-            if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
-            {
-                await SuspensionManager.RestoreAsync();
-            }
-
             var source = args.GetLaunchSource();
             switch (source)
             {
@@ -119,6 +107,7 @@ namespace JumpPoint.Uwp
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Maximized;
             var appView = ApplicationView.GetForCurrentView();
             appView.SetPreferredMinSize(new Size(400, 400));
+            await Task.CompletedTask;
         }
 
         protected override async Task HandleActivation(ProtocolActivatedEventArgs args)
@@ -840,7 +829,10 @@ namespace JumpPoint.Uwp
 
         public override Frame GetNavigationContext()
         {
-            return (Frame)Window.Current.Content;
+            var frame = (Frame)Window.Current.Content;
+            var theme = SimpleIoc.Default.GetInstance<AppSettings>().Theme;
+            frame.RequestedTheme = (ElementTheme)theme;
+            return frame;
         }
 
         private void NavigateShell(string parameter)
@@ -876,7 +868,6 @@ namespace JumpPoint.Uwp
 
         public override async Task Startup(IActivatedEventArgs args)
         {
-            Singleton<ThemeService>.Instance.SetTheme(SimpleIoc.Default.GetInstance<AppSettings>().Theme);
             await JumpListService.Initialize();
             FontPicker.ClearFontCache();
         }

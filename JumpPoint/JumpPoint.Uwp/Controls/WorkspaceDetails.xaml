@@ -1,0 +1,228 @@
+﻿<UserControl
+    x:Class="JumpPoint.Uwp.Controls.WorkspaceDetails"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JumpPoint.Uwp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:JumpPoint.Uwp.Converters"
+    xmlns:gtext="using:Glif.Core.Text"
+    xmlns:helpers="using:JumpPoint.Uwp.Helpers"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:behaviors="using:JumpPoint.Uwp.Interactivity.Behaviors"
+    xmlns:items="using:JumpPoint.Platform.Items"
+    xmlns:commands="using:JumpPoint.ViewModels.Commands"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid RowSpacing="4"
+          ColumnSpacing="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.5*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock IsColorFontEnabled="True"
+                       FontFamily="Segoe UI Emoji"
+                       FontSize="21"
+                       Text="{x:Bind converters:IconConverter.GetWorkspaceGlyph(Workspace.Template), Mode=OneWay}" />
+            <TextBlock Text="{x:Bind Workspace.DisplayName, Mode=OneWay}"
+                       Grid.Column="1"
+                       Margin="8,0"
+                       TextTrimming="CharacterEllipsis"
+                       VerticalAlignment="Center"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                       FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}">
+                <i:Interaction.Behaviors>
+                    <behaviors:FontFamilyBehavior FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay, Converter={StaticResource FontFamilyConverter}}" />
+                </i:Interaction.Behaviors>
+            </TextBlock>
+        </Grid>
+
+        <TextBlock Text="Date Created:"
+                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                   Grid.Row="1" />
+        <TextBlock Text="{x:Bind Workspace.DateCreated.LocalDateTime.ToString(), Mode=OneWay}"
+                   Grid.Row="1"
+                   Grid.Column="1"
+                   TextWrapping="Wrap"/>
+
+        <TextBlock Text="Item Count:"
+                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                   VerticalAlignment="Center"
+                   Grid.Row="2" />
+        <Grid Grid.Row="2"
+              Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{x:Bind Workspace.ItemCount, Mode=OneWay}"
+                       VerticalAlignment="Center"/>
+            <Button Grid.Column="1"
+                    MinWidth="0"
+                    MinHeight="0"
+                    Padding="4"
+                    Background="Transparent"
+                    BorderThickness="0">
+                <FontIcon FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                          Glyph="&#xF639;"
+                          FontSize="18" />
+                <Button.Flyout>
+                    <Flyout>
+                        <Grid ColumnSpacing="8"
+                              RowSpacing="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Image Width="24"
+                                   Height="24">
+                                <Image.Source>
+                                    <BitmapImage DecodePixelHeight="24"
+                                                 DecodePixelWidth="24"
+                                                 DecodePixelType="Logical"
+                                                 UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.Drive)}" />
+                                </Image.Source>
+                            </Image>
+                            <TextBlock Text="{x:Bind Workspace.DriveCount, Mode=OneWay, Converter={StaticResource QuantityHumanizerConverter}, ConverterParameter='Drive'}"
+                                       Grid.Column="1"
+                                       VerticalAlignment="Center" />
+
+                            <Image Width="24"
+                                   Height="24"
+                                   Grid.Row="1">
+                                <Image.Source>
+                                    <BitmapImage DecodePixelHeight="24"
+                                                 DecodePixelWidth="24"
+                                                 DecodePixelType="Logical"
+                                                 UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.Folder)}" />
+                                </Image.Source>
+                            </Image>
+                            <TextBlock Text="{x:Bind Workspace.FolderCount, Mode=OneWay, Converter={StaticResource QuantityHumanizerConverter}, ConverterParameter='Folder'}"
+                                       Grid.Column="1"
+                                       Grid.Row="1"
+                                       VerticalAlignment="Center" />
+
+                            <Image Width="24"
+                                   Height="24"
+                                   Grid.Row="2">
+                                <Image.Source>
+                                    <BitmapImage DecodePixelHeight="24"
+                                                 DecodePixelWidth="24"
+                                                 DecodePixelType="Logical"
+                                                 UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.File)}" />
+                                </Image.Source>
+                            </Image>
+                            <TextBlock Text="{x:Bind Workspace.FileCount, Mode=OneWay, Converter={StaticResource QuantityHumanizerConverter}, ConverterParameter='File'}"
+                                       Grid.Column="1"
+                                       Grid.Row="2"
+                                       VerticalAlignment="Center" />
+
+                            <Image Width="24"
+                                   Height="24"
+                                   Grid.Row="3">
+                                <Image.Source>
+                                    <BitmapImage DecodePixelHeight="24"
+                                                 DecodePixelWidth="24"
+                                                 DecodePixelType="Logical"
+                                                 UriSource="{x:Bind converters:IconConverter.GetItemIconUri(items:JumpPointItemType.AppLink)}" />
+                                </Image.Source>
+                            </Image>
+                            <TextBlock Text="{x:Bind Workspace.AppLinkCount, Mode=OneWay, Converter={StaticResource QuantityHumanizerConverter}, ConverterParameter='App Link'}"
+                                       Grid.Column="1"
+                                       Grid.Row="3"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+        </Grid>
+
+        <TextBlock Text="Path:"
+                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                   Grid.Row="3" />
+        <TextBlock Text="{x:Bind Workspace.Path, Mode=OneWay}"
+                   Grid.Row="3"
+                   Grid.Column="1"
+                   TextWrapping="Wrap"/>
+
+        <Grid Grid.Row="4"
+              Grid.ColumnSpan="2"
+              Margin="0,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <local:IconButton IsCompact="True"
+                              VerticalAlignment="Stretch"
+                              IconSource="{StaticResource ItemsPropertiesIcon}"
+                              CommandParameter="{x:Bind Workspace, Mode=OneWay}"
+                              Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemPropertiesCommand}"
+                              Visibility="{x:Bind IsInDetailsPane, Mode=OneWay, Converter={StaticResource VisibleWhenTrueConverter}}"
+                              Margin="0,0,8,0" />
+            <winui:SplitButton Grid.Column="1"
+                               HorizontalAlignment="Stretch"
+                               CommandParameter="{x:Bind Workspace, Mode=OneWay}"
+                               Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.OpenItemInNewWindowCommand}">
+                <StackPanel Orientation="Horizontal"
+                            Spacing="8">
+                    <IconSourceElement IconSource="{StaticResource OpenItemsInNewWindowIcon}" />
+                    <TextBlock Text="Open in New Window" />
+                </StackPanel>
+                <winui:SplitButton.Flyout>
+                    <MenuFlyout Placement="BottomEdgeAlignedRight">
+                        <MenuFlyoutItem Text="Add to Favorites"
+                                        Icon="{converters:IconSourceElement Source={StaticResource AddItemsToFavoritesIcon}}"
+                                        CommandParameter="{x:Bind Workspace, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.AddItemToFavoritesCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsAddToFavoritesEnabled(Workspace), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutItem Text="Remove from Favorites"
+                                        Icon="{converters:IconSourceElement Source={StaticResource RemoveItemsFromFavoritesIcon}}"
+                                        CommandParameter="{x:Bind Workspace, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.RemoveItemFromFavoritesCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsRemoveFromFavoritesEnabled(Workspace), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutItem Text="Set Workspace Template..."
+                                        Icon="{converters:IconSourceElement Source={StaticResource SetItemsWorkspaceTemplateIcon}}"
+                                        CommandParameter="{x:Bind Workspace, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.SetItemWorkspaceTemplateCommand}"
+                                        IsEnabled="{x:Bind commands:DetailsPane.IsSetWorkspaceTemplateEnabled(Workspace), Mode=OneWay}"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" />
+                        <MenuFlyoutItem Text="More Tools..."
+                                        Icon="{converters:IconSourceElement Source={StaticResource MoreToolsIcon}}"
+                                        CommandParameter="{x:Bind Workspace, Mode=OneWay}"
+                                        Command="{Binding Source={StaticResource Locator}, Path=CommandHelper.ItemMoreToolsCommand}" />
+                    </MenuFlyout>
+                </winui:SplitButton.Flyout>
+            </winui:SplitButton>
+        </Grid>
+
+        <MenuFlyoutSeparator Grid.Row="5"
+                             Grid.ColumnSpan="2" />
+
+    </Grid>
+</UserControl>

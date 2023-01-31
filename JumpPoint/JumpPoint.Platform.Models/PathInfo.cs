@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using Humanizer;
+using Newtonsoft.Json;
 using NittyGritty;
 using NittyGritty.Extensions;
 
@@ -49,9 +50,9 @@ namespace JumpPoint.Platform.Models
             set { Set(ref _displayName, value); }
         }
 
-        private object _parameter;
+        private TabParameter _parameter;
 
-        public object Parameter
+        public TabParameter Parameter
         {
             get { return _parameter; }
             set { Set(ref _parameter, value); }
@@ -65,5 +66,24 @@ namespace JumpPoint.Platform.Models
             set { Set(ref _tag, value); }
         }
 
+    }
+
+    public class TabParameter
+    {
+        public string TabKey { get; set; }
+
+        public string Parameter { get; set; }
+
+        public static TabParameter FromJson(string json)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<TabParameter>(json);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }

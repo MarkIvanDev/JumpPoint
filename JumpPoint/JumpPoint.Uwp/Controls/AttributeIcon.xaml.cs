@@ -67,15 +67,15 @@ namespace JumpPoint.Uwp.Controls
             }
         }
 
-        public IList<FileAttributes> Data
+        public object Data
         {
-            get { return (IList<FileAttributes>)GetValue(DataProperty); }
+            get { return (object)GetValue(DataProperty); }
             set { SetValue(DataProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for Data.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register("Data", typeof(IList<FileAttributes>), typeof(AttributeIcon), new PropertyMetadata(null, OnDataChanged));
+            DependencyProperty.Register("Data", typeof(object), typeof(AttributeIcon), new PropertyMetadata(null, OnDataChanged));
 
         private static void OnDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -87,10 +87,9 @@ namespace JumpPoint.Uwp.Controls
 
         private void Compute()
         {
-            // Compute Opacity
-            if (Data != null && Data.Any() && Attribute != null)
+            if (Data != null)
             {
-                var att = Attribute.Value as FileAttributes? ?? FileAttributes.Normal;
+                var att = Attribute ?? FileAttributes.Normal;
                 if (Data is IList<FileAttributes> listAttributes)
                 {
                     if (listAttributes.All(a => (a & att) == att))
@@ -111,8 +110,9 @@ namespace JumpPoint.Uwp.Controls
                         image.Opacity = 0.0;
                         image.Visibility = Visibility.Collapsed;
                     }
+                    return;
                 }
-                else if (Enum.TryParse<FileAttributes>(Data.ToString(), out var attribute))
+                else if (Data is FileAttributes attribute)
                 {
                     if ((attribute & att) == att)
                     {
@@ -124,8 +124,10 @@ namespace JumpPoint.Uwp.Controls
                         image.Opacity = 0.0;
                         image.Visibility = Visibility.Collapsed;
                     }
+                    return;
                 }
             }
+            image.Visibility = Visibility.Collapsed;
         }
     }
 }

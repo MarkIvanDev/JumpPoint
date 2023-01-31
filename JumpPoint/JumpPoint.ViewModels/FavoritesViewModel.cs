@@ -34,7 +34,7 @@ namespace JumpPoint.ViewModels
             }
         }
 
-        protected override async Task Initialize(object parameter, Dictionary<string, object> state)
+        protected override async Task Initialize(TabParameter parameter, Dictionary<string, object> state)
         {
             PathInfo.Place(nameof(AppPath.Favorites), parameter);
             await RefreshCommand.TryExecute();

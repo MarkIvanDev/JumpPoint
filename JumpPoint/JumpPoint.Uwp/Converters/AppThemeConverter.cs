@@ -1,15 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using NittyGritty.Platform.Theme;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
-using JumpPoint.Platform.Items.Templates;
 
 namespace JumpPoint.Uwp.Converters
 {
-    public class IsGeneralFolderTemplateConverter : IValueConverter
+    public class AppThemeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return value is FolderTemplate template && template == FolderTemplate.General;
+            return value is AppTheme theme ? (ElementTheme)theme : ElementTheme.Default;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
