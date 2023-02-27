@@ -46,7 +46,7 @@
 
   <ItemGroup>
     <PackageReference Include="JumpPoint.Extensions" Version="0.4.1-beta" />
-    <PackageReference Include="NittyGritty" Version="2.1.0-prerelease202301212234" />
+    <PackageReference Include="NittyGritty" Version="2.2.0-dev.1" />
   </ItemGroup>
 
   <ItemGroup>
