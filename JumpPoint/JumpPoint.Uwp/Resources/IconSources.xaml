@@ -52,6 +52,10 @@
                     Glyph="&#xF9A3;"
                     FontSize="18" />
 
+    <FontIconSource x:Key="AllTabsIcon"
+                    FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
+                    Glyph="&#xF77B;"
+                    FontSize="18" />
     <FontIconSource x:Key="AddTabIcon"
                     FontFamily="ms-appx:///Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular"
                     Glyph="&#xF10D;"

@@ -463,16 +463,93 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Button Style="{StaticResource TitleBarButton}"
+                    <Button Style="{StaticResource TitleBarButton}">
+                        <IconSourceElement IconSource="{StaticResource AllTabsIcon}" />
+                        <Button.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedLeft">
+                                <Flyout.FlyoutPresenterStyle>
+                                    <Style TargetType="FlyoutPresenter">
+                                        <Setter Property="Padding"
+                                                Value="0,4" />
+                                    </Style>
+                                </Flyout.FlyoutPresenterStyle>
+                                <ListView SelectionMode="Single"
+                                          ItemsSource="{x:Bind ViewModel.Tabs}"
+                                          SelectedItem="{Binding CurrentTab, Mode=TwoWay}"
+                                          IsItemClickEnabled="True"
+                                          MaxHeight="320"
+                                          MinWidth="240"
+                                          MaxWidth="320">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="viewmodels:TabViewModel">
+                                            <Grid Background="Transparent"
+                                                  ToolTipService.ToolTip="{x:Bind Context.PathInfo.Path, Mode=OneWay}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.ContextFlyout>
+                                                    <MenuFlyout>
+                                                        <MenuFlyoutItem CommandParameter="{Binding}"
+                                                                        Command="{StaticResource NewTabCommand}" />
+                                                        <MenuFlyoutItem CommandParameter="{Binding}"
+                                                                        Command="{StaticResource DuplicateTabCommand}" />
+                                                        <MenuFlyoutItem CommandParameter="{Binding}"
+                                                                        Command="{StaticResource MoveTabToNewWindowCommand}" />
+                                                        <MenuFlyoutItem CommandParameter="{Binding}"
+                                                                        Command="{StaticResource CloseTabCommand}" />
+                                                        <MenuFlyoutItem CommandParameter="{Binding}"
+                                                                        Command="{StaticResource CloseOtherTabsCommand}" />
+                                                    </MenuFlyout>
+                                                </Grid.ContextFlyout>
+
+                                                <Viewbox Width="20"
+                                                         Height="20">
+                                                    <IconSourceElement IconSource="{x:Bind converters:IconConverter.GetPathTypeIconSource(Context.PathInfo.Type, Context.PathInfo.Tag), Mode=OneWay}" />
+                                                </Viewbox>
+                                                <TextBlock Text="{x:Bind Context.PathInfo.DisplayName, Mode=OneWay}"
+                                                           VerticalAlignment="Center"
+                                                           Grid.Column="1"
+                                                           FontSize="14"
+                                                           FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
+                                                           FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
+                                                           FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
+                                                           FontStretch="{x:Bind gtext:FontStretchExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStretch), Mode=OneWay}"
+                                                           Padding="8,0,20,0" />
+                                                <Button Grid.Column="2"
+                                                        Padding="4"
+                                                        BorderThickness="0"
+                                                        Background="Transparent"
+                                                        VerticalAlignment="Center"
+                                                        CommandParameter="{Binding}"
+                                                        Command="{StaticResource CloseTabCommand}">
+                                                    <IconSourceElement IconSource="{StaticResource CloseTabIconSmall}" />
+                                                </Button>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <i:Interaction.Behaviors>
+                                        <core:EventTriggerBehavior EventName="ItemClick">
+                                            <actions:CloseFlyoutAction />
+                                        </core:EventTriggerBehavior>
+                                    </i:Interaction.Behaviors>
+                                </ListView>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                    <Button Grid.Column="1"
+                            Style="{StaticResource TitleBarButton}"
                             CommandParameter="{x:Null}"
                             Command="{x:Bind ViewModel.NewTabCommand}">
                         <IconSourceElement IconSource="{StaticResource AddTabIcon}" />
                     </Button>
                     <Grid x:Name="rightInset"
                           Background="Transparent"
-                          Grid.Column="1" />
+                          Grid.Column="2" />
                 </Grid>
             </controls:PanedTabView2.RightHeader>
             <controls:PanedTabView2.TabStripContent>
