@@ -103,7 +103,7 @@ namespace JumpPoint.FullTrust.ChangeNotifier
                 NotifyFilters.Attributes |
                 NotifyFilters.Size |
                 NotifyFilters.LastWrite |
-                NotifyFilters.LastAccess |
+                //NotifyFilters.LastAccess |
                 NotifyFilters.CreationTime;
             watcher.Changed += OnChanged;
             watcher.Created += OnCreated;

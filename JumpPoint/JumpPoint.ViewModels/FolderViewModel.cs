@@ -85,71 +85,87 @@ namespace JumpPoint.ViewModels
         private async void ItemsChanged(NotifyChange change)
         {
             await changeSemaphore.WaitAsync();
+            var ts = CreateCancellationTokenSource();
             try
             {
+                var token = ts.Token;
                 await Xamarin.Essentials.MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    token.ThrowIfCancellationRequested();
+                    switch (change.ChangeType)
                     {
-                        switch (change.ChangeType)
-                        {
-                            case ChangeType.Created:
-                                StorageItemBase itemToCreate = change.IsDirectory ?
-                                    (await StorageService.GetFolder(change.FullPath, StorageType)) as StorageItemBase :
-                                    await StorageService.GetFile(change.FullPath, StorageType);
-                                if (itemToCreate != null)
-                                {
-                                    Items.Add(itemToCreate);
-                                    await JumpPointService.Load(itemToCreate);
-                                }
-                                break;
+                        case ChangeType.Created:
+                            StorageItemBase itemToCreate = change.IsDirectory ?
+                                (await StorageService.GetFolder(change.FullPath, StorageType)) as StorageItemBase :
+                                await StorageService.GetFile(change.FullPath, StorageType);
+                            token.ThrowIfCancellationRequested();
+                            if (itemToCreate != null)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                Items.Add(itemToCreate);
+                                token.ThrowIfCancellationRequested();
+                                await JumpPointService.Load(itemToCreate);
+                            }
+                            break;
 
-                            case ChangeType.Deleted:
-                                var itemToDelete = Items.FirstOrDefault(i => i.Name.Equals(change.Name, StringComparison.OrdinalIgnoreCase));
-                                if (itemToDelete != null)
-                                {
-                                    Items.Remove(itemToDelete);
-                                }
-                                break;
+                        case ChangeType.Deleted:
+                            var itemToDelete = Items.FirstOrDefault(i => i.Name.Equals(change.Name, StringComparison.OrdinalIgnoreCase));
+                            token.ThrowIfCancellationRequested();
+                            if (itemToDelete != null)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                Items.Remove(itemToDelete);
+                            }
+                            break;
 
-                            case ChangeType.Changed:
-                                var itemToLoad = Items.FirstOrDefault(i => i.Name.Equals(change.Name, StringComparison.OrdinalIgnoreCase)) as StorageItemBase;
-                                StorageItemBase refreshedItem = null;
-                                if (itemToLoad is FolderBase folder)
-                                {
-                                    refreshedItem = await StorageService.GetFolder(folder.Path, StorageType);
-                                }
-                                else if (itemToLoad is FileBase file)
-                                {
-                                    refreshedItem = await StorageService.GetFile(file.Path, StorageType);
-                                }
+                        case ChangeType.Changed:
+                            var itemToLoad = Items.FirstOrDefault(i => i.Name.Equals(change.Name, StringComparison.OrdinalIgnoreCase)) as StorageItemBase;
+                            token.ThrowIfCancellationRequested();
+                            StorageItemBase refreshedItem = null;
+                            if (itemToLoad is FolderBase folder)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                refreshedItem = await StorageService.GetFolder(folder.Path, StorageType);
+                            }
+                            else if (itemToLoad is FileBase file)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                refreshedItem = await StorageService.GetFile(file.Path, StorageType);
+                            }
 
-                                if (refreshedItem != null)
-                                {
-                                    itemToLoad.Refresh(refreshedItem);
-                                    await JumpPointService.Load(itemToLoad);
-                                }
-                                break;
+                            if (refreshedItem != null)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                itemToLoad.Refresh(refreshedItem);
+                                token.ThrowIfCancellationRequested();
+                                await JumpPointService.Load(itemToLoad);
+                            }
+                            break;
 
-                            case ChangeType.Renamed:
-                                var itemToRename = Items.FirstOrDefault(i => i.Name.Equals(change.OldName, StringComparison.OrdinalIgnoreCase)) as StorageItemBase;
-                                if (itemToRename != null)
-                                {
-                                    itemToRename.Path = change.FullPath;
-                                }
-                                break;
+                        case ChangeType.Renamed:
+                            var itemToRename = Items.FirstOrDefault(i => i.Name.Equals(change.OldName, StringComparison.OrdinalIgnoreCase)) as StorageItemBase;
+                            token.ThrowIfCancellationRequested();
+                            if (itemToRename != null)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                itemToRename.Path = change.FullPath;
+                            }
+                            break;
 
-                            case ChangeType.Unknown:
-                            default:
-                                await RefreshCommand.TryExecute();
-                                break;
-                        }
-                    });
+                        case ChangeType.Unknown:
+                        default:
+                            await Refresh(token);
+                            break;
+                    }
+                });
             }
-            catch (Exception)
+            catch
             {
             }
             finally
             {
                 changeSemaphore.Release();
+                DeregisterCancellationTokenSource(ts);
             }
         }
 
