@@ -60,7 +60,12 @@
                                    Margin="0,12,0,4"/>
                         <TextBox IsReadOnly="True"
                                  Visibility="{x:Bind Hash, Converter={StaticResource StringVisibilityConverter}, Mode=OneWay}"
-                                 Text="{x:Bind Hash, Mode=OneWay}"/>
+                                 Text="{x:Bind Hash, Mode=OneWay}"
+                                 Margin="0,0,0,4"/>
+                        <Button Content="Copy"
+                                Visibility="{x:Bind Hash, Converter={StaticResource StringVisibilityConverter}, Mode=OneWay}"
+                                DataContext="{x:Bind Hash, Mode=OneWay}"
+                                Click="OnCopy"/>
                         <winui:ProgressBar IsIndeterminate="{x:Bind Progress, Converter={StaticResource IsNullConverter}, Mode=OneWay}"
                                            Visibility="{x:Bind Progress, Converter={StaticResource CollapsedWhenZeroConverter}, Mode=OneWay}"
                                            Maximum="1"
