@@ -216,54 +216,14 @@
             <Setter Property="VerticalContentAlignment" Value="Stretch" />
             <Setter Property="Margin" Value="0" />
             <Setter Property="Padding" Value="0" />
-            <!--<Setter Property="UseSystemFocusVisuals" Value="True" />
-            <Setter Property="FocusVisualMargin" Value="0" />
-            <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource ListViewItemFocusVisualPrimaryBrush}" />
-            <Setter Property="FocusVisualPrimaryThickness" Value="2" />
-            <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource ListViewItemFocusVisualSecondaryBrush}" />
-            <Setter Property="FocusVisualSecondaryThickness" Value="1" />-->
             <Setter Property="TabNavigation" Value="Local" />
         </Style>
         
         <!--#region Details View -->
         <Style x:Key="DetailsLayoutItemStyle"
                TargetType="ListViewItem" BasedOn="{StaticResource AllLayoutItemStyle}">
-            <Setter Property="Padding" Value="12,0" />
-            <!--<Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
-                        <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
-                                               Control.IsTemplateFocusTarget="True"
-                                               FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-                                               FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
-                                               FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
-                                               FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
-                                               FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
-                                               SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
-                                               CheckBrush="{ThemeResource SystemAccentBrush}"
-                                               CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
-                                               DragBackground="{ThemeResource ListViewItemDragBackground}"
-                                               DragForeground="{ThemeResource ListViewItemDragForeground}"
-                                               FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
-                                               FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
-                                               PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
-                                               PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
-                                               PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
-                                               SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
-                                               SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
-                                               SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
-                                               PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
-                                               SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
-                                               DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                               DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                               ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                               ContentMargin="{TemplateBinding Padding}"
-                                               CheckMode="Inline" />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>-->
+            <Setter Property="Padding"
+                    Value="12,0" />
         </Style>
 
         <DataTemplate x:Key="FolderDetailsTemplate" x:DataType="items:FolderBase">
@@ -645,42 +605,6 @@
                TargetType="ListViewItem" BasedOn="{StaticResource AllLayoutItemStyle}">
             <Setter Property="Padding"
                     Value="4,0" />
-            <!--<Setter Property="VerticalContentAlignment" Value="Top" />-->
-            <!--<Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
-                        <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
-                                               Control.IsTemplateFocusTarget="True"
-                                               FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-                                               FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
-                                               FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
-                                               FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
-                                               FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
-                                               SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
-                                               CheckBrush="{ThemeResource SystemAccentBrush}"
-                                               CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
-                                               DragBackground="{ThemeResource ListViewItemDragBackground}"
-                                               DragForeground="{ThemeResource ListViewItemDragForeground}"
-                                               FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
-                                               FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
-                                               PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
-                                               PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
-                                               PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
-                                               SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
-                                               SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
-                                               SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
-                                               PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
-                                               SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
-                                               DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                               DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                               ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                               ContentMargin="{TemplateBinding Padding}"
-                                               CheckMode="Overlay" />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>-->
         </Style>
 
         <DataTemplate x:Key="FolderGridTemplate" x:DataType="items:FolderBase">
@@ -995,41 +919,6 @@
                TargetType="ListViewItem" BasedOn="{StaticResource AllLayoutItemStyle}">
             <Setter Property="Padding"
                     Value="4,0" />
-            <!--<Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
-                        <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
-                                               Control.IsTemplateFocusTarget="True"
-                                               FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-                                               FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
-                                               FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
-                                               FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
-                                               FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
-                                               SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
-                                               CheckBrush="{ThemeResource SystemAccentBrush}"
-                                               CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
-                                               DragBackground="{ThemeResource ListViewItemDragBackground}"
-                                               DragForeground="{ThemeResource ListViewItemDragForeground}"
-                                               FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
-                                               FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
-                                               PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
-                                               PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
-                                               PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
-                                               SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
-                                               SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
-                                               SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
-                                               PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
-                                               SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
-                                               DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                               DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                               ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                               ContentMargin="{TemplateBinding Padding}"
-                                               CheckMode="Inline" />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>-->
         </Style>
 
         <DataTemplate x:Key="FolderTilesTemplate" x:DataType="items:FolderBase">
@@ -1375,41 +1264,6 @@
                BasedOn="{StaticResource AllLayoutItemStyle}">
             <Setter Property="Padding"
                     Value="12,0" />
-            <!--<Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
-                        <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
-                                               Control.IsTemplateFocusTarget="True"
-                                               FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-                                               FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
-                                               FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
-                                               FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
-                                               FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
-                                               SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
-                                               CheckBrush="{ThemeResource SystemAccentBrush}"
-                                               CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
-                                               DragBackground="{ThemeResource ListViewItemDragBackground}"
-                                               DragForeground="{ThemeResource ListViewItemDragForeground}"
-                                               FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
-                                               FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
-                                               PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
-                                               PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
-                                               PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
-                                               SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
-                                               SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
-                                               SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
-                                               PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
-                                               SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
-                                               DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                               DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                               ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                               ContentMargin="{TemplateBinding Padding}"
-                                               CheckMode="Inline" />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>-->
         </Style>
 
         <DataTemplate x:Key="FolderListTemplate"
@@ -1698,10 +1552,6 @@
                                                RightValue="{x:Bind platform:LayoutModes.Grid}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="entranceTransition.FromVerticalOffset"
-                                Value="0" />
-                        <Setter Target="entranceTransition.FromHorizontalOffset"
-                                Value="50" />
                         <Setter Target="allView.Padding"
                                 Value="4,0,4,12" /><!-- 4,0,-10,12 -->
                         <Setter Target="allView.(ScrollViewer.HorizontalScrollBarVisibility)"
@@ -1730,10 +1580,6 @@
                                                RightValue="{x:Bind platform:LayoutModes.Details}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="entranceTransition.FromVerticalOffset"
-                                Value="50" />
-                        <Setter Target="entranceTransition.FromHorizontalOffset"
-                                Value="0" />
                         <Setter Target="allView.Padding"
                                 Value="4,0,4,12" />
                         <Setter Target="allView.(ScrollViewer.HorizontalScrollBarVisibility)"
@@ -1761,10 +1607,6 @@
                                                RightValue="{x:Bind platform:LayoutModes.Tiles}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="entranceTransition.FromVerticalOffset"
-                                Value="0" />
-                        <Setter Target="entranceTransition.FromHorizontalOffset"
-                                Value="50" />
                         <Setter Target="allView.Padding"
                                 Value="4,0,4,12" />
                         <Setter Target="allView.(ScrollViewer.HorizontalScrollBarVisibility)"
@@ -1793,10 +1635,6 @@
                                                RightValue="{x:Bind platform:LayoutModes.List}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="entranceTransition.FromVerticalOffset"
-                                Value="0" />
-                        <Setter Target="entranceTransition.FromHorizontalOffset"
-                                Value="50" />
                         <Setter Target="allView.Padding"
                                 Value="4,0,4,12" />
                         <Setter Target="allView.(ScrollViewer.HorizontalScrollBarVisibility)"
@@ -1849,11 +1687,6 @@
                               Visibility="{x:Bind GetDetailsHeaderVisibility(Context.Settings.Layout), Mode=OneWay}"
                               Background="{ThemeResource SystemChromeAltHighColor}"
                               Tapped="OnDetailsHeaderTapped">
-                            <Grid.ChildrenTransitions>
-                                <TransitionCollection>
-                                    <RepositionThemeTransition />
-                                </TransitionCollection>
-                            </Grid.ChildrenTransitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="28" />
@@ -1964,7 +1797,8 @@
                     <ListView.ItemContainerTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition IsStaggeringEnabled="False"
-                                                     x:Name="entranceTransition" />
+                                                     FromVerticalOffset="0"
+                                                     FromHorizontalOffset="50" />
                             <AddDeleteThemeTransition />
                         </TransitionCollection>
                     </ListView.ItemContainerTransitions>

@@ -419,6 +419,15 @@
             <controls:PanedTabView2.TabItemTemplate>
                 <DataTemplate x:DataType="viewmodels:TabViewModel">
                     <Frame nguwpext:FrameExtensions.Key="{x:Bind Key, Mode=OneWay}">
+                        <Frame.ContentTransitions>
+                            <TransitionCollection>
+                                <NavigationThemeTransition>
+                                    <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                                        <SuppressNavigationTransitionInfo />
+                                    </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                                </NavigationThemeTransition>
+                            </TransitionCollection>
+                        </Frame.ContentTransitions>
                         <i:Interaction.Behaviors>
                             <behaviors:FrameNavigatedContextBehavior SelectedTab="{Binding ElementName=panedTabView, Path=SelectedItem}" />
                         </i:Interaction.Behaviors>
