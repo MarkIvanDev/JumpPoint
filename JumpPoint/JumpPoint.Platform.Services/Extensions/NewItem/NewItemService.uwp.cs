@@ -186,8 +186,6 @@ namespace JumpPoint.Platform.Services
                     lProp["#text"].ToString() : null;
                 newItem.Service = properties.TryGetValue(nameof(NewItem.Service), out var srv) && srv is PropertySet srvProp && srvProp.ContainsKey("#text") ?
                     srvProp["#text"].ToString() : null;
-                newItem.FileExtension = properties.TryGetValue(nameof(NewItem.FileExtension), out var ft) && ft is PropertySet ftProp && ftProp.ContainsKey("#text") ?
-                    ftProp["#text"].ToString() : null;
             }
 
             return newItem;
