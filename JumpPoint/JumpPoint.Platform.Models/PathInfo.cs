@@ -85,5 +85,10 @@ namespace JumpPoint.Platform.Models
                 return null;
             }
         }
+
+        public string ToJson()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
     }
 }

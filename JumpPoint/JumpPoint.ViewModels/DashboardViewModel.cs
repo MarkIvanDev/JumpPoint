@@ -12,6 +12,7 @@ using NittyGritty.Models;
 using JumpPoint.Platform.Models.Extensions;
 using Humanizer;
 using NittyGritty.Services.Core;
+using JumpPoint.ViewModels.Helpers;
 
 namespace JumpPoint.ViewModels
 {
@@ -27,11 +28,12 @@ namespace JumpPoint.ViewModels
 
         public Collection<ShellItem> QuickLinks { get; } = new Collection<ShellItem>
         {
-            new ShellItem { Content = nameof(AppPath.Favorites), Key = ViewModelKeys.Favorites, Tag = AppPath.Favorites },
-            new ShellItem { Content = nameof(AppPath.Workspaces), Key = ViewModelKeys.Workspaces, Tag = AppPath.Workspaces },
-            new ShellItem { Content = nameof(AppPath.Drives), Key = ViewModelKeys.Drives, Tag = AppPath.Drives },
-            new ShellItem { Content = AppPath.CloudDrives.Humanize(), Key = ViewModelKeys.CloudDrives, Tag = AppPath.CloudDrives },
-            new ShellItem { Content = AppPath.AppLinks.Humanize(), Key = ViewModelKeys.AppLinks, Tag = AppPath.AppLinks }
+            new ShellItem { Content = nameof(AppPath.Favorites), Key = ViewModelKeys.Favorites, Parameter = TabbedNavigationHelper.GetParameter(AppPath.Favorites), Tag = AppPath.Favorites },
+            new ShellItem { Content = nameof(AppPath.Workspaces), Key = ViewModelKeys.Workspaces, Parameter = TabbedNavigationHelper.GetParameter(AppPath.Workspaces), Tag = AppPath.Workspaces },
+            new ShellItem { Content = nameof(AppPath.Drives), Key = ViewModelKeys.Drives, Parameter = TabbedNavigationHelper.GetParameter(AppPath.Drives), Tag = AppPath.Drives },
+            new ShellItem { Content = AppPath.CloudDrives.Humanize(), Key = ViewModelKeys.CloudDrives, Parameter = TabbedNavigationHelper.GetParameter(AppPath.CloudDrives), Tag = AppPath.CloudDrives },
+            new ShellItem { Content = nameof(AppPath.WSL), Key = ViewModelKeys.WSL, Parameter = TabbedNavigationHelper.GetParameter(AppPath.WSL), Tag = AppPath.WSL },
+            new ShellItem { Content = AppPath.AppLinks.Humanize(), Key = ViewModelKeys.AppLinks, Parameter = TabbedNavigationHelper.GetParameter(AppPath.AppLinks), Tag = AppPath.AppLinks }
         };
 
         protected override async Task Refresh(CancellationToken token)

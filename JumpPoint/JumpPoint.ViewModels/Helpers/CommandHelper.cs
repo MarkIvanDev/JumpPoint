@@ -338,7 +338,7 @@ namespace JumpPoint.ViewModels.Helpers
         public RelayCommand<TabViewModel> SettingsCommand => _Settings ?? (_Settings = new RelayCommand<TabViewModel>(
             (tab) =>
             {
-                tab?.NavigationHelper.ToKey(ViewModelKeys.Settings);
+                tab?.NavigationHelper.ToPathType(AppPath.Settings);
             }));
 
         #endregion
@@ -439,7 +439,7 @@ namespace JumpPoint.ViewModels.Helpers
                         var appLink = await AppLinkService.Create(appLinkInfo);
                         if (appLink != null)
                         {
-                            tab?.NavigationHelper.ToKey(ViewModelKeys.AppLinks);
+                            tab?.NavigationHelper.ToPathType(AppPath.AppLinks);
                         }
                     }
                 }

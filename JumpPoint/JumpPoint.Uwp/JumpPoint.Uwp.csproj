@@ -200,11 +200,13 @@
     <Compile Include="Converters\Properties\ThumbnailConverter.cs" />
     <Compile Include="Converters\NavigationViewItemInvokedEventArgsConverter.cs" />
     <Compile Include="Converters\QuantityHumanizerConverter.cs" />
+    <Compile Include="Converters\ReverseStackConverter.cs" />
     <Compile Include="Converters\Selectors\ClipboardItemTemplateSelector.cs" />
     <Compile Include="Converters\Selectors\CloudAccountPropertyTemplateSelector.cs" />
     <Compile Include="Converters\Selectors\ItemDetailsTemplateSelector.cs" />
     <Compile Include="Converters\ShellItemContentTemplateSelector.cs" />
     <Compile Include="Converters\StringConverter.cs" />
+    <Compile Include="Converters\TabParameterConverter.cs" />
     <Compile Include="Converters\UriOrStreamToBitmapImageConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="Dialogs\AddCloudAccountDialog.xaml.cs">

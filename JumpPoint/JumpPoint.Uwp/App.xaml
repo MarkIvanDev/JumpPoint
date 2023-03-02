@@ -786,6 +786,7 @@
                     <conv:FontFamilyConverter x:Key="FontFamilyConverter" />
                     <conv:HiddenOpacityConverter x:Key="HiddenOpacityConverter" />
                     <conv:QuantityHumanizerConverter x:Key="QuantityHumanizerConverter" />
+                    <conv:ReverseStackConverter x:Key="ReverseStackConverter" />
                 </ResourceDictionary>
 
             </ResourceDictionary.MergedDictionaries>

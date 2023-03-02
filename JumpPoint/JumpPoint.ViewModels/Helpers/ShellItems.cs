@@ -43,7 +43,7 @@ namespace JumpPoint.ViewModels.Helpers
                 Type = ShellItemType.Item,
                 Content = AppPath.Favorites,
                 Key = ViewModelKeys.Favorites,
-                Parameter = null,
+                Parameter = TabbedNavigationHelper.GetParameter(AppPath.Favorites),
                 Tag = AppPath.Favorites,
                 Children = new ObservableCollection<ShellItem>()
             };
@@ -52,7 +52,7 @@ namespace JumpPoint.ViewModels.Helpers
                 Type = ShellItemType.Item,
                 Content = AppPath.Workspaces,
                 Key = ViewModelKeys.Workspaces,
-                Parameter = null,
+                Parameter = TabbedNavigationHelper.GetParameter(AppPath.Workspaces),
                 Tag = AppPath.Workspaces,
                 Children = new ObservableCollection<ShellItem>()
             };
@@ -69,7 +69,7 @@ namespace JumpPoint.ViewModels.Helpers
                 Type = ShellItemType.Item,
                 Content = AppPath.Drives,
                 Key = ViewModelKeys.Drives,
-                Parameter = null,
+                Parameter = TabbedNavigationHelper.GetParameter(AppPath.Drives),
                 Tag = AppPath.Drives,
                 Children = new ObservableCollection<ShellItem>()
             };
@@ -78,7 +78,7 @@ namespace JumpPoint.ViewModels.Helpers
                 Type = ShellItemType.Item,
                 Content = AppPath.CloudDrives,
                 Key = ViewModelKeys.CloudDrives,
-                Parameter = null,
+                Parameter = TabbedNavigationHelper.GetParameter(AppPath.CloudDrives),
                 Tag = AppPath.CloudDrives,
                 Children = new ObservableCollection<ShellItem>()
             };
@@ -87,7 +87,7 @@ namespace JumpPoint.ViewModels.Helpers
                 Type = ShellItemType.Item,
                 Content = AppPath.WSL,
                 Key = ViewModelKeys.WSL,
-                Parameter = null,
+                Parameter = TabbedNavigationHelper.GetParameter(AppPath.WSL),
                 Tag = AppPath.WSL,
                 Children = new ObservableCollection<ShellItem>()
             };
@@ -99,7 +99,7 @@ namespace JumpPoint.ViewModels.Helpers
                     Type = ShellItemType.Item,
                     Content = AppPath.Dashboard,
                     Key = ViewModelKeys.Dashboard,
-                    Parameter = null,
+                    Parameter = TabbedNavigationHelper.GetParameter(AppPath.Dashboard),
                     Tag = AppPath.Dashboard
                 },
                 Favorites,
@@ -115,7 +115,7 @@ namespace JumpPoint.ViewModels.Helpers
                     Type = ShellItemType.Item,
                     Content = AppPath.AppLinks,
                     Key = ViewModelKeys.AppLinks,
-                    Parameter = null,
+                    Parameter = TabbedNavigationHelper.GetParameter(AppPath.AppLinks),
                     Tag = AppPath.AppLinks
                 }
             };

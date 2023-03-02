@@ -597,15 +597,120 @@
                             <controls:IconButton CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
                                                  Command="{StaticResource BackCommand}"
                                                  x:Name="navBack"
+                                                 IsRightTapEnabled="True"
                                                  IsEnabled="{x:Bind ((ngservices:NavigationService)ViewModel.CurrentTab.NavigationHelper.NavigationService).Context.CanGoBack, Mode=OneWay}"
                                                  x:Load="{x:Bind helpers:ServiceLocator.AppSettings.ShowBack, Mode=OneWay}"
-                                                 IsCompact="True" />
+                                                 IsCompact="True">
+                                <FlyoutBase.AttachedFlyout>
+                                    <Flyout Placement="BottomEdgeAlignedLeft">
+                                        <Flyout.FlyoutPresenterStyle>
+                                            <Style TargetType="FlyoutPresenter">
+                                                <Setter Property="Padding"
+                                                        Value="0,4" />
+                                            </Style>
+                                        </Flyout.FlyoutPresenterStyle>
+                                        <ListView SelectionMode="None"
+                                                  ItemsSource="{x:Bind ((ngservices:NavigationService)ViewModel.CurrentTab.NavigationHelper.NavigationService).Context.BackStack, Mode=OneWay, Converter={StaticResource ReverseStackConverter}}"
+                                                  IsItemClickEnabled="True"
+                                                  MaxHeight="320"
+                                                  MinWidth="240"
+                                                  MaxWidth="320">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate x:DataType="PageStackEntry">
+                                                    <Grid Background="Transparent"
+                                                          ToolTipService.ToolTip="{x:Bind converters:TabParameterConverter.GetPath(Parameter), Mode=OneWay}">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Viewbox Width="20"
+                                                                 Height="20">
+                                                            <IconSourceElement IconSource="{x:Bind converters:TabParameterConverter.GetIconSource(Parameter), Mode=OneWay}" />
+                                                        </Viewbox>
+                                                        <TextBlock Text="{x:Bind converters:TabParameterConverter.GetDisplayName(Parameter), Mode=OneWay}"
+                                                                   VerticalAlignment="Center"
+                                                                   Grid.Column="1"
+                                                                   FontSize="14"
+                                                                   Padding="8,0,20,0" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                            <i:Interaction.Behaviors>
+                                                <core:EventTriggerBehavior EventName="ItemClick">
+                                                    <actions:CloseFlyoutAction />
+                                                    <core:InvokeCommandAction Command="{x:Bind JumpBackCommand}"
+                                                                              InputConverter="{StaticResource ItemClickEventArgsConverter}"/>
+                                                </core:EventTriggerBehavior>
+                                            </i:Interaction.Behaviors>
+                                        </ListView>
+                                    </Flyout>
+                                </FlyoutBase.AttachedFlyout>
+                                <i:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="RightTapped">
+                                        <core:CallMethodAction TargetObject="{x:Bind ViewModel}"
+                                                               MethodName="RaiseCurrentTabChanged" />
+                                        <actions:OpenFlyoutAction />
+                                    </core:EventTriggerBehavior>
+                                </i:Interaction.Behaviors>
+                            </controls:IconButton>
                             <controls:IconButton CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
                                                  Command="{StaticResource ForwardCommand}"
                                                  x:Name="navForward"
                                                  IsEnabled="{x:Bind ((ngservices:NavigationService)ViewModel.CurrentTab.NavigationHelper.NavigationService).Context.CanGoForward, Mode=OneWay}"
                                                  x:Load="{x:Bind helpers:ServiceLocator.AppSettings.ShowForward, Mode=OneWay}"
-                                                 IsCompact="True" />
+                                                 IsCompact="True">
+                                <FlyoutBase.AttachedFlyout>
+                                    <Flyout Placement="BottomEdgeAlignedLeft">
+                                        <Flyout.FlyoutPresenterStyle>
+                                            <Style TargetType="FlyoutPresenter">
+                                                <Setter Property="Padding"
+                                                        Value="0,4" />
+                                            </Style>
+                                        </Flyout.FlyoutPresenterStyle>
+                                        <ListView SelectionMode="None"
+                                                  ItemsSource="{x:Bind ((ngservices:NavigationService)ViewModel.CurrentTab.NavigationHelper.NavigationService).Context.ForwardStack, Mode=OneWay, Converter={StaticResource ReverseStackConverter}}"
+                                                  IsItemClickEnabled="True"
+                                                  MaxHeight="320"
+                                                  MinWidth="240"
+                                                  MaxWidth="320">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate x:DataType="PageStackEntry">
+                                                    <Grid Background="Transparent"
+                                                          ToolTipService.ToolTip="{x:Bind converters:TabParameterConverter.GetPath(Parameter), Mode=OneWay}">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Viewbox Width="20"
+                                                                 Height="20">
+                                                            <IconSourceElement IconSource="{x:Bind converters:TabParameterConverter.GetIconSource(Parameter), Mode=OneWay}" />
+                                                        </Viewbox>
+                                                        <TextBlock Text="{x:Bind converters:TabParameterConverter.GetDisplayName(Parameter), Mode=OneWay}"
+                                                                   VerticalAlignment="Center"
+                                                                   Grid.Column="1"
+                                                                   FontSize="14"
+                                                                   Padding="8,0,20,0" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                            <i:Interaction.Behaviors>
+                                                <core:EventTriggerBehavior EventName="ItemClick">
+                                                    <actions:CloseFlyoutAction />
+                                                    <core:InvokeCommandAction Command="{x:Bind JumpForwardCommand}"
+                                                                              InputConverter="{StaticResource ItemClickEventArgsConverter}" />
+                                                </core:EventTriggerBehavior>
+                                            </i:Interaction.Behaviors>
+                                        </ListView>
+                                    </Flyout>
+                                </FlyoutBase.AttachedFlyout>
+                                <i:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="RightTapped">
+                                        <core:CallMethodAction TargetObject="{x:Bind ViewModel}"
+                                                               MethodName="RaiseCurrentTabChanged" />
+                                        <actions:OpenFlyoutAction />
+                                    </core:EventTriggerBehavior>
+                                </i:Interaction.Behaviors>
+                            </controls:IconButton>
                             <controls:IconButton CommandParameter="{x:Bind ViewModel.CurrentTab, Mode=OneWay}"
                                                  Command="{StaticResource UpCommand}"
                                                  IsEnabled="{x:Bind commands:NavigationBar.IsUpEnabled(ViewModel.CurrentTab.Context), Mode=OneWay}"

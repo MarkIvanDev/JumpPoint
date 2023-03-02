@@ -1,4 +1,5 @@
-﻿using JumpPoint.Platform;
+﻿using Humanizer;
+using JumpPoint.Platform;
 using JumpPoint.Platform.Items;
 using JumpPoint.Platform.Items.CloudStorage;
 using JumpPoint.Platform.Items.Storage;
@@ -128,31 +129,31 @@ namespace JumpPoint.ViewModels.Helpers
                     break;
 
                 case AppPath.Favorites:
-                    NavigationService.NavigateTo(ViewModelKeys.Favorites, GetTabParameter());
+                    NavigationService.NavigateTo(ViewModelKeys.Favorites, GetTabParameter(GetParameter(AppPath.Favorites)));
                     break;
 
                 case AppPath.Drives:
-                    NavigationService.NavigateTo(ViewModelKeys.Drives, GetTabParameter());
+                    NavigationService.NavigateTo(ViewModelKeys.Drives, GetTabParameter(GetParameter(AppPath.Drives)));
                     break;
 
                 case AppPath.Workspaces:
-                    NavigationService.NavigateTo(ViewModelKeys.Workspaces, GetTabParameter());
+                    NavigationService.NavigateTo(ViewModelKeys.Workspaces, GetTabParameter(GetParameter(AppPath.Workspaces)));
                     break;
 
                 case AppPath.AppLinks:
-                    NavigationService.NavigateTo(ViewModelKeys.AppLinks, GetTabParameter());
+                    NavigationService.NavigateTo(ViewModelKeys.AppLinks, GetTabParameter(GetParameter(AppPath.AppLinks)));
                     break;
 
                 case AppPath.Settings:
-                    NavigationService.NavigateTo(ViewModelKeys.Settings, GetTabParameter());
+                    NavigationService.NavigateTo(ViewModelKeys.Settings, GetTabParameter(GetParameter(AppPath.Settings)));
                     break;
 
                 case AppPath.CloudDrives:
-                    NavigationService.NavigateTo(ViewModelKeys.CloudDrives, GetTabParameter());
+                    NavigationService.NavigateTo(ViewModelKeys.CloudDrives, GetTabParameter(GetParameter(AppPath.CloudDrives)));
                     break;
 
                 case AppPath.WSL:
-                    NavigationService.NavigateTo(ViewModelKeys.WSL, GetTabParameter());
+                    NavigationService.NavigateTo(ViewModelKeys.WSL, GetTabParameter(GetParameter(AppPath.WSL)));
                     break;
 
                 case AppPath.Properties:
@@ -161,7 +162,7 @@ namespace JumpPoint.ViewModels.Helpers
                 case AppPath.ClipboardManager:
                 case AppPath.Unknown:
                 default:
-                    NavigationService.NavigateTo(ViewModelKeys.Dashboard, GetTabParameter());
+                    NavigationService.NavigateTo(ViewModelKeys.Dashboard, GetTabParameter(GetParameter(AppPath.Dashboard)));
                     break;
             }
         }
@@ -186,15 +187,15 @@ namespace JumpPoint.ViewModels.Helpers
             switch (pathType)
             {
                 case AppPath.Drive:
-                    NavigationService.NavigateTo(ViewModelKeys.Drives, GetTabParameter());
+                    NavigationService.NavigateTo(ViewModelKeys.Drives, GetTabParameter(GetParameter(AppPath.Drives)));
                     break;
 
                 case AppPath.Workspace:
-                    NavigationService.NavigateTo(ViewModelKeys.Workspaces, GetTabParameter());
+                    NavigationService.NavigateTo(ViewModelKeys.Workspaces, GetTabParameter(GetParameter(AppPath.Workspaces)));
                     break;
 
                 case AppPath.Cloud:
-                    NavigationService.NavigateTo(ViewModelKeys.CloudDrives, GetTabParameter());
+                    NavigationService.NavigateTo(ViewModelKeys.CloudDrives, GetTabParameter(GetParameter(AppPath.CloudDrives)));
                     break;
 
                 case AppPath.Favorites:
@@ -204,7 +205,7 @@ namespace JumpPoint.ViewModels.Helpers
                 case AppPath.Settings:
                 case AppPath.CloudDrives:
                 case AppPath.WSL:
-                    NavigationService.NavigateTo(ViewModelKeys.Dashboard, GetTabParameter());
+                    NavigationService.NavigateTo(ViewModelKeys.Dashboard, GetTabParameter(GetParameter(AppPath.Dashboard)));
                     break;
 
                 case AppPath.Folder:
@@ -225,6 +226,15 @@ namespace JumpPoint.ViewModels.Helpers
                 TabKey = Key,
                 Parameter = parameter
             });
+        }
+
+        public static string GetParameter(AppPath appPath)
+        {
+            return new QueryString()
+            {
+                { nameof(PathInfo.Type), appPath.ToString() },
+                { nameof(PathInfo.Path), appPath.Humanize() }
+            }.ToString();
         }
 
         public static string GetParameter(AppPath pathType, string path, JumpPointItem item)
