@@ -56,6 +56,18 @@ namespace JumpPoint.ViewModels.Hosted
                 {
                     await commandHelper.OpenUriCommand.TryExecute(open.Uri);
                 }
+                else if (response is ActionChatMessage action)
+                {
+                    switch (action.Action)
+                    {
+                        case ActionMessage.Clear:
+                            Messages.Clear();
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
             }));
 
         public override void LoadState(object parameter, Dictionary<string, object> state)

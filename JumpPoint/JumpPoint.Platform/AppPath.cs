@@ -58,6 +58,9 @@ namespace JumpPoint.Platform
                 case AppPath.AppLinks:
                     return ProtocolPath.AppLinks;
 
+                case AppPath.WSL:
+                    return ProtocolPath.WSL;
+
                 case AppPath.Drive:
                     return ProtocolPath.Drive;
 
@@ -78,7 +81,7 @@ namespace JumpPoint.Platform
 
                 case AppPath.ClipboardManager:
                     return ProtocolPath.Clipboard;
-
+                
                 case AppPath.Unknown:
                 default:
                     return ProtocolPath.Unknown;
