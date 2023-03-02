@@ -44,15 +44,16 @@ namespace JumpPoint.Platform.Services
                     "open CloudDrives",
                     "open Workspaces",
                     "open AppLinks",
+                    "open WSL",
                     "open Chat",
                     "open ClipboardManager"
                 }),
             new CommandInfo("open <item-path>", "Open the specified path. Item can be a Drive, Folder, Cloud Provider, or Workspace.",
                 new List<string>
                 {
-                    $"open {Path.GetPathRoot(Environment.SystemDirectory)}",
-                    $"open {Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}",
-                    $"open {Prefix.CLOUD}{CloudStorageProvider.OneDrive}"
+                    $"open \"{Path.GetPathRoot(Environment.SystemDirectory)}\"",
+                    $"open \"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\"",
+                    $"open \"{Prefix.CLOUD}{CloudStorageProvider.OneDrive}\""
                 })
         };
 
@@ -62,6 +63,7 @@ namespace JumpPoint.Platform.Services
             new CommandInfo("list workspaces", "List all your workspaces"),
             new CommandInfo("list drives", "List all your drives"),
             new CommandInfo("list clouddrives", "List all your cloud drives"),
+            new CommandInfo("list wsl", "List all your WSL drives"),
             new CommandInfo("list userfolders [--all|-a]", "List your enabled user folders or all of them",
                 new List<string>
                 {
@@ -73,6 +75,12 @@ namespace JumpPoint.Platform.Services
                 {
                     "list systemfolders",
                     "list systemfolders --all"
+                }),
+            new CommandInfo("list newitems [--all|-a]", "List your enabled New Item extensions or all of them",
+                new List<string>
+                {
+                    "list newitems",
+                    "list newitems --all"
                 }),
             new CommandInfo("list tools [--all|-a]", "List your enabled tools or all of them",
                 new List<string>
@@ -86,6 +94,11 @@ namespace JumpPoint.Platform.Services
                     "list applinkproviders",
                     "list applinkproviders --all"
                 }),
+        };
+
+        public static IList<CommandInfo> ActionCommands { get; } = new List<CommandInfo>
+        {
+            new CommandInfo("clear", "Clear chat history"),
         };
 
     }

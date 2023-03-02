@@ -26,13 +26,5 @@ namespace JumpPoint.Platform.Extensions
             set { Set(ref _service, value); }
         }
 
-        private string _fileExtension;
-
-        public string FileExtension
-        {
-            get { return _fileExtension; }
-            set { Set(ref _fileExtension, value); }
-        }
-
     }
 }

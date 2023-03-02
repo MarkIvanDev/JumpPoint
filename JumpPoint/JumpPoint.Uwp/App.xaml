@@ -657,6 +657,10 @@
                     <ngconv:StringEmptyConverter x:Key="StringEmptyConverter" />
                     <ngconv:StringFormatConverter x:Key="StringFormatConverter" />
                     <ngconv:StringVisibilityConverter x:Key="StringVisibilityConverter" />
+                    <ngconv:ChainConverter x:Key="ReverseStringVisibilityConverter">
+                        <ngconv:StringVisibilityConverter />
+                        <ngconv:ReverseVisibilityConverter />
+                    </ngconv:ChainConverter>
                     <ngconv:ChangeTypeConverter x:Key="ChangeTypeConverter" />
                     <ngconv:IsNullConverter x:Key="IsNullConverter" />
                     <ngconv:IsEqualConverter x:Key="IsZeroConverter" />
@@ -786,6 +790,7 @@
                     <conv:FontFamilyConverter x:Key="FontFamilyConverter" />
                     <conv:HiddenOpacityConverter x:Key="HiddenOpacityConverter" />
                     <conv:QuantityHumanizerConverter x:Key="QuantityHumanizerConverter" />
+                    <conv:ReverseStackConverter x:Key="ReverseStackConverter" />
                 </ResourceDictionary>
 
             </ResourceDictionary.MergedDictionaries>

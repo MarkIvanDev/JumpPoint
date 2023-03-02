@@ -15,6 +15,7 @@ namespace JumpPoint.Platform
         CloudDrives = 5,
         Workspaces = 6,
         AppLinks = 7,
+        WSL = 8,
 
         Open = 21,
         Drive = 22,
@@ -53,6 +54,9 @@ namespace JumpPoint.Platform
 
                 case ProtocolPath.AppLinks:
                     return AppPath.AppLinks;
+
+                case ProtocolPath.WSL:
+                    return AppPath.WSL;
 
                 case ProtocolPath.Drive:
                     return AppPath.Drive;

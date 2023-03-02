@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Numerics;
 using GalaSoft.MvvmLight.Messaging;
 using JumpPoint.Platform;
@@ -8,6 +9,8 @@ using JumpPoint.Platform.Models;
 using JumpPoint.Uwp.Controls;
 using JumpPoint.Uwp.Helpers;
 using JumpPoint.ViewModels;
+using NittyGritty.Commands;
+using NittyGritty.Uwp.Services;
 using Windows.ApplicationModel.Core;
 using Windows.System;
 using Windows.UI;
@@ -121,6 +124,101 @@ namespace JumpPoint.Uwp
         }
         #endregion
 
+        #region Navigation
+
+        private RelayCommand<PageStackEntry> _JumpBack;
+        public RelayCommand<PageStackEntry> JumpBackCommand => _JumpBack ?? (_JumpBack = new RelayCommand<PageStackEntry>(
+            (entry) =>
+            {
+                if (entry != null)
+                {
+                    var frame = ((NavigationService)ViewModel.CurrentTab.NavigationHelper.NavigationService).Context;
+                    var backStack = frame.BackStack.ToList();
+                    var forwardStack = frame.ForwardStack.ToList();
+                    var index = backStack.IndexOf(entry);
+                    if (index != -1)
+                    {
+                        var currentItem = backStack[index];
+                        var itemsToMove = Enumerable.Range(index + 1, backStack.Count - index - 1).Select(i => backStack[i]).ToList();
+                        itemsToMove.Reverse();
+
+                        // Populate forward stack
+                        var currentEntry = new PageStackEntry(frame.CurrentSourcePageType, ViewModel.CurrentTab.Context.PathInfo.Parameter.ToJson(), null);
+                        forwardStack.Add(currentEntry);
+                        foreach (var item in itemsToMove)
+                        {
+                            forwardStack.Add(item);
+                        }
+
+                        // Clean back stack
+                        foreach (var item in itemsToMove)
+                        {
+                            backStack.Remove(item);
+                        }
+                        backStack.Remove(currentItem);
+
+                        frame.Navigate(currentItem.SourcePageType, currentItem.Parameter);
+                        frame.BackStack.Clear();
+                        foreach (var item in backStack)
+                        {
+                            frame.BackStack.Add(item);
+                        }
+                        frame.ForwardStack.Clear();
+                        foreach (var item in forwardStack)
+                        {
+                            frame.ForwardStack.Add(item);
+                        }
+                    }
+                }
+            }));
+
+        private RelayCommand<PageStackEntry> _JumpForward;
+        public RelayCommand<PageStackEntry> JumpForwardCommand => _JumpForward ?? (_JumpForward = new RelayCommand<PageStackEntry>(
+            (entry) =>
+            {
+                if (entry != null)
+                {
+                    var frame = ((NavigationService)ViewModel.CurrentTab.NavigationHelper.NavigationService).Context;
+                    var backStack = frame.BackStack.ToList();
+                    var forwardStack = frame.ForwardStack.ToList();
+                    var index = forwardStack.IndexOf(entry);
+                    if (index != -1)
+                    {
+                        var currentItem = forwardStack[index];
+                        var itemsToMove = Enumerable.Range(index + 1, forwardStack.Count - index - 1).Select(i => forwardStack[i]).ToList();
+                        itemsToMove.Reverse();
+
+                        // Populate back stack
+                        var currentEntry = new PageStackEntry(frame.CurrentSourcePageType, ViewModel.CurrentTab.Context.PathInfo.Parameter.ToJson(), null);
+                        backStack.Add(currentEntry);
+                        foreach (var item in itemsToMove)
+                        {
+                            backStack.Add(item);
+                        }
+
+                        // Clean forward stack
+                        foreach (var item in itemsToMove)
+                        {
+                            forwardStack.Remove(item);
+                        }
+                        forwardStack.Remove(currentItem);
+
+                        frame.Navigate(currentItem.SourcePageType, currentItem.Parameter);
+                        frame.BackStack.Clear();
+                        foreach (var item in backStack)
+                        {
+                            frame.BackStack.Add(item);
+                        }
+                        frame.ForwardStack.Clear();
+                        foreach (var item in forwardStack)
+                        {
+                            frame.ForwardStack.Add(item);
+                        }
+                    }
+                }
+            }));
+
+        #endregion
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {

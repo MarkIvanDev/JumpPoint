@@ -27,6 +27,7 @@ namespace JumpPoint.Platform.Services
         AppLinkProviderList = 4,
         CommandList = 5,
         NewItemList = 6,
+        Action = 7,
     }
 
     public enum ChatMessageSource

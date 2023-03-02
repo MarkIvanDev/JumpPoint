@@ -200,11 +200,13 @@
     <Compile Include="Converters\Properties\ThumbnailConverter.cs" />
     <Compile Include="Converters\NavigationViewItemInvokedEventArgsConverter.cs" />
     <Compile Include="Converters\QuantityHumanizerConverter.cs" />
+    <Compile Include="Converters\ReverseStackConverter.cs" />
     <Compile Include="Converters\Selectors\ClipboardItemTemplateSelector.cs" />
     <Compile Include="Converters\Selectors\CloudAccountPropertyTemplateSelector.cs" />
     <Compile Include="Converters\Selectors\ItemDetailsTemplateSelector.cs" />
     <Compile Include="Converters\ShellItemContentTemplateSelector.cs" />
     <Compile Include="Converters\StringConverter.cs" />
+    <Compile Include="Converters\TabParameterConverter.cs" />
     <Compile Include="Converters\UriOrStreamToBitmapImageConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="Dialogs\AddCloudAccountDialog.xaml.cs">
@@ -4776,22 +4778,22 @@
       <Version>5.1.2</Version>
     </PackageReference>
     <PackageReference Include="NittyGritty">
-      <Version>2.1.0-prerelease202301212234</Version>
+      <Version>2.2.0-dev.1</Version>
     </PackageReference>
     <PackageReference Include="NittyGritty.Platform">
-      <Version>2.1.0-prerelease202301212234</Version>
+      <Version>2.2.0-dev.1</Version>
     </PackageReference>
     <PackageReference Include="NittyGritty.Services.Core">
-      <Version>2.1.0-prerelease202301212234</Version>
+      <Version>2.2.0-dev.1</Version>
     </PackageReference>
     <PackageReference Include="NittyGritty.Uwp">
-      <Version>2.1.0-prerelease202301212234</Version>
+      <Version>2.2.0-dev.1</Version>
     </PackageReference>
     <PackageReference Include="NittyGritty.Uwp.Interactivity">
-      <Version>2.1.0-prerelease202301212234</Version>
+      <Version>2.2.0-dev.1</Version>
     </PackageReference>
     <PackageReference Include="NittyGritty.Uwp.Services">
-      <Version>2.1.0-prerelease202301212234</Version>
+      <Version>2.2.0-dev.1</Version>
     </PackageReference>
     <PackageReference Include="sqlite-net-pcl">
       <Version>1.8.116</Version>

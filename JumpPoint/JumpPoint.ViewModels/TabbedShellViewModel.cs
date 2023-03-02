@@ -489,6 +489,11 @@ namespace JumpPoint.ViewModels
         {
             CurrentTab?.RaisePropertyChanged(nameof(CurrentTab.Context));
         }
+
+        public void RaiseCurrentTabChanged()
+        {
+            RaisePropertyChanged(nameof(CurrentTab));
+        }
     }
 
     public class TabViewModel : ObservableObject
