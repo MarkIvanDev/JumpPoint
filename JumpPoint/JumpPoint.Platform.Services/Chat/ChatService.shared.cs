@@ -1,7 +1,9 @@
-﻿using JumpPoint.Platform.Extensions;
+﻿using Humanizer;
+using JumpPoint.Platform.Extensions;
 using JumpPoint.Platform.Items.CloudStorage;
 using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Models.Extensions;
+using NittyGritty.Utilities;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -53,6 +55,7 @@ namespace JumpPoint.Platform.Services
                     GetCommand(ChatbotCommand.Help),
                     GetCommand(ChatbotCommand.Open),
                     GetCommand(ChatbotCommand.List),
+                    GetCommand(ChatbotCommand.Clear),
                 };
                 return rootCommand;
             }
@@ -103,11 +106,23 @@ namespace JumpPoint.Platform.Services
                                     {
                                         CommandInfo.HelpCommands,
                                         CommandInfo.OpenCommands,
-                                        CommandInfo.ListCommands
+                                        CommandInfo.ListCommands,
+                                        CommandInfo.ActionCommands,
                                     }
                                 };
                             });
                             return command;
+                        }
+
+                    case ChatbotCommand.Clear:
+                        {
+                            return new Command(cmd.ToString().ToLower())
+                            {
+                                Handler = CommandHandler.Create(() =>
+                                {
+                                    response = new ActionChatMessage(ActionMessage.Clear);
+                                })
+                            };
                         }
 
                     case ChatbotCommand.Open:
@@ -121,14 +136,25 @@ namespace JumpPoint.Platform.Services
                         };
                         command.Handler = CommandHandler.Create<string>((path) =>
                         {
-                            var pathKind = path.GetPathKind();
-                            var lastCrumb = path.GetBreadcrumbs().LastOrDefault();
-                            var uri = GetUri(pathKind, lastCrumb, path);
-                            response = new OpenChatMessage(ChatMessageSource.Bot)
+                            if (EnumHelper<AppPath>.TryParse(path, out var appPath, ignoreCase: true))
                             {
-                                Title = lastCrumb?.DisplayName,
-                                Uri = uri
-                            };
+                                response = new OpenChatMessage(ChatMessageSource.Bot)
+                                {
+                                    Title = appPath.Humanize(),
+                                    Uri = JumpPointService.GetAppUri(appPath, null)
+                                };
+                            }
+                            else
+                            {
+                                var pathKind = path.GetPathKind();
+                                var lastCrumb = path.GetBreadcrumbs().LastOrDefault();
+                                var uri = GetUri(pathKind, lastCrumb, path);
+                                response = new OpenChatMessage(ChatMessageSource.Bot)
+                                {
+                                    Title = lastCrumb?.DisplayName,
+                                    Uri = uri
+                                };
+                            }
                         });
                         return command;
                     }
@@ -141,6 +167,7 @@ namespace JumpPoint.Platform.Services
                             GetListCommand(ListSubCommand.Workspaces),
                             GetListCommand(ListSubCommand.Drives),
                             GetListCommand(ListSubCommand.CloudDrives),
+                            GetListCommand(ListSubCommand.WSL),
                             GetListCommand(ListSubCommand.UserFolders),
                             GetListCommand(ListSubCommand.SystemFolders),
                             GetListCommand(ListSubCommand.Tools),
@@ -216,6 +243,22 @@ namespace JumpPoint.Platform.Services
                                     response = new ItemListChatMessage(ChatMessageSource.Bot)
                                     {
                                         Title = $"Cloud Drives ({drives.Count})",
+                                        Items = { drives }
+                                    };
+                                })
+                            };
+                        }
+
+                    case ListSubCommand.WSL:
+                        {
+                            return new Command(listCmd.ToString().ToLower())
+                            {
+                                Handler = CommandHandler.Create(async () =>
+                                {
+                                    var drives = await WslStorageService.GetDrives();
+                                    response = new ItemListChatMessage(ChatMessageSource.Bot)
+                                    {
+                                        Title = $"WSL Drives ({drives.Count})",
                                         Items = { drives }
                                     };
                                 })
@@ -311,6 +354,7 @@ namespace JumpPoint.Platform.Services
                                 };
                             })
                         };
+                        niCmd.AddOption(new Option<bool>(new string[] { "--all", "-a" }));
                         return niCmd;
 
                     case ListSubCommand.Unknown:
@@ -365,6 +409,7 @@ namespace JumpPoint.Platform.Services
     {
         Unknown = 0,
         Help = 1,
+        Clear = 2,
 
         Open = 10,
         List = 11,
@@ -382,6 +427,7 @@ namespace JumpPoint.Platform.Services
         Tools = 7,
         AppLinkProviders = 8,
         NewItems = 9,
+        WSL = 10,
     }
 
     public static class ListExtensions

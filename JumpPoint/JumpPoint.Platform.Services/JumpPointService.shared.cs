@@ -180,6 +180,7 @@ namespace JumpPoint.Platform.Services
                 case ProtocolPath.CloudDrives:
                 case ProtocolPath.Workspaces:
                 case ProtocolPath.AppLinks:
+                case ProtocolPath.WSL:
                 case ProtocolPath.Chat:
                 case ProtocolPath.Clipboard:
                     return uriBuilder.Uri;

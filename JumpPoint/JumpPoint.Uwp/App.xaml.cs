@@ -126,6 +126,7 @@ namespace JumpPoint.Uwp
                 case ProtocolPath.CloudDrives:
                 case ProtocolPath.Workspaces:
                 case ProtocolPath.AppLinks:
+                case ProtocolPath.WSL:
                     NavigateShell(new QueryString()
                     {
                         { nameof(PathInfo.Type), appPath.ToString() },
@@ -215,6 +216,10 @@ namespace JumpPoint.Uwp
                                     if (localPath == AppPath.Chat)
                                     {
                                         Navigate<Hosted.ChatbotPage>();
+                                    }
+                                    else if (localPath == AppPath.ClipboardManager)
+                                    {
+                                        Navigate<Standalone.ClipboardManagerPage>();
                                     }
                                     else
                                     {
