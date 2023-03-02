@@ -333,7 +333,7 @@
                                                          MinItemWidth="320"
                                                          MinItemHeight="120" />
                             </winui:ItemsRepeater.Layout>
-                            <DataTemplate x:DataType="extensions:ExtensionBase">
+                            <DataTemplate x:DataType="extensions:NewItem">
                                 <Grid ColumnSpacing="12"
                                       RowSpacing="2"
                                       CornerRadius="8"
@@ -381,12 +381,65 @@
                                         <IconSourceElement IconSource="{StaticResource ItemsPropertiesIcon}" />
                                         <Button.Flyout>
                                             <Flyout>
-                                                <StackPanel Spacing="4">
-                                                    <TextBlock Text="{x:Bind Package, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Package: {0}'}" />
-                                                    <TextBlock Text="{x:Bind Version, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Version: {0}'}" />
-                                                    <TextBlock Text="{x:Bind Publisher, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Publisher: {0}'}" />
-                                                    <TextBlock Text="{x:Bind Signature, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Signature: {0}'}" />
-                                                </StackPanel>
+                                                <Grid RowSpacing="4"
+                                                      ColumnSpacing="8"
+                                                      MinWidth="240"
+                                                      MaxWidth="320">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Text="Package:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                                    <TextBlock Text="{x:Bind Package, Mode=OneWay}"
+                                                               Grid.Column="1"
+                                                               TextWrapping="Wrap" />
+
+                                                    <TextBlock Text="Version:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                               Grid.Row="1" />
+                                                    <TextBlock Text="{x:Bind Version, Mode=OneWay}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="1"
+                                                               TextWrapping="Wrap" />
+
+                                                    <TextBlock Text="Publisher:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                               Grid.Row="2" />
+                                                    <TextBlock Text="{x:Bind Publisher, Mode=OneWay}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="2"
+                                                               TextWrapping="Wrap" />
+
+                                                    <TextBlock Text="Signature:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                               Grid.Row="3" />
+                                                    <TextBlock Text="{x:Bind Signature, Mode=OneWay}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="3"
+                                                               TextWrapping="Wrap" />
+
+                                                    <TextBlock Text="Entry Point:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                               Grid.Row="4" />
+                                                    <TextBlock Text="{x:Bind Link, Mode=OneWay}"
+                                                               Visibility="{x:Bind Link, Mode=OneWay, Converter={StaticResource StringVisibilityConverter}}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="4"
+                                                               TextWrapping="Wrap" />
+                                                    <TextBlock Text="{x:Bind Service, Mode=OneWay}"
+                                                               Visibility="{x:Bind Link, Mode=OneWay, Converter={StaticResource ReverseStringVisibilityConverter}}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="4"
+                                                               TextWrapping="Wrap" />
+                                                </Grid>
                                             </Flyout>
                                         </Button.Flyout>
                                     </Button>
@@ -407,7 +460,7 @@
                                                          MinItemWidth="320"
                                                          MinItemHeight="120"/>
                             </winui:ItemsRepeater.Layout>
-                            <DataTemplate x:DataType="extensions:ExtensionBase">
+                            <DataTemplate x:DataType="extensions:Tool">
                                 <Grid ColumnSpacing="12"
                                       RowSpacing="2"
                                       CornerRadius="8"
@@ -453,12 +506,89 @@
                                         <IconSourceElement IconSource="{StaticResource ItemsPropertiesIcon}" />
                                         <Button.Flyout>
                                             <Flyout>
-                                                <StackPanel Spacing="4">
-                                                    <TextBlock Text="{x:Bind Package, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Package: {0}'}" />
-                                                    <TextBlock Text="{x:Bind Version, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Version: {0}'}" />
-                                                    <TextBlock Text="{x:Bind Publisher, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Publisher: {0}'}" />
-                                                    <TextBlock Text="{x:Bind Signature, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Signature: {0}'}" />
-                                                </StackPanel>
+                                                <Grid RowSpacing="4"
+                                                      ColumnSpacing="8"
+                                                      MinWidth="240"
+                                                      MaxWidth="320">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Text="Package:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                                    <TextBlock Text="{x:Bind Package, Mode=OneWay}"
+                                                               Grid.Column="1"
+                                                               TextWrapping="Wrap"/>
+
+                                                    <TextBlock Text="Version:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                               Grid.Row="1" />
+                                                    <TextBlock Text="{x:Bind Version, Mode=OneWay}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="1"
+                                                               TextWrapping="Wrap" />
+
+                                                    <TextBlock Text="Publisher:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                               Grid.Row="2" />
+                                                    <TextBlock Text="{x:Bind Publisher, Mode=OneWay}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="2"
+                                                               TextWrapping="Wrap" />
+
+                                                    <TextBlock Text="Signature:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                               Grid.Row="3" />
+                                                    <TextBlock Text="{x:Bind Signature, Mode=OneWay}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="3"
+                                                               TextWrapping="Wrap" />
+
+                                                    <TextBlock Text="Supported File Types:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                               Grid.Row="4" />
+                                                    <TextBlock Text="Any"
+                                                               Visibility="{x:Bind SupportsAnyFileType, Mode=OneWay, Converter={StaticResource VisibleWhenTrueConverter}}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="4"
+                                                               TextWrapping="Wrap" />
+                                                    <TextBlock Text="{x:Bind x:String.Join(';', FileTypes), Mode=OneWay}"
+                                                               Visibility="{x:Bind SupportsAnyFileType, Mode=OneWay, Converter={StaticResource VisibleWhenFalseConverter}}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="4"
+                                                               TextWrapping="Wrap" />
+
+                                                    <TextBlock Text="Supports Directories:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                               Grid.Row="5" />
+                                                    <TextBlock Text="{x:Bind SupportsDirectories, Mode=OneWay}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="5"
+                                                               TextWrapping="Wrap" />
+
+                                                    <TextBlock Text="Entry Point:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                               Grid.Row="6" />
+                                                    <TextBlock Text="{x:Bind Link, Mode=OneWay}"
+                                                               Visibility="{x:Bind Link, Mode=OneWay, Converter={StaticResource StringVisibilityConverter}}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="6"
+                                                               TextWrapping="Wrap" />
+                                                    <TextBlock Text="{x:Bind Service, Mode=OneWay}"
+                                                               Visibility="{x:Bind Link, Mode=OneWay, Converter={StaticResource ReverseStringVisibilityConverter}}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="6"
+                                                               TextWrapping="Wrap" />
+                                                </Grid>
                                             </Flyout>
                                         </Button.Flyout>
                                     </Button>
@@ -479,7 +609,7 @@
                                                          MinItemWidth="320"
                                                          MinItemHeight="120" />
                             </winui:ItemsRepeater.Layout>
-                            <DataTemplate x:DataType="extensions:ExtensionBase">
+                            <DataTemplate x:DataType="extensions:AppLinkProvider">
                                 <Grid ColumnSpacing="12"
                                       RowSpacing="2"
                                       CornerRadius="8"
@@ -527,12 +657,65 @@
                                         <IconSourceElement IconSource="{StaticResource ItemsPropertiesIcon}" />
                                         <Button.Flyout>
                                             <Flyout>
-                                                <StackPanel Spacing="4">
-                                                    <TextBlock Text="{x:Bind Package, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Package: {0}'}" />
-                                                    <TextBlock Text="{x:Bind Version, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Version: {0}'}" />
-                                                    <TextBlock Text="{x:Bind Publisher, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Publisher: {0}'}" />
-                                                    <TextBlock Text="{x:Bind Signature, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Signature: {0}'}" />
-                                                </StackPanel>
+                                                <Grid RowSpacing="4"
+                                                      ColumnSpacing="8"
+                                                      MinWidth="240"
+                                                      MaxWidth="320">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Text="Package:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                                    <TextBlock Text="{x:Bind Package, Mode=OneWay}"
+                                                               Grid.Column="1"
+                                                               TextWrapping="Wrap" />
+
+                                                    <TextBlock Text="Version:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                               Grid.Row="1" />
+                                                    <TextBlock Text="{x:Bind Version, Mode=OneWay}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="1"
+                                                               TextWrapping="Wrap" />
+
+                                                    <TextBlock Text="Publisher:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                               Grid.Row="2" />
+                                                    <TextBlock Text="{x:Bind Publisher, Mode=OneWay}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="2"
+                                                               TextWrapping="Wrap" />
+
+                                                    <TextBlock Text="Signature:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                               Grid.Row="3" />
+                                                    <TextBlock Text="{x:Bind Signature, Mode=OneWay}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="3"
+                                                               TextWrapping="Wrap" />
+
+                                                    <TextBlock Text="Entry Point:"
+                                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                               Grid.Row="4" />
+                                                    <TextBlock Text="{x:Bind Link, Mode=OneWay}"
+                                                               Visibility="{x:Bind Link, Mode=OneWay, Converter={StaticResource StringVisibilityConverter}}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="4"
+                                                               TextWrapping="Wrap" />
+                                                    <TextBlock Text="{x:Bind Service, Mode=OneWay}"
+                                                               Visibility="{x:Bind Link, Mode=OneWay, Converter={StaticResource ReverseStringVisibilityConverter}}"
+                                                               Grid.Column="1"
+                                                               Grid.Row="4"
+                                                               TextWrapping="Wrap" />
+                                                </Grid>
                                             </Flyout>
                                         </Button.Flyout>
                                     </Button>
