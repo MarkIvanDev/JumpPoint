@@ -39,7 +39,7 @@
     <PackageReference Include="NittyGritty.Platform" Version="2.2.0-dev.1" />
     <PackageReference Include="NittyGritty.Services.Core" Version="2.2.0-dev.1" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.7.1" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.8.1" />
   </ItemGroup>
 
   <ItemGroup Condition=" $(TargetFramework.StartsWith('netstandard')) ">
@@ -64,6 +64,10 @@
     <ProjectReference Include="..\JumpPoint.Platform.Services.OneDrive\JumpPoint.Platform.Services.OneDrive.csproj" />
     <ProjectReference Include="..\JumpPoint.Platform.Services.Storj\JumpPoint.Platform.Services.Storj.csproj" />
     <ProjectReference Include="..\JumpPoint.Platform.Services.OpenDrive\JumpPoint.Platform.Services.OpenDrive.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.6.133" />
   </ItemGroup>
 
 </Project>
