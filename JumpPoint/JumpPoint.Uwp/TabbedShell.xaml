@@ -65,7 +65,7 @@
             </converters:ShellItemContentTemplateSelector.JumpPointItem>
             <converters:ShellItemContentTemplateSelector.AppPath>
                 <DataTemplate x:DataType="platform:AppPath">
-                    <TextBlock Text="{x:Bind Converter={StaticResource HumanizerConverter}, Mode=OneWay}"
+                    <TextBlock Text="{x:Bind Converter={StaticResource HumanizerConverter}}"
                                FontFamily="{x:Bind helpers:ServiceLocator.AppSettings.Font, Mode=OneWay}"
                                FontStyle="{x:Bind gtext:FontStyleExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontStyle), Mode=OneWay}"
                                FontWeight="{x:Bind gtext:FontWeightExtensions.ToPlatform(helpers:ServiceLocator.AppSettings.FontWeight), Mode=OneWay}"
@@ -618,16 +618,16 @@
                                             <ListView.ItemTemplate>
                                                 <DataTemplate x:DataType="PageStackEntry">
                                                     <Grid Background="Transparent"
-                                                          ToolTipService.ToolTip="{x:Bind converters:TabParameterConverter.GetPath(Parameter), Mode=OneWay}">
+                                                          ToolTipService.ToolTip="{x:Bind converters:TabParameterConverter.GetPath(Parameter)}">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto" />
                                                             <ColumnDefinition Width="*" />
                                                         </Grid.ColumnDefinitions>
                                                         <Viewbox Width="20"
                                                                  Height="20">
-                                                            <IconSourceElement IconSource="{x:Bind converters:TabParameterConverter.GetIconSource(Parameter), Mode=OneWay}" />
+                                                            <IconSourceElement IconSource="{x:Bind converters:TabParameterConverter.GetIconSource(Parameter)}" />
                                                         </Viewbox>
-                                                        <TextBlock Text="{x:Bind converters:TabParameterConverter.GetDisplayName(Parameter), Mode=OneWay}"
+                                                        <TextBlock Text="{x:Bind converters:TabParameterConverter.GetDisplayName(Parameter)}"
                                                                    VerticalAlignment="Center"
                                                                    Grid.Column="1"
                                                                    FontSize="14"
@@ -676,16 +676,16 @@
                                             <ListView.ItemTemplate>
                                                 <DataTemplate x:DataType="PageStackEntry">
                                                     <Grid Background="Transparent"
-                                                          ToolTipService.ToolTip="{x:Bind converters:TabParameterConverter.GetPath(Parameter), Mode=OneWay}">
+                                                          ToolTipService.ToolTip="{x:Bind converters:TabParameterConverter.GetPath(Parameter)}">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto" />
                                                             <ColumnDefinition Width="*" />
                                                         </Grid.ColumnDefinitions>
                                                         <Viewbox Width="20"
                                                                  Height="20">
-                                                            <IconSourceElement IconSource="{x:Bind converters:TabParameterConverter.GetIconSource(Parameter), Mode=OneWay}" />
+                                                            <IconSourceElement IconSource="{x:Bind converters:TabParameterConverter.GetIconSource(Parameter)}" />
                                                         </Viewbox>
-                                                        <TextBlock Text="{x:Bind converters:TabParameterConverter.GetDisplayName(Parameter), Mode=OneWay}"
+                                                        <TextBlock Text="{x:Bind converters:TabParameterConverter.GetDisplayName(Parameter)}"
                                                                    VerticalAlignment="Center"
                                                                    Grid.Column="1"
                                                                    FontSize="14"

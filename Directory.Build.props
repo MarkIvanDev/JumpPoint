@@ -3,10 +3,10 @@
   <PropertyGroup>
     <ExtrasUwpMetaPackageVersion>6.2.14</ExtrasUwpMetaPackageVersion>
   </PropertyGroup>
-  <ItemGroup>
+  <!--<ItemGroup>
     <PackageReference Include="Nerdbank.GitVersioning" Condition="!Exists('packages.config')">
-      <Version>3.4.255</Version>
+      <Version>3.6.133</Version>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-  </ItemGroup>
+  </ItemGroup>-->
 </Project>

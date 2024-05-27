@@ -12,10 +12,6 @@ using JumpPoint.Platform.Items.CloudStorage;
 using JumpPoint.Platform.Models;
 using JumpPoint.Platform.Models.Extensions;
 using JumpPoint.Platform.Services;
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NittyGritty;
 using NittyGritty.Models;
@@ -52,20 +48,6 @@ namespace JumpPoint.Uwp
             UnhandledException += OnUnhandledException;
 
             SQLitePCL.Batteries_V2.Init();
-
-            SetupAppCenter();
-        }
-
-        private void SetupAppCenter()
-        {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appcenter.jps.json", optional: true)
-                .Build();
-#if JPBETA
-            AppCenter.Start(config["betaKey"], typeof(Analytics), typeof(Crashes));
-#else
-            AppCenter.Start(config["mainKey"], typeof(Analytics), typeof(Crashes));
-#endif
         }
 
         private void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
